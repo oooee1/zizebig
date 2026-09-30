@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 媒體查詢工具 -->
+<head>
+    <title>《 星辰之路》——性格測驗視覺小說</title>
+    <script>
+    // 禁止右鍵（防止圖片被另存）
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        // 好奇星在跳
+        function triggerBigJump() {
+    const star = document.getElementById('star-character');
+    
+    // 如果目前已經在跳了，就先不重複觸發
+    if (star.classList.contains('big-jump')) return;
+    
+    // 加上大跳的 class
+    star.classList.add('big-jump');
+    
+    // 等 0.5 秒（大跳動畫結束後），把 class 移除，讓它回到平常的定時微跳
+    setTimeout(() => {
+        star.classList.remove('big-jump');
+    }, 500); // 這裡的 500 毫秒必須跟 CSS 裡的 playerClickJump 0.5s 一致
+}
+        // 
+        // 同情星嚇死
+function triggerScaredJump() {
+    const shyStar = document.getElementById('sympathy-character');
+    
+    // 防止重複點擊導致動畫卡死
+    if (shyStar.classList.contains('scared-jump')) return;
+    
+    // 塞入被嚇到的 class
+    shyStar.classList.add('scared-jump');
+    
+    // 動畫跑完 0.6 秒 (600毫秒) 後，移除 class 讓它恢復平常的害羞發抖
+    setTimeout(() => {
+        shyStar.classList.remove('scared-jump');
+    }, 600); 
+}       
+        // 
+        // 爽快星爽了
+function triggerDash() {
+    const dashStar = document.getElementById('dash-character');
+    
+    // 如果正在衝刺中，直接攔截不重複執行
+    if (dashStar.classList.contains('screen-dash')) return;
+    
+    // 注入衝刺 Class
+    dashStar.classList.add('screen-dash');
+    
+    // 1.2 秒（1200毫秒）動畫跑完後，幫他把 Class 拔掉
+    setTimeout(() => {
+        dashStar.classList.remove('screen-dash');
+        // 拔掉 Class 後，他會平滑地轉回正面，重新回到平常的 crispIdle 動畫！
+    }, 1200); 
+}
+        // 
+        // so hot
+        // 熱情星用力跳舞
+function triggerDance() {
+    const fireStar = document.getElementById('dance-character');
+    
+    // 如果正在大跳舞中，就不要重寫觸發
+    if (fireStar.classList.contains('passionate-dance')) return;
+    
+    // 注入跳舞 Class
+    fireStar.classList.add('passionate-dance');
+    
+    // 1.5 秒（1500毫秒）跳舞動畫結束後，拔掉 Class 回到平常的火苗律動
+    setTimeout(() => {
+        fireStar.classList.remove('passionate-dance');
+    }, 1500); 
+}
+            // 
+                   // 載入畫面
+        // 1. 確保資源路徑正確 (檢查你的資料夾名稱)
+        // 要先載完的東西
+const criticalAssets = [
+    '/pct/星辰.PNG', 
+    
+]; 
+const heavyAssets = []; // 暫時先空著
+
+let loadedCount = 0;
+const totalCritical = criticalAssets.length;
+
+function preloadImages(array, callback) {
+    if (array.length === 0) return callback(); // 如果沒東西就直接結束
+
+    array.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        
+        // 成功載入
+        img.onload = () => {
+            loadedCount++;
+            let percent = Math.floor((loadedCount / totalCritical) * 60);
+            updateUI(percent);
+            if (loadedCount === totalCritical) callback();
+        };
+
+        // 失敗處理 (預防圖片路徑寫錯卡死)
+        img.onerror = () => {
+            console.error("圖片載入失敗:", src);
+            loadedCount++; // 即使失敗也算進去，否則進度條會卡死
+            if (loadedCount === totalCritical) callback();
+        };
+    });
+}
+
+function updateUI(p) {
+    const bar = document.getElementById('progress-bar');
+    const text = document.getElementById('loading-percent');
+    if (bar) bar.style.width = p + "%";
+    if (text) text.innerText = p + "%";
+}
+
+// 定義缺少的函式，避免報錯
+function enterGameAnimation() {
+    console.log("開始進入遊戲動畫");
+    // 讓 Loading 畫面消失
+    document.getElementById('loading-screen').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+    }, 1000);
+}
+
+function backgroundLoad(assets) {
+    console.log("後台載入中...");
+}
+
+// 執行
+preloadImages(criticalAssets, () => {
+    enterGameAnimation();
+    backgroundLoad(heavyAssets);
+});
+// 漢堡選單
+function toggleMenu() {
+    const menu = document.getElementById("overlay-menu");
+    // 如果寬度是 0 就展開，否則就縮回
+    if (menu.style.width === "100%") {
+        menu.style.width = "0%";
+    } else {
+        menu.style.width = "100%";
+    }
+}
+// 偵測角色介紹區塊是否進入畫面
+// 1. 建立監視器
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+            // 如果只需要跑一次動畫，觸發後就停止監視該元素
+            observer.unobserve(entry.target); 
+        }
+    });
+}, {
+    threshold: 0.15 // 稍微露出一點點就觸發
+});
+
+// 2. 啟動監視 (確保在頁面載入後執行)
+document.addEventListener('DOMContentLoaded', () => {
+    // 這裡的選擇器要跟 CSS 對應
+    const elementsToWatch = document.querySelectorAll('.character img, .intro-title, .intro');
+    
+    elementsToWatch.forEach((el) => {
+        observer.observe(el);
+    });
+});
+
+// 名字框移動
+document.addEventListener('DOMContentLoaded', () => {
+    const nameCard = document.getElementById('星辰框');
+
+    if (!nameCard) return;
+
+    nameCard.addEventListener('mousemove', (e) => {
+        // 1. 取得名字框在螢幕上的尺寸與位置
+        const rect = nameCard.getBoundingClientRect();
+        const cardWidth = rect.width;
+        const cardHeight = rect.height;
+
+        // 2. 計算滑鼠在名字框內的相對位置 (中心點為 0, 0)
+        const mouseX = e.clientX - rect.left - cardWidth / 2;
+        const mouseY = e.clientY - rect.top - cardHeight / 2;
+
+        // 3. 計算 3D 傾斜角度 (最大傾斜 15 度，可自由調整數字)
+        const maxRotation = 15;
+        const rotateX = -(mouseY / (cardHeight / 2)) * maxRotation;
+        const rotateY = (mouseX / (cardWidth / 2)) * maxRotation;
+
+        // 4. 計算陰影方向 (滑鼠往右傾斜，光從右邊來，陰影往左邊伸長)
+        // 基礎位移 -10px，加上滑鼠偏轉量，確保陰影主要落在左側
+        const shadowX = -10 - (mouseX / (cardWidth / 2)) * 25; 
+        const shadowY = 10 - (mouseY / (cardHeight / 2)) * 25;
+
+        // 5. 套用 3D 旋轉（注意：必須把原本的 rotate(-6deg) 固定寫在最前面，才不會跑位！）
+        nameCard.style.transform = `rotate(-6deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        
+        // 6. 即時將計算出的陰影座標更新到 CSS 變數中
+        nameCard.style.setProperty('--shadow-x', `${shadowX}px`);
+        nameCard.style.setProperty('--shadow-y', `${shadowY}px`);
+    });
+
+    // 7. 滑鼠移開時，平滑還原成原本的模樣
+    nameCard.addEventListener('mouseleave', () => {
+        nameCard.style.transition = `transform 0.5s ease, filter 0.5s ease`;
+        nameCard.style.transform = `rotate(-6deg) rotateX(0deg) rotateY(0deg)`;
+        nameCard.style.setProperty('--shadow-x', `-10px`);
+        nameCard.style.setProperty('--shadow-y', `10px`);
+    });
+
+    // 滑鼠再次移入時，立刻切換回快速追隨，才不會有黏黏的延遲感
+    nameCard.addEventListener('mouseenter', () => {
+        nameCard.style.transition = `transform 0.1s ease-out`;
+    });
+});
+    </script>
+    <style>
+        /* 禁止全網頁所有文字與元素的選取 */
+html, body {
+    -webkit-user-select: none;  /* Safari, Chrome, Edge (iOS/Android) */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* 舊版 IE / Edge */
+    user-select: none;          /* 標準標準寫法 */
+}
+
+/* 額外保險：確保所有圖片也不會被滑鼠選取或產生預設的反白藍暈 */
+img {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/* 左上角漢堡按鈕 */
+.menu-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2000; /* 確保在最上層 */
+    cursor: pointer;
+    background: rgba(15, 15, 15, 0.801);
+    padding: 20px;
+    border-radius: 25px;
+}
+
+.bar {
+    width: 25px;
+    height: 3px;
+    background-color: #e9e9e9;
+    margin: 4px 0;
+    transition: 0.4s;
+}
+
+/* 全螢幕遮罩層 */
+.overlay {
+    height: 100%;
+    width: 0; /* 預設寬度為 0 (隱藏) */
+    position: fixed;
+    z-index: 3000;
+    top: 0;
+    left: 0;
+    background-color: rgba(15, 15, 15, 0.9); /* 半透明背景 */
+    backdrop-filter: blur(8px); /* 背景模糊效果，很有質感 */
+    overflow-x: hidden;
+    transition: 0.5s; /* 展開速度 */
+}
+
+/* 選單內容容器 */
+.overlay-content {
+    position: relative;
+    top: 20%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 0 ;
+    
+}
+
+/* 選單按鈕樣式 */
+.overlay a {
+    padding: 15px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #d6d6d6;
+    display: block;
+    transition: 0.3s;
+    font-weight: bold;
+    letter-spacing: 5px;
+    /* 關鍵屬性：強制不換行 */
+    white-space: nowrap; 
+
+}
+
+.overlay a:hover {
+    color: #ff7322;
+    transform: scale(1.1);
+}
+
+/* 關閉按鈕 */
+.overlay .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 60px;
+}
+        
+        .go-back {
+            line-height: 1;
+            display: inline-block;
+            align-items: center;
+            color: #d6d6d6;
+            text-decoration: none;
+            font-size: 14px;
+            background-color: #0e0e0e;
+            padding: 11px 20px;
+            border-radius: 5px; /* 稍微方正一點更硬核 */
+            transition: 0.3s;
+            white-space: nowrap;
+            z-index: 2000;
+        }
+        
+.game {
+    font-weight: normal;
+    position: absolute;
+    
+    /* 關鍵修正：強制將定位基準鎖定在畫面的正中間，不受 Flex 干擾 */
+    left: 50%;
+    /* 使用百分比作為 bottom，讓它在手機和電腦版的位置更安全 */
+    bottom: 5%; 
+    
+    /* 初始 transform 先做好水平置中 */
+    transform: translateX(-50%);    
+    letter-spacing: 1px;
+    white-space: nowrap;
+    color: #ffffff; 
+    text-decoration: none; 
+    font-size: 320%;
+    background-color: #3822ff;
+    /* font-weight: 950; */
+    padding: 40px 100px;
+    border-radius: 80px;
+    z-index: 1000;
+    box-shadow: 8px 8px 0px #141285;
+    filter: drop-shadow(5px 5px 10px #0f0f0f);
+    will-change: filter;
+    font-family: Dela Gothic One, Arial, sans-serif;
+    
+    /* 執行置中動畫 */
+    animation: bounce 2s ease-in-out infinite alternate;
+    overflow: visible;
+}
+
+/* 左上右上粒子效果 */
+.game::before {
+    content: "";
+    position: absolute;
+    /* 🎯 稍微往上與往左擴展初始範圍 */
+    top: -40px; left: -40px; right: 0; bottom: 0;
+    border-radius: 80px;
+    z-index: -1; 
+    
+    background-image: 
+        radial-gradient(circle, #22deff 5px, transparent 6px),
+        radial-gradient(circle, #3822ff 7px, transparent 8px),
+        radial-gradient(circle, #3822ff 6px, transparent 7px),
+        radial-gradient(circle, #22deff 4px, transparent 5px),
+        radial-gradient(circle, #3822ff 5px, transparent 6px),
+        radial-gradient(circle, #3822ff 8px, transparent 9px);
+    
+    /* 🎯 調整分佈，讓它們偏向左邊、上面與中間 */
+    background-position: 10% 20%, 35% 15%, 50% 10%, 15% 55%, 30% 45%, 5% 40%;
+    background-size: 15% 15%, 20% 20%, 15% 15%, 20% 20%, 15% 15%, 25% 25%;
+    background-repeat: no-repeat;
+
+    /* 執行改進後的均勻外擴動畫 */
+    animation: bgParticleBlastLeft 2.2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+    opacity: 0;
+}
+
+/* 【第二組：負責按鈕「下方、右側與周邊」的粒子】 */
+.game::after {
+    content: "";
+    position: absolute;
+    /* 🎯 稍微往下與往右擴展初始範圍 */
+    top: 0; left: 0; right: -40px; bottom: -40px;
+    border-radius: 80px;
+    z-index: -1;
+    
+    background-image: 
+        radial-gradient(circle, #22deff 7px, transparent 8px),
+        radial-gradient(circle, #3822ff 5px, transparent 6px),
+        radial-gradient(circle, #3822ff 6px, transparent 7px),
+        radial-gradient(circle, #3822ff 4px, transparent 5px),
+        radial-gradient(circle, #3822ff 6px, transparent 7px),
+        radial-gradient(circle, #22deff 8px, transparent 9px);
+        
+    /* 🎯 調整分佈，讓它們偏向右邊、下面與中間 */
+    background-position: 85% 65%, 70% 80%, 60% 90%, 90% 70%, 75% 50%, 95% 45%;
+    background-size: 20% 20%, 15% 15%, 20% 20%, 15% 15%, 15% 15%, 25% 25%;
+    background-repeat: no-repeat;
+
+    /* 執行改進後的均勻外擴動畫，並交錯延遲 0.3 秒 */
+animation: bgParticleBlastRight 2.0s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+    animation-delay: 0.2s;
+    opacity: 0;
+}
+
+/* ==================================================
+   🎯 動態修正：減小純方向的偏移，加大整體放大（Scale）倍數，
+   這樣粒子就會呈現從按鈕正後方「往四面八方均勻炸開」的效果！
+   ================================================== */
+
+@keyframes bgParticleBlastLeft {
+    0% {
+        transform: translate(0, 0) scale(0.7);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-20px, -20px) scale(1.8);
+        opacity: 0; 
+    }
+}
+
+@keyframes bgParticleBlastRight {
+    0% {
+        transform: translate(0, 0) scale(0.7);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(20px, 20px) scale(1.8);
+        opacity: 0;
+    }
+}
+
+/* 彈跳發光 */
+@keyframes bounce {
+    0% {
+        transform: translateX(-50%) translateY(0);
+        box-shadow: 8px 8px 0px #141285, 0 0 15px rgba(56, 34, 255, 0.4);
+    }
+    100% {
+        transform: translateX(-50%) translateY(-15px); 
+        box-shadow: 8px 12px 0px #2522df, 0 0 35px rgba(56, 34, 255, 0.9), 0 0 60px rgba(56, 34, 255, 0.5);
+    }
+}
+ /* 正常彈跳 */
+/* @keyframes bounce {
+    from { 
+        transform: translateX(-50%) translateY(0); 
+    }
+    to { 
+        transform: translateX(-50%) translateY(-15px); 
+    }
+} */
+
+/* 3. 修改 RWD 手機版樣式 */
+@media (max-width: 768px) {
+    .game {
+        font-size: 20px;
+        font-weight: 950;
+        -webkit-text-stroke: 0.5px #0f0f0f; /* 加上描邊 */
+        padding: 6% 13%;
+        bottom: 8%; /* 調整手機版按鈕留在海報合適的位置 */
+    }
+}
+        body,html {
+        margin: 0; padding: 0%;overflow-x: hidden; scroll-behavior: smooth;
+        /* margin and padding讓網頁邊緣沒有留白,overflow讓內容超出時不需要左右滑卷軸,scroll-behavior出現點按鈕(超連結)時的跳轉過程 */
+        }
+        .page1.page2.page3.page4.page5.page6.page7.page8.page9{
+            /* -webkit-overflow-scrolling: touch; */
+          position: relative;
+          width: 100%;
+          overflow: visible; /* 關鍵：不要讓子頁面自己產生滾輪 */
+        }
+
+        /* 全局固定插圖背景 */
+.global-illustration-bg {
+    position: fixed;        /* \10024 核心：鎖定在螢幕上，絕不隨滾輪移動 */
+    top: 0;
+    left: 0;
+    width: 100vw;           /* 填滿螢幕寬度 */
+    height: 100vh;          /* 填滿螢幕高度 */
+    
+    /* 🛠️ 請把下面的路徑換成你真正的全局插圖路徑 */
+    background-image: url('/pct/插圖.png'); 
+    
+    background-size: cover;      /* 自動縮放圖片以完美填滿整個螢幕 */
+    background-position: calc(50% + -90px) calc(50% - -70px);
+    background-repeat: no-repeat; /* 防止圖片因為太小而重複平鋪 */
+    
+    /* \10024 核心：設為 -2。這樣它一定會躺在 Page 1、Page 2 的「下面」 */
+    z-index: -2; 
+
+animation: bgGentleSlide 8s ease-in-out infinite;
+}
+
+/* 2. 修正版背景動畫：絕對不縮放、不旋轉，只有單純的平穩滑動 */
+@keyframes bgGentleSlide {
+    0%, 100% {
+        transform: translate(0, 0); /* 回到原點 */
+    }
+    50% {
+        /* 10秒內只在水平往右、垂直往下極慢地移動 15 像素，非常平穩 */
+        transform: translate(15px, 10px); 
+    }
+}
+
+/* \10024 額外保險：請確保你原本的 body、html 或是各個 page 
+   「沒有」設定死板的白色背景，否則會把底層插圖擋住！ */
+body {
+    background-color: #1a1a1a !important; /* 填入你希望插圖後面墊著的顏色（例如深紫色、夜空藍等） */
+    background-attachment: fixed;          /* 確保這個顏色也是鎖死不隨滾輪移動的 */
+}
+
+/* 如果你的 page1, page2 原本有寫背景色，請把背景色拿掉或改成透明 */
+.page1, .page2, .page3, .page4, .page5, .page6, .page7, .page8 {
+    background: transparent !important; 
+}
+
+        .page1 {
+
+            position: relative;
+            height: 1200px;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .page1 {
+                height: 750px;
+            }
+        }
+        #海報1 img {
+            width: 2000px;
+            transform: translateY(-50px); 
+            height: auto;
+        }
+
+        #poster-character {
+            opacity: 0;
+            animation: slideDownFade 1.5s ease-out forwards;
+            /* 這裡可以確保動畫期間不要擋到滑鼠點擊 */
+            margin-top: -50px; /* 初始位置往下移，配合動畫 */
+
+        }
+
+/* 當外層動畫播完後，恢復滑鼠功能 (動畫結束時間 1.5s) */
+@keyframes slideDownFade {
+    0% {
+        opacity: 30%;
+        transform: translateY(-100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto; /* 結束後才可以 hover */
+    }
+}
+
+
+/* 3. 內層圖片 Hover 狀態 */
+#poster-character img:hover {
+    transform: scale(1.05) translateY(-15px); 
+    cursor: pointer;
+}
+@keyframes slideupFade {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto; /* 結束後才可以 hover */
+    }
+}
+/* 浮動動畫 */
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+        /* #poster-background img {
+            width: 100%;
+            height: 100%;
+        } */
+        #logo {
+    position: absolute;  /* 關鍵 1：啟動絕對定位，讓它像貼紙一樣浮起來 */
+    z-index: 10;         /* 關鍵 2：只要有 position，z-index 就會生效，10 就夠在海報上了 */
+    /* 調整位置：你可以隨意修改這兩個數值來定位 Logo */
+    top: 10px;          
+    left: 1100px;          
+    transform: rotate(-5deg); 
+}
+
+#logo img {
+    width: 500px;
+    height: auto;
+    opacity: 0;
+    animation: 
+        slideupFade 1s ease-out forwards, 
+        floating 4s ease-in-out infinite 2s;
+filter: drop-shadow(0px 0px 20px rgba(0, 0, 0, 5));}
+
+#標準字 {
+    position: absolute;  /* 關鍵 1：啟動絕對定位 */
+    z-index: 10;         /* 關鍵 2：讓它浮在海報上 */
+    /* 調整位置：隨意修改這兩個數值，因為是絕對定位，絕對不會推擠到 Logo 或海報 */
+    top: -50px;          
+    left: 220px;       
+    transform: rotate(-5deg);    
+}
+
+#標準字 img {
+    width: 950px;
+    height: auto;
+        animation: 
+        slideupFade 1s ease-out forwards, 
+        floating 4s ease-in-out infinite 2s;
+    opacity: 0;
+filter: drop-shadow(0px 0px 20px rgba(0, 0, 0, 5));}
+
+        .poster {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .page2 {
+            height: 1500px;
+            width: 100%;
+            background-color: #2a2a2a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* padding-top: 70px; */
+            /* 上方留白 */
+            color: white;
+            overflow: hidden;
+        }
+
+.poster-2 img {
+    /* 1. 將海報寬度縮小，100% 會自動去符合外層（也就是碎紙）的寬度 */
+    width: 2900px; 
+    height: auto;
+    display: block;
+    object-fit: cover;
+        /* transform: rotate(90deg); */
+    /* 2. 微調海報在碎紙裡面的位置（如果需要的話，不需要轉 90deg 了，因為外層轉就好） */
+    /* transform: rotate(180deg); */
+    /* opacity: 0.6;  */
+
+    }
+
+    
+.poster-2 {
+
+    top: 200px;
+    right: -250px;
+    /* transform: rotate(180deg); */
+    position: absolute;
+
+    /* 4. 給予外層（碎紙）一個固定的寬高，這就是你希望碎紙縮小後的尺寸 */
+    width: 2500px;  /* 舉例：原本可能很大，你可以自由縮小這個數值（例如 1200px） */
+    height: 3100px; /* 根據你的碎紙比例調整高度 */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* 5. 讓碎紙往下挪一點，但不影響最上面位置：增加上內邊距 */
+    /* 這會把裡面的海報與遮罩核心內容往下推，而 .poster-2 的頂部依然頂在原本的位置 */
+    padding-top: 100px; 
+
+    /* 遮罩設定 */
+    -webkit-mask-image: url('/pct/碎紙.PNG'); 
+    mask-image: url('/pct/碎紙.PNG');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    
+    /* 關鍵修正：將 mask-size 改回 contain 或 100%，讓它完美貼合你上面設定的 width/height */
+    -webkit-mask-size: contain; 
+    mask-size: contain;
+    
+    /* 保持你原本的旋轉 */
+    -webkit-mask-clip: border-box;
+    mask-clip: border-box;
+}
+    
+        
+        #剪裁遮罩圖 img {
+            width: 3000px;
+            height: auto;
+            display: none;
+        }
+        </style>
+        </head>
+
+
+        <body>
+            <style>
+        .page3 {
+            position: relative;
+            height: 2500px;
+            width: 100%;
+            background-color: #3d3d3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        #剪刀 img {
+            width: 4000px;
+        }
+        #剪刀 {
+            transform: rotate(160deg);
+            position: absolute;
+            top: -1490px;
+            left: -2000px;
+        }
+        #底圖 img {
+            width: 2000px;
+        }
+        #底圖 {
+            z-index: -1;
+            position: absolute;
+            top: 700px;
+            /* right: 20px; */
+        }
+
+        #遊戲介紹 {
+            font-family: 'Dela Gothic One', Arial, sans-serif;
+            /* font-family: 'Microsoft YaHei', Arial, sans-serif; */
+            position: absolute;
+            font-size: 250px;
+            z-index: 1000;
+            white-space: nowrap;
+            top: 20px;
+            right: 200px;
+            transform: rotate(-8deg);
+        }
+        #模板框 {
+            position: absolute;
+            width: 100%;
+            height: 1000px;
+            background-color: #d6d6d6;
+            border: 5px solid #d6d6d6;
+            top: 210px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #介紹框 img {
+            width: 1700px;
+        }
+        #介紹框 {
+            z-index: 1000;
+            position: absolute;
+            left: 180px;
+            top: 1300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-2deg);
+        }
+        #下z img {
+            width: 1500px;
+        }
+        #下z {
+            z-index: 10;
+            position: absolute;
+            left: -100px;
+            top: 800px;
+            transform: rotate(-10deg);
+        }
+        #格紋 img {
+            width: 1000px;
+        }
+        #格紋 {
+            position: absolute;
+            right: 0px;
+            top: 1200px;
+        }
+        /* #介紹角色 img {
+            width: 600px;
+            transform: rotate(10deg);
+        }
+        #介紹角色 {
+            position: absolute;
+            width: 500px;
+            height: 600px;
+            left: 1100px;
+            top: 1400px;
+        } */
+        #角色介紹 {
+            position: absolute;
+            font-size: 250px;
+            z-index: 1005;
+            white-space: nowrap;
+            bottom: -220px;
+            transform: rotate(3deg);
+            /* background-color: #ff7322;
+            border-radius: 5px; */
+             padding: 30px 80px;
+        }
+        .星球 img {
+            width: 900px;
+            z-index: -1000;
+        }
+        #筆1 img {
+            width: 1500px;
+        }
+        #筆1 {
+            z-index: 1001;
+            position: absolute;
+            left: 150px;
+            bottom: -850px;
+            transform: rotate(-129deg);
+        }
+        #筆2 img {
+            width: 1900px;
+        }
+        #筆2 {
+            z-index: 1002;
+            position: absolute;
+            left: 100px;
+            bottom: -800px;
+            transform: rotate(30deg);
+        }
+        
+
+        @media (max-width: 768px) {
+            .page3 {
+                height: 800px;
+            }
+        }
+        .page4 {
+            position: relative;
+            flex-direction: column;
+            height: 1550px;
+            width: 100%;
+            background-color: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+        .名字框 img {
+            width: 850px;
+            display: block;
+        }
+        .名字框 {
+            position: absolute;
+            z-index: 2000;
+            perspective: 1000px;
+        }
+
+
+        #星辰框 {
+            position: absolute;
+            top: 290px;
+            left: 700px; 
+            transform: rotate(-5deg);
+            transform-style: preserve-3d; 
+    transition: transform 0.1s ease-out;
+    
+    /* 🎯 預設動態陰影基準線 (會由 JS 根據滑鼠動態改變前兩個值) */
+    filter: drop-shadow(var(--shadow-x, -10px) var(--shadow-y, 10px) 15px rgba(0, 0, 0, 0.6));
+    will-change: transform, filter;
+        }
+        .角色 {
+            z-index: 2000;
+        }
+        #星辰 img {
+            width: 700px;
+        }
+        #星辰 {
+            position:absolute;
+            left: 135px;
+            width: 100%;
+            top: 340px;
+            transform-origin: center bottom;
+    
+    /* 執行 4.5 秒一個循環的超優雅「角色待機呼吸」動畫 */
+    animation: characterIdle 4.5s ease-in-out infinite alternate;
+    
+    will-change: transform, filter;
+        }
+        #星辰-intro{
+            z-index: 1000;
+            color: #303030;
+            padding: 80px 190px;
+            position: absolute;
+            top: 620px;
+            right: -150px;
+            white-space: nowrap;  
+            transform: rotate(-2deg);
+        }
+        #星辰-name {
+            position: absolute;
+            top: 100px;
+            right: 210px;
+            letter-spacing: 30px;
+            white-space: nowrap;
+            transform: rotate(4deg);
+            z-index: 2005
+        }
+        @keyframes characterIdle {
+    0% {
+        /* 初始狀態：正常站立 */
+        transform: translateY(0) scaleY(1) scaleX(1);
+        filter: brightness(1);
+    }
+    40% {
+        /* 呼吸吸氣：身體微微往上提（translateY），並且縱向拉高 1.01 倍 */
+        transform: translateY(-8px) scaleY(1.01) scaleX(0.99);
+        /* 吸氣到高點時，角色身上的光芒隱約閃爍變亮 */
+    }
+    100% {
+        /* 呼吸吐氣：身體微微沉下去（比初始再沉一點），並往橫向微微變寬 */
+        transform: translateY(4px) scaleY(0.99) scaleX(1.01);
+    }
+}
+        #碎紙 {
+            top: 250px;
+        }
+        .都是碎紙 {
+            transform: scaleX(1.5);
+            position: absolute;
+            height: auto;
+            filter: drop-shadow(12px 12px 20px rgba(0, 0, 0, 0.9));
+        }
+        .都是碎紙 img {
+            width: 1400px;
+            height: auto;
+        }
+        /* #碎紙 {
+            transform: rotate(360deg)scaleX(1.5);
+            position: absolute;
+            height: auto;
+            right: 230px;
+            top: 250px;
+            filter: drop-shadow(12px 12px 20px rgba(0, 0, 0, 0.9));
+        } */
+
+        /* .character img, .intro-title{
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        z-index: 10;
+
+} */
+
+        .intro-title.show {
+    opacity: 1;
+    transform: translateY(0);
+    /* font-family: dela gothic one, Arial, sans-serif; */
+}
+.大標題 {
+    font-family: 'Dela Gothic One', Arial, sans-serif;
+                 filter: drop-shadow(5px 5px 10px #0f0f0f);
+}
+
+.character img.show {
+    opacity: 1;
+    transform: translateY(0); 
+}
+        .page5 {
+            position: relative;
+            height: 1600px;
+            width: 100%;
+            background-color: #3d3d3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .intro {
+            z-index: 10000;
+            color: #303030;
+            padding: 80px 190px;
+            position: absolute;
+            font-size: 48px;
+            white-space: nowrap;  
+            font-weight: bold;
+        }
+        .intro-title {
+                font-family: 'Dela Gothic One', Arial, sans-serif;
+            position: absolute;
+            font-size: 180px;
+            z-index: 1999;
+            white-space: nowrap;
+        }
+        #好奇星 img {
+            width: 600px;
+            cursor: pointer; /* 讓滑鼠移上去時顯示手指，提示玩家可以點擊 */
+    transition: transform 0.1s ease-out;
+    /* 調整：將動畫時間拉長到 6 秒，讓平常的漂移顯得更慢、更自然舒適 */
+    animation: normalIdleJump 3s ease-in-out infinite;
+        }
+    @keyframes normalIdleJump {
+    /* 0% ~ 10%：突然輕快地原地微跳一下 */
+    0% { transform: translate(0, 0); }
+    5% { transform: translate(0, -15px); } /* 往上跳 */
+    10% { transform: translate(0, 0); }    /* 落回原地 */
+    
+    /* 10% ~ 100%：不跳了，開始在原地自然地隨機慢速漂移、晃動（呼吸感） */
+    30% { transform: translate(6px, -4px); }   /* 往右上方微微漂移 */
+    50% { transform: translate(-4px, 3px); }   /* 往左下方微微漂移 */
+    75% { transform: translate(5px, 2px); }    /* 往右下方微微漂移 */
+    100% { transform: translate(0, 0); }       /* 平滑回到原點，準備下一次微跳 */
+}
+        #好奇星 img.big-jump {
+    /* 當大跳觸發時，暫停原本的發呆動畫，改跑大跳動畫 */
+animation: playerClickJump 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
+}
+
+/* 4. 玩家點擊的大跳動畫 (保持不變) */
+@keyframes playerClickJump {
+    0% { transform: translate(0, 0) scaleY(0.9); }
+    30% { transform: translate(0, -80px) scaleY(1.05); }
+    70% { transform: translate(0, 0) scaleY(0.95); }
+    100% { transform: translate(0, 0) scaleY(1); }
+}
+
+        #好奇星{
+            position: absolute;
+            top: 300px;
+            left: 1000px;
+        }
+
+        #好奇星-name {
+            position: absolute;
+            left: 200px;
+            top: 90px;
+            transform: rotate(-10deg) translateY(50px); 
+            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .星球 {
+            z-index: 1000;
+            position: absolute;
+        }
+        #碎紙2 {
+            transform: scaleX(-1) scaleX(1.5);
+        }
+
+
+
+
+        .page6 {
+            height: 1350px;
+            width: 100%;
+            background-color: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+#同情星 img {
+    width: 600px; /* 保持跟好奇星一樣的尺寸 */
+    cursor: pointer;
+    transition: transform 0.1s ease-out;
+    
+    /* 啟動平常的「害羞發抖」動畫，時間設短一點（2秒），讓發抖頻率快一點 */
+    animation: shyShivering 2s ease-in-out infinite;
+}
+
+/* 2. 平常「緊張、害羞發抖」的動畫 */
+@keyframes shyShivering {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    10% { transform: translate(-3px, 1px) scale(0.98); }  /* 往左縮一下 */
+    12% { transform: translate(3px, -1px) scale(0.98); }  /* 快速往右震一下 */
+    14% { transform: translate(-2px, -1px) scale(1); }    /* 持續細微發抖 */
+    16% { transform: translate(2px, 1px) scale(1); }
+    18% { transform: translate(0, 0) scale(1); }          /* 恢復 */
+    
+    /* 20% ~ 100% 身體不安地慢慢微縮、呼吸 */
+    50% { transform: translate(0, 4px) scale(0.97); }     /* 害羞到微微蹲低、縮小 */
+}
+
+/* 3. 點擊時由 JS 塞入的「被嚇到」Class */
+#同情星 img.scared-jump {
+    /* 瞬間蓋掉發抖，執行大驚嚇 */
+    animation: clickedScared 0.6s cubic-bezier(0.15, 0.85, 0.3, 1) forwards !important;
+}
+
+/* 4. 被嚇到的動畫：瞬間彈飛 + 劇烈抖動 */
+@keyframes clickedScared {
+    0% { transform: translate(0, 0) scale(1); }
+    5% { transform: translate(0, 0) scale(0.9); }         /* 嚇到瞬間縮小 */
+    20% { transform: translate(0, -90px) scale(1.1); }    /* 猛烈往上彈飛 90px */
+    
+    /* 在空中驚慌失措地劇烈左右左右發抖 */
+    30% { transform: translate(-10px, -85px) scale(1); }
+    40% { transform: translate(10px, -90px) scale(1); }
+    50% { transform: translate(-8px, -80px) scale(0.95); }
+    60% { transform: translate(6px, -40px) scale(0.95); }  /* 開始往下掉 */
+    75% { transform: translate(-3px, 0) scale(0.98); }    /* 落地 */
+    100% { transform: translate(0, 0) scale(1); }         /* 驚魂未定恢復原狀 */
+}
+
+                #碎紙3 img {
+            width: 1400px;
+            height: auto;
+        }
+        #碎紙3 {
+            transform: rotate(360deg)scaleX(1.5);
+            position: absolute;
+            height: auto;
+            right: 230px;
+            top: 250px;
+            filter: drop-shadow(12px 12px 20px rgba(0, 0, 0, 0.9));
+        }
+        .page7 {
+            height: 1580px;
+            width: 100%;
+            background-color: #3d3d3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        #爽快星 {
+            position: absolute;
+            right: 90px;
+        }
+    #爽快星 img {
+    width: 600px;
+    cursor: pointer;
+    
+    
+    transition: transform 0.1s ease-out;
+    
+    /* 啟動平常的「輕快律動」動畫 */
+    animation: crispIdle 2.5s ease-in-out infinite;
+}
+
+/* 2. 平常「俐落、精力充沛」的發呆動畫 */
+@keyframes crispIdle {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    /* 輕快地左右晃動 */
+    15% { transform: translate(-8px, 0) rotate(-2deg); }
+    30% { transform: translate(8px, 0) rotate(2deg); }
+    45% { transform: translate(0, 0) scale(1); }
+    
+    /* 俐落的下蹲彈跳 */
+    70% { transform: translate(0, 6px) scaleY(0.92) scaleX(1.05); } /* 快速蓄力 */
+    75% { transform: translate(0, -25px) scaleY(1.08); }             /* 俐落往上彈 */
+    82% { transform: translate(0, 0) scale(1); }                    /* 迅速落地穩定 */
+}
+
+/* 3. 點擊時由 JS 塞入的「瞬間衝刺」Class */
+#爽快星 img.screen-dash {
+    /* 保持 1.2 秒的衝刺時間 */
+    animation: fullScreenDash 1.2s cubic-bezier(0.66, 0, 0.2, 1) forwards !important;
+}
+
+@keyframes fullScreenDash {
+    0% { 
+        transform: translate(0, 0) scaleX(1); 
+    }
+    /* 0% ~ 35%：瞬間往左衝出螢幕左側 */
+    10% {
+        transform: translate(40px, 0) scaleX(0.9) skewX(-10deg); /* 衝刺前蓄力 */
+    }
+    35% { 
+        transform: translate(-2500px, 0) scaleX(1.3) skewX(20deg); /* 暴速衝出左側 */
+        opacity: 1;
+    }
+    
+    36% {
+        opacity: 0;
+        transform: translate(2500px, 0) scaleX(1); 
+    }
+    50% {
+        opacity: 1; 
+    }
+    
+    70% {
+        transform: translate(-100px, 0) scaleX(1.2) skewX(-15deg); /* 帶有慣性衝過頭 */
+    }
+    85% {
+        transform: translate(20px, 0) scaleX(0.95); /* 稍微往回修正 */
+    }
+    100% { 
+        transform: translate(0, 0) scaleX(1); /* 完美煞車停在原地，臉的方向跟一開始完全一樣！ */
+    }
+}
+        .page8 {
+            height: 1370px;
+            width: 100%;
+            background-color: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        /* 1. 熱情星基礎樣式 */
+#熱情星 img {
+    width: 600px;
+    cursor: pointer;
+    transition: transform 0.1s ease-out;
+    
+    /* 啟動平常的「熱情火苗律動」動畫，節奏比別人都快（1.2s） */
+    animation: passionateIdle 1.2s ease-in-out infinite;
+}
+
+/* 2. 平常「停不下來的火苗律動」動畫 */
+@keyframes passionateIdle {
+    0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    25% { transform: translate(10px, -20px) scale(1.05, 0.95) rotate(3deg); } /* 往右上方扭一下 */
+    50% { transform: translate(0, 0) scale(0.95, 1.05) rotate(0deg); }       /* 下蹲呼吸 */
+    75% { transform: translate(-10px, -20px) scale(1.05, 0.95) rotate(-3deg); } /* 往左上方扭一下 */
+}
+
+/* 3. 點擊時由 JS 塞入的「用力跳舞」Class */
+#熱情星 img.passionate-dance {
+    /* 點擊熱舞時間設定 1.5 秒，這是一段超嗨的連續組合技 */
+    animation: heavyDancing 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+}
+
+/* 4. 點擊動畫：左右橫掃 + 360度大旋轉 + 瘋狂彈跳 */
+@keyframes heavyDancing {
+    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    
+    /* 第一段：瘋狂左右高速扭動、身體一下變寬一下變高 */
+    15% { transform: translate(-40px, -30px) scale(1.2, 0.8) rotate(-15deg); }
+    30% { transform: translate(40px, -50px) scale(0.8, 1.2) rotate(15deg); }
+    45% { transform: translate(-30px, -10px) scale(1.1, 0.9) rotate(-10deg); }
+    
+    /* 第二段：核心大絕招！瞬間騰空並空中 360 度大旋轉 */
+    60% { 
+        transform: translate(0, -120px) scale(1.3) rotate(180deg); 
+    }
+    75% { 
+        transform: translate(0, -140px) scale(0.8, 1.3) rotate(360deg); /* 轉完一整圈，在最高點拉長 */
+    }
+    
+    /* 第三段：爽快落地、餘震熱舞 */
+    85% { transform: translate(0, 15px) scale(1.3, 0.7) rotate(0deg); } /* 重力落地壓扁緩衝 */
+    93% { transform: translate(0, -15px) scale(0.9, 1.1) rotate(0deg); } /* 小反彈 */
+    100% { transform: translate(0, 0) scale(1) rotate(0deg); }          /* 完美收招 */
+}
+        .page10 {
+            height: 1100px;
+            width: 100%;
+            background-color: #3d3d3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        #前導圖1 img {
+            width: 100px;
+        }
+        #簡報封面1 img {
+            width: 100px;
+        }
+        #騎火箭 img {
+            width: 100px;
+        }
+        .page9 {
+    height: auto !important; /* 讓高度隨內容撐開，不要寫死 150px */
+    min-height: 400px;      /* 給予最小高度 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 50px 0;
+    background-color: #2a2a2a;
+    white-space: normal;    /* 容器本身允許正常排版 */
+}
+        #聯絡方式 {
+            font-size: 20px;
+            color: #afafaf;
+        }
+        .聯絡內文{
+            color: #afafaf;
+            font-weight: bold;
+        }
+        
+        .IG-link img {
+    width: 50px !important;  /* 強制指定寬度 */
+    height: auto !important;
+    display: block;
+}
+        .gmail img {
+    width: 50px !important;  /* 強制指定寬度 */
+    height: auto !important;
+    display: block;
+}
+
+
+    </style>
+</body>
+        <div class="global-illustration-bg"></div>
+
+        <div class="menu-toggle" onclick="toggleMenu()">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+        </div>
+        <div id="overlay-menu" class="overlay">
+            <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+            <div class="overlay-content">
+            <a href="#page1" onclick="toggleMenu()">首頁</a>
+            <a href="/the game/game.html" onclick="toggleMenu()">開始遊玩</a>
+            <a href="#page3"onclick="toggleMenu()">遊戲介紹</a>
+            <a href="#page4" onclick="toggleMenu()">角色介紹</a>
+            <!-- <a href="#page10" onclick="toggleMenu()">周邊商品</a>
+            <a href="#page11" onclick="toggleMenu()">展示圖</a> -->
+            <a href="#page9" onclick="toggleMenu()">聯絡我們</a>
+        </div>
+</div>
+</div>
+
+
+    <div id="page1" class="page1">
+        <div class="game-start">
+        <a href="https://www.youtube.com/watch?v=_vRuI6-k0Mk" class="game" >開始遊玩</a>
+        <div id="標準字"><img src="/pct/標準字.PNG" alt="標準字"></div>
+        <div id="logo"><img src="/pct/logo.png" alt="logo"></div>
+        <div id="海報1" class="第一頁" ><img src="/pct/1海報.png" alt="海報"></div>
+        </div>
+    </div>
+
+    <div id="page2" class="page2">
+    <div class="poster-2"><img src="/pct/前導圖.png" alt="海報"></div>
+    <div id="剪裁遮罩圖" ><img src="/pct/碎紙.PNG" alt="剪裁遮罩圖"></div>
+    </div>
+
+    <div id="page3" class="page3">
+        <div id="遊戲介紹" class="大標題">遊戲介紹</div>
+        <div id="剪刀"><img src="/pct/剪刀3.png"></div>
+        <span id="介紹詞">這裡是遊戲的介紹內容。<br>1</br>2</span>
+        <div id="上層"><img src="/pct/底圖 - 複製.PNG" alt="上層"></div>
+        <div id="下z"><img src="/pct/zzzz.PNG" alt="下z"></div>
+        <div id="模板框" class="框框"></div>
+        <div id="介紹框" ><img src="/pct/介紹框.PNG" alt="介紹框"></div>
+        <!-- <div id="介紹角色"><img src="/pct/同情星.png"></div> -->
+         <div id="格紋"><img src="/pct/格紋.PNG" alt="格紋"></div>
+        <div id="底圖"><img src="/pct/底圖.png" alt="底圖"></div>
+                <div id="角色介紹" class="大標題">角色介紹</div>
+        <div id="筆1" class="裝飾圖"><img src="/pct/pen1.png"></div>
+        <div id="筆2" class="裝飾圖"><img src="/pct/pen2.png"></div>
+
+
+    </div>
+
+    <div id="page4" class="page4">
+        <div id="星辰" class="角色"><img src="/pct/星辰.PNG"></div>
+        
+        <div id="星辰框" class="名字框">
+            <img src="/pct/星辰框.PNG" alt="星辰框">
+            
+            <span id="星辰-name" class="intro-title">星辰</span>
+        </div>
+        
+        <span id="星辰-intro" class="intro">
+            （玩家名 • 星辰）<br>一位迷茫的高中生，頭腦裡裝滿了想法，<br>但總找不到自己確切的夢想，有時想當遊戲主播，<br>有時想當麵包師傅，感到迷茫時會靠著日記抒發。<br>在他心裡深深相信每一次迷路，都是離夢想更近的<br>一小步。
+        </span>
+        
+        <div id="碎紙" class="都是碎紙"><img src="/pct/碎紙1.PNG"></div>
+    </div>
+
+<div id="page5" class="page5">
+        <div id="好奇星" class="角色">
+            <img id="star-character" src="/pct/好奇星.png" alt="好奇星" onclick="triggerBigJump()">
+        </div>
+        <div id="好奇星球" class="星球"><img src="/pct/好奇星球.png"></div>
+        
+        <div id="好奇星框" class="名字框">
+            <img src="/pct/好奇星框.PNG" alt="好奇星框">
+            <span id="好奇星-name" class="intro-title">好奇星</span>
+        </div>
+        
+        <span id="好奇星-intro" class="intro" style="font-family: Arial, sans-serif;">
+            對事物抱持疑問，<br>想法千奇百怪，<br>喜歡用奇特的方式解決困境。
+        </span>
+                <div id="碎紙2" class="都是碎紙"><img src="/pct/碎紙1.PNG"></div>
+    </div>
+
+    </div>
+
+    <div id="page6" class="page6"> 
+        <div id="同情星" class="角色">
+            <img id="sympathy-character" src="/pct/同情星.png" alt="同情星" onclick="triggerScaredJump()">
+        </div>
+        <div id="同情星球" class="星球"><img src="/pct/同情星球.PNG"></div>
+        
+        <div id="同情星框" class="名字框">
+            <img src="/pct/同情星框.PNG" alt="同情星框">
+            <span id="同情星-name" class="intro-title">同情星</span>
+        </div>
+        
+        <span id="同情星-intro" class="intro" style="font-family: Arial, sans-serif;">
+            是一隻像美人魚一樣的海獺，<br>善良且熱於助人<br>與他人相處融洽。
+        </span>
+                <div id="碎紙9" class="都是碎紙"><img src="/pct/碎紙1.PNG"></div>
+    </div>
+
+    </div>
+
+    <div id="page7" class="page7">
+        <div id="爽快星" class="角色">
+            <img id="dash-character" src="/pct/爽快星.png" alt="爽快星" onclick="triggerDash()">
+        </div>
+        <div id="爽快星球" class="星球"><img src="/pct/爽快星球.png"></div>
+        
+        <div id="爽快星框" class="名字框">
+            <img src="/pct/爽快星框.PNG" alt="爽快星框">
+            <span id="爽快星-name" class="intro-title">爽快星</span>
+        </div>
+        
+        <span id="爽快星-intro" class="intro" font-family="Arial, sans-serif">
+            擁有閃電般的速度⚡️<br>是一隻有著螢光綠長舌頭和酷似殺馬特角的變色龍，<br>他利用超長綠舌頭送信給居民們，<br>是一位精力充沛的超速郵差！
+                <div id="碎紙4" class="都是碎紙"><img src="/pct/碎紙1.PNG"></div>
+    </div>
+
+    </div>
+
+    <div id="page8" class="page8">
+        <div id="熱情星" class="角色">
+            <img id="dance-character" src="/pct/熱情星.png" alt="熱情星" onclick="triggerDance()" draggable="false">
+        </div>
+        <div id="熱情星球" class="星球"><img src="/pct/熱情星球.png"></div>
+        
+        <div id="熱情星框" class="名字框">
+            <img src="/pct/熱情星框.PNG" alt="熱情星框">
+            <span id="熱情星-name" class="intro-title">熱情星</span>
+        </div>
+        
+        <span id="熱情星-intro" class="intro" font-family="Arial, sans-serif">
+            有著令人信服的領導魅力，能自然地凝聚團隊的共識，<br>戴著象徵領導者的王冠，<br>尾巴的火焰是他是超過600°c的熱情！<br>從懵懂到成熟，帶領大家一步步朝著目標前進，<br>像是隊伍裡可靠又讓人安心的隊長🔥
+        </span>    
+                <div id="碎紙5" class="都是碎紙"><img src="/pct/碎紙1.PNG"></div>
+    </div>
+
+    </div>
+
+    <!-- <div id="page10" class="page10">
+        <div id="周邊商品" class="大標題">周邊商品</div>
+    </div>
+    <div id="page11" class="page11">
+        <div id="展示圖">展示圖</div>
+    </div> -->
+    <div id="page10" class="page10">
+        <div id="聯絡方式">其他作品</div>
+        <div id="簡報封面1">簡報封面1<img src="/pct/1海報.png" alt="簡報封面1"></div>
+        <div id="簡報封面2">簡報封面2<img src="/pct/簡報封面2.png" alt="簡報封面2"></div>
+        <div id="前導圖1">星星笑嘻嘻<img src="/pct/前導圖.png" alt="前導圖1"></div>
+        <div id="前導圖2">前導圖2<img src="/pct/前導圖2.png" alt="前導圖2"></div>
+        <div id="騎火箭">騎火箭<img src="/pct/Biu🚀.png" alt="騎火箭"></div>
+        <div id="好奇星生日圖">好奇星生日圖<img src="/pct/好奇星生日圖.png" alt="好奇星生日圖"></div>
+    </div>
+
+    <div id="page9" class="page9">
+        <div id="聯絡方式" class="大標題">聯絡方式</div>
+    <a href="https://www.instagram.com/zz.zize/" class="IG-link" target="_blank">
+        <img src="/pct/IG.webp" alt="IG">
+    </a>
+    <a href="mailto:zzbiggggggg@gmail.com" class="gmail">
+        <img src="/pct/Gmail.png" alt="Gmail">
+    </a>
+    <div class="聯絡內文">
+        <p>Instagram: 星辰之路/zz.zize</p>
+        <p>電子郵件: zzbiggggggg@gmail.com</p>
+    </div>
+    <a href="#page1" class="go-back">返回首頁</a>
+    <div id="免責聲明" class="聯絡內文">免責聲明:D 本遊戲純屬虛構，與任何現實人物、團體或事件無關。</div>
+</div>
+
+
+    <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+    <!-- 手機電腦視窗比例 -->
+
+
+</html>

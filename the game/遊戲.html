@@ -1,0 +1,2919 @@
+<!DOCTYPE html>
+<html lang="en">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 遊戲開始前:點擊畫面進行對話(標示)，選單可開啟自動劇情、調整音量與查看對話紀錄 -->
+ <!-- 黑幕 上面有好奇星在跳和跑內容，結束後跳上面這個。劇情漸入 -->
+<head>
+    <title>《 星辰之路》——性格測驗視覺小說</title>
+</head>
+
+                   <!-- 載入畫面js -->
+                    <!-- 我要怎麼讓打字效果能在,他打字過程中 我點螢幕任何一點能跳成那段文字打玩的樣子 而不是在沒打完就跳到下一段劇情 -->
+<script>
+    
+// ==========================================
+// 📌 1. 全域變數與初始化
+// ==========================================
+window.playerName = "星辰"; // 預設玩家名稱
+let currentStep = 0;
+let isSoundOn = true;
+
+// ⭕ 掛載在 window 確保全域狀態一致
+window.myTypingTimer = null;
+window.isTyping = false;
+window.currentFullText = "";
+let isClickCooldown = false; // 防連點 / 防雙重觸發鎖
+
+// 紀錄已計分的關卡 ID
+const scoredSceneIds = new Set();
+const scores = {}; // 分數紀錄物件
+
+// 防右鍵選單
+document.addEventListener('contextmenu', event => event.preventDefault());
+// ==========================================
+// 📖 2. 劇本資料 (storyScript)
+// ==========================================
+const storyScript = [
+    // 好奇星開始
+    {
+        id: 0,
+        text: "呃...怎麼回事，頭好暈。(背景搖晃)",
+        speaker: "星辰",
+        background: "好奇星草叢",
+        characters: ["星辰害怕"],  
+    },
+    {
+        id: 1,
+        text: "蛤？這裡是哪裡。",
+        characters: ["星辰思考"],  
+    },
+    {
+        id: 1.5,
+        text: "噁，樹怎麼有電！",
+        characters: ["星辰嚇死"],  
+    },
+    {
+        id: 2,
+        text: "來到陌生環境有什麼做法",
+        options: [
+            { 
+                text: "我到處走走好了", 
+                nextId: 2.1, 
+                score: { "好奇星": 3 },
+                feedback: "" 
+            },
+            { 
+                text: "我選擇呼喊", 
+                nextId: 2.2,  
+                score: { "好奇星": 2 },
+                feedback: "呀厚！有人嗎？沒人嗎？" 
+            },
+            { 
+                text: "我可以原地等", 
+                nextId: 2.3, 
+                score: { "好奇星": 1 },
+                feedback: "原地等等吧，說不定會有人來救我呢。" 
+            },
+            { 
+                text: "我會埋怨", 
+                nextId: 2.4, 
+                score: { "好奇星": 0 },
+                feedback: "好想回家啊..." 
+            }
+        ]
+    }, 
+    {
+        id: 2.1,
+        text: "到處走走看看，說不定能找到線索。",
+        nextId: 3,
+        characters: ["星辰思考"],  
+    },
+    {
+        id: 2.2,
+        text: "呀厚！有人嗎？沒人嗎？",
+        nextId: 3,
+        characters: ["星辰"],  
+    },
+    {
+        id: 2.3,
+        text: "原地等等吧，說不定有人來救我呢。",
+        nextId: 3,
+        characters: ["星辰苦惱"],  
+    },
+    {
+        id: 2.4,
+        text: "好想回家啊...我怎麼這麼雖。",
+        nextId: 3,
+        characters: ["星辰苦惱"],  
+    },
+    {
+        id: 3,
+        type: "漫畫",
+        text: "什麼聲音？",
+        comicImages: ["/pct/comic-1.jpg", "/pct/comic-2.jpg"],
+        speaker: "星辰",
+        characters: ["星辰嚇死"],  
+    },
+    {
+        id: 4,
+        type: "漫畫",
+        text: "哇哇哇啊啊！",
+        comicImages: ["/pct/comic-1.jpg", "/pct/comic-2.jpg"],
+        characters: ["星辰嚇死"],  
+        nextId: 5
+    },
+    {
+        id: 5,
+        text: "咩。",
+        characters: ["好奇星"],
+    },
+    {
+        id: 6,
+        text: "這裡是哪...有好多棉花！？",
+        characters: ["星辰害怕"],
+    },
+    {
+        id: 7,
+        text: "你好！我是好奇星。",
+        characters: ["好奇星開心"],
+    },
+    {
+        id: 8,
+        text: "你叫什麼名字咩？",
+    },
+    {
+        id: 9,
+        text: "我是{playerName}•星辰，剛來到這個地方。",
+        speaker: "玩家",
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 10,
+        text: "哇！好有趣的名字。",
+        characters: ["好奇星開心"],
+    },
+    {
+        id: 11,
+        text: "你要不要來參觀我們的星球咩？",
+        characters: ["好奇星會跳"],
+    },
+    {
+        id: 12,
+        text: "欸？...好啊。",
+        characters: ["星辰"],
+    },
+    {
+        id: 12.1,
+        text: "",
+        background: "好奇星草原",
+    },
+    {
+        id: 13,
+        text: "這裡以前是片大草原，不過因為發電機壞掉了...",
+        characters: ["好奇星"],
+    },
+    {
+        id: 13.1,
+        text: "我們的毛沒辦法被吹走，星球才會充滿了棉花咩。",
+        characters: ["好奇星"],
+    },
+    {
+        id: 14,
+        text: "（所以羊怎麼會講話...）",
+        characters: ["星辰思考"],
+    },
+    {
+        id: 15,
+        text: "{playerName}的星球是甚麼樣子的咩？",
+        characters: ["好奇星"],
+    },
+    {
+        id: 16,
+        text: "叫做地球喔，但其實是什麼樣的我也沒有很清楚...",
+        characters: ["星辰苦惱"],
+    },
+    {
+        id: 17,
+        text: "記得曾經聽到過這樣的星球咩。",
+        characters: ["好奇星開心"],
+    },
+    {
+        id: 18,
+        text: "{playerName}看起來是想要找回去的方法吧，我這裡好像有的咩。",
+        characters: ["好奇星開心"],
+    },
+    {
+        id: 19,
+        text: "欸？等等那是。",
+        characters: ["好奇星會跳"],
+    },
+    {
+        id: 20,
+        text: "有好奇星被困住了咩。",
+        characters: ["好奇星哭"],
+    },
+    {
+        id: 20.1,
+        text: "用創意解決困境",
+        options: [
+            { 
+                text: "我想把棉花吹開", 
+                nextId: 20.2, 
+                score: { "好奇星": 3 },
+            },
+            { 
+                text: "我可能吃得下棉花？", 
+                nextId: 20.3,  
+                score: { "好奇星": 2 },
+            },
+            { 
+                text: "看我大力出奇蹟", 
+                nextId: 20.4, 
+                score: { "好奇星": 1 },
+            },
+            { 
+                text: "我選擇徒手撥開", 
+                nextId: 20.5, 
+                score: { "好奇星": 0 },
+            }
+        ]
+    },
+    {
+        id: 20.2,
+        text: "拿樹葉搧開吧...看我的！",
+        nextId: 21,
+        characters: ["星辰搖晃"],
+    },
+    {
+        id: 20.3,
+        text: "ㄌㄩㄝ...吃起來像棉被。",
+        nextId: 21,
+        characters: ["星辰害怕"],
+    },
+    {
+        id: 20.4,
+        text: "用力拔出來了。",
+        nextId: 21,
+        characters: ["星辰驕傲"],
+    },
+    {
+        id: 20.5,
+        text: "好黏...",
+        nextId: 21,
+        characters: ["星辰害怕"],
+    },
+    {
+        id: 21,
+        text: "得救了咩！",
+        characters: ["好奇星路人"],
+    },
+    {
+        id: 22,
+        text: "{playerName}你好厲害咩。",
+        characters: ["好奇星會跳"],
+    },
+    {
+        id: 23,
+        text: "該怎麼回答呢？",
+        options: [
+            { 
+                text: "喝水一樣簡單", 
+                nextId: 24, 
+            },
+            { 
+                text: "易如反掌！", 
+                nextId: 24,  
+            },
+        ]
+    },
+    {
+        id: 24,
+        text: "既然這樣，我們有個小小的請求～",
+        characters: ["好奇星"],
+    },
+    {
+        id: 25,
+        text: "能不能幫我們解決星球上的棉花！",
+        characters: ["好奇星們"],
+    },
+    {
+        id: 26,
+        text: "你們從哪冒出來的！",
+        characters: ["星辰嚇死"],
+    },
+    {
+        id: 27,
+        text: "事情就是這樣啦，我們沒辦法解決咩。",
+        characters: ["好奇星"],
+    },
+    {
+        id: 28,
+        text: "（我好像也沒辦法拒絕...）",
+        characters: ["星辰思考"],
+    },
+    {
+        id: 29,
+        text: "好吧，如果能幫到你們的話。",
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 30,
+        text: "好耶我們走吧咩！（好奇星推著星辰）",
+        characters: ["好奇星們"],
+    },
+    {
+        id: 31,
+        text: "等等慢點！",
+        characters: ["星辰害怕"],
+    },
+    {
+        id: 31.1,
+        text: "",
+        background: "好奇星棉花重災區",
+    },
+    {
+        id: 32,
+        text: "但具體應該怎麼解決呢。",
+        characters: ["星辰思考"],
+    },
+    {
+        id: 33,
+        text: "好奇星，星球上有什麼特殊的物品嗎？",
+        characters: ["星辰思考"],
+    },
+    {
+        id: 34,
+        text: "發電機這裡應該有工具咩。",
+        characters: ["好奇星"],
+    },
+    {
+        id: 35,
+        text: "嘿嘿，找到這些咩。",
+        characters: ["好奇星"],
+    },
+    {
+        id: 35.1,
+        text: "現在該怎麼辦？",
+        options: [
+            { 
+                text: "試試看樹皮？", 
+                nextId: 36.2, 
+                score: { "好奇星": 3 },
+            },
+            { 
+                text: "試試看吹風機？", 
+                nextId: 35.3,  
+                score: { "好奇星": 2 },
+            },
+            { 
+                text: "試試看羊毛？", 
+                nextId: 35.3, 
+                score: { "好奇星": 1 },
+            },
+            { 
+                text: "嘗試先修理發電機？", 
+                nextId: 35.4, 
+                score: { "好奇星": 0 },
+            }
+        ]
+    },
+    {
+        id: 35.3,
+        text: "嘿嘿就這個了。",
+        nextId: 35.5,
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 35.5,
+        text: "（修復失敗，再想想看吧）",
+        nextId: 35.1,
+        characters: ["星辰苦惱"],
+    },
+    {
+        id: 35.4,
+        text: "嘿嘿就這個了。",
+        nextId: 36,
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 36,
+        text: "（拉電線小遊戲）",
+        nextId: 36.1,
+    },
+    {
+        id: 36.1,
+        text: "（怕發電機又壞一次，還是做點別的吧。）",
+        nextId: 36.2,
+        characters: ["星辰苦惱"],
+    },
+    {
+        id: 36.2,
+        text: "我記得樹有電，不如就接電做個吸塵器吧！",
+        nextId: 36.3,
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 36.3,
+        text: "加點這個...還要放那個...（一陣勁爆的勞作聲）",
+        nextId: 37,
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 37,
+        text: "躂躂，做出來了！",
+        nextId: 38,
+        characters: ["星辰驕傲"],
+        comicImages: ["/創造尾巴"]
+    },
+    {
+        id: 38,
+        text: "還好這裡的樹有電...",
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 39,
+        text: "這是小型的羊毛吸塵器，試試看吧！",
+        characters: ["星辰驕傲"],
+    },
+    {
+        id: 40,
+        text: "咩？",
+        characters: ["好奇星有尾巴"],
+    },
+    {
+        id: 40.1,
+        text: "(轉場 好奇星左右搖擺)",
+        background: "好奇星草叢",
+        characters: ["好奇星有尾巴"],
+    },
+    {
+        id: 41,
+        text: "嗚嗚嗚感謝{playerName}的吸塵器！現在我們都能享受吃草了咩！！QQ",
+        characters: ["好奇星開心有尾巴"],
+    },
+    {
+        id: 42,
+        text: "嘿嘿，如願以償！現在我要告訴你回去的方法了咩。",
+        characters: ["好奇星開心有尾巴"],
+    },
+    {
+        id: 43,
+        text: "真的嗎，真是太感謝你們了。",
+        characters: ["星辰感動"],
+    },
+    {
+        id: 45,
+        text: "走吧帶你去一個地方。",
+        characters: ["好奇星有尾巴"],
+    },
+    {
+        id: 46,
+        text: "(過場)",
+        background: "黑幕",
+    },
+    {
+        id: 47,
+        text: "就是這裡了咩！",
+        characters: ["好奇星有尾巴"],
+    },
+    {
+        id: 48,
+        text: "這是...火箭？",
+        characters: ["星辰思考"],
+    },
+    {
+        id: 49,
+        text: "這是之前跟你一樣的物種留下來的，應該能夠幫你回去的咩！",
+        characters: ["好奇星有尾巴"],
+    },
+    // {
+    //     id: 50,
+    //     text: "（ㄒㄧㄒㄧㄙㄨㄙㄨ）",
+    //     comicImages: ["/火箭"],
+    // },
+    {
+        id: 51,
+        text: "欸？這是什麼！",
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 52,
+        text: "拼圖嗎？",
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 53,
+        text: "好酷，我也是第一次看到咩。",
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 54,
+        text: "它好像進到火箭裡面了。",
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 55,
+        text: "哇，它被喚醒了！",
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 56,
+        text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 57,
+        text: "嘿咻！",
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 58,
+        text: "星辰，其實我還有一個問題要問你咩。",
+        characters: ["好奇星有尾巴"],
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 59,
+        text: "「你未來想成為什麼樣的人。」",
+        characters: ["好奇星有尾巴"],
+        comicImages: ["/火箭"],
+    },
+    {
+        id: 60,
+        text: "你的未來",
+        options: [
+            { 
+                text: "我想當一個充滿想像力，有自我思考的人。", 
+                nextId: 61, 
+                score: { "好奇星": 3 },
+            },
+            { 
+                text: "我想當一個樂觀開朗，願意協助大家的人。", 
+                nextId: 61,  
+                score: { "好奇星": 2 },
+            },
+            { 
+                text: "我想當一個細心的領袖，帶大家前進的人。", 
+                nextId: 61, 
+                score: { "好奇星": 1 },
+            },
+            { 
+                text: "我想當一個有完美規範，有完美秩序的人。", 
+                nextId: 61, 
+                score: { "好奇星": 0 },
+            }
+        ]
+    },
+    {
+        id: 61,
+        text: "這就是我的想法。",
+        characters: ["星辰驕傲"],
+        comicImages: ["/這就是我的想法"],
+    },
+    {
+        id: 62,
+        text: "我知道了咩！",
+        characters: ["好奇星有尾巴"],
+    },
+    {
+        id: 63,
+        text: "祝福你未來的旅途一帆風順！要常來玩咩。",
+        characters: ["好奇星開心有尾巴"],
+    },
+    {
+        id: 64,
+        text: "好奇星們再見啦～",
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 65,
+        text: "咩嘿嘿嘿嘿～",
+        characters: ["好奇星們"],
+    },
+    // 好奇星結束
+    {
+        id: 66,
+        text: "這麼快就要回去了啊，不過這趟旅程真奇特。",
+        characters: ["星辰驕傲"],
+        background: "火箭內",
+    },
+    {
+        id: 67,
+        text: "我記得之前是在床上...",
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 68,
+        text: "欸～可以看到外太空啊，真壯觀。",
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 69,
+        text: "這裡有，一封信？",
+        characters: ["星辰"],
+        comicImages: ["/信"],
+    },
+    {
+        id: 70,
+        text: "親愛的{playerName}•星辰：",
+        characters: [""],
+        comicImages: ["/火箭上的信"],
+    },
+    {
+        id: 71,
+        text: "我們準備前往至下一個星球，",
+        characters: [""],
+        comicImages: ["/火箭上的信"],
+    },
+    {
+        id: 71.1,
+        text: "很抱歉因為行程的問題沒能參加你的畢業典禮。",
+        characters: [""],
+        comicImages: ["/火箭上的信"],
+    },
+    {
+        id: 72,
+        text: "祝你畢業快樂，最愛你的▇▇、▇▇。",
+        characters: [""],
+        comicImages: ["/火箭上的信"],
+    },
+    {
+        id: 74,
+        text: "這是...？",
+        characters: ["星辰"],
+        comicImages: ["/火箭上的信"],
+    },
+    {
+        id: 75,
+        text: "（※火箭廣播、火箭廣播）",
+        characters: [""],
+    },
+    {
+        id: 75.1,
+        text: "（※即將抵達同情星）",
+        characters: [""],
+    },
+    {
+        id: 76,
+        text: "等等...怎麼感覺離地球越來越遠了？(背景搖晃)",
+        characters: ["星辰嚇死"],
+    },
+    {
+        id: 76.1,
+        text: "（※準備降落、準...備...)(背景搖晃)",
+        characters: [""],
+    },
+    {
+        id: 77,
+        text: "欸欸欸欸欸欸!!!!!??????(背景搖晃)",
+        characters: ["星辰嚇死"],
+    },
+    // 同情星開始
+   {
+        id: 78,
+        text: "(背景碰!!!了一大下)",
+        characters: [""],
+        background: "同情星海灘",
+    },
+    {
+        id: 79,
+        text: "咦...怎麼會有這麼多貝殼？",
+        characters: ["星辰害怕"],
+    },
+    {
+        id: 80,
+        text: "看到這顆星球有許多古怪，沒打開的貝殼會怎麼想？",
+        options: [
+            { 
+                text: "我會感到很難過", 
+                nextId: 80.1, 
+                score: { "同情星": 3 },
+            },
+            { 
+                text: "我想了解發生的原因", 
+                nextId: 80.2,  
+                score: { "同情星": 2 },
+            },
+            { 
+                text: "我想吃", 
+                nextId: 80.3, 
+                score: { "同情星": 1 },
+            },
+            { 
+                text: "我想先到處走", 
+                nextId: 80.4, 
+                score: { "同情星": 0 },
+            }
+        ]
+    },
+    {
+        id: 80.1,
+        text: "一定是發生了什麼難過的事貝殼才會變成這樣...",
+        nextId: 81, 
+        characters: ["星辰害怕"]
+    },
+    {
+        id: 80.2,
+        text: "這顆星球究竟發生什麼事了，怎麼這麼多奇怪的貝殼。",
+        nextId: 81, 
+        characters: ["星辰思考"]
+    },
+    {
+        id: 80.3,
+        text: "好餓啊，但閉著的沒辦法吃...",
+        nextId: 81, 
+        characters: ["星辰害怕"]
+    },
+    {
+        id: 80.4,
+        text: "不管了先走走看看。",
+        nextId: 81, 
+        characters: ["星辰"]
+    },
+    {
+        id: 81,
+        text: "附近好像有哭聲。",
+        characters: ["星辰思考"]
+    },
+    {
+        id: 82,
+        text: "欸？角落有一隻在哭泣的海獺。",
+        characters: ["星辰思考"]
+    },
+    {
+        id: 82.1,
+        text: "嗚嗚、嗚、嗚嗚嗚嗚嗚嗚嗚嗚嗚——",
+        characters: ["同情星苦惱"]
+    },
+    {
+        id: 83,
+        text: "哈囉，我是{playerName}•星辰，你叫什麼名字？",
+        characters: ["星辰微笑"]
+    },
+    {
+        id: 83.1,
+        text: "還有這個地方是哪裡？",
+        characters: ["星辰微笑"]
+    },
+    {
+        id: 84,
+        text: "嗚嗚嗚…我叫同情星，這裡是我的星球。",
+        characters: ["同情星苦惱"]
+    },
+    {
+        id: 85,
+        text: "{playerName}...你長得好眼熟。",
+        characters: ["同情星"]
+    },
+    {
+        id: 85.1,
+        text: "總覺得在哪裡見過？",
+        characters: ["同情星"]
+    },
+    {
+        id: 86,
+        text: "同情星，很高興認識你！",
+        characters: ["星辰驕傲"]
+    },
+    {
+        id: 85.2,
+        text: "嗚嗚嗚、嗚嗚嗚嗚嗚。",
+        characters: ["同情星苦惱"]
+    },
+    {
+        id: 85.3,
+        text: "嗚、嗚、嗚、嗚嗚嗚嗚嗚嗚嗚嗚嗚",
+        characters: ["同情星苦惱"]
+    },
+    {
+        id: 85.4,
+        text: "嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚",
+        characters: ["同情星苦惱"]
+    },
+    // {
+    //     id: 86,
+    //     text: "話說...你怎麼會在這裡哭呀？",
+    //     characters: ["星辰"]
+    // },
+    {
+        id: 87,
+        text: "看見同情星哭泣，你的第一直覺是什麼？",
+        options: [
+            { 
+                text: "我能共情他", 
+                nextId: 87.1, 
+                score: { "同情星": 3 },
+            },
+            { 
+                text: "我想知道原因", 
+                nextId: 87.2,  
+                score: { "同情星": 2 },
+            },
+            { 
+                text: "我不知所措", 
+                nextId: 87.3, 
+                score: { "同情星": 1 },
+            },
+            { 
+                text: "多一事不如少一事", 
+                nextId: 87.4, 
+                score: { "同情星": 0 },
+            }
+        ]
+    },
+    {
+        id: 87.1,
+        text: "看他哭我也好難過...",
+        nextId: 87.5, 
+        characters: ["星辰害怕"]
+    },
+    {
+        id: 87.2,
+        text: "你怎麼啦？為什麼躲在這裡哭？",
+        nextId: 88, 
+        characters: ["星辰"]
+    },
+    {
+        id: 87.3,
+        text: "怎麼辦怎麼辦！",
+        nextId: 87.5, 
+        characters: ["星辰苦惱"]
+    },
+    {
+        id: 87.4,
+        text: "我要安慰他嗎...",
+        nextId: 87.5, 
+        characters: ["星辰苦惱"]
+    },
+    {
+        id: 87.5,
+        text: "（總之先釐清哭泣的原因吧）",
+        nextId: 87.2, 
+        characters: ["星辰"]
+    },
+    {
+        id: 88,
+        text: "嗚...{playerName}你跟我來吧。",
+        characters: ["同情星苦惱"]
+    },
+    {
+        id: 89,
+        text: "哇，這裡怎麼有這麼多貝殼？",
+        comicImages: ["/同情星家裡"],
+    },
+    {
+        id: 90,
+        text: "因為...我太在意別人了，",
+        comicImages: ["/同情星家裡"],
+    },
+    {
+        id: 91,
+        text: "想不斷地幫助他人...",
+        comicImages: ["/同情星家裡"],
+    },
+    {
+        id: 92,
+        text: "但也忽略了自己，很擔心自己是否有真正幫助到人。",
+        comicImages: ["/同情星家裡"],
+    },
+    {
+        id: 93,
+        text: "嗚…時間久了，收集貝殼的數量也會隨著壓力變多。",
+        comicImages: ["/同情星家裡"],
+    },
+    {
+        id: 94,
+        text: "天啊…聽到你遭遇這些我也感到很難過。",
+        character: ["星辰"]
+    },
+    {
+        id: 95,
+        text: "了解原因後你會怎麼有效解決",
+        options: [
+            { 
+                text: "我會耐心開導", 
+                nextId: 95.1, 
+                score: { "同情星": 3 },
+            },
+            { 
+                text: "我會默默陪伴", 
+                nextId: 95.2,  
+                score: { "同情星": 2 },
+            },
+            { 
+                text: "不接受他人的求助", 
+                nextId: 95.3, 
+                score: { "同情星": 1 },
+            },
+            { 
+                text: "我會沒在聽只想吃蛤蜊", 
+                nextId: 95.4, 
+                score: { "同情星": 0 },
+            }
+        ]
+    },
+    {
+        id: 95.1,
+        text: "幫助別人是好事，但你要先把自己顧好才有能力和力氣去照顧別人哇！",
+        nextId: 95.5,
+        characters: ["星辰微笑"]
+    },
+    {
+        id: 95.2,
+        text: "（在旁邊安靜陪伴和抱抱他）",
+        nextId: 95.6,
+        characters: ["星辰微笑"]
+    },
+    {
+        id: 95.3,
+        text: "以後有人需要幫助你就直接拒絕就好，因為自己最重要！",
+        nextId: 95.5,
+        characters: ["星辰驕傲"]
+    },
+    {
+        id: 95.4,
+        text: "燒烤貝殼和水煮貝殼哪個比較好吃...？",
+        nextId: 95.6,
+        characters: ["星辰思考"]
+    },
+    {
+        id: 95.5,
+        text: "也對...要照顧好自己才行呢。",
+        characters: ["同情星感動"]
+    },
+    {
+        id: 95.6,
+        text: "啊，我想到可以怎麼解決了！",
+        characters: ["星辰驕傲"]
+    },
+    {
+        id: 96,
+        text: "嗚？",
+        characters: ["同情星苦惱"]
+    },
+    {
+        id: 97,
+        text: "只要好好地玩一番，心情就會變很好。",
+        characters: ["星辰微笑"]
+    },
+    {
+        id: 98,
+        text: "如何釋放壓力，讓心情變好！",
+        options: [
+            { 
+                text: "夏天就是要去海邊", 
+                nextId: 98.1, 
+                score: { "同情星": 3 },
+            },
+            { 
+                text: "大吃特吃", 
+                nextId: 98.2,  
+                score: { "同情星": 2 },
+            },
+            { 
+                text: "去ktv大叫", 
+                nextId: 98.3, 
+                score: { "同情星": 1 },
+            },
+            { 
+                text: "爬山有益健康", 
+                nextId: 98.4, 
+                score: { "同情星": 0 },
+            }
+        ]
+    },
+    {
+        id: 98.1,
+        text: "去海邊衝浪！",
+        nextId: 99, 
+        characters: ["星辰驕傲"],
+        comicImages: ["/衝浪"]
+    },
+    {
+        id: 98.2,
+        text: "聽說吃東西會讓心情變好！",
+        nextId: 99, 
+        characters: ["星辰驕傲"],
+        comicImages: ["/大吃"]
+    },
+    {
+        id: 98.3,
+        text: "把不開心全都唱出來！",
+        nextId: 99, 
+        characters: ["星辰驕傲"],
+        comicImages: ["/唱歌"]
+    },
+    {
+        id: 98.4,
+        text: "走！我們去爬山看風景吹吹風！",
+        nextId: 99, 
+        characters: ["星辰驕傲"],
+        comicImages: ["/爬山"]
+    },
+    {
+        id: 99,
+        text: "嗚呼！好開心。",
+        characters: ["同情星"]
+    },
+    {
+        id: 100,
+        text: "咦？你的貝殼...",
+        characters: ["星辰"]
+    },
+    {
+        id: 101,
+        text: "打開了！",
+        comicImages: ["/貝殼打開漫畫"]
+    },
+    {
+        id: 102,
+        text: "好漂亮的珍珠。",
+        comicImages: ["/貝殼打開漫畫"]
+    },
+    {
+        id: 103,
+        text: "家裡的貝殼肯定都打開了呢。",
+        comicImages: ["/貝殼打開漫畫"]
+    },
+    {
+        id: 104,
+        text: "這樣...我就能開設自己的珠寶店了！",
+        comicImages: ["/貝殼打開漫畫"]
+    },
+    {
+        id: 105,
+        text: "珠寶店？",
+        comicImages: ["/貝殼打開漫畫"]
+    },
+    {
+        id: 106,
+        text: "嗚…其實…我想開珠寶店很久了。",
+        comicImages: ["/貝殼打開漫畫"]
+    },
+    {
+        id: 107,
+        text: "我也能趁這個機會實現夢想，還能幫助別人。",
+        comicImages: ["/貝殼打開漫畫"]
+    },
+    {
+        id: 108,
+        text: "那麼，我來幫你一起開店吧！",
+        comicImages: ["/貝殼打開漫畫"]
+    },
+    {
+        id: 109,
+        text: "嗚…能在自己的能力內幫助別人，真是太好了！",
+        comicImages: ["/賣珠寶"]
+    },
+    {
+        id: 111,
+        text: "謝謝你星辰，我感到輕鬆許多！",
+        characters: ["同情星自信"]
+    },
+    {
+        id: 112,
+        text: "嘿嘿我也很開心幫助到你。",
+        characters: ["星辰驕傲"]
+    },
+    {
+        id: 113,
+        text: "嗚嗚嗚嗚...",
+        characters: ["同情星苦惱"]
+    },
+    {
+        id: 114,
+        text: "怎麼又哭了哇。",
+        characters: ["星辰"]
+    },
+    {
+        id: 115,
+        text: "我嗚…太感動了。",
+        characters: ["同情星苦惱"]
+    },
+    {
+        id: 116,
+        text: "看到同情星在自己的幫助下做回它自己會有怎樣的心情",
+        options: [
+            { 
+                text: "我原來也有照亮別人的能力", 
+                nextId: 117.1, 
+                score: { "同情星": 3 },
+            },
+            { 
+                text: "我很開心能助他一臂之力", 
+                nextId: 117.2,
+                score: { "同情星": 2 },
+            },
+            { 
+                text: "我覺得輕輕鬆鬆", 
+                nextId: 117.3,
+                score: { "同情星": 1 },
+            },
+            { 
+                text: "我是勇者欣梅爾", 
+                nextId: 117.4,
+                score: { "同情星": 0 },
+            }
+        ]
+    },
+    {
+        id: 117.1,
+        text: "哇...我真的幫助到他了呢！",
+        nextId: 118,
+        characters: ["星辰"]
+    },
+    {
+        id: 117.2,
+        text: "看到他能做回自己，真是開心！",
+        nextId: 118,
+        characters: ["星辰"]
+    },
+    {
+        id: 117.3,
+        text: "哇賽！我真是太天才了。",
+        nextId: 118,
+        characters: ["星辰"]
+    },
+    {
+        id: 117.4,
+        text: "勇者欣梅爾說過，就算一點也好，",
+        nextId: 117.5,
+        characters: ["星辰"]
+    },
+    {
+        id: 117.5,
+        text: "能成為他前進的動力，那就足夠了。",
+        nextId: 118,
+        characters: ["星辰"]
+    },
+    {
+        id: 118,
+        text: "欸...這是什麼？",
+        comicImages: ["/同情星拼圖降下"]
+    },
+    {
+        id: 119,
+        text: "我也不太清楚，好像是火箭的燃料吧。",
+        comicImages: ["/同情星拼圖降下"]
+    },
+    {
+        id: 120,
+        text: "也真奇怪，每次解決完問題後都會出現...",
+        comicImages: ["/同情星拼圖降下"]
+    },
+    {
+        id: 121,
+        text: "所以...要告別了吧。",
+        comicImages: ["/同情星拼圖降下"]
+    },
+    {
+        id: 122,
+        text: "嗯！我得搭火箭走啦。",
+        comicImages: ["/同情星拼圖降下"]
+    },
+    {
+        id: 123,
+        text: "等等！離開之前我要帶你去一個地方。",
+        comicImages: ["/同情星拼圖降下"]
+    },
+    {
+        id: 124,
+        text: "嗒噠，我們最最最，最漂亮的海灘！",
+        characters: ["同情星"]
+    },
+    {
+        id: 125,
+        text: "這個貝殼留給你當紀念品吧。",
+        characters: ["同情星"]
+    },
+    {
+        id: 126,
+        text: "嘿嘿！真是謝謝你。",
+        characters: ["星辰"]
+    },
+    {
+        id: 127,
+        text: "貝殼裡面...又是信。",
+        characters: ["星辰"],
+        comicImages: ["/貝殼信"]
+    },
+    {
+        id: 129,
+        text: "恭喜你結束了第二次的旅程，這顆星球很美吧！",
+        comicImages: ["/貝殼裡的信"]
+    },
+    {
+        id: 130,
+        text: "我們也很喜歡在這裡渡假放鬆，",
+        comicImages: ["/貝殼裡的信"]
+    },
+    {
+        id: 131,
+        text: "如果感到勞累不彷停下來吧，最愛你的▇▇、▇▇。",
+        comicImages: ["/貝殼裡的信"]
+    },
+    {
+        id: 132,
+        text: "嘿嘿，這是之前來訪的旅人留下的。",
+        characters: ["同情星自信"]
+    },
+    {
+        id: 133,
+        text: "{playerName}•星辰，祝你的旅途順利。",
+        characters: ["同情星感動"]
+    },
+    {
+        id: 134,
+        text: "嗯！珠寶店也要營運順利喔！",
+        characters: ["星辰驕傲"]
+    },
+    // 同情星結束
+
+    
+
+];
+
+// ==========================================
+// 🎨 3. 資源預載
+// ==========================================
+const criticalAssets = [
+    '/pct/星辰沒邊.png', 
+    '/pct/星辰害怕_哭泣😢🫱🫲.png', // ⭕ 修正：移除多餘的雙引號
+    '/pct/星辰嚇死了😱.png',
+    '/pct/星辰驕傲👆🤓.png',
+    '/pct/星辰微笑🙂👍.png',
+    '/pct/星辰思考🤔✏️.png',
+    '/pct/星辰苦惱😟.png',
+    '/pct/星辰感動😨😭📘.png',
+    '/pct/好奇星_p.png',
+    '/pct/好奇星開心.png',
+    '/pct/好奇星小尾巴.png',
+    '/pct/好奇星開心wink.png',
+    '/pct/2同情星⭐️.png',
+    '/pct/同情星苦惱.png',
+    '/pct/同情星開心.png',
+    '/pct/3爽快星⭐️.png',
+    '/pct/4熱情星⭐️.png',
+    '/pct/同情星 自信的北港五隻虎.png',
+    '/pct/好奇星 一群好奇星.png',
+    '/pct/好奇星哭.png',
+    '/pct/好奇星哭小尾巴.png',
+    '/pct/好奇星開心閉眼.png',
+    '/pct/好奇星路人張嘴.png',
+    '/pct/好奇星路人閉嘴.png',
+]; 
+
+let loadedCount = 0;
+const totalCritical = criticalAssets.length;
+
+function preloadImages(array, callback) {
+    if (!array || array.length === 0) return callback();
+
+    array.forEach(src => {
+        if (!src) {
+            handleAssetLoaded(callback);
+            return;
+        }
+        const img = new Image();
+        img.src = src;
+        img.onload = () => handleAssetLoaded(callback);
+        img.onerror = () => {
+            console.warn("圖片載入失敗:", src);
+            handleAssetLoaded(callback);
+        };
+    });
+}
+
+function handleAssetLoaded(callback) {
+    loadedCount++;
+    let percent = Math.floor((loadedCount / totalCritical) * 100);
+    requestAnimationFrame(() => updateUI(percent));
+    if (loadedCount >= totalCritical && typeof callback === "function") {
+        callback();
+    }
+}
+
+function updateUI(p) {
+    const bar = document.getElementById('progress-bar');
+    const text = document.getElementById('loading-percent');
+    if (bar) bar.style.width = p + "%";
+    if (text) text.innerText = p + "%";
+}
+
+function enterGameAnimation() {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        loadingScreen.style.transition = 'opacity 1s ease';
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 1000);
+    }
+}
+
+// 選單開關邏輯
+function toggleMenu(e) {
+    if (e) e.stopPropagation();
+    const wrapper = document.getElementById("menu-items-wrapper");
+    if (wrapper) wrapper.classList.toggle("open");
+}
+
+// ==========================================
+// 💬 打字機效果（確保每一句都有打字效果）
+// ==========================================
+function startTypingEffect(text, callback) {
+    const textTag = document.getElementById("對話文本");
+    if (!textTag) return;
+
+    if (window.myTypingTimer) {
+        clearInterval(window.myTypingTimer);
+        window.myTypingTimer = null;
+    }
+
+    // ⭕ 只將 {playerName} 替換為純玩家輸入的名字，不帶「星辰·」
+    let formattedText = (text || "")
+        .replace(/\{playerName\}/g, window.playerName || "")
+        .replace(/\(玩家名稱\)/g, window.playerName || "")
+        .replace(/（玩家名稱）/g, window.playerName || "");
+
+    window.currentFullText = formattedText;
+    window.isTyping = true;
+    textTag.innerHTML = ""; 
+
+    let index = 0;
+
+    window.myTypingTimer = setInterval(() => {
+        if (!window.isTyping) {
+            clearInterval(window.myTypingTimer);
+            window.myTypingTimer = null;
+            return;
+        }
+
+        if (index < formattedText.length) {
+            if (formattedText.charAt(index) === '<') {
+                let tagBuffer = '';
+                while (index < formattedText.length && formattedText.charAt(index) !== '>') {
+                    tagBuffer += formattedText.charAt(index);
+                    index++;
+                }
+                if (index < formattedText.length) {
+                    tagBuffer += '>';
+                    index++;
+                }
+                textTag.innerHTML += tagBuffer;
+            } else {
+                textTag.innerHTML += formattedText.charAt(index);
+                index++;
+            }
+        } else {
+            clearInterval(window.myTypingTimer);
+            window.myTypingTimer = null;
+            window.isTyping = false;
+            
+            if (typeof callback === "function") callback();
+        }
+    }, 40);
+}
+
+function renderOptions(scene) {
+    const optBox = document.getElementById('選項框');
+    if (scene && scene.options && optBox) {
+        optBox.innerHTML = "";
+        optBox.style.display = 'flex';
+
+        // 🟢 1. 判斷是否為 ID 60，如果是就加上微調位置的 Class，否則移除
+        if (Number(scene.id) === 60) {
+            optBox.classList.add('id60-position');
+        } else {
+            optBox.classList.remove('id60-position');
+        }
+
+        scene.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.innerText = opt.text;
+            btn.className = 'option-btn';
+
+            // 🟢 2. ID 60 的按鈕小字體（你原本的邏輯）
+            if (Number(scene.id) === 60) {
+                btn.classList.add('small-text');
+            }
+
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                selectOption(opt, scene);
+            };
+            optBox.appendChild(btn);
+        });
+    }
+}
+function setSpeaker(name) {
+    const speakerText = document.getElementById('speaker-name');
+    if (speakerText) {
+        speakerText.textContent = name;
+    }
+}
+
+// ==========================================
+// 🎬 5. 核心渲染機制 (renderScene)
+// ==========================================
+// ==========================================
+// 🎬 5. 核心渲染機制 (renderScene - 修正說話者名字顯示)
+// ==========================================
+function renderScene(stepIndex) {
+    const scene = storyScript[stepIndex];
+    if (!scene) return;
+
+    // --------------------------------------------------
+    // ⭕ 判斷對話框是否有文字內容：無文字則隱藏整個對話框
+    // --------------------------------------------------
+    const dialogBox = document.getElementById('對話框');
+    // 檢查是否有 text 且去除空白後不為空字串
+    const hasText = scene.text && scene.text.trim() !== "";
+
+    if (dialogBox) {
+        if (!hasText) {
+            dialogBox.classList.add('hide-dialog'); // 隱藏對話框
+        } else {
+            dialogBox.classList.remove('hide-dialog'); // 顯示對話框
+        }
+    }
+    // 每次渲染新場景時強制停止舊的打字機
+    if (window.myTypingTimer) {
+        clearInterval(window.myTypingTimer);
+        window.myTypingTimer = null;
+    }
+    window.isTyping = false;
+    
+    const speakerEl = document.getElementById('玩家');
+    const svgTextEl = document.querySelector('.player-text');
+    const pageEl = document.getElementById('page1');
+    const currentSceneId = Number(scene.id);
+// --------------------------------------------------
+// 🖼️ 背景圖片開關切換邏輯 (對應 HTML 既有的 ID)
+// --------------------------------------------------
+if (scene.background) {
+    // 1. 先隱藏所有 class 為 "背景圖" 或 "背景" 的元素
+    document.querySelectorAll('.背景圖, .背景').forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // 2. 找到劇本指定的背景 ID 並將它顯示出來
+    const targetBg = document.getElementById(scene.background);
+    if (targetBg) {
+        targetBg.style.display = 'block';
+    } else {
+        console.warn(`⚠️ 找不到 ID 為 "${scene.background}" 的背景元素`);
+    }
+}
+    // --------------------------------------------------
+    // 💡 修正說話者名字抓取邏輯
+    // --------------------------------------------------
+    // --------------------------------------------------
+    // 💡 修正說話者名字抓取邏輯
+    // --------------------------------------------------
+    let displayName = "";
+    
+    if (scene.speaker) {
+        // 1. 若劇本有明確寫 speaker，優先使用
+        if (scene.speaker === "玩家") {
+            displayName = window.playerName ? `${window.playerName} ・ 星辰` : "星辰";
+        } else {
+            displayName = scene.speaker;
+        }
+    } else if (scene.characters && scene.characters.length > 0) {
+        // 2. 若沒寫 speaker，從 characters[0] 判斷說話者
+        let charName = scene.characters[0];
+
+        if (charName.includes("好奇星路人")) {
+            displayName = "路人好奇星";
+        } else if (charName.includes("好奇星們")) {
+            displayName = "好奇星們";
+        } else if (charName.includes("星辰")) {
+            if (currentSceneId < 8) {
+                displayName = "星辰";
+            } else {
+                displayName = window.playerName ? `${window.playerName} ・ 星辰` : "星辰";
+            }
+        } else if (charName.includes("好奇星")) {
+            displayName = "好奇星";
+        } else if (charName.includes("同情星")) {
+            displayName = "同情星";
+        } else if (charName.includes("熱情星")) {
+            displayName = "熱情星";
+        } else if (charName.includes("爽快星")) {
+            displayName = "爽快星";
+        } else {
+            // 其他角色直接拿角色名稱前綴
+            displayName = charName;
+        }
+    }
+
+    // 更新 DOM 上的名字文字
+    if (speakerEl) {
+        speakerEl.innerText = displayName;
+        speakerEl.setAttribute('data-text', displayName);
+    }
+    
+    if (svgTextEl) {
+        if (displayName.includes("・") && window.playerName) {
+            svgTextEl.innerHTML = `${window.playerName}<tspan dx="6">・</tspan><tspan dx="6">星辰</tspan>`;
+        } else {
+            svgTextEl.textContent = displayName;
+        }
+    }
+
+    // 依據說話者動態切換對話框樣式 (Color/Theme)
+    if (pageEl) {
+        // 1. 移除所有可能的舊 Class（加入新增的兩種）
+        pageEl.classList.remove(
+            'speaker-star', 
+            'speaker-curious', 
+            'speaker-curious-random-person', 
+            'speaker-curious-group', 
+            'speaker-sympathy', 
+            'speaker-passion', 
+            'speaker-refreshing'
+        );
+
+        // 2. 依照 displayName 派發全新的 Class
+        if (displayName.includes("路人好奇星")) {
+            pageEl.classList.add('speaker-curious-random-person');
+        } else if (displayName.includes("好奇星們")) {
+            pageEl.classList.add('speaker-curious-group');
+        } else if (displayName.includes("星辰") || scene.speaker === "玩家") {
+            pageEl.classList.add('speaker-star');
+        } else if (displayName.includes("好奇星")) {
+            pageEl.classList.add('speaker-curious');
+        } else if (displayName.includes("同情星")) {
+            pageEl.classList.add('speaker-sympathy');
+        } else if (displayName.includes("熱情星")) {
+            pageEl.classList.add('speaker-passion');
+        } else if (displayName.includes("爽快星")) {
+            pageEl.classList.add('speaker-refreshing');
+        } else {
+            pageEl.classList.add('speaker-star');
+        }
+    }
+
+    // 8 號場景開啟輸入名字彈窗
+    if (currentSceneId === 8) {
+        showInputBox();
+    } else {
+        hideInputBox();
+    }
+
+    // 隱藏舊選項框
+    const optBox = document.getElementById('選項框');
+    if (optBox) optBox.style.display = 'none';
+
+    // 顯示對應立繪
+    hideAllCharacters();
+    if (scene.characters && Array.isArray(scene.characters)) {
+        scene.characters.forEach(charName => {
+            const charEl = document.getElementById(charName);
+            if (charEl) charEl.style.display = 'block';
+        });
+    }
+
+    // 觸發特定動作動畫
+    switch (currentSceneId) {
+        case 0: 
+        case 1:
+            playScaredAnim("星辰害怕"); break;
+        case 1.5:
+        case 3:
+        case 26:
+            playScaredAnim("星辰嚇死"); break;
+        case 2.1: 
+        case 2.2:
+        case 2.3: 
+        case 2.4: 
+        case 14:
+            playSlideInAnim("星辰"); break;
+        case 39:
+        case 37:
+            playNodAnim("星辰驕傲"); break;
+        case 12: 
+        case 100: 
+        case 134:
+            playNodAnim("星辰點頭"); break;
+        case 30:
+            playHappyJumpAnim("好奇星們"); break;
+        case 5:
+            playCuriousAnim("好奇星", "curious-bounce"); break;
+        case 7:
+            playCuriousAnim("好奇星開心", "curious-wiggle"); break;
+        case 19:
+            playCuriousAnim("好奇星會跳", "curious-pop"); break;
+        case 40:
+            playCuriousAnim("好奇星有尾巴", "curious-bounce"); break;
+        case 41:
+            playCuriousAnim("好奇星開心有尾巴", "curious-wiggle"); break;
+    }
+
+    // 開始打字效果
+    startTypingEffect(scene.text, () => {
+        renderOptions(scene);
+    });
+}
+// ==========================================
+// 🔀 6. 劇情推進與選項處置 (包含防雙重觸發)
+// ==========================================
+function selectOption(option, currentScene) {
+    if (option.score && !scoredSceneIds.has(currentScene.id)) {
+        for (let character in option.score) {
+            scores[character] = (scores[character] || 0) + option.score[character];
+        }
+        scoredSceneIds.add(currentScene.id);
+    }
+
+    const nextIndex = storyScript.findIndex(s => s.id === option.nextId);
+    if (nextIndex !== -1) {
+        currentStep = nextIndex;
+        renderScene(currentStep);
+    }
+}
+
+// ==========================================
+// 🔀 6. 劇情推進與選項處置
+// ==========================================
+// ==========================================
+// 🔀 劇情推進邏輯
+// ==========================================
+function nextStep() {
+    // 點擊冷卻鎖，防止按太快
+    if (isClickCooldown) return;
+
+    const scene = storyScript[currentStep];
+
+    // 特殊關卡：輸入名字不觸發點擊推進
+    if (scene && Number(scene.id) === 8) return;
+
+    // --------------------------------------------------
+    // 【狀態 1】如果「還在打字中」-> 點擊第 1 下：變打完的樣子
+    // --------------------------------------------------
+    if (window.isTyping) {
+        // 1. 立刻停止打字計時器
+        if (window.myTypingTimer) {
+            clearInterval(window.myTypingTimer);
+            window.myTypingTimer = null;
+        }
+        
+        // 2. 將狀態改為已完成打字
+        window.isTyping = false;
+        
+        // 3. 把這句話「瞬間變完整」
+        const textBox = document.getElementById("對話文本");
+        if (textBox) {
+            textBox.innerHTML = window.currentFullText;
+        }
+        
+        // 4. 如果有選項，顯示選項
+        renderOptions(scene);
+
+        // 5. 加鎖 150 毫秒，防止這「第 1 下點擊」誤跳到下一句
+        isClickCooldown = true;
+        setTimeout(() => {
+            isClickCooldown = false;
+        }, 150);
+
+        return; // 🔴 絕對不跳下一句！
+    }
+
+    // --------------------------------------------------
+    // 【狀態 2】如果有選項在螢幕上 -> 點背景不能跳下一句
+    // --------------------------------------------------
+    if (scene && scene.options && scene.options.length > 0) {
+        return;
+    }
+
+    // --------------------------------------------------
+    // 【狀態 3】字已經打完了 -> 點擊第 2 下：進入下一句
+    // --------------------------------------------------
+    if (scene && scene.nextId !== undefined) {
+        currentStep = storyScript.findIndex(s => s.id === scene.nextId);
+    } else {
+        currentStep++;
+    }
+
+    // 載入下一句（會重新觸發 startTypingEffect，從頭打字）
+    if (currentStep < storyScript.length && currentStep !== -1) {
+        renderScene(currentStep);
+    }
+}
+
+// 全局點擊事件代理
+document.addEventListener('click', function (e) {
+    // 1. 自動收合選單
+    const menuContainer = document.querySelector('.menu-container');
+    const wrapper = document.getElementById("menu-items-wrapper");
+    if (menuContainer && !menuContainer.contains(e.target) && wrapper) {
+        wrapper.classList.remove('open');
+    }
+
+    // 2. 避開按鈕與輸入框
+    if (e.target.closest('.menu-container') || 
+        e.target.closest('.option-btn') || 
+        e.target.closest('#submit-name') ||
+        e.target.closest('#player-name-input') ||
+        e.target.closest('.nav-item')) {
+        return; 
+    }
+
+    // 3. 推進劇情或跳過打字
+    nextStep();
+});
+
+// ==========================================
+// ✏️ 7. 玩家名字輸入處理
+// ==========================================
+// ==========================================
+// ✏️ 7. 玩家名字輸入處理 (修正版)
+// ==========================================
+function showInputBox() {
+    // 1. 顯示半透明黑幕/遮罩
+    const askBg = document.getElementById("問名字") || document.getElementById("問背景");
+    if (askBg) {
+        askBg.style.display = "block";
+    }
+
+    // 2. 顯示輸入視窗並觸發動畫
+    const askItem = document.getElementById("askname-item");
+    if (askItem) {
+        askItem.style.display = "block"; // 強制顯示 display
+        askItem.classList.remove("show");
+        void askItem.offsetWidth; // 💡 強制瀏覽器重繪 (Reflow)
+        askItem.classList.add("show");
+    }
+
+    // 3. 自動聚焦到輸入框
+    setTimeout(() => {
+        const input = document.getElementById("player-name-input");
+        if (input) {
+            input.focus();
+        }
+    }, 150);
+}
+
+function hideInputBox() {
+    // 1. 隱藏背景遮罩
+    const askBg = document.getElementById("問名字") || document.getElementById("問背景");
+    if (askBg) {
+        askBg.style.display = "none";
+    }
+
+    // 2. 隱藏輸入框本體
+    const askItem = document.getElementById("askname-item");
+    if (askItem) {
+        askItem.classList.remove("show");
+        askItem.style.display = "none";
+    }
+}
+function submitName() {
+    const inputEl = document.getElementById("player-name-input");
+    let inputName = inputEl ? inputEl.value.trim() : "";
+
+    // 儲存玩家名字，沒填就預設 "星辰"
+    window.playerName = inputName || "星辰";
+
+    // ⭕ 關鍵：強制關閉輸入視窗
+    hideInputBox();
+
+    // 跳轉到名字輸入完成後的劇情 (ID: 9)
+    const targetIndex = storyScript.findIndex(s => Number(s.id) === 9);
+    if (targetIndex !== -1) {
+        currentStep = targetIndex;
+        renderScene(currentStep);
+    } else {
+        currentStep++;
+        renderScene(currentStep);
+    }
+}
+
+// ==========================================
+// 🎭 8. 動畫與角色控制輔助函式
+// ==========================================
+function hideAllCharacters() {
+    const chars = [
+        "星辰", "星辰害怕", "星辰嚇死", "星辰點頭", "星辰微笑", "星辰思考", "星辰苦惱", "星辰感動", "好奇星", 
+        "同情星","同情星苦惱","同情星感動", "爽快星", "熱情星", "星辰驕傲", "好奇星開心", 
+        "好奇星有尾巴", "好奇星會跳", "好奇星開心有尾巴", "驕傲星辰", "路人好奇星", "好奇星哭","同情星自信","好奇星們","好奇星哭小尾巴","好奇星開心閉眼","路人好奇星張嘴","路人好奇星閉嘴"
+    ];
+    chars.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+}
+function playHappyJumpAnim(charId = '好奇星們') {
+    const target = document.getElementById(charId);
+    if (target && target.style.display !== 'none') {
+        target.classList.remove('happy-jump'); 
+        void target.offsetWidth; // 強制重繪（Reflow），確保重複觸發時能重新播放動畫
+        target.classList.add('happy-jump');    
+    }
+}
+function playSlideInAnim(charId = '星辰') {
+    const target = document.getElementById(charId);
+    if (target && target.style.display !== 'none') {
+        target.classList.remove('slide-in-right'); 
+        void target.offsetWidth; 
+        target.classList.add('slide-in-right');    
+    }
+}
+
+function playScaredAnim(charId) {
+    const target = document.getElementById(charId);
+    if (target && target.style.display !== 'none') {
+        target.classList.remove('scared-bounce'); 
+        void target.offsetWidth; 
+        target.classList.add('scared-bounce');    
+    }
+}
+
+function playCuriousAnim(charId, animType = 'curious-bounce') {
+    const target = document.getElementById(charId);
+    if (!target) return;
+
+    target.classList.remove('curious-bounce', 'curious-wiggle', 'curious-pop', 'nod-head'); 
+    void target.offsetWidth; 
+    target.classList.add(animType); 
+}
+
+function playNodAnim(charId) {
+    document.querySelectorAll('.全星辰').forEach(el => el.style.display = 'none');
+
+    const target = document.getElementById(charId);
+    if (!target) return;
+
+    target.style.display = 'block'; 
+    target.style.opacity = '1';
+    target.classList.remove('nod-head', 'curious-bounce', 'scared-bounce');
+    void target.offsetWidth; 
+    target.classList.add('nod-head');
+}
+
+// ==========================================
+// 🚀 9. 頁面載入與事件繫結
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    hideAllCharacters();
+
+    const submitBtn = document.getElementById("submit-name");
+    if (submitBtn) {
+        submitBtn.addEventListener("click", submitName);
+    }
+
+    preloadImages(criticalAssets, () => {
+        enterGameAnimation();
+        renderScene(0);
+    });
+});
+// ==========================================
+// 👆 點擊高亮維持機制 (事件代理)
+// ==========================================
+document.addEventListener('click', function (e) {
+    
+    // ⭕ 情境 A：點擊漢堡選單項目 (.nav-item)
+    const navItem = e.target.closest('.nav-item');
+    if (navItem) {
+        // 1. 移除選單內所有項目的 active
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        // 2. 給當前點擊的項目加上 active，使其持續保持顏色
+        navItem.classList.add('active');
+        return;
+    }
+
+    // ⭕ 情境 B：點擊劇情選項按鈕 (.option-btn)
+    const optionBtn = e.target.closest('.option-btn');
+    if (optionBtn) {
+        // 1. 移除選項框內所有按鈕的 active
+        document.querySelectorAll('.option-btn').forEach(el => el.classList.remove('active'));
+        // 2. 給當前點擊的選項加上 active
+        optionBtn.classList.add('active');
+        return;
+    }
+});
+// 切換按鈕的變色狀態（點一下開、再點一下關，互不干擾）
+function toggleActive(element) {
+    if (element) {
+        element.classList.toggle('active');
+    }
+}
+
+
+// ==========================================
+// 🛠️ 測試專用：按下 ~ 鍵 (Esc下方) 或 F2 快捷跳關
+// (全專案寫完後，把這段刪除即可)
+// ==========================================
+window.addEventListener('keydown', function (e) {
+    // 按下 `~` 鍵 (Backquote) 或 `F2` 鍵觸發
+    if (e.key === '`' || e.key === '~' || e.key === 'F2') {
+        e.preventDefault();
+        
+        // 彈出輸入框
+        const targetId = prompt("🛠️ [開發者跳關器]\n請輸入要跳轉的 Scene ID (例如: 1, 2.1, 8, 14):");
+        
+        if (targetId !== null && targetId.trim() !== "") {
+            const cleanId = targetId.trim();
+            // 搜尋劇本中符合 ID 的索引
+            const targetIndex = storyScript.findIndex(s => String(s.id) === cleanId);
+
+            if (targetIndex !== -1) {
+                // 強制停止目前的打字機
+                if (window.myTypingTimer) {
+                    clearInterval(window.myTypingTimer);
+                    window.myTypingTimer = null;
+                }
+                window.isTyping = false;
+
+                // 更新步數並渲染
+                currentStep = targetIndex;
+                renderScene(currentStep);
+                console.log(`✅ 已跳轉至 Scene ID: ${cleanId}`);
+            } else {
+                alert(`❌ 找不到 Scene ID 為 "${cleanId}" 的劇情！`);
+            }
+        }
+    }
+});
+    </script>
+
+
+
+
+
+
+
+
+               <!-- css -->
+<style>
+
+    * {
+    /* 1. 防止文字被選取（滑鼠上去不會變直線 I 字型） */
+    user-select: none;
+    -webkit-user-select: none; /* 支援 Chrome/Safari */
+    -moz-user-select: none;    /* 支援 Firefox */
+
+    /* 2. 防止圖片被拖拽（滑鼠拉不出來） */
+    -webkit-user-drag: none;
+}
+    /* 統一字體 */
+    body {
+        /* font-family: "Dela Gothic One", sans-serif; */
+        line-height: 1.6;
+        margin: 0; padding: 0;
+        width: 100%; height: 100%;
+        /* overflow: hidden; */
+        justify-content: center; align-items: center;
+        display: flex;
+    }
+    img {
+        max-width: 100%;
+        display: block;
+    }
+    * {
+        box-sizing: border-box;
+    }
+    /* 東西不會過大跑出來 */
+    #loading-screen {
+    position: fixed;
+    top: 0; left: 0;
+    font-weight: bold;
+    font-size: 30px;
+    width: 100%; height: 100%;
+    gap: 20px;
+    color: #ffffff;
+    background: #0f0f0f;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    transition: opacity 1s ease; /* 淡出動畫 */
+    z-index: 999999;
+}
+
+#progress-bar {
+    height: 20px;
+    background: #62c6ff; /* 你的主題橘色 */
+    width: 0%; /* JS 會動態改這個 */
+    transition: width 1s;
+}
+/* 載入畫面 */
+
+#對話內容{
+    white-space: pre-line; 
+    /* font-family: "", sans-serif;  */
+    font-size: 20px;
+    color: white;
+}
+#page1 {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 100000;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    overflow: hidden !important;
+    height: 100% !important;
+    width: 100% !important;
+    position: relative;
+    touch-action: none;
+}
+
+
+/* #玩家名稱 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+} */
+
+/* 光 泛光 發光 */
+.角色圖 img{
+    filter: 
+    /* 第一層：內圍小範圍強光 */
+    drop-shadow(0 0 5px #fff) 
+    /* 第二層：中範圍主要顏色 */
+    drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)) 
+    drop-shadow(0 0 3px rgba(255, 255, 255, 1)) 
+}
+
+.全好奇星 img {
+    width: 750px;
+}
+.全好奇星{
+    position: absolute;  
+    transform: translateX(-480px) translateY(-210px);
+}
+/* 好奇星專用：原地彈跳一下 */
+.curious-pop {
+    animation: curiousPop 0.35s ease-out both !important;
+}
+
+@keyframes curiousPop {
+    0%   { transform: translateX(-480px) translateY(-210px) scale(1, 1); }
+    40%  { transform: translateX(-480px) translateY(-230px) scale(0.98, 1.05); } /* 向上跳 20px */
+    70%  { transform: translateX(-480px) translateY(-208px) scale(1.02, 0.98); } /* 落地微壓 */
+    100% { transform: translateX(-480px) translateY(-210px) scale(1, 1); }        /* 恢復原位 */
+}
+/* 1. 活力雙連跳 (curious-bounce) */
+.curious-bounce {
+    animation: curiousBounce 0.6s cubic-bezier(0.28, 0.84, 0.42, 1) both !important;
+}
+
+@keyframes curiousBounce {
+    0%   { transform: translateX(-480px) translateY(-210px) scale(1, 1); }
+    15%  { transform: translateX(-480px) translateY(-238px) scale(0.95, 1.08) rotate(3deg); }  /* 向上跳 28px */
+    30%  { transform: translateX(-480px) translateY(-210px) scale(1.05, 0.95) rotate(0deg); }  /* 落地壓扁 */
+    45%  { transform: translateX(-480px) translateY(-228px) scale(0.98, 1.05) rotate(-3deg); } /* 小跳 18px */
+    60%  { transform: translateX(-480px) translateY(-210px) scale(1.02, 0.98) rotate(0deg); }  /* 落地 */
+    100% { transform: translateX(-480px) translateY(-210px) scale(1, 1); }                     /* 恢復原位 */
+}
+
+/* 2. 好奇湊近探頭 (curious-peek) */
+/* .curious-peek {
+    animation: curiousPeek 0.55s ease-out both !important;
+}
+
+@keyframes curiousPeek {
+    0%   { transform: translateX(-480px) translateY(-210px) rotate(0deg); }
+    35%  { transform: translateX(-495px) translateY(-225px) rotate(-8deg) scale(1.05); } 
+    70%  { transform: translateX(-495px) translateY(-225px) rotate(-8deg) scale(1.05); } 
+    100% { transform: translateX(-480px) translateY(-210px) rotate(0deg) scale(1); }     
+} */
+
+/* 3. 歡樂開心擺動 (curious-wiggle) */
+.curious-wiggle {
+    animation: curiousWiggle 0.5s ease-in-out both !important;
+}
+
+@keyframes curiousWiggle {
+    0%   { transform: translateX(-480px) translateY(-210px) rotate(0deg); }
+    20%  { transform: translateX(-480px) translateY(-218px) rotate(-10deg); }
+    40%  { transform: translateX(-480px) translateY(-218px) rotate(10deg); }
+    60%  { transform: translateX(-480px) translateY(-214px) rotate(-8deg); }
+    80%  { transform: translateX(-480px) translateY(-214px) rotate(8deg); }
+    100% { transform: translateX(-480px) translateY(-210px) rotate(0deg); }
+}
+#爽快星 img {
+    width: 760px;
+    transform: scaleX(-1) translateX(500px) translateY(-140px);
+
+}
+.全同情星 img {
+    width: 700px;
+}
+.全同情星 {
+    transform:  translateX(-400px) translateY(-170px);
+}
+#熱情星 img {
+    width: 720px;
+    transform: scaleX(-1) translateX(480px) translateY(-120px);
+
+}
+/* 改為控制外層 div 的寬度，並讓裡面的圖片自動填滿 */
+
+.全星辰 img {
+    width: 100%;
+    height: auto;
+}
+
+/* 找到這段並修改 */
+.全星辰 {
+    z-index: 5;
+    width: 900px;
+    position: absolute;
+    right: 90px;
+    bottom: -190px;      
+    /* transition: all 0.5s ease; */
+    display: none;  /* ✨ 改回預設隱藏 */
+}
+#星辰思考 {
+    width: 800px; /* 從原本全域的 900px 縮小成 700px */
+    right: 120px; /* 若縮小後位置偏了，可以在這裡微調位置 */
+    bottom: -80px;
+}
+
+/* 漸層滑入動畫 Class */
+.slide-in-right {
+    animation: slideInFromRight 0.5s ease-out forwards;
+}
+/* 定義動畫軌跡 */
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(20px); 
+        opacity: 0;                  
+    }
+    100% {
+        transform: translateX(0);    
+        opacity: 1;                 
+    }
+}
+/* 嚇到跳一下動畫 Class */
+.scared-bounce {
+    animation: scareJump 0.5s ease-out;
+}
+
+/* 定義嚇到的彈跳動作 */
+@keyframes scareJump {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    20% {
+        /* 瞬間往上跳，並因為慣性稍微拉長身形 */
+        transform: translateY(-50px) scale(0.95, 1.05); 
+    }
+    40% {
+        /* 掉回地面，並因為衝擊力稍微壓扁 */
+        transform: translateY(0) scale(1.05, 0.95);
+    }
+    60% {
+        /* 稍微再彈起一點點 */
+        transform: translateY(-10px) scale(0.98, 1.02);
+    }
+    100% {
+        /* 恢復正常狀態 */
+        transform: translateY(0) scale(1);
+    }
+}
+/* 嚇死 */
+/* .scared-recoil {
+animation: scared-recoil 0.4s ease-out both
+}
+
+@keyframes scared-recoil {
+    0%   { transform: translateY(0) scale(1); }
+    20%  { transform: translateY(12px) scale(1.02); } 
+    40%  { transform: translateY(10px) scale(1.02); } 
+    100% { transform: translateY(0) scale(1); }   
+} */
+/* 左右搖晃 猶豫不決 */
+.shake-head {
+    animation: headShake 0.5s ease-in-out;
+}
+
+@keyframes headShake {
+    0% { transform: translateX(0) rotate(0deg); }
+    20% { transform: translateX(-15px) rotate(-3deg); }
+    40% { transform: translateX(15px) rotate(3deg); }
+    60% { transform: translateX(-10px) rotate(-2deg); }
+    80% { transform: translateX(10px) rotate(2deg); }
+    100% { transform: translateX(0) rotate(0deg); }
+}
+/* 星辰點頭動畫 */
+#星辰點頭.nod-head,
+#星辰驕傲.nod-head,
+.nod-head {
+    animation: nodHeadAnim 0.5s ease-in-out both !important;
+}
+
+@keyframes nodHeadAnim {
+    0%   { transform: translateY(0); }
+    30%  { transform: translateY(18px); }  /* 向下點頭 18px */
+    65%  { transform: translateY(-4px); }  /* 微幅回彈 */
+    100% { transform: translateY(0); }     /* 恢復原位 */
+}
+/* 點點頭 */
+.nod-head {
+    animation: headNod 0.6s ease-in-out;
+}
+
+@keyframes headNod {
+    0% { transform: translateY(0); }
+    30% { transform: translateY(15px) rotate(1deg); } 
+    60% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
+
+.星球 {
+    position: absolute;
+    bottom: 0;      /* 靠底部對齊 */
+    transition: all 0.5s ease;    
+    /* display: none;   */
+}
+.角色圖 {
+    z-index: 10; /* 確保角色圖在對話框上面 */
+}
+
+/* #好奇星叢林 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#好奇星叢林 {
+    position: absolute;
+    top: 0px; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1; 
+} */
+.背景圖 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.背景圖 {
+    position: absolute;
+    top: 0px; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1; /* 確保背景在最下面 */
+}
+
+
+
+/* #對話框, .dialog-box, #dialog-box {
+    position: absolute !important;
+    overflow: hidden !important; 
+} */
+ /* 當對話框沒有內容時隱藏 */
+#對話框.hide-dialog {
+    display: none !important;
+}
+#對話框 {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 330px;
+    z-index: 999;
+    pointer-events: none;
+}
+#對話框那條線 {
+    position: absolute;
+    bottom: 0px; /* 線的位置 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 17px;
+    background-color: #ffb30f; /* 線的顏色 */
+    z-index: 9999;
+}
+
+/* .dialog-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+background: linear-gradient(to bottom, rgba(8, 8, 8, 0.98) 50%, #1a1a1a 90%, rgba(0, 0, 0, 0) 600%);
+    clip-path: polygon(0% 0%, 100% 10%, 100% 100%, 0% 100%);
+    
+    z-index: 1; 
+} */
+
+#名字框 {
+    position: absolute; /* 改用 absolute 方便精確定位 */
+    z-index: 1000; 
+    /* 這裡控制名字的位置，y 軸負值讓它飄上去 */
+    transform: translateX(100px) translateY(-50px);
+}
+
+/* #玩家 {
+    position: relative;
+    font-size: 90px;
+    color: #f7aa1d; 
+    font-family: 'Dela Gothic One', Arial, sans-serif;
+    z-index: 1000;
+    transform: translateX(100px) translateY(-70px);
+} */
+/* 主體直接讀取你的角色變數 */
+/* 修改後的 #玩家 樣式 */
+#玩家 {
+    display: inline-block;
+    position: relative;
+
+    color: var(--theme-bg-color, #ffffff);
+    
+    /* 1. 粗體描邊 */
+    -webkit-text-stroke: 30px var(--stroke-color, #000);
+
+    /* 2. 強制轉角全變成圓角（解決突起） */
+    stroke-linejoin: round !important;
+    -webkit-stroke-linejoin: round !important;
+
+    /* 3. 補上圓角邊緣限制 */
+    stroke-linecap: round !important;
+
+    paint-order: stroke fill;
+}
+
+/* 關閉導致延遲爆開的偽元素 */
+#玩家::before,
+#玩家::after {
+    display: none !important;
+}
+/* CSS 設定 */
+.player-text {
+    font-size: 32px;
+    font-family: 'Dela Gothic One', Arial, sans-serif;
+    fill: var(--theme-bg-color, #ffffff);
+    
+    /* SVG 專用描邊 */
+    stroke: var(--stroke-color, #141414);
+    stroke-width: 10px;
+    paint-order: stroke fill;
+
+    /* 在 SVG 裡面，這兩行才會真正生效！ */
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+.player-svg {
+    position: relative; /* 必須搭配 relative / absolute / fixed */
+    z-index: 9999;        /* 這樣就能跟外面的 HTML 爭奪圖層了 */
+    
+    /* 順便把原本的位移移到 SVG 上 */
+    transform: translateX(50px) translateY(-95px);
+    pointer-events: none;
+}
+
+/* 預設把所有名字藏起來 */
+.player-svg .player-text {
+    display: none;
+}
+
+/* 根據 #page1 的 class 決定顯示哪一個名字 */
+#page1.speaker-star .name-star { display: block; }
+#page1.speaker-curious .name-curious { display: block; }
+#page1.speaker-refreshing .name-refreshing { display: block; }
+#page1.speaker-sympathy .name-sympathy { display: block; }
+#page1.speaker-passionate .name-passionate { display: block; }
+/* 對話框底色綁定全域變數 */
+.dialog-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 讓對話框顏色與目前設定的邊框顏色相同 (帶透明度) */
+    background: linear-gradient(to bottom, rgba(17, 17, 17, 0.96) 20%, #1a1a1a 50%, rgba(0, 0, 0, 0.8) 100%);    /* background-color: rgba(36, 36, 36, 0.92);     */
+    clip-path: polygon(0% 0%, 100% 15%, 100% 100%, 0% 100%);
+    z-index: 1; 
+    transition: background 0.3s ease;
+}
+
+/* ==========================================
+   🎨 5 種發話者/星球色彩設定 (可依需求微調 HEX 色碼)
+   ========================================== */
+/* 1. 星辰 (主角) */
+#page1.speaker-star {
+    --stroke-color: #181818; 
+    --theme-bg-color: #ffab0f;
+}
+
+/* 2. 好奇星 */
+#page1.speaker-curious {
+    --stroke-color: #181818; 
+    --theme-bg-color: rgba(159, 255, 250, 0.95);
+}
+#page1.speaker-curious-random-person {
+    --stroke-color: #181818; 
+    --theme-bg-color: rgba(159, 255, 250, 0.95);
+}
+#page1.speaker-curious-group {
+    --stroke-color: #181818; 
+    --theme-bg-color: rgba(159, 255, 250, 0.95);
+}
+/* 3. 同情星 */
+#page1.speaker-sympathy {
+    --stroke-color: #181818; 
+    --theme-bg-color: rgba(242, 174, 255, 0.95);
+}
+
+/* 4. 熱情星*/
+#page1.speaker-passion {
+    --stroke-color: #181818; 
+    --theme-bg-color: rgba(195, 255, 155, 0.95);
+}
+
+/* 5. 爽快星*/
+#page1.speaker-refreshing {
+    --stroke-color: #181818; 
+    --theme-bg-color: #ff8b8bf2;
+}
+
+/* 1. 對話框容器：固定高度與對齊方式，防止打字時對話框本身晃動 */
+#對話框, .dialog-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    min-height: 120px; /* 請依據你的設計調整固定高度 */
+    box-sizing: border-box;
+}
+/* ⭕ 徹底修復：強行鎖定定位、文字靠左與絕對行高，絕不跳動 */
+#對話文本 {
+    /* 1. 用 absolute 做左右居中 */
+    position: absolute !important;
+    top: 135px !important;            /* 固定頂部位置！絕不能設定 top: 50% 或 margin: auto */
+    left: 50% !important;
+    transform: translateX(-50%) !important; /* 讓整個文字框水平完美居中 */
+
+    /* 2. 給予固定的寬度與高度 */
+    width: 80% !important;           /* 內容區域寬度 */
+    height: 180px !important;        /* 固定高度 */
+
+    /* 3. 文字水平置中，但垂直絕對靠頂部 */
+    display: block !important;
+    text-align: center !important;   /* ⭕ 你要的水平置中 */
+    
+    /* 4. 樣式與固定行高（關鍵！） */
+    color: white !important;
+    font-size: 48px !important;
+    line-height: 1.5 !important;     /* ⭕ 行高鎖死，換行時只會往下長，絕不往上推 */
+    font-weight: bold !important;
+
+    /* 5. 邊距清空 */
+    margin: 0 !important;
+    padding: 0 !important;
+    word-break: break-all !important;
+    overflow: hidden !important;
+    z-index: 10 !important;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-290px); 
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-280px);
+  }
+}
+#選項框 {
+    width: 600px;
+    height: 570px;
+    position: absolute;
+    bottom: 350px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@font-face {
+  font-family: 'CP-&-TRANS';
+  src: url('/font/CP and Trans.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block; /* 改為 block 避免字體替換時跳動 */
+}
+
+.option-btn {
+    width: 120%;
+    padding: 35px;
+    /* 載入你的背景圖片 */
+    background-image: url('/pct/選項框單.PNG');
+    background-size: 100% 100%; /* 讓圖片延展填滿整個按鈕，若怕變形可改為 contain */
+    background-repeat: no-repeat;
+    background-position: center;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: "CP-&-TRANS", sans-serif !important;
+    font-size: 50px;
+    transition: 0.2s;
+    position: relative; 
+    z-index: 1000;
+    text-shadow: 8px 8px 8px rgba(0, 0, 0, 0.8); 
+}
+/* ⭕ 當節點為 ID 60 時，套用這個 30px 字體 */
+.option-btn.small-text {
+    font-size: 34px !important;
+}
+#選項框.id60-position {
+    bottom: 320px; /* 這裡填入你希望 ID 60 時的位置，例如原本是 350px 改成 250px */
+}
+
+.option-btn:hover {
+    transform: scale(1.05); /* 放大 */
+}
+
+
+
+
+/* 漢堡按鈕樣式 */
+.menu-container {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    display: flex;
+    align-items: center; /* 讓按鈕與選單水平對齊線置中 */
+    gap: 15px;           /* 按鈕與選單展開後的間距 */
+    z-index: 200000;
+}
+
+/* 漢堡按鈕樣式 */
+#burger-menu {
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;      
+    justify-content: center;  
+    background-color: rgba(0, 0, 0, 0.5); 
+    border-radius: 20px; 
+    transition: transform 0.2s ease;
+}
+
+#burger-menu img {
+    width: 80px;
+    height: auto; 
+}
+
+#burger-menu span {
+    display: none;
+}
+
+/* 選項容器：初始寬度為 0 隱藏在按鈕右側 */
+#menu-items-wrapper {
+    display: flex;
+    gap: 15px;
+    overflow: hidden;
+    max-width: 0; 
+    transition: max-width 0.5s ease-in-out;
+    white-space: nowrap;
+    align-items: center; /* 讓內部小圖示垂直置中 */
+}
+/* 開啟狀態：讓容器寬度撐開 */
+#menu-items-wrapper.open {
+    max-width: 800px; /* 設一個夠大的寬度 */
+}
+
+/* 選項樣式 */
+.nav-item {
+    background-color: rgba(0, 0, 0, 0.5); 
+    color: white;
+    padding: 30px 30px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.2s ease;
+    border: 3px solid #313131;
+}
+
+/* 當容器開啟時，選項逐個浮現 */
+#menu-items-wrapper.open .nav-item {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 這裡做「一個個出現」的延遲效果 */
+#menu-items-wrapper.open .nav-item:nth-child(1) { transition-delay: 0.1s; }
+#menu-items-wrapper.open .nav-item:nth-child(2) { transition-delay: 0.2s; }
+#menu-items-wrapper.open .nav-item:nth-child(3) { transition-delay: 0.3s; }
+#menu-items-wrapper.open .nav-item:nth-child(4) { transition-delay: 0.4s; }
+
+/* 點擊後選中的狀態：持續保持顏色 */
+
+/* 2. 點擊後持續保持顏色 (Focus 狀態) */
+.nav-item:focus {
+    background-color: #ffa033 !important;
+    border-color: #ffffff !important;
+    outline: none !important; /* 移除瀏覽器預設的藍色/黑色的 Focus 外框 */
+}
+/* 點擊後的變色保持狀態 */
+.nav-item.active {
+    background-color: #ffa033 !important;
+    border-color: #313131 !important;
+}
+.nav-item img {
+    width: 40px;
+    object-fit: contain; 
+    display: block;   
+}
+
+.nav-item {
+    display: flex;    
+    justify-content: center;
+    align-items: center;
+    min-width: 80px;    
+    height: 80px;     
+    padding: 0 10px;    
+}
+
+
+/* ==========================================
+   🎮 8. 玩家輸入名字對話框樣式
+   ========================================== */
+
+/* 1. 滿版黑幕遮罩 */
+/* 檔背景觸控跳下一頁的 */
+#問名字 {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.0) !important;
+    
+    pointer-events: auto !important; 
+    z-index: 999999 !important;
+}
+/* 1. 從上方滑入動畫 */
+@keyframes uptodown {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -150px); 
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* 2. 輸入框視窗本體 (預設隱藏) */
+#askname-item {
+    /* ⭕ 改用 visibility & opacity 隱藏，解決 display:none 無法觸發動畫的問題 */
+    display: block !important; 
+    opacity: 0;
+    visibility: hidden;
+    
+    position: fixed !important;
+    top: 350px !important;
+    left: 50% !important;
+    transform: translate(-50%, -150px); /* 預設停留在上方 */
+    
+    pointer-events: none !important; /* 隱藏時不可以點擊 */
+    z-index: 1000000 !important;
+    
+    width: 520px !important;
+    height: 300px !important;
+    padding: 25px !important;
+    background: #2c2c2c !important;
+    border: 5px solid #ffb921 !important;
+    border-radius: 20px !important;
+    text-align: center !important;
+    
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* ⭕ 當加上 .show 時才播放由上下滑入動畫 */
+#askname-item.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    animation: uptodown 0.5s ease-out forwards;
+}
+
+/* 3. 強制讓 input 可以打字與點擊 */
+#askname-item input,
+#askname-item button {
+    pointer-events: auto !important;
+    cursor: text !important;
+    position: relative;
+    z-index: 99999 !important; /* 確保在最頂層 */
+}
+
+/* ==========================================
+   🎮 1. 輸入框 - 標題 (.ask-title)
+   ========================================== */
+.ask-title {
+    color: #ffffff;
+    font-size: 40px;
+    font-weight: 900;
+    margin-bottom: 15px;
+    text-align: center;
+    gap: 20px;
+    z-index: 1000000 !important;
+}
+
+/* ==========================================
+   🎮 2. 輸入框 - 本體 (.ask-input)
+   ========================================== */
+/* ==========================================
+   🎮 玩家輸入框 - 排版修復
+   ========================================== */
+
+/* ⭕ 1. 建立平行排版容器 */
+.ask-row {
+    display: flex !important;
+    flex-direction: row !important;      /* 強制左右排列 */
+    align-items: center !important;      /* ⭕ 關鍵：垂直完美居中對齊 */
+    justify-content: center !important;  /* 水平居中 */
+    gap: 12px !important;                 /* 輸入框與按鈕之間的間隔 */
+    width: 100% !important;
+    margin-top: 20px !important;         /* 讓整組與上方標題保持距離 */
+}
+
+/* ⭕ 2. 輸入框樣式 */
+.ask-input {
+    height: 48px !important;             /* ⭕ 與按鈕統一高度 */
+    width: 280px !important;             /* 固定寬度 */
+    padding: 0 12px !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    border-radius: 8px !important;
+    /* border: 2px solid #ccc !important; */
+    box-sizing: border-box !important;   /* 確保邊框不影響高度計算 */
+    margin: 0 !important;                /* 清除所有外距，避免推擠 */
+    z-index: 1000000 !important;
+}
+
+/* ⭕ 3. 確認按鈕樣式 */
+.ask-btn {
+    height: 48px !important;             /* ⭕ 與輸入框統一高度 */
+    padding: 0 24px !important;          /* 左右留白 */
+    font-size: 20px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    background-color: #ffd561 !important;
+    color: #333 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;   /* 確保邊框不影響高度計算 */
+    margin: 0 !important;                /* ⭕ 徹底刪除 margin-top，防止往下掉 */
+    display: inline-flex !important;
+    align-items: center !important;      /* 按鈕文字垂直居中 */
+    justify-content: center !important;  /* 按鈕文字水平居中 */
+    z-index: 1000000 !important;
+}
+
+/* 按鈕懸停效果 (可選) */
+.ask-btn:hover {
+    background-color: #ffc42e !important;
+}
+</style>
+
+
+                 <!-- html -->
+<body>
+                 <!-- 資源預載 -->
+     <div id="loading-screen">
+    <div class="loading-title">正在連結...</div>
+    <div class="progress-container">
+        <img src="/pct/跳跳跳.gif" alt="Loading..." style="width: 100px; height: 100px; margin-bottom: 10px;">
+        <div id="progress-bar"></div>
+    </div>
+    <div id="loading-percent">0%</div>
+</div>
+                 <!-- 基本 -->
+        <!-- ⭕ 修改後 -->
+    <div id="page1" class="page">
+    <div id="星辰" class="全星辰 角色圖"><img src="/pct/星辰沒邊.png"></div>
+    <div id="星辰害怕" class="全星辰 角色圖"><img src="/pct/星辰害怕_哭泣😢🫱🫲.png"></div>
+    <div id="星辰點頭" class="全星辰 角色圖"><img src="/pct/星辰沒邊.png"></div>
+    <div id="星辰嚇死" class="全星辰 角色圖"><img src="/pct/星辰嚇死了😱.png"></div>
+    <div id="星辰驕傲" class="全星辰 角色圖"><img src="/pct/星辰驕傲👆🤓.png"></div>
+    <div id="星辰微笑" class="全星辰 角色圖"><img src="/pct/星辰正常微笑🙂👍.png"></div>
+    <div id="星辰思考" class="全星辰 角色圖"><img src="/pct/星辰思考🤔✏️.png"></div>
+    <div id="星辰苦惱" class="全星辰 角色圖"><img src="/pct/星辰苦惱😟.png"></div>
+    <div id="星辰感動" class="全星辰 角色圖"><img src="/pct/星辰看到父母😨😭📘.png"></div>
+    
+    <div id="好奇星草原" class="背景圖"><img src="/pct/好奇星 草原 橫.png"></div>
+    <div id="好奇星草叢" class="背景圖"><img src="/pct/好奇星 草叢 橫.png"></div>
+    <div id="好奇星棉花重災區" class="背景圖"><img src="/pct/好奇星 棉花重災區(救好奇星) 橫.png"></div>
+    <div id="好奇星黃色結局" class="背景"><img src="/pct/好奇星 黃色結尾 橫.png"></div>
+
+    <div id="好奇星" class="角色圖 全好奇星 星球"><img src="/pct/好奇星_p.png"></div>
+    <div id="好奇星開心" class="角色圖 全好奇星 星球"><img src="/pct/好奇星開心.png"></div>    
+    <div id="好奇星會跳" class="角色圖 全好奇星 星球"><img src="/pct/好奇星_p.png"></div>
+    <div id="好奇星有尾巴" class="角色圖 全好奇星 星球"><img src="/pct/好奇星小尾巴.png"></div>
+    <div id="好奇星開心有尾巴" class="角色圖 全好奇星 星球"><img src="/pct/好奇星開心wink.png"></div>
+    <div id="一群好奇星" class="角色圖 全好奇星 星球"><img src="/pct/好奇星 一群好奇星.png"></div>
+    <div id="好奇星哭" class="角色圖 全好奇星 星球"><img src="/pct/好奇星哭.png"></div>
+    <div id="好奇星哭小尾巴" class="角色圖 全好奇星 星球"><img src="/pct/好奇星哭小尾巴.png"></div>
+    <div id="好奇星開心閉眼" class="角色圖 全好奇星 星球"><img src="/pct/好奇星開心閉眼.png"></div>
+    <div id="路人好奇星張嘴" class="角色圖 全好奇星 星球"><img src="/pct/好奇星路人張嘴.png"></div>
+    <div id="路人好奇星閉嘴" class="角色圖 全好奇星 星球"><img src="/pct/好奇星路人閉嘴.png"></div>
+
+    <div id="同情星" class="角色圖 全同情星 星球"><img src="/pct/同情星正常.png"></div>  
+    <div id="同情星苦惱" class="角色圖 全同情星 星球"><img src="/pct/同情星= =.png"></div>
+    <div id="同情星感動" class="角色圖 全同情星 星球"><img src="/pct/同情星喜極而泣🥹.png"></div>
+    <div id="同情星自信" class="角色圖 全同情星 星球"><img src="/pct/同情星 自信的北港五隻虎.png"></div>
+    
+    <div id="爽快星" class="角色圖 全爽快星 星球"><img src="/pct/3爽快星⭐️.png"></div>
+    <div id="熱情星" class="角色圖 全熱情星 星球"><img src="/pct/4熱情星⭐️.png"></div>
+    
+    <!-- ⭕ 將 SVG 放到 #對話框 內部 -->
+<div id="對話框">
+    <div id="speaker-name"></div>
+  <!-- ⭕ 在 #對話框 內的 <svg> 補上新增的角色名稱標籤 -->
+<svg class="player-svg" viewBox="0 0 400 100">
+  <text x="20" y="60" class="player-text name-star">星辰</text>
+  <text x="20" y="60" class="player-text name-curious">好奇星</text>
+  <text x="20" y="60" class="player-text name-curious-random-person">路人好奇星</text>
+  <text x="20" y="60" class="player-text name-curious-group">一群好奇星</text>
+  <text x="20" y="60" class="player-text name-refreshing">爽快星</text>
+  <text x="20" y="60" class="player-text name-sympathy">同情星</text>
+  <text x="20" y="60" class="player-text name-passionate">熱情星</text>
+</svg>
+    <div id="對話框那條線"></div>
+    <div class="dialog-bg"></div> 
+    <div id="名字框"></div>
+    <div id="對話文本"></div>
+</div>
+
+
+<!-- <svg class="player-svg" viewBox="0 0 400 150">
+  <text x="20" y="100" class="player-text">星辰</text>
+</svg> -->
+    
+    <div id="漫畫框" class="框框"></div>
+    <div id="背景" class="框框"></div>
+
+    <div id="選項框" style="display: none;"></div>
+</div>
+    <!-- 背景 -->
+           
+
+
+<!-- 遮罩黑幕 -->
+<div id="問名字" onclick="event.stopPropagation();"></div>
+
+<!-- 輸入框視窗 -->
+<div id="askname-item" onclick="event.stopPropagation();">
+    <h3 class="ask-title">請輸入你的名字</h3>
+    
+    <!-- ⭕ 用 flex 容器把它們包在一起，確保絕對平行 -->
+    <div class="ask-row" onclick="event.stopPropagation();">
+        <input 
+            type="text" 
+            id="player-name-input" 
+            class="ask-input" 
+            placeholder="輸入1~5個字" 
+            maxlength="5" 
+            onclick="event.stopPropagation();"
+            onmousedown="event.stopPropagation(); this.focus();"
+        >
+        <button type="button" class="ask-btn" onclick="event.stopPropagation(); submitName();">確認</button>
+    </div>
+</div>
+
+
+<!-- <div class="menu-container"> -->
+
+
+
+<div class="menu-container">
+    <!-- 1. 主按鈕 -->
+    <div id="burger-menu" onclick="event.stopPropagation(); toggleMenu(event);">
+        <img src="/pct/2選單.png" alt="menu">
+    </div>
+
+    <!-- 2. 展開選單 -->
+    <div id="menu-items-wrapper">
+    <div class="nav-item" onclick="event.stopPropagation(); toggleActive(this); closeAuto(this);"><img src="/pct/2快轉.png" alt="自動"></div>
+    <div class="nav-item" onclick="event.stopPropagation(); toggleActive(this); showLog(this);"><img src="/pct/2紀錄.png" alt="紀錄"></div>
+    <div class="nav-item" onclick="event.stopPropagation(); toggleActive(this); toggleAudio(this);"><img src="/pct/2音量.png" alt="音效"></div>
+</div>
+<!-- </div> -->
+
+</body>
+</html>
