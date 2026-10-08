@@ -2637,45 +2637,6 @@ img { max-width:100%; }
 
         function preloadSceneAssets(stepIndex, callback) { preloadImages(getSceneAssetPaths(stepIndex), callback); }
 
-
-        const totalCritical = criticalAssets.length;
-
-        function showScene(sceneNumber, isShake = false) {
-    const bg = document.getElementById('page1');
-    if (!bg) return;
-
-    if (isShake) {
-        bg.classList.remove('is-shaking');
-        void bg.offsetWidth; // 強制重繪，讓動畫可以重複觸發
-        bg.classList.add('is-shaking');
-    } else {
-        bg.classList.remove('is-shaking');
-    }
-}
-
-        function preloadImages(array, callback) {
-            if (!array || array.length === 0) return callback();
-            array.forEach(src => {
-                const img = new Image();
-                img.src = src;
-                img.onload = () => handleAssetLoaded(callback);
-                img.onerror = () => handleAssetLoaded(callback);
-            });
-        }
-        
-
-        function handleAssetLoaded(callback) {
-            loadedCount++;
-            let percent = Math.floor((loadedCount / totalCritical) * 100);
-            const bar = document.getElementById('progress-bar');
-            const text = document.getElementById('loading-percent');
-            if (bar) bar.style.width = percent + "%";
-            if (text) text.innerText = percent + "%";
-            if (loadedCount >= totalCritical && typeof callback === "function") {
-                callback();
-            }
-        }
-
         // 設定載入畫面最少要顯示幾秒（例如：2000 代表 2 秒）
 const minLoadingTime = 1000; 
 const startTime = Date.now();
