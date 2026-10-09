@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'Dela Gothic One';
+    src: url('DelaGothicOne-Regular.woff2') format('woff2'),
+        url('DelaGothicOne-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: '';
+    src: url('CP--TRANS.woff2') format('woff2'),
+        url('CP--TRANS.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
