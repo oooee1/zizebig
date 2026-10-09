@@ -135,6 +135,7 @@
 }
         .角色圖 {
             z-index: 10;
+            display: none;
         }
 
         .角色圖 img {
@@ -176,20 +177,19 @@
         #一群好奇星 {
             position: absolute;
             left: 10px;
-            bottom: 200px;
+            bottom: 205px;
             width: 95%;
         }
         .全同情星 {
             position: absolute;
-            left: -5%;
-            bottom: 190px;
-            width: 70%;
+            left: -2%;
+            bottom: 200px;
         }
 
-        .全同情星 img { width: 120%; height: auto; }
+        .全同情星 img { width: 160%; height: auto; }
 
-
-
+        .全爽快星 { position: absolute !important; left: -20% !important; bottom: 120px !important; width: 110% !important; } 
+        .全爽快星 img { width: 110% !important; height: auto !important; }
 
 /* 💡 輸入框容器專用動畫 Class */
 .modal-pop-in {
@@ -416,9 +416,9 @@
 .name-curious { fill: #88fdf8; }
 .name-curious-random-person { fill: #88fdf8; }
 .name-curious-group { fill: #88fdf8; }
-.name-refreshing { fill: #ff8b8b; }
+.name-refreshing { fill: #c3ff9b; }
 .name-sympathy { fill: #f2aeff; }
-.name-passionate { fill: #c3ff9b; }
+.name-passionate { fill: #ff8b8b; }
 
 /* 5. 顯示與角色名稱匹配 */
 #page1.speaker-star .name-star { display: block !important; }
@@ -468,7 +468,7 @@
         /* 1. 將 @font-face 移至 CSS 最上方宣告 */
     @font-face {
   font-family: 'CP-&-TRANS';
-  src: url('./font/CP%20and%20Trans.otf') format('opentype');
+  src: url('./font/CP--TRANS.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -487,7 +487,7 @@
         width: 90%;
         height: 55px;
         background-color: #232323;
-        background-image: url('./pct/選項框單.PNG');
+        background-image: url('./pct/選項框單.webp');
         background-size: 100% 100%;
         background-repeat: no-repeat;
         color: white;
@@ -749,15 +749,15 @@ img { max-width:100%; }
         <!-- ⭕ 必須直接放在 body 第一層，不要包在任何 div 裡面 -->
     <div class="menu-container">
         <div id="burger-menu" onclick="event.stopPropagation(); toggleMenu(event);">
-            <img src="./pct/2選單.png" alt="選單">
+            <img src="./pct/2選單.webp" alt="選單">
         </div>
         <div id="menu-items-wrapper">
             <!-- 找到這段並替換 -->
                 <div class="nav-item" onclick="event.stopPropagation(); skipToOption();">
-                    <img src="./pct/2跳過.png" alt="跳過">
+                    <img src="./pct/2跳過.webp" alt="跳過">
                 </div>
                 <div class="nav-item" id="volume-btn" onclick="event.stopPropagation(); toggleBGM(this);">
-                    <img src="./pct/2音量.png" alt="音量">
+                    <img src="./pct/2音量.webp" alt="音量">
                 </div>
         </div>
     </div>
@@ -775,74 +775,89 @@ img { max-width:100%; }
         <!-- 主舞台 -->
         <div id="page1">
             <!-- 角色立繪 -->
-            <div id="星辰" class="全星辰 角色圖"><img data-src="./pct/星辰沒邊.png" alt="星辰"></div>
-            <div id="星辰害怕" class="全星辰 角色圖"><img data-src="./pct/星辰害怕_哭泣.png" alt="星辰害怕"></div>
-            <div id="星辰點頭" class="全星辰 角色圖"><img data-src="./pct/星辰沒邊.png" alt="星辰點頭"></div>
-            <div id="星辰嚇死" class="全星辰 角色圖"><img data-src="./pct/星辰嚇死了.png" alt="星辰嚇死"></div>
-            <div id="星辰驕傲" class="全星辰 角色圖"><img data-src="./pct/星辰驕傲.png" alt="星辰驕傲"></div>
-            <div id="星辰微笑" class="全星辰 角色圖"><img data-src="./pct/星辰正常微笑.png" alt="星辰微笑"></div>
-            <div id="星辰思考" class="全星辰 角色圖"><img data-src="./pct/星辰思考.png" alt="星辰思考"></div>
-            <div id="星辰苦惱" class="全星辰 角色圖"><img data-src="./pct/星辰苦惱.png" alt="星辰苦惱"></div>
-            <div id="星辰感動" class="全星辰 角色圖"><img data-src="./pct/星辰看到父母.png" alt="星辰感動"></div>
+            <div id="星辰" class="全星辰 角色圖"><img data-src="./pct/星辰沒邊.webp" alt="星辰"></div>
+            <div id="星辰害怕" class="全星辰 角色圖"><img data-src="./pct/星辰害怕_哭泣.webp" alt="星辰害怕"></div>
+            <div id="星辰點頭" class="全星辰 角色圖"><img data-src="./pct/星辰沒邊.webp" alt="星辰點頭"></div>
+            <div id="星辰嚇死" class="全星辰 角色圖"><img data-src="./pct/星辰嚇死了.webp" alt="星辰嚇死"></div>
+            <div id="星辰驕傲" class="全星辰 角色圖"><img data-src="./pct/星辰驕傲.webp" alt="星辰驕傲"></div>
+            <div id="星辰微笑" class="全星辰 角色圖"><img data-src="./pct/星辰正常微笑.webp" alt="星辰微笑"></div>
+            <div id="星辰思考" class="全星辰 角色圖"><img data-src="./pct/星辰思考.webp" alt="星辰思考"></div>
+            <div id="星辰苦惱" class="全星辰 角色圖"><img data-src="./pct/星辰苦惱.webp" alt="星辰苦惱"></div>
+            <div id="星辰感動" class="全星辰 角色圖"><img data-src="./pct/星辰看到父母.webp" alt="星辰感動"></div>
             
             <!-- 背景圖 -->
-            <div id="好奇星草原" class="背景圖"><img data-src="./pct/好奇星 草原 直.png"></div>
-            <div id="好奇星草叢" class="背景圖"><img data-src="./pct/好奇星 草叢 直.png"></div>
-            <div id="好奇星棉花重災區" class="背景圖"><img data-src="./pct/好奇星 棉花重災區(救好奇星) 直.png"></div>
-            <div id="好奇星黃色結局" class="背景"><img data-src="./pct/好奇星 黃色結尾 直.png"></div>
-            <div id="火箭" class="背景圖"><img data-src="./pct/好奇星 太空  直.png"></div>
+            <div id="好奇星草原" class="背景圖"><img data-src="./pct/好奇星 草原 直.webp"></div>
+            <div id="好奇星草叢" class="背景圖"><img data-src="./pct/好奇星 草叢 直.webp"></div>
+            <div id="好奇星棉花重災區" class="背景圖"><img data-src="./pct/好奇星 棉花重災區(救好奇星) 直.webp"></div>
+            <div id="好奇星黃色結局" class="背景"><img data-src="./pct/好奇星 黃色結尾 直.webp"></div>
+            <div id="火箭" class="背景圖"><img data-src="./pct/好奇星 太空  直.webp"></div>
+            <div id="同情星晚霞" class="背景圖"><img data-src="./pct/信義區（自己用）.webp"></div>
+            <div id="同情星初遇" class="背景圖"><img data-src="./pct/初遇.webp"></div>
+            <div id="同情星貝殼" class="背景圖"><img data-src="./pct/藏貝殼的地方.webp"></div>
+            <div id="同情星沒貝殼" class="背景圖"><img data-src="./pct/沒貝殼.webp"></div>
+            <div id="同情星海" class="背景圖"><img data-src="./pct/那個很美的海.webp"></div>
 
             <!-- 好奇星系列 -->
-            <div id="好奇星" class="角色圖 全好奇星"><img data-src="./pct/好奇星_p.png" alt="好奇星"></div>
-            <div id="好奇星開心" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心.png" alt="好奇星開心"></div>    
-            <div id="好奇星會跳" class="角色圖 全好奇星"><img data-src="./pct/好奇星_p.png" alt="好奇星會跳"></div>
-            <div id="好奇星有尾巴" class="角色圖 全好奇星"><img data-src="./pct/好奇星小尾巴.png" alt="好奇星有尾巴"></div>
-            <div id="好奇星開心有尾巴" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心wink.png" alt="好奇星開心有尾巴"></div>
-            <div id="一群好奇星" class="角色圖 全好奇星"><img data-src="./pct/好奇星  一群好奇星.png" alt="一群好奇星"></div>
-            <div id="好奇星哭" class="角色圖 全好奇星"><img data-src="./pct/好奇星哭.png" alt="好奇星哭"></div>
-            <div id="好奇星哭小尾巴" class="角色圖 全好奇星"><img data-src="./pct/好奇星哭小尾巴.png" alt="好奇星哭小尾巴"></div>
-            <div id="好奇星開心閉眼" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心閉眼.png" alt="好奇星開心閉眼"></div>
-            <div id="路人好奇星張嘴" class="角色圖 全好奇星"><img data-src="./pct/好奇星路人張嘴.png" alt="路人好奇星張嘴"></div>
-            <div id="路人好奇星閉嘴" class="角色圖 全好奇星"><img data-src="./pct/好奇星路人閉嘴.png" alt="路人好奇星閉嘴"></div>
+            <div id="好奇星" class="角色圖 全好奇星"><img data-src="./pct/好奇星_p.webp" alt="好奇星"></div>
+            <div id="好奇星開心" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心.webp" alt="好奇星開心"></div>    
+            <div id="好奇星會跳" class="角色圖 全好奇星"><img data-src="./pct/好奇星_p.webp" alt="好奇星會跳"></div>
+            <div id="好奇星有尾巴" class="角色圖 全好奇星"><img data-src="./pct/好奇星小尾巴.webp" alt="好奇星有尾巴"></div>
+            <div id="好奇星開心有尾巴" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心wink.webp" alt="好奇星開心有尾巴"></div>
+            <div id="一群好奇星" class="角色圖 全好奇星"><img data-src="./pct/好奇星  一群好奇星.webp" alt="一群好奇星"></div>
+            <div id="好奇星哭" class="角色圖 全好奇星"><img data-src="./pct/好奇星哭.webp" alt="好奇星哭"></div>
+            <div id="好奇星哭小尾巴" class="角色圖 全好奇星"><img data-src="./pct/好奇星哭小尾巴.webp" alt="好奇星哭小尾巴"></div>
+            <div id="好奇星開心閉眼" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心閉眼.webp" alt="好奇星開心閉眼"></div>
+            <div id="路人好奇星張嘴" class="角色圖 全好奇星"><img data-src="./pct/好奇星路人張嘴.webp" alt="路人好奇星張嘴"></div>
+            <div id="路人好奇星閉嘴" class="角色圖 全好奇星"><img data-src="./pct/好奇星路人閉嘴.webp" alt="路人好奇星閉嘴"></div>
 
             <!-- 同情星系列 -->
-            <div id="同情星" class="角色圖 全同情星"><img data-src="./pct/同情星正常.png" alt="同情星"></div>  
-            <div id="同情星苦惱" class="角色圖 全同情星"><img data-src="./pct/同情星= =.png" alt="同情星苦惱"></div>
-            <div id="同情星感動" class="角色圖 全同情星"><img data-src="./pct/同情星喜極而泣.png" alt="同情星感動"></div>
-            <div id="同情星自信" class="角色圖 全同情星"><img data-src="./pct/同情星 自信的北港五隻虎.png" alt="同情星自信"></div>
+            <div id="同情星" class="角色圖 全同情星"><img data-src="./pct/同情星正常.webp" alt="同情星"></div>  
+            <div id="同情星苦惱" class="角色圖 全同情星"><img data-src="./pct/同情星= =.webp" alt="同情星苦惱"></div>
+            <div id="同情星感動" class="角色圖 全同情星"><img data-src="./pct/同情星喜極而泣.webp" alt="同情星感動"></div>
+            <div id="同情星自信" class="角色圖 全同情星"><img data-src="./pct/同情星 自信的北港五隻虎.webp" alt="同情星自信"></div>
             
             <!-- 爽快星 -->
-            <div id="爽快星" class="角色圖 全爽快星"><img data-src="./pct/爽快星正常.png" alt="爽快星"></div>
-            <div id="爽快星生氣" class="角色圖 全爽快星"><img data-src="./pct/爽快星生氣.png" alt="爽快星生氣"></div>
-            <div id="爽快星害怕" class="角色圖 全爽快星"><img data-src="./pct/爽快星害怕.png" alt="爽快星害怕"></div>
-            <div id="爽快星開心" class="角色圖 全爽快星"><img data-src="./pct/爽快星開心.png" alt="爽快星開心"></div>
-            <div id="爽快星疑惑" class="角色圖 全爽快星"><img data-src="./pct/爽快星疑惑.png" alt="爽快星疑惑"></div>
+            <div id="爽快星" class="角色圖 全爽快星"><img data-src="./pct/爽快星一般.webp" alt="爽快星"></div>
+            <div id="爽快星生氣" class="角色圖 全爽快星"><img data-src="./pct/爽快星生氣.webp" alt="爽快星生氣"></div>
+            <div id="爽快星害怕" class="角色圖 全爽快星"><img data-src="./pct/爽快星害怕.webp" alt="爽快星害怕"></div>
+            <div id="爽快星開心" class="角色圖 全爽快星"><img data-src="./pct/爽快星開心吃信封.webp" alt="爽快星開心"></div>
+            <div id="爽快星疑惑" class="角色圖 全爽快星"><img data-src="./pct/爽快星問號.webp" alt="爽快星疑惑"></div>
+            <div id="爽快星慌張" class="角色圖 全爽快星"><img data-src="./pct/爽快星慌張.webp" alt="爽快星驚訝"></div>
+            <!-- 熱情星 -->
+            <div id="熱情星" class="角色圖 全熱情星"><img data-src="./pct/4熱情星.webp" alt="熱情星"></div>
             
-            <div id="熱情星" class="角色圖 全熱情星"><img data-src="./pct/4熱情星.png" alt="熱情星"></div>
+            <!-- 爸媽 -->
+            <div id="爸爸" class="角色圖 全爸媽"><img data-src="./pct/他爸.webp" alt="爸爸"></div>
+            <div id="爸爸微笑" class="角色圖 全爸媽"><img data-src="./pct/他爸微笑.webp" alt="爸爸微笑"></div>
+            <div id="爸爸難過" class="角色圖 全爸媽"><img data-src="./pct/他爸難過.webp" alt="爸爸難過"></div>
+            <div id="媽媽" class="角色圖 全爸媽"><img data-src="./pct/他媽.webp" alt="媽媽"></div>
+            <div id="媽媽微笑" class="角色圖 全爸媽"><img data-src="./pct/他媽微笑.webp" alt="媽媽微笑"></div>
+            <div id="媽媽難過" class="角色圖 全爸媽"><img data-src="./pct/他媽難過.webp" alt="媽媽難過"></div>
             
-            <!-- 問題圖 -->
-            <div id="上面那三個UI" class="ui"><img src="./問題/上面那三個UI.png" ></div>
-            <div id="黑色紙" class="ui"><img src="./問題/背景 黑色紙.png" ></div>
-            <div id="格子條紋紙" class="ui"><img src="./問題/背景 格子條紋紙.png" ></div>
-            <div id="藍色紙" class="ui"><img src="./問題/背景 藍紙（壓在星辰上面）（星辰在下面）（星辰逼你看了嗎）.png" ></div>
-            <div id="背景選擇" class="ui"><img src="./問題/背景 選擇.png" ></div>
-            
-            <div id="是的" class="ui"><img src="./問題/文字：是的.png" ></div>
-            <div id="你會選擇？" class="ui"><img src="./問題/文字：你會選擇？.png" ></div>
-            <div id="我再想想" class="ui"><img src="./問題/文字：我再想想....PNG" ></div>
-            <div id="藍色背景" class="ui"><img src="./問題/背景藍色背景.png" ></div>
-            <div id="紫色背景" class="ui"><img src="./問題/背景紫色背景.png" ></div>
-            <div id="綠色背景" class="ui"><img src="./問題/背景 綠.png" ></div>
-            <div id="紅色背景" class="ui"><img src="./問題/背景紅色背景.png" ></div>
 
-            <div id="藍色拼圖" class="ui 拼圖"><img src="./問題/拼圖藍色拼圖.png" ></div>
-            <div id="紫色拼圖" class="ui 拼圖"><img src="./問題/拼圖紫色拼圖.png" ></div>
-            <div id="綠色拼圖" class="ui 拼圖"><img src="./問題/拼圖綠色拼圖.png" ></div>
-            <div id="粉色拼圖" class="ui 拼圖"><img src="./問題/拼圖粉色拼圖.png" ></div>
-            <div id="藍色選項" class="ui 選項"><img src="./問題/拼圖藍色拼圖.png" ></div>
-            <div id="紫色選項" class="ui 選項"><img src="./問題/拼圖紫色拼圖.png" ></div>
-            <div id="綠色選項" class="ui 選項"><img src="./問題/拼圖綠色拼圖.png" ></div>
-            <div id="粉色選項" class="ui 選項"><img src="./問題/拼圖粉色拼圖.png" ></div>
+            <!-- 問題圖 -->
+            <div id="上面那三個UI" class="ui"><img src="./問題/上面那三個UI.webp" ></div>
+            <div id="黑色紙" class="ui"><img src="./問題/背景 黑色紙.webp" ></div>
+            <div id="格子條紋紙" class="ui"><img src="./問題/背景 格子條紋紙.webp" ></div>
+            <div id="藍色紙" class="ui"><img src="./問題/背景 藍紙（壓在星辰上面）（星辰在下面）（星辰逼你看了嗎）.webp" ></div>
+            <div id="背景選擇" class="ui"><img src="./問題/背景 選擇.webp" ></div>
+            
+            <div id="是的" class="ui"><img src="./問題/文字：是的.webp" ></div>
+            <div id="你會選擇？" class="ui"><img src="./問題/文字：你會選擇？.webp" ></div>
+            <div id="我再想想" class="ui"><img src="./問題/文字：我再想想....webp" ></div>
+            <div id="藍色背景" class="ui"><img src="./問題/背景藍色背景.webp" ></div>
+            <div id="紫色背景" class="ui"><img src="./問題/背景紫色背景.webp" ></div>
+            <div id="綠色背景" class="ui"><img src="./問題/背景 綠.webp" ></div>
+            <div id="紅色背景" class="ui"><img src="./問題/背景紅色背景.webp" ></div>
+
+            <div id="藍色拼圖" class="ui 拼圖"><img src="./問題/拼圖藍色拼圖.webp" ></div>
+            <div id="紫色拼圖" class="ui 拼圖"><img src="./問題/拼圖紫色拼圖.webp" ></div>
+            <div id="綠色拼圖" class="ui 拼圖"><img src="./問題/拼圖綠色拼圖.webp" ></div>
+            <div id="粉色拼圖" class="ui 拼圖"><img src="./問題/拼圖粉色拼圖.webp" ></div>
+            <div id="藍色選項" class="ui 選項"><img src="./問題/拼圖藍色拼圖.webp" ></div>
+            <div id="紫色選項" class="ui 選項"><img src="./問題/拼圖紫色拼圖.webp" ></div>
+            <div id="綠色選項" class="ui 選項"><img src="./問題/拼圖綠色拼圖.webp" ></div>
+            <div id="粉色選項" class="ui 選項"><img src="./問題/拼圖粉色拼圖.webp" ></div>
             <!-- 問題 -->
 
             <!-- 對話框 (100% 舊版 SVG 與文字標籤結構) -->
@@ -2055,7 +2070,7 @@ img { max-width:100%; }
     {
         id: 99,
         text: "嗚呼！好開心。",
-        characters: ["同情星"]
+        characters: ["同情星感動"]
     },
     {
         id: 100,
@@ -2221,7 +2236,7 @@ img { max-width:100%; }
     {
         id: 124,
         text: "嗒噠，我們最最最，最漂亮的海灘！",
-        characters: ["同情星"]
+        characters: ["同情星感動"]
     },
     {
         id: 125,
@@ -2262,7 +2277,7 @@ img { max-width:100%; }
     {
         id: 133,
         text: "{playerName}•星辰，祝你的旅途順利。",
-        characters: ["同情星感動"]
+        characters: ["同情星"]
     },
     {
         id: 134,
@@ -2588,38 +2603,55 @@ img { max-width:100%; }
         // 問題資料夾尚未完成，因此不在啟動時預載它。
         let loadedCount = 0;
         let totalCritical = 1;
+        const assetLoadPromises = new Map();
+        const readySceneIndexes = new Set();
+        const pendingSceneLoads = new Map();
+
 
         function preloadImages(array, callback) {
             const unique = [...new Set((array || []).filter(Boolean))];
             totalCritical = Math.max(unique.length, 1);
             loadedCount = 0;
-            if (unique.length === 0) { if (typeof callback === "function") callback(); return; }
-            unique.forEach(src => {
-                const img = new Image();
-                img.decoding = "async";
-                img.onload = () => handleAssetLoaded(callback);
-                img.onerror = () => handleAssetLoaded(callback);
-                img.src = src;
+
+            const updateProgress = () => {
+                loadedCount++;
+                const percent = Math.min(
+                    100,
+                    Math.floor((loadedCount / totalCritical) * 100)
+                );
+                const bar = document.getElementById('progress-bar');
+                const text = document.getElementById('loading-percent');
+
+                if (bar) bar.style.width = percent + "%";
+                if (text) text.innerText = percent + "%";
+            };
+
+            if (unique.length === 0) {
+                if (typeof callback === "function") callback();
+                return;
+            }
+
+            Promise.all(unique.map(src => {
+                if (assetLoadPromises.has(src)) {
+                    return assetLoadPromises.get(src).then(updateProgress);
+                }
+
+                const promise = new Promise(resolve => {
+                    const img = new Image();
+                    img.decoding = "async";
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve();
+                    img.src = src;
+                });
+
+                assetLoadPromises.set(src, promise);
+                return promise.then(updateProgress);
+            })).then(() => {
+                if (typeof callback === "function") callback();
             });
         }
 
-        function handleAssetLoaded(callback) {
-            loadedCount++;
-            const percent = Math.floor((loadedCount / totalCritical) * 100);
-            const bar = document.getElementById('progress-bar');
-            const text = document.getElementById('loading-percent');
-            if (bar) bar.style.width = percent + "%";
-            if (text) text.innerText = percent + "%";
-            if (loadedCount >= totalCritical && typeof callback === "function") callback();
-        }
-
-        function activateImages(container) {
-            if (!container) return;
-            container.querySelectorAll('img[data-src]').forEach(img => {
-                const src = img.getAttribute('data-src');
-                if (src && !img.getAttribute('src')) { img.setAttribute('src', src); img.decoding = "async"; }
-            });
-        }
+function activateImages(container) { if (!container) return; container.querySelectorAll('img[data-src]').forEach(img => { const src = img.getAttribute('data-src'); if (src && !img.getAttribute('src')) { img.setAttribute('src', src); img.decoding = "async"; } }); }
 
         function getSceneAssetPaths(stepIndex) {
             const scene = storyScript[stepIndex];
@@ -2636,8 +2668,7 @@ img { max-width:100%; }
             return [...new Set(paths.filter(Boolean))];
         }
 
-        function preloadSceneAssets(stepIndex, callback) { preloadImages(getSceneAssetPaths(stepIndex), callback); }
-
+function preloadSceneAssets(stepIndex, callback) { if (readySceneIndexes.has(stepIndex)) { if (typeof callback === "function") callback(); return; } let pending = pendingSceneLoads.get(stepIndex); if (!pending) { pending = new Promise(resolve => { preloadImages(getSceneAssetPaths(stepIndex), resolve); }).then(() => { readySceneIndexes.add(stepIndex); pendingSceneLoads.delete(stepIndex); }); pendingSceneLoads.set(stepIndex, pending); } if (typeof callback === "function") pending.then(callback); }
         // 設定載入畫面最少要顯示幾秒（例如：2000 代表 2 秒）
 const minLoadingTime = 1000; 
 const startTime = Date.now();
@@ -2707,7 +2738,7 @@ function enterGameAnimation() {
 function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
-
+if (!readySceneIndexes.has(stepIndex)) { preloadSceneAssets(stepIndex, () => {  if (currentStep === stepIndex) { renderScene(stepIndex); } }); return; }
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     const pageEl = document.getElementById('page1');
