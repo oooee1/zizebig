@@ -2744,7 +2744,10 @@ function renderScene(stepIndex) {
 
     // 場景素材還沒載完時，先不要切換背景／角色，避免破圖或閃一下。
     if (!readySceneIndexes.has(stepIndex)) {
-        preloadSceneAssets(stepIndex, () => renderScene(stepIndex));
+        preloadSceneAssets(stepIndex, () => {
+            // 若等待期間玩家已跳到別幕，不要把舊場景再畫回來。
+            if (currentStep === stepIndex) renderScene(stepIndex);
+        });
         return;
     }
 
