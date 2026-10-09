@@ -2711,8 +2711,6 @@ function renderScene(stepIndex) {
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     const pageEl = document.getElementById('page1');
 
-    // 沒有對話文字時隱藏對話框、名字標籤與對話框裝飾線；有文字時恢復顯示。
-    if (pageEl) pageEl.classList.toggle('hide-dialog', !hasText);
 
     // 1. 隱藏所有背景，並清除所有背景上的震動 Class
 document.querySelectorAll('.背景圖, .背景').forEach(el => {
@@ -2747,6 +2745,8 @@ if (bgContainer) {
     // 重置發言者 Class
     if (pageEl) {
         pageEl.className = ""; 
+        // 注意：className 重設後再套用 hide-dialog，避免隱藏狀態被清掉。
+        pageEl.classList.toggle('hide-dialog', !hasText);
     }
 
     // 重置打字計時器
