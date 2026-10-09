@@ -1045,7 +1045,7 @@ img { max-width:100%; }
     },
     {
         id: 9,
-        text: "我是{playerName}．星辰，剛來到這個地方。",
+        text: "我是{playerName}・星辰，剛來到這個地方。",
         speaker: "玩家",
         characters: ["星辰微笑"],
         background: "好奇星草叢",
@@ -2782,7 +2782,7 @@ if (bgContainer) {
     if (hasText) {
         if (scene.speaker) {
             displayName = (scene.speaker === "玩家") ? 
-                (window.playerName ? `${window.playerName}．星辰` : "星辰") : scene.speaker;
+                (window.playerName ? `${window.playerName}・星辰` : "星辰") : scene.speaker;
         } else if (scene.characters && scene.characters.length > 0) {
             let charName = scene.characters[0];
             if (charName.includes("路人") || charName.includes("好奇星張嘴") || charName.includes("好奇星閉嘴")) {
@@ -2790,7 +2790,7 @@ if (bgContainer) {
             } else if (charName.includes("一群好奇星")) {
                 displayName = "好奇星們";
             } else if (charName.includes("星辰")) {
-                displayName = (currentSceneId < 8) ? "星辰" : (window.playerName ? `${window.playerName}．星辰` : "星辰");
+                displayName = (currentSceneId < 8) ? "星辰" : (window.playerName ? `${window.playerName}・星辰` : "星辰");
             } else if (charName.includes("好奇星")) {
                 displayName = "好奇星";
             } else if (charName.includes("同情星")) {
@@ -3090,7 +3090,7 @@ if (scene.bgm) {
     // 2. 更新 SVG 名字標籤
     const nameSvgText = document.getElementById("name-star-text");
     if (nameSvgText) {
-        nameSvgText.textContent = `${window.playerName}．星辰`;
+        nameSvgText.textContent = `${window.playerName}・星辰`;
     }
 
     // 3. 處理彈窗與黑幕淡出
