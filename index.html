@@ -2584,33 +2584,49 @@ img { max-width:100%; }
 ];
 
 
-        // 啟動時只載入目前劇情需要的素材，不再一次下載整個 pct 資料夾。
-        // 問題資料夾尚未完成，因此不在啟動時預載它。
+        // 只預載目前場景需要的素材，並共用同一份載入工作，避免重複下載。
         let loadedCount = 0;
         let totalCritical = 1;
+        const assetLoadPromises = new Map();
+        const readySceneIndexes = new Set();
+        const pendingSceneLoads = new Map();
 
         function preloadImages(array, callback) {
             const unique = [...new Set((array || []).filter(Boolean))];
             totalCritical = Math.max(unique.length, 1);
             loadedCount = 0;
-            if (unique.length === 0) { if (typeof callback === "function") callback(); return; }
-            unique.forEach(src => {
-                const img = new Image();
-                img.decoding = "async";
-                img.onload = () => handleAssetLoaded(callback);
-                img.onerror = () => handleAssetLoaded(callback);
-                img.src = src;
-            });
-        }
 
-        function handleAssetLoaded(callback) {
-            loadedCount++;
-            const percent = Math.floor((loadedCount / totalCritical) * 100);
-            const bar = document.getElementById('progress-bar');
-            const text = document.getElementById('loading-percent');
-            if (bar) bar.style.width = percent + "%";
-            if (text) text.innerText = percent + "%";
-            if (loadedCount >= totalCritical && typeof callback === "function") callback();
+            const updateProgress = () => {
+                loadedCount++;
+                const percent = Math.min(100, Math.floor((loadedCount / totalCritical) * 100));
+                const bar = document.getElementById('progress-bar');
+                const text = document.getElementById('loading-percent');
+                if (bar) bar.style.width = percent + "%";
+                if (text) text.innerText = percent + "%";
+            };
+
+            if (unique.length === 0) {
+                if (typeof callback === "function") callback();
+                return;
+            }
+
+            Promise.all(unique.map(src => {
+                if (assetLoadPromises.has(src)) {
+                    return assetLoadPromises.get(src).then(updateProgress);
+                }
+
+                const promise = new Promise(resolve => {
+                    const img = new Image();
+                    img.decoding = "async";
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve(); // 失敗也要結束等待，避免遊戲卡死
+                    img.src = src;
+                });
+                assetLoadPromises.set(src, promise);
+                return promise.then(updateProgress);
+            })).then(() => {
+                if (typeof callback === "function") callback();
+            });
         }
 
         function activateImages(container) {
@@ -2636,7 +2652,25 @@ img { max-width:100%; }
             return [...new Set(paths.filter(Boolean))];
         }
 
-        function preloadSceneAssets(stepIndex, callback) { preloadImages(getSceneAssetPaths(stepIndex), callback); }
+        function preloadSceneAssets(stepIndex, callback) {
+            if (readySceneIndexes.has(stepIndex)) {
+                if (typeof callback === "function") callback();
+                return;
+            }
+
+            let pending = pendingSceneLoads.get(stepIndex);
+            if (!pending) {
+                pending = new Promise(resolve => {
+                    preloadImages(getSceneAssetPaths(stepIndex), resolve);
+                }).then(() => {
+                    readySceneIndexes.add(stepIndex);
+                    pendingSceneLoads.delete(stepIndex);
+                });
+                pendingSceneLoads.set(stepIndex, pending);
+            }
+
+            if (typeof callback === "function") pending.then(callback);
+        }
 
         // 設定載入畫面最少要顯示幾秒（例如：2000 代表 2 秒）
 const minLoadingTime = 1000; 
@@ -2707,6 +2741,12 @@ function enterGameAnimation() {
 function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
+
+    // 場景素材還沒載完時，先不要切換背景／角色，避免破圖或閃一下。
+    if (!readySceneIndexes.has(stepIndex)) {
+        preloadSceneAssets(stepIndex, () => renderScene(stepIndex));
+        return;
+    }
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
