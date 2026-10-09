@@ -744,26 +744,29 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
 img { max-width:100%; }
 
 
-
 #星辰苦惱 {
     display: block !important;
-    position: fixed !important;
-    left: 300px !important;
-    top: 500px !important;
+    width: 130% !important;
+    right: -90px !important;
+    bottom: -240px !important;
+    z-index: 101 !important;
+}
 
-    margin: 0 !important;
-    transform: none !important;
-    z-index: 99999 !important;
+#星辰苦惱 img {
+    width: 140% !important;
+    height: auto !important;
 }
 
 /* 藍紙：壓在星辰上面 */
 #藍色紙 {
     z-index: 102;
+    bottom: 10px;
 }
 
 /* 格子條紋紙：最上層 */
 #格子條紋紙 {
-    z-index: 101;
+    z-index: 100;
+    bottom: 20px;
 }
 #page1 .ui {
     display: none;
@@ -826,7 +829,7 @@ img { max-width:100%; }
             <div id="星辰驕傲" class="全星辰 角色圖"><img data-src="./pct/星辰驕傲.webp" alt="星辰驕傲"></div>
             <div id="星辰微笑" class="全星辰 角色圖"><img data-src="./pct/星辰正常微笑.webp" alt="星辰微笑"></div>
             <div id="星辰思考" class="全星辰 角色圖"><img data-src="./pct/星辰思考.webp" alt="星辰思考"></div>
-            <div id="星辰苦惱" class="全星辰 角色圖"><img src="./pct/星辰苦惱.webp" alt="星辰苦惱"></div>
+            <div id="星辰苦惱" class="全星辰 角色圖 星辰苦惱選項"><img src="./pct/星辰苦惱.webp" alt="星辰苦惱"></div>
             <div id="星辰感動" class="全星辰 角色圖"><img data-src="./pct/星辰看到父母.webp" alt="星辰感動"></div>
             
             <!-- 背景圖 -->
