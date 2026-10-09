@@ -152,7 +152,13 @@
         }
 
         .全星辰 img { width: 160%; height: auto; }
-
+        /* 只調整星辰苦惱的位置 */
+#page1 #星辰苦惱 {
+    right: auto !important;
+    bottom: auto !important;
+    left: 0 !important;
+    top: 0 !important;
+}
         #星辰思考 {
             width: 100%;
             /* right: -5%; */
@@ -702,7 +708,7 @@
   width: 290px;
   filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5));
   /* 💡 如果要微調上下位置，用 margin-top 即可，不會破壞居中 */
-  margin-top: -50px; 
+  margin-top: -90px !important; 
 }
 
 @keyframes fadeInUp {
@@ -738,6 +744,36 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
  #game-container { height:min(90vh,932px); height:min(90dvh,932px); }
 }
 img { max-width:100%; }
+
+
+
+
+/* 藍紙：壓在星辰上面 */
+#藍色紙 {
+    z-index: 102;
+}
+
+/* 格子條紋紙：最上層 */
+#格子條紋紙 {
+    z-index: 101;
+}
+#page1 .ui {
+    display: none;
+    position: absolute;
+}
+
+/* 讓素材圖片正常顯示，不改原本尺寸 */
+#page1 .ui img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* 四個拼圖可以點擊 */
+#page1 .ui.拼圖 {
+    cursor: pointer;
+}
+
 </style>
 </head>
 
@@ -2020,22 +2056,18 @@ img { max-width:100%; }
             { 
                 text: "夏天就是要去海邊", 
                 nextId: 98.1, 
-                score: { "同情星": 3 },
             },
             { 
                 text: "大吃特吃", 
                 nextId: 98.2,  
-                score: { "同情星": 2 },
             },
             { 
                 text: "去ktv大叫", 
                 nextId: 98.3, 
-                score: { "同情星": 1 },
             },
             { 
                 text: "爬山有益健康", 
                 nextId: 98.4, 
-                score: { "同情星": 0 },
             }
         ]
     },
@@ -2990,27 +3022,115 @@ if (scene.bgm) {
 }
         // 💡 補上渲染選項按鈕的函式
         function renderOptions(scene) {
-            const optBox = document.getElementById('選項框');
-            if (!optBox) return;
+    const optBox = document.getElementById('選項框');
+    if (!optBox) return;
 
-            if (scene && scene.options && scene.options.length > 0) {
-                optBox.innerHTML = '';
-                scene.options.forEach(opt => {
-                    const btn = document.createElement('div');
-                    btn.className = '選項按鈕';
-                    if (opt.text.length > 12) btn.classList.add('small-text');
-                    btn.innerText = opt.text;
-                    btn.onclick = (e) => {
-                        e.stopPropagation();
-                        selectOption(opt, scene);
-                    };
-                    optBox.appendChild(btn);
-                });
-                optBox.style.display = 'flex';
-            } else {
-                optBox.style.display = 'none';
-            }
+    // 新介面需要用到的素材
+    const uiIds = [
+        '背景選擇',
+        '格子條紋紙',
+        '藍色紙',
+        '你會選擇？',
+        '藍色拼圖',
+        '紫色拼圖',
+        '綠色拼圖',
+        '粉色拼圖'
+    ];
+
+    const hideQuestionUI = () => {
+        uiIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+
+        // 隱藏新版專用的星辰思考立繪
+        const thinkingStar = document.getElementById('星辰苦惱');
+        if (thinkingStar) thinkingStar.style.display = 'none';
+    };
+
+    // 每次渲染選項時，先把新版介面關閉
+    hideQuestionUI();
+
+    if (!scene || !scene.options || scene.options.length === 0) {
+        optBox.style.display = 'none';
+        return;
+    }
+
+    // 只要選項中有 score，就使用新版介面
+    const usePuzzleUI = scene.options.some(
+        opt => opt.score && Object.keys(opt.score).length > 0
+    );
+
+    if (usePuzzleUI) {
+        // 隱藏原本四條橫向選項
+        optBox.style.display = 'none';
+
+        // 顯示新版介面素材
+        uiIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'block';
+        });
+
+        // 顯示星辰思考立繪
+        const thinkingStar = document.getElementById('星辰思考');
+        if (thinkingStar) {
+            thinkingStar.style.display = 'block';
         }
+
+        // 四個拼圖依序對應四個選項
+        const puzzleIds = [
+            '藍色拼圖',
+            '紫色拼圖',
+            '綠色拼圖',
+            '粉色拼圖'
+        ];
+
+        puzzleIds.forEach((id, index) => {
+            const puzzle = document.getElementById(id);
+            if (!puzzle) return;
+
+            // 避免重複綁定點擊事件
+            puzzle.onclick = null;
+
+            if (index >= scene.options.length) {
+                puzzle.style.display = 'none';
+                return;
+            }
+
+            puzzle.style.display = 'block';
+
+            puzzle.onclick = (e) => {
+                e.stopPropagation();
+                selectOption(scene.options[index], scene);
+            };
+        });
+
+        return;
+    }
+
+    // 沒有 score：維持原本的四條橫向選項
+    optBox.innerHTML = '';
+
+    scene.options.forEach(opt => {
+        const btn = document.createElement('div');
+        btn.className = '選項按鈕';
+
+        if (opt.text.length > 12) {
+            btn.classList.add('small-text');
+        }
+
+        btn.innerText = opt.text;
+
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            selectOption(opt, scene);
+        };
+
+        optBox.appendChild(btn);
+    });
+
+    optBox.style.display = 'flex';
+}
         
 
         function selectOption(option, currentScene) {
