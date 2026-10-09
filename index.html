@@ -2744,10 +2744,24 @@ if (bgContainer) {
 
     // 重置發言者 Class
     if (pageEl) {
-        pageEl.className = ""; 
-        // 注意：className 重設後再套用 hide-dialog，避免隱藏狀態被清掉。
+        pageEl.className = "";
         pageEl.classList.toggle('hide-dialog', !hasText);
     }
+
+    // 直接控制對話框、裝飾線與名字標籤，避免其他 CSS / class 重設讓隱藏失效。
+    const dialogElements = [
+        document.getElementById('對話框'),
+        document.getElementById('對話框那條線'),
+        pageEl ? pageEl.querySelector('.player-svg') : null
+    ];
+    dialogElements.forEach(el => {
+        if (!el) return;
+        if (hasText) {
+            el.style.removeProperty('display');
+        } else {
+            el.style.setProperty('display', 'none', 'important');
+        }
+    });
 
     // 重置打字計時器
     if (window.myTypingTimer) {
