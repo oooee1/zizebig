@@ -2907,6 +2907,18 @@ if (scene.bgm) {
     if (nextSceneIndex >= 0 && nextSceneIndex < storyScript.length) {
         setTimeout(() => preloadSceneAssets(nextSceneIndex), 0);
     }
+
+    // 最後再依照本幕是否有實際文字設定一次，避免本幕後續流程覆蓋顯示狀態。
+    const shouldShowDialog = typeof scene.text === "string" && scene.text.trim().length > 0;
+    const dialogParts = [
+        document.getElementById("對話框"),
+        document.getElementById("對話框那條線"),
+        document.querySelector("#page1 .player-svg")
+    ];
+    dialogParts.forEach(element => {
+        if (!element) return;
+        element.style.setProperty("display", shouldShowDialog ? "" : "none", shouldShowDialog ? "" : "important");
+    });
 }
         
         function updateCharacterAnimation(characterId) {
