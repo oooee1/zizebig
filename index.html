@@ -143,9 +143,9 @@
 
         .全星辰 {
             z-index: 5;
-            width: 80%;
+            width: 110%;
             position: absolute;
-            right: 20%;
+            right: -20%;
             bottom: 10px;
             display: none;
         }
@@ -153,7 +153,7 @@
         .全星辰 img { width: 160%; height: auto; }
 
         #星辰思考 {
-            width: 70%;
+            width: 100%;
             /* right: -5%; */
             bottom: 70px;
         }
@@ -162,7 +162,7 @@
             position: absolute;
             left: -12%;
             bottom: 180px;
-            width: 75%;
+            width: 90%;
         }
 
         .全好奇星 img { width: 135%; height: auto; }
@@ -171,13 +171,13 @@
             position: absolute;
             left: 0px;
             bottom: 190px;
-            width: 75%;
+            width: 95%;
         }
         #一群好奇星 {
             position: absolute;
-            left: 0px;
+            left: 10px;
             bottom: 200px;
-            width: 75%;
+            width: 95%;
         }
         .全同情星 {
             position: absolute;
@@ -368,7 +368,6 @@
 /* 💡 新增這段：當對話框隱藏時，SVG 名字標籤也一併隱藏 */
 /* 💡 當 page1 被加上 hide-dialog 時，強制隱藏對話框與名字 SVG */
 #page1.hide-dialog #對話框,
-#page1.hide-dialog #對話框那條線,
 #page1.hide-dialog .player-svg {
     display: none !important;
 }
@@ -729,7 +728,7 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
 }
 #對話框 { height:min(250px,35dvh); min-height:170px; }
 #對話框那條線 { top:auto; bottom:min(240px,35dvh); }
-.player-svg { top:auto !important; bottom:clamp(155px,calc(35dvh - 12px),255px); left:5%; width:min(78%,300px); height:auto; aspect-ratio:300 / 70; }
+.player-svg { top:auto !important; bottom: 200px; left:5%; width:min(78%,300px); height:auto; aspect-ratio:300 / 70; }
 #對話文本 { width:86%; height:62%; font-size:clamp(17px,5.2vw,24px); line-height:1.45; padding-bottom:env(safe-area-inset-bottom); }
 #選項框 { width:100%; padding:0 12px; gap:clamp(8px,1.8vh,15px); }
 .選項按鈕 { min-height:48px; height:auto; padding:10px 12px; font-size:clamp(15px,4.6vw,20px); }
@@ -1425,7 +1424,6 @@ img { max-width:100%; }
         id: 37,
         text: "躂躂，做出來了！",
         nextId: 38,
-        characters: ["星辰驕傲"],
         comicImages: ["/尾巴"],
         background: "好奇星棉花重災區",
     },
@@ -2709,11 +2707,8 @@ function renderScene(stepIndex) {
     if (!scene) return;
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
-    const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
+    const hasText = scene.text && scene.text.trim() !== "";
     const pageEl = document.getElementById('page1');
-
-    // 沒有對話文字時隱藏對話框、名字標籤與對話框裝飾線；有文字時恢復顯示。
-    if (pageEl) pageEl.classList.toggle('hide-dialog', !hasText);
 
     // 1. 隱藏所有背景，並清除所有背景上的震動 Class
 document.querySelectorAll('.背景圖, .背景').forEach(el => {
