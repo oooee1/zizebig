@@ -152,13 +152,7 @@
         }
 
         .全星辰 img { width: 160%; height: auto; }
-        /* 只調整星辰苦惱的位置 */
-#page1 #星辰苦惱 {
-    right: auto !important;
-    bottom: auto !important;
-    left: 0 !important;
-    top: 0 !important;
-}
+
         #星辰思考 {
             width: 100%;
             /* right: -5%; */
@@ -187,12 +181,16 @@
             width: 95%;
         }
         .全同情星 {
-            position: absolute;
-            left: -2%;
-            bottom: 200px;
-        }
+    position: absolute;
+    left: -2%;
+    bottom: 200px;
+    width: 90%;
+}
 
-        .全同情星 img { width: 160%; height: auto; }
+.全同情星 img {
+    width: 135%;
+    height: auto;
+}
 
         .全爽快星 { position: absolute !important; left: -20% !important; bottom: 120px !important; width: 110% !important; } 
         .全爽快星 img { width: 110% !important; height: auto !important; }
@@ -747,6 +745,16 @@ img { max-width:100%; }
 
 
 
+#星辰苦惱 {
+    display: block !important;
+    position: fixed !important;
+    left: 300px !important;
+    top: 500px !important;
+
+    margin: 0 !important;
+    transform: none !important;
+    z-index: 99999 !important;
+}
 
 /* 藍紙：壓在星辰上面 */
 #藍色紙 {
@@ -818,7 +826,7 @@ img { max-width:100%; }
             <div id="星辰驕傲" class="全星辰 角色圖"><img data-src="./pct/星辰驕傲.webp" alt="星辰驕傲"></div>
             <div id="星辰微笑" class="全星辰 角色圖"><img data-src="./pct/星辰正常微笑.webp" alt="星辰微笑"></div>
             <div id="星辰思考" class="全星辰 角色圖"><img data-src="./pct/星辰思考.webp" alt="星辰思考"></div>
-            <div id="星辰苦惱" class="全星辰 角色圖"><img data-src="./pct/星辰苦惱.webp" alt="星辰苦惱"></div>
+            <div id="星辰苦惱" class="全星辰 角色圖"><img src="./pct/星辰苦惱.webp" alt="星辰苦惱"></div>
             <div id="星辰感動" class="全星辰 角色圖"><img data-src="./pct/星辰看到父母.webp" alt="星辰感動"></div>
             
             <!-- 背景圖 -->
@@ -3072,7 +3080,7 @@ if (scene.bgm) {
         });
 
         // 顯示星辰思考立繪
-        const thinkingStar = document.getElementById('星辰思考');
+        const thinkingStar = document.getElementById('星辰苦惱');
         if (thinkingStar) {
             thinkingStar.style.display = 'block';
         }
