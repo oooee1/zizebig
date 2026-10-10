@@ -780,11 +780,15 @@ img { max-width:100%; }
     height: auto;
 }
 
-/* 四個顏色拼圖可接收點擊；滑鼠游標由透明像素判定程式控制 */
+/* 四個顏色拼圖圖層：粉色最上、綠色、藍色、紫色最下；不更動位置與尺寸 */
+#page1:not(.puzzle-confirm-mode) #粉色拼圖 { z-index: 2004 !important; }
+#page1:not(.puzzle-confirm-mode) #綠色拼圖 { z-index: 2003 !important; }
+#page1:not(.puzzle-confirm-mode) #藍色拼圖 { z-index: 2002 !important; }
+#page1:not(.puzzle-confirm-mode) #紫色拼圖 { z-index: 2001 !important; }
+
 #page1:not(.puzzle-confirm-mode) .ui.拼圖 {
     cursor: default;
     pointer-events: auto !important;
-    z-index: 2000 !important;
 }
 
 #page1.question-choice-mode .dialog-wrapper,
@@ -3589,9 +3593,25 @@ if (scene.bgm) {
             // 不依賴 e.target：按鈕可能被其他圖層蓋住，導致真正的按鈕 onclick 收不到事件。
             // 直接用點擊座標判斷命中的可見按鈕圖案，再執行對應功能。
             const buttonIds = ['是的', '我再想想'];
-            const hitButtonId = buttonIds.find(id =>
+            let hitButtonId = buttonIds.find(id =>
                 isInsideVisibleConfirmButton(id, e.clientX, e.clientY)
             );
+
+            // 若點擊事件本身落在按鈕上，且圖片座標在圖片範圍內，避免透明像素取樣失敗造成按鈕完全失效。
+            // 仍不會放行背景上的一般點擊；只有事件目標為這兩個按鈕時才使用此備援。
+            if (!hitButtonId && e.target instanceof Element) {
+                const targetButton = e.target.closest('#是的, #我再想想');
+                if (targetButton) {
+                    const img = targetButton.querySelector('img');
+                    if (img) {
+                        const rect = img.getBoundingClientRect();
+                        if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                            e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                            hitButtonId = targetButton.id;
+                        }
+                    }
+                }
+            }
 
             if (hitButtonId) {
                 e.preventDefault();
