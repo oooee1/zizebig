@@ -745,14 +745,14 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
 img { max-width:100%; }
 
 
-#星辰苦惱 {
+#星辰苦惱-選項用 {
     width: 130% !important;
     right: -90px !important;
     bottom: -240px !important;
     z-index: 101 !important;
 }
 
-#星辰苦惱 img {
+#星辰苦惱-選項用 img {
     width: 140% !important;
     height: auto !important;
 }
@@ -780,7 +780,12 @@ img { max-width:100%; }
     height: auto;
 }
 
-/* 四個顏色拼圖可接收點擊；滑鼠游標由透明像素判定程式控制 */
+/* 拼圖圖層：粉色放在紫色下方，其餘拼圖維持原本位置與尺寸 */
+#page1:not(.puzzle-confirm-mode) #綠色拼圖 { z-index: 2004 !important; }
+#page1:not(.puzzle-confirm-mode) #藍色拼圖 { z-index: 2003 !important; }
+#page1:not(.puzzle-confirm-mode) #紫色拼圖 { z-index: 2002 !important; }
+#page1:not(.puzzle-confirm-mode) #粉色拼圖 { z-index: 2001 !important; }
+
 #page1:not(.puzzle-confirm-mode) .ui.拼圖 {
     cursor: default;
     pointer-events: auto !important;
@@ -921,6 +926,8 @@ img { max-width:100%; }
     pointer-events: none;
 }
 
+/* 短螢幕只調整拼圖選項；確認按鈕沿用上方共用尺寸與位置，
+   避免重複 media query 覆寫手機／平板的按鈕大小。 */
 @media (max-height: 650px) {
     #page1.puzzle-confirm-mode #藍色選項,
     #page1.puzzle-confirm-mode #紫色選項,
@@ -1019,7 +1026,8 @@ img { max-width:100%; }
             <div id="星辰驕傲" class="全星辰 角色圖"><img data-src="./pct/星辰驕傲.webp" alt="星辰驕傲"></div>
             <div id="星辰微笑" class="全星辰 角色圖"><img data-src="./pct/星辰正常微笑.webp" alt="星辰微笑"></div>
             <div id="星辰思考" class="全星辰 角色圖"><img data-src="./pct/星辰思考.webp" alt="星辰思考"></div>
-            <div id="星辰苦惱" class="全星辰 角色圖 星辰苦惱選項"><img src="./pct/星辰苦惱.webp" alt="星辰苦惱"></div>
+            <div id="星辰苦惱" class="全星辰 角色圖 星辰苦惱選項"><img src="./pct/星辰苦惱(選項用).webp" alt="星辰苦惱"></div>
+            <div id="星辰苦惱-選項用" class="全星辰 角色圖 星辰苦惱選項"><img src="./pct/星辰苦惱.webp" alt="星辰苦惱"></div>
             <div id="星辰感動" class="全星辰 角色圖"><img data-src="./pct/星辰看到父母.webp" alt="星辰感動"></div>
             
             <!-- 背景圖 -->
@@ -2841,6 +2849,10 @@ img { max-width:100%; }
         const readySceneIndexes = new Set();
         const pendingSceneLoads = new Map();
 
+        // 場景素材載入中時鎖住劇情推進，避免連點把對話跳過。
+        let sceneTransitionLoading = false;
+        let sceneTransitionTarget = null;
+
 
         function preloadImages(array, callback) {
             const unique = [...new Set((array || []).filter(Boolean))];
@@ -2972,7 +2984,28 @@ function enterGameAnimation() {
 function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
-if (!readySceneIndexes.has(stepIndex)) { preloadSceneAssets(stepIndex, () => {  if (currentStep === stepIndex) { renderScene(stepIndex); } }); return; }
+
+    if (!readySceneIndexes.has(stepIndex)) {
+        // 同一幕正在載入時，不重複建立等待流程。
+        if (sceneTransitionLoading && sceneTransitionTarget === stepIndex) return;
+
+        sceneTransitionLoading = true;
+        sceneTransitionTarget = stepIndex;
+        const page = document.getElementById('page1');
+        if (page) page.classList.add('scene-assets-loading');
+
+        preloadSceneAssets(stepIndex, () => {
+            // 只解鎖目前等待的那一幕，避免較舊的載入回呼干擾新場景。
+            if (sceneTransitionTarget !== stepIndex) return;
+            sceneTransitionLoading = false;
+            sceneTransitionTarget = null;
+            if (page) page.classList.remove('scene-assets-loading');
+
+            if (currentStep === stepIndex) renderScene(stepIndex);
+        });
+        return;
+    }
+
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     const pageEl = document.getElementById('page1');
@@ -3264,6 +3297,7 @@ if (scene.bgm) {
                 yesButton.onclick = function (e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    if (sceneTransitionLoading) return;
                     const pending = pendingPuzzleConfirmation;
                     if (!pending) return;
 
@@ -3303,6 +3337,7 @@ if (scene.bgm) {
             if (rethinkButton) {
                 rethinkButton.onclick = (e) => {
                     e.stopPropagation();
+                    if (sceneTransitionLoading) return;
                     pendingPuzzleConfirmation = null;
                     page.classList.remove('puzzle-confirm-mode');
                     renderOptions(scene);
@@ -3344,7 +3379,7 @@ if (scene.bgm) {
         });
 
         // 隱藏新版專用的星辰思考立繪
-        const thinkingStar = document.getElementById('星辰苦惱');
+        const thinkingStar = document.getElementById('星辰苦惱-選項用');
         if (thinkingStar) thinkingStar.style.display = 'none';
     };
 
@@ -3372,7 +3407,7 @@ if (scene.bgm) {
         });
 
         // 顯示星辰思考立繪
-        const thinkingStar = document.getElementById('星辰苦惱');
+        const thinkingStar = document.getElementById('星辰苦惱-選項用');
         if (thinkingStar) {
             thinkingStar.style.display = 'block';
         }
@@ -3503,6 +3538,7 @@ if (scene.bgm) {
         
 
         function selectOption(option, currentScene) {
+            if (sceneTransitionLoading) return;
             if (option.score && !scoredSceneIds.has(currentScene.id)) {
                 for (let character in option.score) {
                     scores[character] = (scores[character] || 0) + option.score[character];
@@ -3518,6 +3554,8 @@ if (scene.bgm) {
         }
         
         function nextStep() {
+            // 目前場景還在載素材時，任何點擊都不能推進或跳過對話。
+            if (sceneTransitionLoading) return;
             const scene = storyScript[currentStep];
             if (scene && Number(scene.id) === 8) return;
 
@@ -3586,13 +3624,26 @@ if (scene.bgm) {
             const activePage = document.getElementById('page1');
             if (!activePage || !activePage.classList.contains('puzzle-confirm-mode')) return;
 
-            // 兩個按鈕本身的點擊事件必須放行，否則 onclick 無法執行。
-            // 其他所有位置（包括黑色背景、空白處）一律攔截。
-            const clickedButton = e.target instanceof Element
-                ? e.target.closest('#是的, #我再想想')
-                : null;
-            if (clickedButton) return;
+            // 不依賴 e.target：按鈕可能被其他圖層蓋住，導致真正的按鈕 onclick 收不到事件。
+            // 直接用點擊座標判斷命中的可見按鈕圖案，再執行對應功能。
+            const buttonIds = ['是的', '我再想想'];
+            let hitButtonId = buttonIds.find(id =>
+                isInsideVisibleConfirmButton(id, e.clientX, e.clientY)
+            );
 
+            if (hitButtonId) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+
+                const button = document.getElementById(hitButtonId);
+                if (button && typeof button.onclick === 'function') {
+                    button.onclick.call(button, e);
+                }
+                return;
+            }
+
+            // 背景、透明區、其他畫面元素一律不觸發任何操作。
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
