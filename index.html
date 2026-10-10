@@ -747,7 +747,6 @@ img { max-width:100%; }
 
 
 /* 星辰苦惱（一般對話與選項版）都要顯示在拼圖上方，避免平板畫面被拼圖蓋住 */
-#星辰苦惱,
 #星辰苦惱-選項用 {
     z-index: 2005 !important;
 }
@@ -811,6 +810,20 @@ img { max-width:100%; }
     cursor: default;
 }
 
+
+/* 確認畫面：原本黃色線在 #對話框 的 stacking context 裡，會被外面的「是的」按鈕蓋住。
+   改由 page1 的偽元素畫線，讓它能真正疊在確認按鈕圖片上方。 */
+#page1.puzzle-confirm-mode::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 10px;
+    background: #ffb30f;
+    z-index: 10001;
+    pointer-events: none;
+}
 
 /* 第二階段拼圖詳細內容：保留底部黃色線，不要隨對話框一起隱藏 */
 #page1.puzzle-confirm-mode #對話框那條線 {
@@ -2877,6 +2890,16 @@ img { max-width:100%; }
 
 function activateImages(container) { if (!container) return; container.querySelectorAll('img[data-src]').forEach(img => { const src = img.getAttribute('data-src'); if (src && !img.getAttribute('src')) { img.setAttribute('src', src); img.decoding = "async"; } }); }
 
+        // 預載「問題」資料夾的所有題目介面圖片，確保拼圖選擇與確認畫面出現前素材已載入。
+        function getQuestionAssetPaths() {
+            const paths = [];
+            document.querySelectorAll('img[src*="./問題/"], img[data-src*="./問題/"]').forEach(img => {
+                const src = img.getAttribute('src') || img.getAttribute('data-src');
+                if (src) paths.push(src);
+            });
+            return [...new Set(paths.filter(Boolean))];
+        }
+
         function getSceneAssetPaths(stepIndex) {
             const scene = storyScript[stepIndex];
             if (!scene) return [];
@@ -2889,6 +2912,11 @@ function activateImages(container) { if (!container) return; container.querySele
                 if (el) el.querySelectorAll('img[data-src]').forEach(img => paths.push(img.getAttribute('data-src')));
             });
             if (Array.isArray(scene.comicImages)) paths.push(...scene.comicImages);
+
+            // 啟動時一併預載所有題目相關圖片（題目背景、拼圖、選項、確認畫面與按鈕）。
+            // 只加在第一幕，避免每次切換劇情都重複把整組題目素材納入預載清單。
+            if (stepIndex === 0) paths.push(...getQuestionAssetPaths());
+
             return [...new Set(paths.filter(Boolean))];
         }
 
