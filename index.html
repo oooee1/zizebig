@@ -3256,12 +3256,36 @@ if (scene.bgm) {
                     const pending = pendingPuzzleConfirmation;
                     if (!pending) return;
 
+                    // 先保留待確認資料，再清除確認狀態，避免被其他點擊事件當成「我再想想」。
                     pendingPuzzleConfirmation = null;
                     page.classList.remove('puzzle-confirm-mode');
+
+                    // 隱藏確認畫面的所有素材，避免舊選項殘留在下一幕。
                     document.querySelectorAll('#page1 .ui').forEach(el => {
                         el.style.display = 'none';
                     });
-                    selectOption(pending.option, pending.scene);
+                    const optBox = document.getElementById('選項框');
+                    if (optBox) optBox.style.display = 'none';
+
+                    // 「是的」必須依照所選選項的 nextId 直接跳轉，不回到選擇畫面。
+                    const nextIndex = storyScript.findIndex(s =>
+                        Number(s.id) === Number(pending.option.nextId)
+                    );
+                    if (nextIndex === -1) {
+                        console.error('找不到選項 nextId 對應的劇情：', pending.option.nextId);
+                        return;
+                    }
+
+                    // 分數只在確認「是的」時加入，並避免重複計分。
+                    if (pending.option.score && !scoredSceneIds.has(pending.scene.id)) {
+                        for (const character in pending.option.score) {
+                            scores[character] = (scores[character] || 0) + pending.option.score[character];
+                        }
+                        scoredSceneIds.add(pending.scene.id);
+                    }
+
+                    currentStep = nextIndex;
+                    renderScene(currentStep);
                 };
             }
 
