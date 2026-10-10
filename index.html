@@ -3266,6 +3266,7 @@ if (scene.bgm) {
                 yesButton.onclick = function (e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    if (sceneTransitionLoading) return;
                     const pending = pendingPuzzleConfirmation;
                     if (!pending) return;
 
@@ -3305,6 +3306,7 @@ if (scene.bgm) {
             if (rethinkButton) {
                 rethinkButton.onclick = (e) => {
                     e.stopPropagation();
+                    if (sceneTransitionLoading) return;
                     pendingPuzzleConfirmation = null;
                     page.classList.remove('puzzle-confirm-mode');
                     renderOptions(scene);
