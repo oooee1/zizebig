@@ -3251,23 +3251,17 @@ if (scene.bgm) {
         '藍色拼圖',
         '紫色拼圖',
         '綠色拼圖',
-        '粉色拼圖',
-        '黑色紙',
-        '確認選項背景',
-        '是的',
-        '我再想想',
-        '藍色背景',
-        '紫色背景',
-        '綠色背景',
-        '紅色背景',
-        '藍色選項',
-        '紫色選項',
-        '綠色選項',
-        '粉色選項'
+        '粉色拼圖'
     ];
 
     const hideQuestionUI = () => {
-        uiIds.forEach(id => {
+        const allQuestionUiIds = [
+            ...uiIds,
+            '黑色紙', '確認選項背景', '是的', '我再想想',
+            '藍色背景', '紫色背景', '綠色背景', '紅色背景',
+            '藍色選項', '紫色選項', '綠色選項', '粉色選項'
+        ];
+        allQuestionUiIds.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         });
