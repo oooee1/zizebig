@@ -3381,8 +3381,9 @@ if (scene.bgm) {
                         puzzlePixelIsVisible(img, e.clientX, e.clientY);
                 });
 
-                const selected = hit || { color, optionIndex };
-                showPuzzleConfirmation(scene.options[selected.optionIndex], scene, selected.color);
+                // 點在所有拼圖的不透明圖案以外時，完全不觸發任何反應。
+                if (!hit) return;
+                showPuzzleConfirmation(scene.options[hit.optionIndex], scene, hit.color);
             };
             puzzle.onclick = chooseThisPuzzle;
             const puzzleImage = puzzle.querySelector('img');
