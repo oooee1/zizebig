@@ -3318,35 +3318,72 @@ if (scene.bgm) {
             thinkingStar.style.display = 'block';
         }
 
-        // 四個拼圖依序對應四個選項
-        const puzzleIds = [
-            '藍色拼圖',
-            '紫色拼圖',
-            '綠色拼圖',
-            '粉色拼圖'
+        // 畫面上的選項順序：第一個綠色、第二個藍色，接著紫色、粉色。
+        // 素材可能是整張透明畫布，不能直接用最上層圖片當成點擊結果；
+        // 先依圖片透明像素判斷使用者實際點到哪一塊拼圖。
+        const puzzleEntries = [
+            { id: '綠色拼圖', color: '綠色', optionIndex: 0 },
+            { id: '藍色拼圖', color: '藍色', optionIndex: 1 },
+            { id: '紫色拼圖', color: '紫色', optionIndex: 2 },
+            { id: '粉色拼圖', color: '粉色', optionIndex: 3 }
         ];
+        const puzzleAlphaCache = new WeakMap();
 
-        puzzleIds.forEach((id, index) => {
+        function puzzlePixelIsVisible(img, clientX, clientY) {
+            if (!img || !img.complete || !img.naturalWidth || !img.naturalHeight) return false;
+            const rect = img.getBoundingClientRect();
+            if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return false;
+
+            let canvas = puzzleAlphaCache.get(img);
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                if (!ctx) return false;
+                try {
+                    ctx.drawImage(img, 0, 0);
+                    puzzleAlphaCache.set(img, canvas);
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            const x = Math.min(canvas.width - 1, Math.max(0, Math.floor((clientX - rect.left) / rect.width * canvas.width)));
+            const y = Math.min(canvas.height - 1, Math.max(0, Math.floor((clientY - rect.top) / rect.height * canvas.height)));
+            try {
+                return canvas.getContext('2d', { willReadFrequently: true }).getImageData(x, y, 1, 1).data[3] > 24;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        puzzleEntries.forEach(({ id, color, optionIndex }) => {
             const puzzle = document.getElementById(id);
             if (!puzzle) return;
-
-            // 避免重複綁定點擊事件
             puzzle.onclick = null;
 
-            if (index >= scene.options.length) {
+            if (optionIndex >= scene.options.length) {
                 puzzle.style.display = 'none';
                 return;
             }
 
             puzzle.style.display = 'block';
-
             const chooseThisPuzzle = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                const colorNames = ['藍色', '紫色', '綠色', '粉色'];
-                showPuzzleConfirmation(scene.options[index], scene, colorNames[index]);
+
+                // 由畫面順序檢查點擊座標落在哪張拼圖的不透明區域。
+                const hit = puzzleEntries.find(entry => {
+                    if (entry.optionIndex >= scene.options.length) return false;
+                    const img = document.querySelector('#' + entry.id + ' img');
+                    return img && img.parentElement.style.display !== 'none' &&
+                        puzzlePixelIsVisible(img, e.clientX, e.clientY);
+                });
+
+                const selected = hit || { color, optionIndex };
+                showPuzzleConfirmation(scene.options[selected.optionIndex], scene, selected.color);
             };
-            // 桌機與手機都支援：點拼圖本體或裡面的圖片都能進確認畫面。
             puzzle.onclick = chooseThisPuzzle;
             const puzzleImage = puzzle.querySelector('img');
             if (puzzleImage) puzzleImage.onclick = chooseThisPuzzle;
