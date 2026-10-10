@@ -779,11 +779,147 @@ img { max-width:100%; }
     height: auto;
 }
 
-/* 四個拼圖可以點擊 */
-#page1 .ui.拼圖 {
+/* 四個顏色拼圖必須能被點擊，並放在選擇畫面的裝飾素材上方 */
+#page1:not(.puzzle-confirm-mode) .ui.拼圖 {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    z-index: 2000 !important;
+}
+
+#page1.question-choice-mode .dialog-wrapper,
+#page1.question-choice-mode #對話框,
+#page1.question-choice-mode #對話文本,
+#page1.question-choice-mode .player-svg {
+    pointer-events: none !important;
+}
+
+#page1:not(.puzzle-confirm-mode) .ui.拼圖 img {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+
+/* 第二階段顏色拼圖確認畫面 */
+#page1.puzzle-confirm-mode #對話框那條線 {
+    display: none !important;
+}
+
+#page1.puzzle-confirm-mode .ui {
+    display: none;
+}
+
+#page1.puzzle-confirm-mode #藍色背景,
+#page1.puzzle-confirm-mode #紫色背景,
+#page1.puzzle-confirm-mode #綠色背景,
+#page1.puzzle-confirm-mode #紅色背景 {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 101;
+}
+
+#page1.puzzle-confirm-mode #藍色背景 img,
+#page1.puzzle-confirm-mode #紫色背景 img,
+#page1.puzzle-confirm-mode #綠色背景 img,
+#page1.puzzle-confirm-mode #紅色背景 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#page1.puzzle-confirm-mode #黑色紙 {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 102;
+}
+
+#page1.puzzle-confirm-mode #黑色紙 img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+
+#page1.puzzle-confirm-mode #藍色選項,
+#page1.puzzle-confirm-mode #紫色選項,
+#page1.puzzle-confirm-mode #綠色選項,
+#page1.puzzle-confirm-mode #粉色選項 {
+    position: absolute;
+    top: 8%;
+    left: 8%;
+    width: 84%;
+    z-index: 103;
+    cursor: default;
+}
+
+#page1.puzzle-confirm-mode .拼圖選項文字 {
+    position: absolute;
+    left: 18%;
+    top: 20%;
+    width: 64%;
+    height: 58%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    color: #fff;
+    font-size: clamp(17px, 4.6vw, 23px);
+    line-height: 1.35;
+    font-weight: bold;
+    text-shadow: 0 1px 4px rgba(0,0,0,.7);
+    pointer-events: none;
+}
+
+#page1.puzzle-confirm-mode #確認選項背景 {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 104;
+}
+
+#page1.puzzle-confirm-mode #確認選項背景 img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+#page1.puzzle-confirm-mode #我再想想,
+#page1.puzzle-confirm-mode #是的 {
+    position: absolute;
+    bottom: -2%;
+    /* width: 28%; */
+    z-index: 105;
     cursor: pointer;
 }
 
+
+#page1.puzzle-confirm-mode #我再想想 img,
+#page1.puzzle-confirm-mode #是的 img {
+    width: 100%;
+    height: auto;
+}
+
+@media (max-height: 650px) {
+    #page1.puzzle-confirm-mode #藍色選項,
+    #page1.puzzle-confirm-mode #紫色選項,
+    #page1.puzzle-confirm-mode #綠色選項,
+    #page1.puzzle-confirm-mode #粉色選項 {
+        top: 5%;
+        width: 76%;
+        left: 12%;
+    }
+
+    #page1.puzzle-confirm-mode #我再想想,
+    #page1.puzzle-confirm-mode #是的 {
+        bottom: 3%;
+        width: 25%;
+    }
+}
 
 /* 第二階段選擇畫面：保留底部黃色線條，隱藏對話框背景、文字與名字 */
 #page1.question-choice-mode #對話框 {
@@ -903,6 +1039,7 @@ img { max-width:100%; }
             <div id="藍色紙" class="ui"><img src="./問題/背景 藍紙（壓在星辰上面）（星辰在下面）（星辰逼你看了嗎）.webp" ></div>
             <div id="背景選擇" class="ui"><img src="./問題/背景 選擇.webp" ></div>
             
+            <div id="確認選項背景" class="ui"><img src="./問題/背景+文字：確定是這個選項嗎？.webp" ></div>
             <div id="是的" class="ui"><img src="./問題/文字：是的.webp" ></div>
             <div id="你會選擇？" class="ui"><img src="./問題/文字：你會選擇？.webp" ></div>
             <div id="我再想想" class="ui"><img src="./問題/文字：我再想想....webp" ></div>
@@ -915,10 +1052,10 @@ img { max-width:100%; }
             <div id="紫色拼圖" class="ui 拼圖"><img src="./問題/拼圖紫色拼圖.webp" ></div>
             <div id="綠色拼圖" class="ui 拼圖"><img src="./問題/拼圖綠色拼圖.webp" ></div>
             <div id="粉色拼圖" class="ui 拼圖"><img src="./問題/拼圖粉色拼圖.webp" ></div>
-            <div id="藍色選項" class="ui 選項"><img src="./問題/拼圖藍色拼圖.webp" ></div>
-            <div id="紫色選項" class="ui 選項"><img src="./問題/拼圖紫色拼圖.webp" ></div>
-            <div id="綠色選項" class="ui 選項"><img src="./問題/拼圖綠色拼圖.webp" ></div>
-            <div id="粉色選項" class="ui 選項"><img src="./問題/拼圖粉色拼圖.webp" ></div>
+            <div id="藍色選項" class="ui 選項"><img src="./問題/拼圖藍色選項.webp" ><div class="拼圖選項文字"></div></div>
+            <div id="紫色選項" class="ui 選項"><img src="./問題/拼圖紫色選項.webp" ><div class="拼圖選項文字"></div></div>
+            <div id="綠色選項" class="ui 選項"><img src="./問題/拼圖綠色選項.webp" ><div class="拼圖選項文字"></div></div>
+            <div id="粉色選項" class="ui 選項"><img src="./問題/拼圖粉色選項.webp" ><div class="拼圖選項文字"></div></div>
             <!-- 問題 -->
 
             <!-- 對話框 (100% 舊版 SVG 與文字標籤結構) -->
@@ -3048,10 +3185,73 @@ if (scene.bgm) {
             break;
     }
 }
+        // 玩家點選拼圖後，先進入確認畫面；只有按「是的」才正式計分並前往 nextId。
+        let pendingPuzzleConfirmation = null;
+
+        function showPuzzleConfirmation(option, scene, colorName) {
+            const page = document.getElementById('page1');
+            const optBox = document.getElementById('選項框');
+            if (!page || !option || !scene) return;
+
+            pendingPuzzleConfirmation = { option, scene };
+
+            // 先收起選擇介面的素材，再顯示確認介面。
+            document.querySelectorAll('#page1 .ui').forEach(el => {
+                el.style.display = 'none';
+            });
+            if (optBox) optBox.style.display = 'none';
+            page.classList.add('puzzle-confirm-mode');
+
+            const backgroundId = colorName === '粉色' ? '紅色背景' : colorName + '背景';
+            const selectedOptionId = colorName + '選項';
+            [backgroundId, '黑色紙', selectedOptionId, '確認選項背景', '是的', '我再想想'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'block';
+            });
+
+            const selectedOption = document.getElementById(selectedOptionId);
+            if (selectedOption) {
+                const label = selectedOption.querySelector('.拼圖選項文字');
+                if (label) label.textContent = option.text || '';
+                selectedOption.onclick = null;
+            }
+
+            const yesButton = document.getElementById('是的');
+            const rethinkButton = document.getElementById('我再想想');
+
+            if (yesButton) {
+                yesButton.onclick = (e) => {
+                    e.stopPropagation();
+                    const pending = pendingPuzzleConfirmation;
+                    if (!pending) return;
+
+                    pendingPuzzleConfirmation = null;
+                    page.classList.remove('puzzle-confirm-mode');
+                    document.querySelectorAll('#page1 .ui').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    selectOption(pending.option, pending.scene);
+                };
+            }
+
+            if (rethinkButton) {
+                rethinkButton.onclick = (e) => {
+                    e.stopPropagation();
+                    pendingPuzzleConfirmation = null;
+                    page.classList.remove('puzzle-confirm-mode');
+                    renderOptions(scene);
+                };
+            }
+        }
+
         // 💡 補上渲染選項按鈕的函式
         function renderOptions(scene) {
     const optBox = document.getElementById('選項框');
     if (!optBox) return;
+
+    // 每次回到選擇介面，都解除確認畫面狀態，避免舊畫面的樣式擋住拼圖。
+    const page = document.getElementById('page1');
+    if (page) page.classList.remove('puzzle-confirm-mode');
 
     // 新介面需要用到的素材
     const uiIds = [
@@ -3066,7 +3266,13 @@ if (scene.bgm) {
     ];
 
     const hideQuestionUI = () => {
-        uiIds.forEach(id => {
+        const allQuestionUiIds = [
+            ...uiIds,
+            '黑色紙', '確認選項背景', '是的', '我再想想',
+            '藍色背景', '紫色背景', '綠色背景', '紅色背景',
+            '藍色選項', '紫色選項', '綠色選項', '粉色選項'
+        ];
+        allQuestionUiIds.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         });
@@ -3105,32 +3311,75 @@ if (scene.bgm) {
             thinkingStar.style.display = 'block';
         }
 
-        // 四個拼圖依序對應四個選項
-        const puzzleIds = [
-            '藍色拼圖',
-            '紫色拼圖',
-            '綠色拼圖',
-            '粉色拼圖'
+        // 畫面上的選項順序：第一個綠色、第二個藍色，接著紫色、粉色。
+        // 素材可能是整張透明畫布，不能直接用最上層圖片當成點擊結果；
+        // 先依圖片透明像素判斷使用者實際點到哪一塊拼圖。
+        const puzzleEntries = [
+            { id: '綠色拼圖', color: '綠色', optionIndex: 0 },
+            { id: '藍色拼圖', color: '藍色', optionIndex: 1 },
+            { id: '紫色拼圖', color: '紫色', optionIndex: 2 },
+            { id: '粉色拼圖', color: '粉色', optionIndex: 3 }
         ];
+        const puzzleAlphaCache = new WeakMap();
 
-        puzzleIds.forEach((id, index) => {
+        function puzzlePixelIsVisible(img, clientX, clientY) {
+            if (!img || !img.complete || !img.naturalWidth || !img.naturalHeight) return false;
+            const rect = img.getBoundingClientRect();
+            if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return false;
+
+            let canvas = puzzleAlphaCache.get(img);
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                if (!ctx) return false;
+                try {
+                    ctx.drawImage(img, 0, 0);
+                    puzzleAlphaCache.set(img, canvas);
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            const x = Math.min(canvas.width - 1, Math.max(0, Math.floor((clientX - rect.left) / rect.width * canvas.width)));
+            const y = Math.min(canvas.height - 1, Math.max(0, Math.floor((clientY - rect.top) / rect.height * canvas.height)));
+            try {
+                return canvas.getContext('2d', { willReadFrequently: true }).getImageData(x, y, 1, 1).data[3] > 24;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        puzzleEntries.forEach(({ id, color, optionIndex }) => {
             const puzzle = document.getElementById(id);
             if (!puzzle) return;
-
-            // 避免重複綁定點擊事件
             puzzle.onclick = null;
 
-            if (index >= scene.options.length) {
+            if (optionIndex >= scene.options.length) {
                 puzzle.style.display = 'none';
                 return;
             }
 
             puzzle.style.display = 'block';
-
-            puzzle.onclick = (e) => {
+            const chooseThisPuzzle = (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                selectOption(scene.options[index], scene);
+
+                // 由畫面順序檢查點擊座標落在哪張拼圖的不透明區域。
+                const hit = puzzleEntries.find(entry => {
+                    if (entry.optionIndex >= scene.options.length) return false;
+                    const img = document.querySelector('#' + entry.id + ' img');
+                    return img && img.parentElement.style.display !== 'none' &&
+                        puzzlePixelIsVisible(img, e.clientX, e.clientY);
+                });
+
+                const selected = hit || { color, optionIndex };
+                showPuzzleConfirmation(scene.options[selected.optionIndex], scene, selected.color);
             };
+            puzzle.onclick = chooseThisPuzzle;
+            const puzzleImage = puzzle.querySelector('img');
+            if (puzzleImage) puzzleImage.onclick = chooseThisPuzzle;
         });
 
         return;
