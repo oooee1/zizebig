@@ -3363,23 +3363,35 @@ function renderOptions(scene) {
             }
         }
 
+        // 使用 capture 階段接收點擊，避免內層裝飾／覆蓋元素的事件攔截，
+        // 導致玩家無法跳過打字或繼續劇情。
         document.addEventListener('click', function (e) {
+            const target = e.target instanceof Element ? e.target : null;
+            if (!target) return;
+
             const menuContainer = document.querySelector('.menu-container');
             const wrapper = document.getElementById("menu-items-wrapper");
-            if (menuContainer && !menuContainer.contains(e.target) && wrapper) {
+            if (menuContainer && !menuContainer.contains(target) && wrapper) {
                 wrapper.classList.remove('open');
             }
 
-            if (e.target.closest('.menu-container') || 
-                e.target.closest('.選項按鈕') || 
-                e.target.closest('#player-name-input') ||
-                e.target.closest('.nav-item') ||
-                e.target.closest('#askname-item')) {
-                return; 
+            // 這些是有自己操作流程的控制項，不交給全畫面點擊推進劇情。
+            if (target.closest('.menu-container') ||
+                target.closest('.選項按鈕') ||
+                target.closest('.拼圖') ||
+                target.closest('.選項') ||
+                target.closest('#player-name-input') ||
+                target.closest('.nav-item') ||
+                target.closest('#askname-item') ||
+                target.closest('#問名字') ||
+                target.closest('#確認選項背景') ||
+                target.closest('#是的') ||
+                target.closest('#我再想想')) {
+                return;
             }
 
             nextStep();
-        });
+        }, true);
 
         function showInputBox() {
     const askBg = document.getElementById("問名字");
