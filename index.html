@@ -472,7 +472,8 @@
         /* 1. 將 @font-face 移至 CSS 最上方宣告 */
     @font-face {
   font-family: 'CP-&-TRANS';
-  src: url('./font/CP--TRANS.woff2') format('woff2');
+  src: url('./font/CP--TRANS.woff') format('woff'),
+       url('./font/CP--TRANS.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
