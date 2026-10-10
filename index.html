@@ -3509,7 +3509,9 @@ if (scene.bgm) {
             }
         }
 
+        // 使用捕獲階段攔截確認畫面的點擊，避免任何其他全域事件在按鈕處理前推進劇情。
         document.addEventListener('click', function (e) {
+
             // 第二階段是確認畫面：背景任意位置都不能推進劇情。
             // 「我再想想」與「是的」各自的 onclick 會自行處理，且會停止冒泡。
             const activePage = document.getElementById('page1');
