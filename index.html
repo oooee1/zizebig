@@ -779,9 +779,9 @@ img { max-width:100%; }
     height: auto;
 }
 
-/* 四個顏色拼圖必須能被點擊，並放在選擇畫面的裝飾素材上方 */
+/* 四個顏色拼圖可接收點擊；滑鼠游標由透明像素判定程式控制 */
 #page1:not(.puzzle-confirm-mode) .ui.拼圖 {
-    cursor: pointer !important;
+    cursor: default;
     pointer-events: auto !important;
     z-index: 2000 !important;
 }
@@ -795,7 +795,7 @@ img { max-width:100%; }
 
 #page1:not(.puzzle-confirm-mode) .ui.拼圖 img {
     pointer-events: auto !important;
-    cursor: pointer !important;
+    cursor: default;
 }
 
 
@@ -3381,6 +3381,30 @@ if (scene.bgm) {
             }
         }
 
+        // 只有滑鼠移到拼圖實際不透明的圖案上，才顯示可點擊游標。
+        // 透明區域與畫面其他地方一律維持一般游標。
+        const updatePuzzleCursor = (clientX, clientY) => {
+            const isOverPuzzle = puzzleEntries.some(entry => {
+                if (entry.optionIndex >= scene.options.length) return false;
+                const img = document.querySelector('#' + entry.id + ' img');
+                return img && img.parentElement.style.display !== 'none' &&
+                    puzzlePixelIsVisible(img, clientX, clientY);
+            });
+            puzzleEntries.forEach(entry => {
+                const puzzle = document.getElementById(entry.id);
+                if (!puzzle) return;
+                puzzle.style.cursor = isOverPuzzle ? 'pointer' : 'default';
+                const img = puzzle.querySelector('img');
+                if (img) img.style.cursor = isOverPuzzle ? 'pointer' : 'default';
+            });
+        };
+
+        const puzzleStage = document.getElementById('page1');
+        if (puzzleStage) {
+            puzzleStage.onmousemove = (e) => updatePuzzleCursor(e.clientX, e.clientY);
+            puzzleStage.onmouseleave = () => updatePuzzleCursor(-1, -1);
+        }
+
         puzzleEntries.forEach(({ id, color, optionIndex }) => {
             const puzzle = document.getElementById(id);
             if (!puzzle) return;
@@ -3487,6 +3511,11 @@ if (scene.bgm) {
         }
 
         document.addEventListener('click', function (e) {
+            // 第二階段是確認畫面：背景任意位置都不能推進劇情。
+            // 「我再想想」與「是的」各自的 onclick 會自行處理，且會停止冒泡。
+            const activePage = document.getElementById('page1');
+            if (activePage && activePage.classList.contains('puzzle-confirm-mode')) return;
+
             const menuContainer = document.querySelector('.menu-container');
             const wrapper = document.getElementById("menu-items-wrapper");
             if (menuContainer && !menuContainer.contains(e.target) && wrapper) {
