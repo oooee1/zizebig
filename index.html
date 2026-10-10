@@ -3597,22 +3597,6 @@ if (scene.bgm) {
                 isInsideVisibleConfirmButton(id, e.clientX, e.clientY)
             );
 
-            // 若點擊事件本身落在按鈕上，且圖片座標在圖片範圍內，避免透明像素取樣失敗造成按鈕完全失效。
-            // 仍不會放行背景上的一般點擊；只有事件目標為這兩個按鈕時才使用此備援。
-            if (!hitButtonId && e.target instanceof Element) {
-                const targetButton = e.target.closest('#是的, #我再想想');
-                if (targetButton) {
-                    const img = targetButton.querySelector('img');
-                    if (img) {
-                        const rect = img.getBoundingClientRect();
-                        if (e.clientX >= rect.left && e.clientX <= rect.right &&
-                            e.clientY >= rect.top && e.clientY <= rect.bottom) {
-                            hitButtonId = targetButton.id;
-                        }
-                    }
-                }
-            }
-
             if (hitButtonId) {
                 e.preventDefault();
                 e.stopPropagation();
