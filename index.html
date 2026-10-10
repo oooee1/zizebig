@@ -471,13 +471,14 @@
 
         /* 1. 將 @font-face 移至 CSS 最上方宣告 */
     @font-face {
-  font-family: 'CP-&-TRANS';
-  src: url('./font/CP--TRANS.woff') format('woff'),
-       url('./font/CP--TRANS.woff2') format('woff2');
-  font-weight: normal;
+  font-family: 'CPTrans';
+  src: url('./font/CP--TRANS.woff2?v=2') format('woff2'),
+       url('./font/CP--TRANS.woff?v=2') format('woff');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
-}
+  }
+
 
     * {
         user-select: none;
@@ -505,7 +506,7 @@
         position: relative; 
         z-index: 1000;
         /* 字型名稱必須與 @font-face 宣告的名稱完全一致 */
-        font-family: 'CP-&-TRANS', sans-serif !important;
+        font-family: 'CPTrans', sans-serif !important;
     }
         .選項按鈕.small-text {
             font-size: 14px;
