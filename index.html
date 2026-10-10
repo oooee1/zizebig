@@ -889,26 +889,32 @@ img { max-width:100%; }
     height: auto;
 }
 
+/* 確認畫面只有這兩個明確大小的按鈕可以接收點擊，避免圖片原始尺寸讓點擊區蓋滿畫面。 */
 #page1.puzzle-confirm-mode #我再想想,
 #page1.puzzle-confirm-mode #是的 {
     position: absolute;
-    bottom: -3%;
-    /* width: 28%; */
-    z-index: 105;
+    bottom: 0;
+    width: 28%;
+    height: auto;
+    z-index: 10000;
     cursor: pointer;
+    pointer-events: auto;
 }
 
-    #page1.puzzle-confirm-mode #我再想想 {
-        left: -4%;
-    }
-    #page1.puzzle-confirm-mode #是的 {
-        right: -2%;
-    }
+#page1.puzzle-confirm-mode #我再想想 {
+    left: 2%;
+}
+
+#page1.puzzle-confirm-mode #是的 {
+    right: 2%;
+}
 
 #page1.puzzle-confirm-mode #我再想想 img,
 #page1.puzzle-confirm-mode #是的 img {
+    display: block;
     width: 100%;
     height: auto;
+    pointer-events: none;
 }
 
 @media (max-height: 650px) {
