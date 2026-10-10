@@ -897,6 +897,36 @@ img { max-width:100%; }
     cursor: pointer;
 }
 
+#page1.puzzle-confirm-mode #我再想想 {
+    left: 5%;
+}
+
+#page1.puzzle-confirm-mode #是的 {
+    right: 5%;
+}
+
+#page1.puzzle-confirm-mode #我再想想 img,
+#page1.puzzle-confirm-mode #是的 img {
+    width: 100%;
+    height: auto;
+}
+
+@media (max-height: 650px) {
+    #page1.puzzle-confirm-mode #藍色選項,
+    #page1.puzzle-confirm-mode #紫色選項,
+    #page1.puzzle-confirm-mode #綠色選項,
+    #page1.puzzle-confirm-mode #粉色選項 {
+        top: 5%;
+        width: 76%;
+        left: 12%;
+    }
+
+    #page1.puzzle-confirm-mode #我再想想,
+    #page1.puzzle-confirm-mode #是的 {
+        bottom: 3%;
+        width: 25%;
+    }
+}
 
 #page1.puzzle-confirm-mode #我再想想 img,
 #page1.puzzle-confirm-mode #是的 img {
@@ -3374,8 +3404,12 @@ if (scene.bgm) {
                         puzzlePixelIsVisible(img, e.clientX, e.clientY);
                 });
 
-                const selected = hit || { color, optionIndex };
-                showPuzzleConfirmation(scene.options[selected.optionIndex], scene, selected.color);
+
+
+                // 點在所有拼圖的不透明圖案以外時，完全不觸發任何反應。
+                if (!hit) return;
+                showPuzzleConfirmation(scene.options[hit.optionIndex], scene, hit.color);
+
             };
             puzzle.onclick = chooseThisPuzzle;
             const puzzleImage = puzzle.querySelector('img');
