@@ -154,12 +154,9 @@
         .全星辰 img { width: 160%; height: auto; }
 
         #星辰思考 {
-            position: absolute;
             width: 100%;
-            right: -20% !important;
-            left: auto !important;
-            top: auto !important;
-            bottom: 70px !important;
+            /* right: -5%; */
+            bottom: 70px;
         }
 
         .全好奇星 {
@@ -746,63 +743,48 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
 }
 img { max-width:100%; }
 
-/* 確認選項：把文字疊在選項圖片上 */
-#page1 .ui.選項 {
-    position: absolute;
+
+#星辰苦惱 {
+    display: block !important;
+    width: 130% !important;
+    right: -90px !important;
+    bottom: -240px !important;
+    z-index: 101 !important;
 }
 
-#page1 .選項文字 {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    box-sizing: border-box;
-    padding: 8% 12%;
-    text-align: center;
-    overflow-wrap: anywhere;
-    white-space: normal;
-
-    font-size: clamp(14px, 2.8vw, 24px);
-    line-height: 1.4;
-    color: #333;
-
-    pointer-events: none;
+#星辰苦惱 img {
+    width: 140% !important;
+    height: auto !important;
 }
 
-/* 圖層順序：顏色背景 → 藍色背景 → 黑色紙 */
-#藍色背景,
-#紫色背景,
-#綠色背景,
-#紅色背景 {
-    z-index: 100;
-}
-
-#黑色紙 {
+/* 藍紙：壓在星辰上面 */
+#藍色紙 {
     z-index: 102;
+    bottom: 10px;
 }
 
-/* 確認文字背景 */
-#確認選項背景 {
-    z-index: 103;
+/* 格子條紋紙：最上層 */
+#格子條紋紙 {
+    z-index: 100;
+    bottom: 20px;
+}
+#page1 .ui {
+    display: none;
+    position: absolute;
 }
 
-/* 被選中的選項放在確認背景上方 */
-#選項藍色選項,
-#選項紫色選項,
-#選項綠色選項,
-#選項粉色選項 {
-    z-index: 104;
+/* 讓素材圖片正常顯示，不改原本尺寸 */
+#page1 .ui img {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
-/* 確認按鈕 */
-#是的,
-#我再想想 {
-    z-index: 105;
+/* 四個拼圖可以點擊 */
+#page1 .ui.拼圖 {
+    cursor: pointer;
 }
+
 </style>
 </head>
 
@@ -910,20 +892,19 @@ img { max-width:100%; }
             <div id="是的" class="ui"><img src="./問題/文字：是的.webp" ></div>
             <div id="你會選擇？" class="ui"><img src="./問題/文字：你會選擇？.webp" ></div>
             <div id="我再想想" class="ui"><img src="./問題/文字：我再想想....webp" ></div>
-            <div id="確認選項背景" class="ui"><img src="./問題/背景+文字：確定是這個選項嗎？.webp" alt=""></div>
             <div id="藍色背景" class="ui"><img src="./問題/背景藍色背景.webp" ></div>
             <div id="紫色背景" class="ui"><img src="./問題/背景紫色背景.webp" ></div>
             <div id="綠色背景" class="ui"><img src="./問題/背景 綠.webp" ></div>
             <div id="紅色背景" class="ui"><img src="./問題/背景紅色背景.webp" ></div>
 
-            <div id="拼圖藍色拼圖" class="ui 拼圖"><img src="./問題/拼圖藍色拼圖.webp" ></div>
-            <div id="拼圖紫色拼圖" class="ui 拼圖"><img src="./問題/拼圖紫色拼圖.webp" ></div>
-            <div id="拼圖綠色拼圖" class="ui 拼圖"><img src="./問題/拼圖綠色拼圖.webp" ></div>
-            <div id="拼圖粉色拼圖" class="ui 拼圖"><img src="./問題/拼圖粉色拼圖.webp" ></div>
-            <div id="選項藍色選項" class="ui 選項"><img src="./問題/拼圖藍色拼圖.webp" ></div>
-            <div id="選項紫色選項" class="ui 選項"><img src="./問題/拼圖紫色拼圖.webp" ></div>
-            <div id="選項綠色選項" class="ui 選項"><img src="./問題/拼圖綠色拼圖.webp" ></div>
-            <div id="選項粉色選項" class="ui 選項"><img src="./問題/拼圖粉色拼圖.webp" ></div>
+            <div id="藍色拼圖" class="ui 拼圖"><img src="./問題/拼圖藍色拼圖.webp" ></div>
+            <div id="紫色拼圖" class="ui 拼圖"><img src="./問題/拼圖紫色拼圖.webp" ></div>
+            <div id="綠色拼圖" class="ui 拼圖"><img src="./問題/拼圖綠色拼圖.webp" ></div>
+            <div id="粉色拼圖" class="ui 拼圖"><img src="./問題/拼圖粉色拼圖.webp" ></div>
+            <div id="藍色選項" class="ui 選項"><img src="./問題/拼圖藍色拼圖.webp" ></div>
+            <div id="紫色選項" class="ui 選項"><img src="./問題/拼圖紫色拼圖.webp" ></div>
+            <div id="綠色選項" class="ui 選項"><img src="./問題/拼圖綠色拼圖.webp" ></div>
+            <div id="粉色選項" class="ui 選項"><img src="./問題/拼圖粉色拼圖.webp" ></div>
             <!-- 問題 -->
 
             <!-- 對話框 (100% 舊版 SVG 與文字標籤結構) -->
@@ -1002,26 +983,26 @@ img { max-width:100%; }
         speaker: "星辰",
         background: "好奇星草叢",
         characters: ["星辰害怕"],  
-        bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3" // 指定此幕的背景音樂
+        bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.mp3" // 指定此幕的背景音樂
     },
     {
         id: 1,
         text: "蛤？這裡是哪裡。",
         background: "好奇星草叢",
         characters: ["星辰思考"],  
-        bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3"
+        bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.mp3"
     },
     {
         id: 1.5,
         text: "噁，樹怎麼有電！",
         background: "好奇星草叢",
         characters: ["星辰嚇死"],  
-        bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3"
+        bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.mp3"
     },
     {
         id: 2,
         text: "來到陌生環境有什麼做法？",
-        bgm: "./audio/1.星辰選擇好奇星問題時.MP3",
+        bgm: "./audio/1.星辰選擇好奇星問題時.mp3",
         background: "好奇星草叢",
         options: [
             { 
@@ -1057,7 +1038,7 @@ img { max-width:100%; }
         background: "好奇星草叢",
         nextId: 3,
         characters: ["星辰思考"],  
-        bgm: "./audio/1.星辰選擇好奇星問題時.MP3"
+        bgm: "./audio/1.星辰選擇好奇星問題時.mp3"
     },
     {
         id: 2.2,
@@ -1065,7 +1046,7 @@ img { max-width:100%; }
         background: "好奇星草叢",
         nextId: 3,
         characters: ["星辰"],  
-        bgm: "./audio/1.星辰選擇好奇星問題時.MP3"
+        bgm: "./audio/1.星辰選擇好奇星問題時.mp3"
     },
     {
         id: 2.3,
@@ -1073,7 +1054,7 @@ img { max-width:100%; }
         background: "好奇星草叢",
         nextId: 3,
         characters: ["星辰苦惱"],  
-        bgm: "./audio/1.星辰選擇好奇星問題時.MP3"
+        bgm: "./audio/1.星辰選擇好奇星問題時.mp3"
     },
     {
         id: 2.4,
@@ -1081,7 +1062,7 @@ img { max-width:100%; }
         background: "好奇星草叢",
         nextId: 3,
         characters: ["星辰苦惱"],  
-        bgm: "./audio/1.星辰選擇好奇星問題時.MP3"
+        bgm: "./audio/1.星辰選擇好奇星問題時.mp3"
     },
     {
         id: 3,
@@ -1089,7 +1070,7 @@ img { max-width:100%; }
         background: "好奇星草叢",
         comicImages: ["./1好奇星-1-第一張.jpg", "./1好奇星-1-第二張.jpg", "./1好奇星-1-第二張角色.jpg"],
         speaker: "星辰",
-        // bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3"
+        // bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.mp3"
     },
     {
         id: 4,
@@ -1103,21 +1084,21 @@ img { max-width:100%; }
         text: "咩。",
         characters: ["好奇星"],
         background: "好奇星草叢",
-        bgm: "./audio/1.貫穿好奇星球.MP3",
+        bgm: "./audio/1.貫穿好奇星球.mp3",
     },
     {
         id: 6,
         text: "這裡是哪...有好多棉花！？",
         characters: ["星辰害怕"],
         background: "好奇星草叢",
-        bgm: "./audio/1.貫穿好奇星球.MP3"
+        bgm: "./audio/1.貫穿好奇星球.mp3"
     },
     {
         id: 7,
         text: "你好！我是好奇星。",
         characters: ["好奇星開心"],
         background: "好奇星草叢",
-        bgm: "./audio/1.貫穿好奇星球.MP3"
+        bgm: "./audio/1.貫穿好奇星球.mp3"
     },
     {
         id: 8,
@@ -1209,15 +1190,15 @@ img { max-width:100%; }
         background: "好奇星草原",
     },
     {
-        id: 20.11,
+        id: 20.1,
         text: "哎呀哎呀要怎麼辦咩！",
         characters: ["好奇星哭"],
         background: "好奇星草原",
     },
     {
-        id: 20.12,
+        id: 20.1,
         text: "用創意解決困境？",
-        bgm: "./audio/1.星辰選擇好奇星問題時.MP3",
+        bgm: "./audio/1.星辰選擇好奇星問題時.mp3",
         background: "好奇星草原",
         options: [
             { 
@@ -1280,7 +1261,7 @@ img { max-width:100%; }
         id: 22,
         text: "{playerName}你好厲害咩。",
         characters: ["好奇星會跳"],
-        bgm: "./audio/1.貫穿好奇星球.MP3",
+        bgm: "./audio/1.貫穿好奇星球.mp3",
         background: "好奇星草原",
     },
     {
@@ -1349,7 +1330,7 @@ img { max-width:100%; }
     {
         id: 31.1,
         text: "",
-        bgm: "./audio/1.貫穿好奇星球.MP3",
+        bgm: "./audio/1.貫穿好奇星球.mp3",
         background: "好奇星棉花重災區",
     },
     {
@@ -1429,7 +1410,7 @@ img { max-width:100%; }
     {
         id: 35.1,
         text: "選擇你的道具？",
-        bgm: "./audio/1.星辰選擇好奇星問題時.MP3",
+        bgm: "./audio/1.星辰選擇好奇星問題時.mp3",
         background: "好奇星棉花重災區",
         options: [
             { 
@@ -1493,7 +1474,7 @@ img { max-width:100%; }
         text: "我記得樹有電，不如就接電做個吸塵器吧！",
         nextId: 36.3,
         characters: ["星辰微笑"],
-        bgm: "./audio/1.貫穿好奇星球.MP3",
+        bgm: "./audio/1.貫穿好奇星球.mp3",
         background: "好奇星棉花重災區",
     },
     {
@@ -1703,7 +1684,7 @@ img { max-width:100%; }
         text: "這麼快就要回去了啊，不過這趟旅程真奇特。",
         characters: ["星辰驕傲"],
         background: "火箭",
-        bgm: "./audio/2星辰在火箭上 前往同情星.MP3",
+        bgm: "./audio/2星辰在火箭上 前往同情星.mp3",
     },
     {
         id: 67,
@@ -3050,274 +3031,118 @@ if (scene.bgm) {
             break;
     }
 }
-        // 💡 新版拼圖選項的共用設定與函式
-    // 四種顏色與選項的對應
-// 目前依照 options 陣列順序配對，不依照 score 排序
-const puzzleSlots = [
-    {
-        puzzleId: "拼圖藍色拼圖",
-        selectedId: "選項藍色選項",
-        textId: "藍色選項文字",
-        backgroundId: "藍色背景"
-    },
-    {
-        puzzleId: "拼圖紫色拼圖",
-        selectedId: "選項紫色選項",
-        textId: "紫色選項文字",
-        backgroundId: "紫色背景"
-    },
-    {
-        puzzleId: "拼圖綠色拼圖",
-        selectedId: "選項綠色選項",
-        textId: "綠色選項文字",
-        backgroundId: "綠色背景"
-    },
-    {
-        puzzleId: "拼圖粉色拼圖",
-        selectedId: "選項粉色選項",
-        textId: "粉色選項文字",
-        backgroundId: "紅色背景"
-    }
-];
-
-const puzzleChoiceUIIds = [
-    "背景選擇",
-    "格子條紋紙",
-    "藍色紙",
-    "你會選擇？",
-    "拼圖藍色拼圖",
-    "拼圖紫色拼圖",
-    "拼圖綠色拼圖",
-    "拼圖粉色拼圖"
-];
-
-const puzzleConfirmUIIds = [
-    "確認選項背景",
-    "黑色紙",
-    "藍色背景",
-    "紫色背景",
-    "綠色背景",
-    "紅色背景",
-    "選項藍色選項",
-    "選項紫色選項",
-    "選項綠色選項",
-    "選項粉色選項",
-    "是的",
-    "我再想想"
-];
-
-// 隱藏指定 ID 的元素
-function hideUIElements(ids) {
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = "none";
-    });
-}
-
-// 隱藏整個確認畫面
-function hidePuzzleConfirmation() {
-    hideUIElements(puzzleConfirmUIIds);
-
-    window.pendingPuzzleConfirmation = null;
-}
-
-// 顯示某個選項的確認畫面
-function showPuzzleConfirmation(option, scene, slot) {
-    // 先隱藏原本的選項介面
-    hideUIElements(puzzleChoiceUIIds);
-
-    // 隱藏其他顏色選項與確認素材
-    hidePuzzleConfirmation();
-
-    // 記住這次選擇，但現在還不計算分數
-    window.pendingPuzzleConfirmation = {
-        option: option,
-        scene: scene,
-        slot: slot
-    };
-
-    // 顯示選中的顏色背景
-    const colorBackground = document.getElementById(
-        slot.backgroundId
-    );
-
-    if (colorBackground) {
-        colorBackground.style.display = "block";
-    }
-
-    // 顯示藍色底紙、黑色紙、確認背景
-    [
-        "藍色背景",
-        "黑色紙",
-        "確認選項背景"
-    ].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = "block";
-    });
-
-    // 顯示選中的選項圖片
-    const selectedOption = document.getElementById(
-        slot.selectedId
-    );
-
-    if (selectedOption) {
-        selectedOption.style.display = "block";
-    }
-
-    // 把 options 裡的 text 放到圖片上
-    const textElement = document.getElementById(
-        slot.textId
-    );
-
-    if (textElement) {
-        textElement.textContent = option.text;
-    }
-
-    // 顯示兩個確認按鈕
-    const yesButton = document.getElementById("是的");
-    const rethinkButton = document.getElementById("我再想想");
-
-    if (yesButton) {
-        yesButton.style.display = "block";
-
-        yesButton.onclick = function (e) {
-            e.stopPropagation();
-
-            const pending = window.pendingPuzzleConfirmation;
-            if (!pending) return;
-
-            // 先清除暫存，再執行原本的選項流程
-            window.pendingPuzzleConfirmation = null;
-
-            hidePuzzleConfirmation();
-
-            // 只有按下「是的」才正式計分並跳轉
-            selectOption(pending.option, pending.scene);
-        };
-    }
-
-    if (rethinkButton) {
-        rethinkButton.style.display = "block";
-
-        rethinkButton.onclick = function (e) {
-            e.stopPropagation();
-
-            const pending = window.pendingPuzzleConfirmation;
-            if (!pending) return;
-
-            const originalScene = pending.scene;
-
-            // 不計分、不跳劇情，回到原本選項
-            hidePuzzleConfirmation();
-            renderOptions(originalScene);
-        };
-    }
-}
-// 顯示選項介面
-function renderOptions(scene) {
-    const optBox = document.getElementById("選項框");
+        // 💡 補上渲染選項按鈕的函式
+        function renderOptions(scene) {
+    const optBox = document.getElementById('選項框');
     if (!optBox) return;
 
-    // 每次渲染前，先清除舊確認畫面
-    hidePuzzleConfirmation();
+    // 新介面需要用到的素材
+    const uiIds = [
+        '背景選擇',
+        '格子條紋紙',
+        '藍色紙',
+        '你會選擇？',
+        '藍色拼圖',
+        '紫色拼圖',
+        '綠色拼圖',
+        '粉色拼圖'
+    ];
 
-    // 隱藏舊版選項與新版介面的所有素材
-    hideUIElements(puzzleChoiceUIIds);
+    const hideQuestionUI = () => {
+        uiIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
 
-    const thinkingStar = document.getElementById("星辰思考");
-    if (thinkingStar) thinkingStar.style.display = "none";
+        // 隱藏新版專用的星辰思考立繪
+        const thinkingStar = document.getElementById('星辰苦惱');
+        if (thinkingStar) thinkingStar.style.display = 'none';
+    };
 
-    const worriedStar = document.getElementById("星辰苦惱");
-    if (worriedStar) worriedStar.style.display = "none";
+    // 每次渲染選項時，先把新版介面關閉
+    hideQuestionUI();
 
-    if (!scene || !Array.isArray(scene.options) ||
-        scene.options.length === 0) {
-        optBox.style.display = "none";
+    if (!scene || !scene.options || scene.options.length === 0) {
+        optBox.style.display = 'none';
         return;
     }
 
-    // 只要選項具有 score，就使用彩色拼圖介面
+    // 只要選項中有 score，就使用新版介面
     const usePuzzleUI = scene.options.some(
         opt => opt.score && Object.keys(opt.score).length > 0
     );
 
     if (usePuzzleUI) {
-        optBox.style.display = "none";
+        // 隱藏原本四條橫向選項
+        optBox.style.display = 'none';
 
-        // 顯示選項介面的固定素材
-        [
-            "背景選擇",
-            "格子條紋紙",
-            "藍色紙",
-            "你會選擇？"
-        ].forEach(id => {
+        // 顯示新版介面素材
+        uiIds.forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.style.display = "block";
+            if (el) el.style.display = 'block';
         });
 
         // 顯示星辰思考立繪
+        const thinkingStar = document.getElementById('星辰苦惱');
         if (thinkingStar) {
-            thinkingStar.style.display = "block";
+            thinkingStar.style.display = 'block';
         }
 
-        // 按陣列順序配對，不看 score 數值
-        puzzleSlots.forEach((slot, index) => {
-            const puzzle = document.getElementById(
-                slot.puzzleId
-            );
+        // 四個拼圖依序對應四個選項
+        const puzzleIds = [
+            '藍色拼圖',
+            '紫色拼圖',
+            '綠色拼圖',
+            '粉色拼圖'
+        ];
 
+        puzzleIds.forEach((id, index) => {
+            const puzzle = document.getElementById(id);
             if (!puzzle) return;
 
-            // 先清除舊的點擊事件
+            // 避免重複綁定點擊事件
             puzzle.onclick = null;
 
-            // 沒有對應選項就隱藏拼圖
             if (index >= scene.options.length) {
-                puzzle.style.display = "none";
+                puzzle.style.display = 'none';
                 return;
             }
 
-            puzzle.style.display = "block";
+            puzzle.style.display = 'block';
 
-            const option = scene.options[index];
-
-            puzzle.onclick = function (e) {
+            puzzle.onclick = (e) => {
                 e.stopPropagation();
-
-                showPuzzleConfirmation(
-                    option,
-                    scene,
-                    slot
-                );
+                selectOption(scene.options[index], scene);
             };
         });
 
         return;
     }
 
-    // 沒有 score 的選項，沿用原本的文字按鈕
-    optBox.innerHTML = "";
+    // 沒有 score：維持原本的四條橫向選項
+    optBox.innerHTML = '';
 
-    scene.options.forEach(option => {
-        const btn = document.createElement("div");
-        btn.className = "選項按鈕";
+    scene.options.forEach(opt => {
+        const btn = document.createElement('div');
+        btn.className = '選項按鈕';
 
-        if (option.text.length > 12) {
-            btn.classList.add("small-text");
+        if (opt.text.length > 12) {
+            btn.classList.add('small-text');
         }
 
-        btn.textContent = option.text;
+        btn.innerText = opt.text;
 
-        btn.onclick = function (e) {
+        btn.onclick = (e) => {
             e.stopPropagation();
-            selectOption(option, scene);
+            selectOption(opt, scene);
         };
 
         optBox.appendChild(btn);
     });
 
-    optBox.style.display = "flex";
+    optBox.style.display = 'flex';
 }
+        
 
         function selectOption(option, currentScene) {
             if (option.score && !scoredSceneIds.has(currentScene.id)) {
@@ -3363,34 +3188,23 @@ function renderOptions(scene) {
             }
         }
 
-        // 使用 capture 階段接收點擊，避免內層裝飾／覆蓋元素的事件攔截，
-        // 導致玩家無法跳過打字或繼續劇情。
         document.addEventListener('click', function (e) {
-            const target = e.target instanceof Element ? e.target : null;
-            if (!target) return;
-
             const menuContainer = document.querySelector('.menu-container');
             const wrapper = document.getElementById("menu-items-wrapper");
-            if (menuContainer && !menuContainer.contains(target) && wrapper) {
+            if (menuContainer && !menuContainer.contains(e.target) && wrapper) {
                 wrapper.classList.remove('open');
             }
 
-            // 這些是有自己操作流程的控制項，不交給全畫面點擊推進劇情。
-            if (target.closest('.menu-container') ||
-                target.closest('.選項按鈕') ||
-                target.closest('.拼圖') ||
-                target.closest('#player-name-input') ||
-                target.closest('.nav-item') ||
-                target.closest('#askname-item') ||
-                target.closest('#問名字') ||
-                target.closest('#確認選項背景') ||
-                target.closest('#是的') ||
-                target.closest('#我再想想')) {
-                return;
+            if (e.target.closest('.menu-container') || 
+                e.target.closest('.選項按鈕') || 
+                e.target.closest('#player-name-input') ||
+                e.target.closest('.nav-item') ||
+                e.target.closest('#askname-item')) {
+                return; 
             }
 
             nextStep();
-        }, true);
+        });
 
         function showInputBox() {
     const askBg = document.getElementById("問名字");
