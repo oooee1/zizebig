@@ -3586,15 +3586,26 @@ if (scene.bgm) {
             const activePage = document.getElementById('page1');
             if (!activePage || !activePage.classList.contains('puzzle-confirm-mode')) return;
 
-            // 按鈕為了配合版面，外框可能被調成很大；只允許點到圖片「實際不透明的圖案」。
-            // 點到按鈕圖片的透明區、背景或其他任何位置，一律攔截，不讓劇情或選項被誤觸。
-            const clickedButton = e.target instanceof Element
-                ? e.target.closest('#是的, #我再想想')
-                : null;
-            if (clickedButton && isInsideVisibleConfirmButton(clickedButton.id, e.clientX, e.clientY)) {
+            // 不依賴 e.target：按鈕可能被其他圖層蓋住，導致真正的按鈕 onclick 收不到事件。
+            // 直接用點擊座標判斷命中的可見按鈕圖案，再執行對應功能。
+            const buttonIds = ['是的', '我再想想'];
+            const hitButtonId = buttonIds.find(id =>
+                isInsideVisibleConfirmButton(id, e.clientX, e.clientY)
+            );
+
+            if (hitButtonId) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+
+                const button = document.getElementById(hitButtonId);
+                if (button && typeof button.onclick === 'function') {
+                    button.onclick.call(button, e);
+                }
                 return;
             }
 
+            // 背景、透明區、其他畫面元素一律不觸發任何操作。
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
