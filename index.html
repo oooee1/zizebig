@@ -779,9 +779,11 @@ img { max-width:100%; }
     height: auto;
 }
 
-/* 四個拼圖可以點擊 */
-#page1 .ui.拼圖 {
+/* 四個顏色拼圖必須能被點擊，並放在選擇畫面的裝飾素材上方 */
+#page1:not(.puzzle-confirm-mode) .ui.拼圖 {
     cursor: pointer;
+    pointer-events: auto !important;
+    z-index: 110 !important;
 }
 
 
@@ -3241,6 +3243,10 @@ if (scene.bgm) {
         function renderOptions(scene) {
     const optBox = document.getElementById('選項框');
     if (!optBox) return;
+
+    // 每次回到選擇介面，都解除確認畫面狀態，避免舊畫面的樣式擋住拼圖。
+    const page = document.getElementById('page1');
+    if (page) page.classList.remove('puzzle-confirm-mode');
 
     // 新介面需要用到的素材
     const uiIds = [
