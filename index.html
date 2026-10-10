@@ -746,25 +746,6 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
 }
 img { max-width:100%; }
 
-/* 拼圖題的每張素材都是遊戲舞台圖層：固定疊在舞台上，不能留在一般文件流裡 */
-#page1 .ui {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    z-index: 90;
-    pointer-events: auto;
-}
-
-#page1 .ui img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    object-fit: fill;
-}
-
 /* 確認選項：把文字疊在選項圖片上 */
 #page1 .ui.選項 {
     position: absolute;
