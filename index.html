@@ -812,6 +812,20 @@ img { max-width:100%; }
 }
 
 
+/* 確認畫面：原本黃色線在 #對話框 的 stacking context 裡，會被外面的「是的」按鈕蓋住。
+   改由 page1 的偽元素畫線，讓它能真正疊在確認按鈕圖片上方。 */
+#page1.puzzle-confirm-mode::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 10px;
+    background: #ffb30f;
+    z-index: 10001;
+    pointer-events: none;
+}
+
 /* 第二階段拼圖詳細內容：保留底部黃色線，不要隨對話框一起隱藏 */
 #page1.puzzle-confirm-mode #對話框那條線 {
     display: block !important;
