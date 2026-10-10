@@ -780,11 +780,11 @@ img { max-width:100%; }
     height: auto;
 }
 
-/* 四個顏色拼圖圖層：粉色最上、綠色、藍色、紫色最下；不更動位置與尺寸 */
-#page1:not(.puzzle-confirm-mode) #粉色拼圖 { z-index: 2004 !important; }
-#page1:not(.puzzle-confirm-mode) #綠色拼圖 { z-index: 2003 !important; }
-#page1:not(.puzzle-confirm-mode) #藍色拼圖 { z-index: 2002 !important; }
-#page1:not(.puzzle-confirm-mode) #紫色拼圖 { z-index: 2001 !important; }
+/* 拼圖圖層：粉色放在紫色下方，其餘拼圖維持原本位置與尺寸 */
+#page1:not(.puzzle-confirm-mode) #綠色拼圖 { z-index: 2004 !important; }
+#page1:not(.puzzle-confirm-mode) #藍色拼圖 { z-index: 2003 !important; }
+#page1:not(.puzzle-confirm-mode) #紫色拼圖 { z-index: 2002 !important; }
+#page1:not(.puzzle-confirm-mode) #粉色拼圖 { z-index: 2001 !important; }
 
 #page1:not(.puzzle-confirm-mode) .ui.拼圖 {
     cursor: default;
@@ -2818,6 +2818,10 @@ img { max-width:100%; }
         const readySceneIndexes = new Set();
         const pendingSceneLoads = new Map();
 
+        // 場景素材載入中時鎖住劇情推進，避免連點把對話跳過。
+        let sceneTransitionLoading = false;
+        let sceneTransitionTarget = null;
+
 
         function preloadImages(array, callback) {
             const unique = [...new Set((array || []).filter(Boolean))];
@@ -2949,7 +2953,28 @@ function enterGameAnimation() {
 function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
-if (!readySceneIndexes.has(stepIndex)) { preloadSceneAssets(stepIndex, () => {  if (currentStep === stepIndex) { renderScene(stepIndex); } }); return; }
+
+    if (!readySceneIndexes.has(stepIndex)) {
+        // 同一幕正在載入時，不重複建立等待流程。
+        if (sceneTransitionLoading && sceneTransitionTarget === stepIndex) return;
+
+        sceneTransitionLoading = true;
+        sceneTransitionTarget = stepIndex;
+        const page = document.getElementById('page1');
+        if (page) page.classList.add('scene-assets-loading');
+
+        preloadSceneAssets(stepIndex, () => {
+            // 只解鎖目前等待的那一幕，避免較舊的載入回呼干擾新場景。
+            if (sceneTransitionTarget !== stepIndex) return;
+            sceneTransitionLoading = false;
+            sceneTransitionTarget = null;
+            if (page) page.classList.remove('scene-assets-loading');
+
+            if (currentStep === stepIndex) renderScene(stepIndex);
+        });
+        return;
+    }
+
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     const pageEl = document.getElementById('page1');
@@ -3480,6 +3505,7 @@ if (scene.bgm) {
         
 
         function selectOption(option, currentScene) {
+            if (sceneTransitionLoading) return;
             if (option.score && !scoredSceneIds.has(currentScene.id)) {
                 for (let character in option.score) {
                     scores[character] = (scores[character] || 0) + option.score[character];
@@ -3495,6 +3521,8 @@ if (scene.bgm) {
         }
         
         function nextStep() {
+            // 目前場景還在載素材時，任何點擊都不能推進或跳過對話。
+            if (sceneTransitionLoading) return;
             const scene = storyScript[currentStep];
             if (scene && Number(scene.id) === 8) return;
 
