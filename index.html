@@ -3249,7 +3249,9 @@ if (scene.bgm) {
             const rethinkButton = document.getElementById('我再想想');
 
             if (yesButton) {
-                yesButton.onclick = (e) => {
+                // 明確重新綁定「是的」：確認目前選項並繼續劇情。
+                yesButton.onclick = function (e) {
+                    e.preventDefault();
                     e.stopPropagation();
                     const pending = pendingPuzzleConfirmation;
                     if (!pending) return;
@@ -3549,10 +3551,12 @@ if (scene.bgm) {
             const activePage = document.getElementById('page1');
             if (!activePage || !activePage.classList.contains('puzzle-confirm-mode')) return;
 
-            // 不依賴元素的矩形大小；只有實際點到「是的」或「我再想想」的不透明圖案才放行。
-            const hitYes = isInsideVisibleConfirmButton('是的', e.clientX, e.clientY);
-            const hitRethink = isInsideVisibleConfirmButton('我再想想', e.clientX, e.clientY);
-            if (hitYes || hitRethink) return;
+            // 兩個按鈕本身的點擊事件必須放行，否則 onclick 無法執行。
+            // 其他所有位置（包括黑色背景、空白處）一律攔截。
+            const clickedButton = e.target instanceof Element
+                ? e.target.closest('#是的, #我再想想')
+                : null;
+            if (clickedButton) return;
 
             e.preventDefault();
             e.stopPropagation();
