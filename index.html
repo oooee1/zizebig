@@ -154,8 +154,12 @@
         .全星辰 img { width: 160%; height: auto; }
 
         #星辰思考 {
+            position: absolute;
             width: 100%;
-            bottom: 70px;
+            right: -20% !important;
+            left: auto !important;
+            top: auto !important;
+            bottom: 70px !important;
         }
 
         .全好奇星 {
@@ -3047,8 +3051,7 @@ if (scene.bgm) {
             break;
     }
 }
-        // 💡 補上渲染選項按鈕的函式
-        function showPuzzleConfirmation(option, scene, slot) {
+        // 💡 新版拼圖選項的共用設定與函式
     // 四種顏色與選項的對應
 // 目前依照 options 陣列順序配對，不依照 score 排序
 const puzzleSlots = [
@@ -3210,7 +3213,6 @@ function showPuzzleConfirmation(option, scene, slot) {
             renderOptions(originalScene);
         };
     }
-}
 }
 // 顯示選項介面
 function renderOptions(scene) {
