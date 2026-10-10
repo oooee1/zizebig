@@ -3052,8 +3052,8 @@ if (bgContainer) {
         pageEl.className = "";
         pageEl.classList.toggle('hide-dialog', !hasText);
 
-        // 第二階段選擇畫面：隱藏對話框背景和名字，但保留黃線
-        pageEl.classList.toggle('question-choice-mode', currentSceneId === 2);
+        // 所有帶有選項的劇情都套用選擇畫面樣式，避免像 ID 35.1 這類選項幕又顯示對話框；保留底部黃色線。
+        pageEl.classList.toggle('question-choice-mode', Array.isArray(scene.options) && scene.options.length > 0);
     }
 
     // 直接控制對話框、裝飾線與名字標籤，避免其他 CSS / class 重設讓隱藏失效。
