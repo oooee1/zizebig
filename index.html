@@ -3509,14 +3509,50 @@ if (scene.bgm) {
             }
         }
 
-        // 確認畫面期間，在捕獲階段攔截畫面其他位置的點擊。
-        // 按鈕本身保留正常事件，讓「我再想想」與「是的」的 onclick 可以執行。
+        // 確認畫面期間，只允許點到兩個按鈕圖案本身；透明區與其他位置全部攔截。
+        const confirmButtonCanvases = new WeakMap();
+        function isInsideVisibleConfirmButton(buttonId, clientX, clientY) {
+            const button = document.getElementById(buttonId);
+            const img = button && button.querySelector('img');
+            if (!img || !img.complete || !img.naturalWidth || !img.naturalHeight) return false;
+
+            const rect = img.getBoundingClientRect();
+            if (rect.width <= 0 || rect.height <= 0 ||
+                clientX < rect.left || clientX > rect.right ||
+                clientY < rect.top || clientY > rect.bottom) return false;
+
+            let canvas = confirmButtonCanvases.get(img);
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                if (!ctx) return false;
+                try {
+                    ctx.drawImage(img, 0, 0);
+                    confirmButtonCanvases.set(img, canvas);
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            const x = Math.min(canvas.width - 1, Math.max(0, Math.floor((clientX - rect.left) / rect.width * canvas.width)));
+            const y = Math.min(canvas.height - 1, Math.max(0, Math.floor((clientY - rect.top) / rect.height * canvas.height)));
+            try {
+                return canvas.getContext('2d', { willReadFrequently: true }).getImageData(x, y, 1, 1).data[3] > 24;
+            } catch (_) {
+                return false;
+            }
+        }
+
         document.addEventListener('click', function (e) {
             const activePage = document.getElementById('page1');
             if (!activePage || !activePage.classList.contains('puzzle-confirm-mode')) return;
 
-            const clickedButton = e.target.closest('#我再想想, #是的');
-            if (clickedButton) return;
+            // 不依賴元素的矩形大小；只有實際點到「是的」或「我再想想」的不透明圖案才放行。
+            const hitYes = isInsideVisibleConfirmButton('是的', e.clientX, e.clientY);
+            const hitRethink = isInsideVisibleConfirmButton('我再想想', e.clientX, e.clientY);
+            if (hitYes || hitRethink) return;
 
             e.preventDefault();
             e.stopPropagation();
