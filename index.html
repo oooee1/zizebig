@@ -925,6 +925,8 @@ img { max-width:100%; }
     pointer-events: none;
 }
 
+/* 短螢幕只調整拼圖選項；確認按鈕沿用上方共用尺寸與位置，
+   避免重複 media query 覆寫手機／平板的按鈕大小。 */
 @media (max-height: 650px) {
     #page1.puzzle-confirm-mode #藍色選項,
     #page1.puzzle-confirm-mode #紫色選項,
@@ -933,35 +935,6 @@ img { max-width:100%; }
         top: 5%;
         width: 76%;
         left: 12%;
-    }
-
-    #page1.puzzle-confirm-mode #我再想想,
-    #page1.puzzle-confirm-mode #是的 {
-        width: 100%;
-    }
-}
-
-
-#page1.puzzle-confirm-mode #我再想想 img,
-#page1.puzzle-confirm-mode #是的 img {
-    width: 100%;
-    height: auto;
-}
-
-@media (max-height: 650px) {
-    #page1.puzzle-confirm-mode #藍色選項,
-    #page1.puzzle-confirm-mode #紫色選項,
-    #page1.puzzle-confirm-mode #綠色選項,
-    #page1.puzzle-confirm-mode #粉色選項 {
-        top: 5%;
-        width: 76%;
-        left: 12%;
-    }
-
-    #page1.puzzle-confirm-mode #我再想想,
-    #page1.puzzle-confirm-mode #是的 {
-        bottom: 3%;
-        width: 25%;
     }
 }
 
