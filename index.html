@@ -755,7 +755,8 @@ img { max-width:100%; }
 #星辰苦惱-選項用 {
     width: 130% !important;
     right: -90px !important;
-    bottom: -240px !important;
+    /* bottom 使用正值，讓角色往上移；負值會把角色往舞台下方推 */
+    bottom: clamp(80px, 18vh, 180px) !important;
 }
 
 #星辰苦惱-選項用 img {
