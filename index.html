@@ -784,6 +784,21 @@ img { max-width:100%; }
     cursor: pointer;
 }
 
+
+/* 第二階段選擇畫面：保留底部黃色線條，隱藏對話框背景、文字與名字 */
+#page1.question-choice-mode #對話框 {
+    background: transparent !important;
+    clip-path: none !important;
+}
+
+#page1.question-choice-mode #對話文本 {
+    display: none !important;
+}
+
+#page1.question-choice-mode .player-svg {
+    display: none !important;
+}
+
 </style>
 </head>
 
@@ -2820,6 +2835,9 @@ if (bgContainer) {
     if (pageEl) {
         pageEl.className = "";
         pageEl.classList.toggle('hide-dialog', !hasText);
+
+        // 第二階段選擇畫面：隱藏對話框背景和名字，但保留黃線
+        pageEl.classList.toggle('question-choice-mode', currentSceneId === 2);
     }
 
     // 直接控制對話框、裝飾線與名字標籤，避免其他 CSS / class 重設讓隱藏失效。
