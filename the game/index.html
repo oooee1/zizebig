@@ -465,7 +465,7 @@
         /* 1. 將 @font-face 移至 CSS 最上方宣告 */
     @font-face {
   font-family: 'CP-&-TRANS';
-  src: url('/font/CP and Trans.otf') format('truetype');
+  src: url('../font/CP--TRANS.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: block; /* 改為 block 避免字體替換時跳動 */
@@ -484,7 +484,7 @@
         width: 90%;
         height: 55px;
         background-color: #232323;
-        background-image: url('/pct/選項框單.PNG');
+        background-image: url('../pct/選項框單.webp');
         background-size: 100% 100%;
         background-repeat: no-repeat;
         color: white;
@@ -729,15 +729,15 @@
         <!-- ⭕ 必須直接放在 body 第一層，不要包在任何 div 裡面 -->
     <div class="menu-container">
         <div id="burger-menu" onclick="event.stopPropagation(); toggleMenu(event);">
-            <img src="/pct/2選單.png" alt="選單">
+            <img src="../pct/2選單.webp" alt="選單">
         </div>
         <div id="menu-items-wrapper">
             <!-- 找到這段並替換 -->
                 <div class="nav-item" onclick="event.stopPropagation(); skipToOption();">
-                    <img src="/pct/2跳過.png" alt="跳過">
+                    <img src="../pct/2跳過.webp" alt="跳過">
                 </div>
                 <div class="nav-item" id="volume-btn" onclick="event.stopPropagation(); toggleBGM(this);">
-                    <img src="/pct/2音量.png" alt="音量">
+                    <img src="../pct/2音量.webp" alt="音量">
                 </div>
         </div>
     </div>
@@ -746,7 +746,7 @@
         <div id="loading-screen">
             <div>正在連結...</div>
             <div class="progress-container">
-                <img src="/pct/跳跳跳.gif" alt="Loading..." style="width: 120px; height: 120px; left: -50px; margin-bottom: 5px;">
+                <img src="../pct/跳跳跳.gif" alt="Loading..." style="width: 120px; height: 120px; left: -50px; margin-bottom: 5px;">
                 <div id="progress-bar"></div>
             </div>
             <div id="loading-percent">0%</div>
@@ -755,74 +755,74 @@
         <!-- 主舞台 -->
         <div id="page1">
             <!-- 角色立繪 -->
-            <div id="星辰" class="全星辰 角色圖"><img src="/pct/星辰沒邊.png" alt="星辰"></div>
-            <div id="星辰害怕" class="全星辰 角色圖"><img src="/pct/星辰害怕_哭泣.png" alt="星辰害怕"></div>
-            <div id="星辰點頭" class="全星辰 角色圖"><img src="/pct/星辰沒邊.png" alt="星辰點頭"></div>
-            <div id="星辰嚇死" class="全星辰 角色圖"><img src="/pct/星辰嚇死了.png" alt="星辰嚇死"></div>
-            <div id="星辰驕傲" class="全星辰 角色圖"><img src="/pct/星辰驕傲.png" alt="星辰驕傲"></div>
-            <div id="星辰微笑" class="全星辰 角色圖"><img src="/pct/星辰正常微笑.png" alt="星辰微笑"></div>
-            <div id="星辰思考" class="全星辰 角色圖"><img src="/pct/星辰思考.png" alt="星辰思考"></div>
-            <div id="星辰苦惱" class="全星辰 角色圖"><img src="/pct/星辰苦惱.png" alt="星辰苦惱"></div>
-            <div id="星辰感動" class="全星辰 角色圖"><img src="/pct/星辰看到父母.png" alt="星辰感動"></div>
+            <div id="星辰" class="全星辰 角色圖"><img src="../pct/星辰沒邊.webp" alt="星辰"></div>
+            <div id="星辰害怕" class="全星辰 角色圖"><img src="../pct/星辰害怕_哭泣.webp" alt="星辰害怕"></div>
+            <div id="星辰點頭" class="全星辰 角色圖"><img src="../pct/星辰沒邊.webp" alt="星辰點頭"></div>
+            <div id="星辰嚇死" class="全星辰 角色圖"><img src="../pct/星辰嚇死了.webp" alt="星辰嚇死"></div>
+            <div id="星辰驕傲" class="全星辰 角色圖"><img src="../pct/星辰驕傲.webp" alt="星辰驕傲"></div>
+            <div id="星辰微笑" class="全星辰 角色圖"><img src="../pct/星辰正常微笑.webp" alt="星辰微笑"></div>
+            <div id="星辰思考" class="全星辰 角色圖"><img src="../pct/星辰思考.webp" alt="星辰思考"></div>
+            <div id="星辰苦惱" class="全星辰 角色圖"><img src="../pct/星辰苦惱.webp" alt="星辰苦惱"></div>
+            <div id="星辰感動" class="全星辰 角色圖"><img src="../pct/星辰看到父母.webp" alt="星辰感動"></div>
             
             <!-- 背景圖 -->
-            <div id="好奇星草原" class="背景圖"><img src="/pct/好奇星 草原 直.png"></div>
-            <div id="好奇星草叢" class="背景圖"><img src="/pct/好奇星 草叢 直.png"></div>
-            <div id="好奇星棉花重災區" class="背景圖"><img src="/pct/好奇星 棉花重災區(救好奇星) 直.png"></div>
-            <div id="好奇星黃色結局" class="背景"><img src="/pct/好奇星 黃色結尾 直.png"></div>
-            <div id="火箭" class="背景圖"><img src="/pct/好奇星 太空  直.png"></div>
+            <div id="好奇星草原" class="背景圖"><img src="../pct/好奇星 草原 直.webp"></div>
+            <div id="好奇星草叢" class="背景圖"><img src="../pct/好奇星 草叢 直.webp"></div>
+            <div id="好奇星棉花重災區" class="背景圖"><img src="../pct/好奇星 棉花重災區(救好奇星) 直.webp"></div>
+            <div id="好奇星黃色結局" class="背景"><img src="../pct/好奇星 黃色結尾 直.webp"></div>
+            <div id="火箭" class="背景圖"><img src="../pct/好奇星 太空  直.webp"></div>
 
             <!-- 好奇星系列 -->
-            <div id="好奇星" class="角色圖 全好奇星"><img src="/pct/好奇星_p.png" alt="好奇星"></div>
-            <div id="好奇星開心" class="角色圖 全好奇星"><img src="/pct/好奇星開心.png" alt="好奇星開心"></div>    
-            <div id="好奇星會跳" class="角色圖 全好奇星"><img src="/pct/好奇星_p.png" alt="好奇星會跳"></div>
-            <div id="好奇星有尾巴" class="角色圖 全好奇星"><img src="/pct/好奇星小尾巴.png" alt="好奇星有尾巴"></div>
-            <div id="好奇星開心有尾巴" class="角色圖 全好奇星"><img src="/pct/好奇星開心wink.png" alt="好奇星開心有尾巴"></div>
-            <div id="一群好奇星" class="角色圖 全好奇星"><img src="/pct/好奇星  一群好奇星.png" alt="一群好奇星"></div>
-            <div id="好奇星哭" class="角色圖 全好奇星"><img src="/pct/好奇星哭.png" alt="好奇星哭"></div>
-            <div id="好奇星哭小尾巴" class="角色圖 全好奇星"><img src="/pct/好奇星哭小尾巴.png" alt="好奇星哭小尾巴"></div>
-            <div id="好奇星開心閉眼" class="角色圖 全好奇星"><img src="/pct/好奇星開心閉眼.png" alt="好奇星開心閉眼"></div>
-            <div id="路人好奇星張嘴" class="角色圖 全好奇星"><img src="/pct/好奇星路人張嘴.png" alt="路人好奇星張嘴"></div>
-            <div id="路人好奇星閉嘴" class="角色圖 全好奇星"><img src="/pct/好奇星路人閉嘴.png" alt="路人好奇星閉嘴"></div>
+            <div id="好奇星" class="角色圖 全好奇星"><img src="../pct/好奇星_p.webp" alt="好奇星"></div>
+            <div id="好奇星開心" class="角色圖 全好奇星"><img src="../pct/好奇星開心.webp" alt="好奇星開心"></div>    
+            <div id="好奇星會跳" class="角色圖 全好奇星"><img src="../pct/好奇星_p.webp" alt="好奇星會跳"></div>
+            <div id="好奇星有尾巴" class="角色圖 全好奇星"><img src="../pct/好奇星小尾巴.webp" alt="好奇星有尾巴"></div>
+            <div id="好奇星開心有尾巴" class="角色圖 全好奇星"><img src="../pct/好奇星開心wink.webp" alt="好奇星開心有尾巴"></div>
+            <div id="一群好奇星" class="角色圖 全好奇星"><img src="../pct/好奇星  一群好奇星.webp" alt="一群好奇星"></div>
+            <div id="好奇星哭" class="角色圖 全好奇星"><img src="../pct/好奇星哭.webp" alt="好奇星哭"></div>
+            <div id="好奇星哭小尾巴" class="角色圖 全好奇星"><img src="../pct/好奇星哭小尾巴.webp" alt="好奇星哭小尾巴"></div>
+            <div id="好奇星開心閉眼" class="角色圖 全好奇星"><img src="../pct/好奇星開心閉眼.webp" alt="好奇星開心閉眼"></div>
+            <div id="路人好奇星張嘴" class="角色圖 全好奇星"><img src="../pct/好奇星路人張嘴.webp" alt="路人好奇星張嘴"></div>
+            <div id="路人好奇星閉嘴" class="角色圖 全好奇星"><img src="../pct/好奇星路人閉嘴.webp" alt="路人好奇星閉嘴"></div>
 
             <!-- 同情星系列 -->
-            <div id="同情星" class="角色圖 全同情星"><img src="/pct/同情星正常.png" alt="同情星"></div>  
-            <div id="同情星苦惱" class="角色圖 全同情星"><img src="/pct/同情星= =.png" alt="同情星苦惱"></div>
-            <div id="同情星感動" class="角色圖 全同情星"><img src="/pct/同情星喜極而泣.png" alt="同情星感動"></div>
-            <div id="同情星自信" class="角色圖 全同情星"><img src="/pct/同情星 自信的北港五隻虎.png" alt="同情星自信"></div>
+            <div id="同情星" class="角色圖 全同情星"><img src="../pct/同情星正常.webp" alt="同情星"></div>  
+            <div id="同情星苦惱" class="角色圖 全同情星"><img src="../pct/同情星= =.webp" alt="同情星苦惱"></div>
+            <div id="同情星感動" class="角色圖 全同情星"><img src="../pct/同情星喜極而泣.webp" alt="同情星感動"></div>
+            <div id="同情星自信" class="角色圖 全同情星"><img src="../pct/同情星 自信的北港五隻虎.webp" alt="同情星自信"></div>
             
             <!-- 爽快星 -->
-            <div id="爽快星" class="角色圖 全爽快星"><img src="/pct/爽快星正常.png" alt="爽快星"></div>
-            <div id="爽快星生氣" class="角色圖 全爽快星"><img src="/pct/爽快星生氣.png" alt="爽快星生氣"></div>
-            <div id="爽快星害怕" class="角色圖 全爽快星"><img src="/pct/爽快星害怕.png" alt="爽快星害怕"></div>
-            <div id="爽快星開心" class="角色圖 全爽快星"><img src="/pct/爽快星開心.png" alt="爽快星開心"></div>
-            <div id="爽快星疑惑" class="角色圖 全爽快星"><img src="/pct/爽快星疑惑.png" alt="爽快星疑惑"></div>
+            <div id="爽快星" class="角色圖 全爽快星"><img src="../pct/爽快星一般.webp" alt="爽快星"></div>
+            <div id="爽快星生氣" class="角色圖 全爽快星"><img src="../pct/爽快星生氣.webp" alt="爽快星生氣"></div>
+            <div id="爽快星害怕" class="角色圖 全爽快星"><img src="../pct/爽快星害怕.webp" alt="爽快星害怕"></div>
+            <div id="爽快星開心" class="角色圖 全爽快星"><img src="../pct/爽快星吃信封.webp" alt="爽快星開心"></div>
+            <div id="爽快星疑惑" class="角色圖 全爽快星"><img src="../pct/爽快星問號.webp" alt="爽快星疑惑"></div>
             
-            <div id="熱情星" class="角色圖 全熱情星"><img src="/pct/4熱情星.png" alt="熱情星"></div>
+            <div id="熱情星" class="角色圖 全熱情星"><img src="../pct/4熱情星.webp" alt="熱情星"></div>
             
             <!-- 問題圖 -->
-            <div id="上面那三個UI" class="ui"><img src="/問題/上面那三個UI.png" ></div>
-            <div id="黑色紙" class="ui"><img src="/問題/背景 黑色紙.png" ></div>
-            <div id="格子條紋紙" class="ui"><img src="/問題/背景 格子條紋紙.png" ></div>
-            <div id="藍色紙" class="ui"><img src="/問題/背景 藍紙（壓在星辰上面）（星辰在下面）（星辰逼你看了嗎）.png" ></div>
-            <div id="背景選擇" class="ui"><img src="/問題/背景 選擇.png" ></div>
+            <div id="上面那三個UI" class="ui"><img src="../問題/上面那三個UI.webp" ></div>
+            <div id="黑色紙" class="ui"><img src="../問題/背景 黑色紙.webp" ></div>
+            <div id="格子條紋紙" class="ui"><img src="../問題/背景 格子條紋紙.webp" ></div>
+            <div id="藍色紙" class="ui"><img src="../問題/背景 藍紙（壓在星辰上面）（星辰在下面）（星辰逼你看了嗎）.webp" ></div>
+            <div id="背景選擇" class="ui"><img src="../問題/背景 選擇.webp" ></div>
             
-            <div id="是的" class="ui"><img src="/問題/文字：是的.png" ></div>
-            <div id="你會選擇？" class="ui"><img src="/問題/文字：你會選擇？.png" ></div>
-            <div id="我再想想" class="ui"><img src="/問題/文字：我再想想....PNG" ></div>
-            <div id="藍色背景" class="ui"><img src="/問題/背景藍色背景.png" ></div>
-            <div id="紫色背景" class="ui"><img src="/問題/背景紫色背景.png" ></div>
-            <div id="綠色背景" class="ui"><img src="/問題/背景綠色背景.png" ></div>
-            <div id="紅色背景" class="ui"><img src="/問題/背景紅色背景.png" ></div>
+            <div id="是的" class="ui"><img src="../問題/文字：是的.webp" ></div>
+            <div id="你會選擇？" class="ui"><img src="../問題/文字：你會選擇？.webp" ></div>
+            <div id="我再想想" class="ui"><img src="../問題/文字：我再想想....webp" ></div>
+            <div id="藍色背景" class="ui"><img src="../問題/背景藍色背景.webp" ></div>
+            <div id="紫色背景" class="ui"><img src="../問題/背景紫色背景.webp" ></div>
+            <div id="綠色背景" class="ui"><img src="../問題/背景 綠.webp" ></div>
+            <div id="紅色背景" class="ui"><img src="../問題/背景紅色背景.webp" ></div>
 
-            <div id="藍色拼圖" class="ui 拼圖"><img src="/問題/拼圖藍色拼圖.png" ></div>
-            <div id="紫色拼圖" class="ui 拼圖"><img src="/問題/拼圖紫色拼圖.png" ></div>
-            <div id="綠色拼圖" class="ui 拼圖"><img src="/問題/拼圖綠色拼圖.png" ></div>
-            <div id="粉色拼圖" class="ui 拼圖"><img src="/問題/拼圖粉色拼圖.png" ></div>
-            <div id="藍色選項" class="ui 選項"><img src="/問題/拼圖藍色拼圖.png" ></div>
-            <div id="紫色選項" class="ui 選項"><img src="/問題/拼圖紫色拼圖.png" ></div>
-            <div id="綠色選項" class="ui 選項"><img src="/問題/拼圖綠色拼圖.png" ></div>
-            <div id="粉色選項" class="ui 選項"><img src="/問題/拼圖粉色拼圖.png" ></div>
+            <div id="藍色拼圖" class="ui 拼圖"><img src="../問題/拼圖藍色拼圖.webp" ></div>
+            <div id="紫色拼圖" class="ui 拼圖"><img src="../問題/拼圖紫色拼圖.webp" ></div>
+            <div id="綠色拼圖" class="ui 拼圖"><img src="../問題/拼圖綠色拼圖.webp" ></div>
+            <div id="粉色拼圖" class="ui 拼圖"><img src="../問題/拼圖粉色拼圖.webp" ></div>
+            <div id="藍色選項" class="ui 選項"><img src="../問題/拼圖藍色拼圖.webp" ></div>
+            <div id="紫色選項" class="ui 選項"><img src="../問題/拼圖紫色拼圖.webp" ></div>
+            <div id="綠色選項" class="ui 選項"><img src="../問題/拼圖綠色拼圖.webp" ></div>
+            <div id="粉色選項" class="ui 選項"><img src="../問題/拼圖粉色拼圖.webp" ></div>
             <!-- 問題 -->
 
             <!-- 對話框 (100% 舊版 SVG 與文字標籤結構) -->
@@ -901,26 +901,26 @@
         speaker: "星辰",
         background: "好奇星草叢",
         characters: ["星辰害怕"],  
-        bgm: "/audio/1.遇到好奇星前、看到火箭準備離開好奇星.mp3" // 指定此幕的背景音樂
+        bgm: "../audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3" // 指定此幕的背景音樂
     },
     {
         id: 1,
         text: "蛤？這裡是哪裡。",
         background: "好奇星草叢",
         characters: ["星辰思考"],  
-        bgm: "/audio/1.遇到好奇星前、看到火箭準備離開好奇星.mp3"
+        bgm: "../audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3"
     },
     {
         id: 1.5,
         text: "噁，樹怎麼有電！",
         background: "好奇星草叢",
         characters: ["星辰嚇死"],  
-        bgm: "/audio/1.遇到好奇星前、看到火箭準備離開好奇星.mp3"
+        bgm: "../audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3"
     },
     {
         id: 2,
         text: "來到陌生環境有什麼做法？",
-        bgm: "/audio/1.星辰選擇好奇星問題時.mp3",
+        bgm: "../audio/1.星辰選擇好奇星問題時.MP3",
         background: "好奇星草叢",
         options: [
             { 
@@ -956,7 +956,7 @@
         background: "好奇星草叢",
         nextId: 3,
         characters: ["星辰思考"],  
-        bgm: "/audio/1.星辰選擇好奇星問題時.mp3"
+        bgm: "../audio/1.星辰選擇好奇星問題時.MP3"
     },
     {
         id: 2.2,
@@ -964,7 +964,7 @@
         background: "好奇星草叢",
         nextId: 3,
         characters: ["星辰"],  
-        bgm: "/audio/1.星辰選擇好奇星問題時.mp3"
+        bgm: "../audio/1.星辰選擇好奇星問題時.MP3"
     },
     {
         id: 2.3,
@@ -972,7 +972,7 @@
         background: "好奇星草叢",
         nextId: 3,
         characters: ["星辰苦惱"],  
-        bgm: "/audio/1.星辰選擇好奇星問題時.mp3"
+        bgm: "../audio/1.星辰選擇好奇星問題時.MP3"
     },
     {
         id: 2.4,
@@ -980,21 +980,21 @@
         background: "好奇星草叢",
         nextId: 3,
         characters: ["星辰苦惱"],  
-        bgm: "/audio/1.星辰選擇好奇星問題時.mp3"
+        bgm: "../audio/1.星辰選擇好奇星問題時.MP3"
     },
     {
         id: 3,
         text: "什麼聲音？",
         background: "好奇星草叢",
-        comicImages: ["/1好奇星-1-第一張.jpg", "/1好奇星-1-第二張.jpg", "/1好奇星-1-第二張角色.jpg"],
+        comicImages: ["../1漫畫/1好奇星-1-第一張.jpg", "../1漫畫/1好奇星-1-第二張.jpg", "../1漫畫/1好奇星-1-第二張角色.png"],
         speaker: "星辰",
-        // bgm: "/audio/1.遇到好奇星前、看到火箭準備離開好奇星.mp3"
+        // bgm: "../audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3"
     },
     {
         id: 4,
         text: "哇哇哇啊啊！",
         background: "好奇星草叢",
-        comicImages: ["/pct/comic-1.jpg", "/pct/comic-2.jpg"],
+        comicImages: ["../1漫畫/1好奇星-1完整.png", "../1漫畫/1好奇星-2完整.png"],
         nextId: 5
     },
     {
@@ -1002,21 +1002,21 @@
         text: "咩。",
         characters: ["好奇星"],
         background: "好奇星草叢",
-        bgm: "/audio/1.貫穿好奇星球.mp3",
+        bgm: "../audio/1.貫穿好奇星球.MP3",
     },
     {
         id: 6,
         text: "這裡是哪...有好多棉花！？",
         characters: ["星辰害怕"],
         background: "好奇星草叢",
-        bgm: "/audio/1.貫穿好奇星球.mp3"
+        bgm: "../audio/1.貫穿好奇星球.MP3"
     },
     {
         id: 7,
         text: "你好！我是好奇星。",
         characters: ["好奇星開心"],
         background: "好奇星草叢",
-        bgm: "/audio/1.貫穿好奇星球.mp3"
+        bgm: "../audio/1.貫穿好奇星球.MP3"
     },
     {
         id: 8,
@@ -1116,7 +1116,7 @@
     {
         id: 20.1,
         text: "用創意解決困境？",
-        bgm: "/audio/1.星辰選擇好奇星問題時.mp3",
+        bgm: "../audio/1.星辰選擇好奇星問題時.MP3",
         background: "好奇星草原",
         options: [
             { 
@@ -1179,7 +1179,7 @@
         id: 22,
         text: "{playerName}你好厲害咩。",
         characters: ["好奇星會跳"],
-        bgm: "/audio/1.貫穿好奇星球.mp3",
+        bgm: "../audio/1.貫穿好奇星球.MP3",
         background: "好奇星草原",
     },
     {
@@ -1248,7 +1248,7 @@
     {
         id: 31.1,
         text: "",
-        bgm: "/audio/1.貫穿好奇星球.mp3",
+        bgm: "../audio/1.貫穿好奇星球.MP3",
         background: "好奇星棉花重災區",
     },
     {
@@ -1328,7 +1328,7 @@
     {
         id: 35.1,
         text: "選擇你的道具？",
-        bgm: "/audio/1.星辰選擇好奇星問題時.mp3",
+        bgm: "../audio/1.星辰選擇好奇星問題時.MP3",
         background: "好奇星棉花重災區",
         options: [
             { 
@@ -1392,7 +1392,7 @@
         text: "我記得樹有電，不如就接電做個吸塵器吧！",
         nextId: 36.3,
         characters: ["星辰微笑"],
-        bgm: "/audio/1.貫穿好奇星球.mp3",
+        bgm: "../audio/1.貫穿好奇星球.MP3",
         background: "好奇星棉花重災區",
     },
     {
@@ -1603,7 +1603,7 @@
         text: "這麼快就要回去了啊，不過這趟旅程真奇特。",
         characters: ["星辰驕傲"],
         background: "火箭",
-        bgm: "/audio/2星辰在火箭上 前往同情星.mp3",
+        bgm: "../audio/2星辰在火箭上 前往同情星.MP3",
     },
     {
         id: 67,
@@ -1620,32 +1620,32 @@
     {
         id: 69,
         text: "這裡有，一封信？",
-        comicImages: ["/1漫畫/信.png"],
+        comicImages: ["../1漫畫/信.png"],
         background: "火箭",
     },
     {
         id: 70,
         text: "親愛的{playerName}•星辰：",
-        comicImages: ["/1漫畫/信.png"],
+        comicImages: ["../1漫畫/信.png"],
         background: "火箭",
     },
     {
         id: 71,
         text: "我們準備前往至下一個星球，",
-        comicImages: ["/1漫畫/信.png"],
+        comicImages: ["../1漫畫/信.png"],
         background: "火箭",
     },
     {
         id: 71.1,
         text: "很抱歉因為行程的問題沒能參加你的畢業典禮。",
-        comicImages: ["/1漫畫/信.png"],
+        comicImages: ["../1漫畫/信.png"],
         background: "火箭",
     },
     {
         id: 72,
         text: "祝你畢業快樂，最愛你的▇▇、▇▇。",
         characters: [""],
-        comicImages: ["/1漫畫/信.png"],
+        comicImages: ["../1漫畫/信.png"],
         background: "火箭",
     },
     {
@@ -2567,69 +2567,69 @@
 
         const criticalAssets = [
     // 載入畫面
-    '/pct/跳跳跳.gif',
+    '../pct/跳跳跳.gif',
 
     // 角色立繪 - 星辰
-    '/pct/星辰沒邊.png',
-    '/pct/星辰害怕_哭泣.png',
-    '/pct/星辰嚇死了.png',
-    '/pct/星辰驕傲.png',
-    '/pct/星辰正常微笑.png',
-    '/pct/星辰思考.png',
-    '/pct/星辰苦惱.png',
-    '/pct/星辰看到父母.png',
+    '../pct/星辰沒邊.webp',
+    '../pct/星辰害怕_哭泣.webp',
+    '../pct/星辰嚇死了.webp',
+    '../pct/星辰驕傲.webp',
+    '../pct/星辰正常微笑.webp',
+    '../pct/星辰思考.webp',
+    '../pct/星辰苦惱.webp',
+    '../pct/星辰看到父母.webp',
 
     // 背景圖
-    '/pct/好奇星 草原 直.png',
-    '/pct/好奇星 草叢 直.png',
-    '/pct/好奇星 棉花重災區(救好奇星) 直.png',
-    '/pct/好奇星 黃色結尾 直.png',
-    '/pct/好奇星 太空  直.png',
+    '../pct/好奇星 草原 直.webp',
+    '../pct/好奇星 草叢 直.webp',
+    '../pct/好奇星 棉花重災區(救好奇星) 直.webp',
+    '../pct/好奇星 黃色結尾 直.webp',
+    '../pct/好奇星 太空  直.webp',
 
     // 角色立繪 - 好奇星系列
-    '/pct/好奇星_p.png',
-    '/pct/好奇星開心.png',
-    '/pct/好奇星小尾巴.png',
-    '/pct/好奇星開心wink.png',
-    '/pct/好奇星  一群好奇星.png',
-    '/pct/好奇星哭.png',
-    '/pct/好奇星哭小尾巴.png',
-    '/pct/好奇星開心閉眼.png',
-    '/pct/好奇星路人張嘴.png',
-    '/pct/好奇星路人閉嘴.png',
+    '../pct/好奇星_p.webp',
+    '../pct/好奇星開心.webp',
+    '../pct/好奇星小尾巴.webp',
+    '../pct/好奇星開心wink.webp',
+    '../pct/好奇星  一群好奇星.webp',
+    '../pct/好奇星哭.webp',
+    '../pct/好奇星哭小尾巴.webp',
+    '../pct/好奇星開心閉眼.webp',
+    '../pct/好奇星路人張嘴.webp',
+    '../pct/好奇星路人閉嘴.webp',
 
     // 角色立繪 - 同情星
-    '/pct/同情星正常.png',
-    '/pct/同情星= =.png',
-    '/pct/同情星喜極而泣.png',
-    '/pct/同情星 自信的北港五隻虎.png',
+    '../pct/同情星正常.webp',
+    '../pct/同情星= =.webp',
+    '../pct/同情星喜極而泣.webp',
+    '../pct/同情星 自信的北港五隻虎.webp',
 
     // 角色立繪 - 爽快星系列
-    './pct/爽快星正常.png',
-    './pct/爽快星生氣.png',
-    './pct/爽快星害怕.png',
-    './pct/爽快星開心.png',
-    './pct/爽快星疑惑.png',
+    '.../pct/爽快星一般.webp',
+    '.../pct/爽快星生氣.webp',
+    '.../pct/爽快星害怕.webp',
+    '.../pct/爽快星吃信封.webp',
+    '.../pct/爽快星問號.webp',
 
-    '/pct/4熱情星.png',
+    '../pct/4熱情星.webp',
 
     // UI 與問題圖片
-    '/問題/上面那三個UI.png',
-    '/問題/背景 黑色紙.png',
-    '/問題/背景 格子條紋紙.png',
-    '/問題/背景 藍紙（壓在星辰上面）（星辰在下面）（星辰逼你看了嗎）.png',
-    '/問題/背景 選擇.png',
-    '/問題/文字：是的.png',
-    '/問題/文字：你會選擇？.png',
-    '/問題/文字：我再想想....PNG',
-    '/問題/背景藍色背景.png',
-    '/問題/背景紫色背景.png',
-    '/問題/背景綠色背景.png',
-    '/問題/背景紅色背景.png',
-    '/問題/拼圖藍色拼圖.png',
-    '/問題/拼圖紫色拼圖.png',
-    '/問題/拼圖綠色拼圖.png',
-    '/問題/拼圖粉色拼圖.png'
+    '../問題/上面那三個UI.webp',
+    '../問題/背景 黑色紙.webp',
+    '../問題/背景 格子條紋紙.webp',
+    '../問題/背景 藍紙（壓在星辰上面）（星辰在下面）（星辰逼你看了嗎）.webp',
+    '../問題/背景 選擇.webp',
+    '../問題/文字：是的.webp',
+    '../問題/文字：你會選擇？.webp',
+    '../問題/文字：我再想想....webp',
+    '../問題/背景藍色背景.webp',
+    '../問題/背景紫色背景.webp',
+    '../問題/背景 綠.webp',
+    '../問題/背景紅色背景.webp',
+    '../問題/拼圖藍色拼圖.webp',
+    '../問題/拼圖紫色拼圖.webp',
+    '../問題/拼圖綠色拼圖.webp',
+    '../問題/拼圖粉色拼圖.webp'
 ];
 
         let loadedCount = 0;
