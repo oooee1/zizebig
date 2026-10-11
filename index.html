@@ -2917,7 +2917,14 @@ img { max-width:100%; }
                 const promise = new Promise(resolve => {
                     const img = new Image();
                     img.decoding = "async";
-                    img.onload = () => resolve();
+                    // 不只等圖片下載完成，也先完成解碼，避免切換到確認畫面時圖片晚一幀才繪製而閃一下。
+                    img.onload = () => {
+                        if (typeof img.decode === "function") {
+                            img.decode().catch(() => {}).finally(resolve);
+                        } else {
+                            resolve();
+                        }
+                    };
                     img.onerror = () => resolve();
                     img.src = src;
                 });
