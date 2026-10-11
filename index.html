@@ -3335,6 +3335,12 @@ if (scene.bgm) {
                         scoredSceneIds.add(pending.scene.id);
                     }
 
+                    // 立刻收起選項畫面使用的星辰苦惱立繪，避免下一幕素材預載期間殘留在畫面上。
+                    ['星辰苦惱', '星辰苦惱-選項用'].forEach(id => {
+                        const character = document.getElementById(id);
+                        if (character) character.style.display = 'none';
+                    });
+
                     currentStep = nextIndex;
                     renderScene(currentStep);
                 };
@@ -3757,7 +3763,7 @@ if (scene.bgm) {
 
     function hideAllCharacters() {
     const chars = [
-        "星辰", "星辰害怕", "星辰嚇死", "星辰點頭", "星辰微笑", "星辰思考", "星辰苦惱", "星辰感動", "星辰驕傲",
+        "星辰", "星辰害怕", "星辰嚇死", "星辰點頭", "星辰微笑", "星辰思考", "星辰苦惱", "星辰苦惱-選項用", "星辰感動", "星辰驕傲",
         "好奇星", "好奇星開心", "好奇星有尾巴", "好奇星會跳", "好奇星開心有尾巴", "路人好奇星張嘴", "路人好奇星閉嘴", 
         "好奇星哭", "一群好奇星", "好奇星哭小尾巴", "好奇星開心閉眼",
         "同情星", "同情星苦惱", "同情星感動", "同情星自信", 
