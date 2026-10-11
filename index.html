@@ -961,18 +961,30 @@ img { max-width:100%; }
     }
 }
 
-/* 第二階段選擇畫面：保留底部黃色線條，隱藏對話框背景、文字與名字 */
+/* 計分問題：使用原本的對話框，題目文字由下往上滑入 */
 #page1.question-choice-mode #對話框 {
-    background: transparent !important;
-    clip-path: none !important;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(15, 15, 15, 0.85) 100%
+    ) !important;
+    clip-path: polygon(0% 0%, 100% 15%, 100% 100%, 0% 100%) !important;
 }
 
 #page1.question-choice-mode #對話文本 {
-    display: none !important;
+    display: block !important;
+    animation: question-dialog-slide-up 0.55s cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
-#page1.question-choice-mode .player-svg {
-    display: none !important;
+@keyframes question-dialog-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(42px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
