@@ -975,7 +975,16 @@ img { max-width:100%; }
     display: none !important;
 }
 
-</style>
+
+        /* 問題選項畫面：星辰苦惱在拼圖上方，但仍被藍色紙覆蓋 */
+        #page1:not(.puzzle-confirm-mode) #星辰苦惱-選項用 {
+            z-index: 2005 !important;
+        }
+        #page1:not(.puzzle-confirm-mode) #藍色紙 {
+            z-index: 2006 !important;
+        }
+
+    </style>
 </head>
 
 <body>
