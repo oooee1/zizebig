@@ -1,0 +1,111 @@
+name: Resize WebP game assets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  resize-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Pillow
+        run: python -m pip install --upgrade Pillow
+
+      - name: Resize oversized WebP images
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageOps
+          import os
+
+          # Resize only oversized WebP images; keep existing paths and transparency.
+          # pct: character/background art; 問題: question UI pieces and buttons.
+          targets = [
+              (Path("pct"), 1800),
+              (Path("問題"), 1000),
+          ]
+          changed = 0
+          total_before = 0
+          total_after = 0
+
+          for folder, max_edge in targets:
+              if not folder.exists():
+                  print(f"Skip missing folder: {folder}")
+                  continue
+
+              for path in folder.rglob("*"):
+                  if not path.is_file() or path.suffix.lower() != ".webp":
+                      continue
+
+                  before_bytes = path.stat().st_size
+                  try:
+                      with Image.open(path) as source:
+                          if getattr(source, "is_animated", False):
+                              print(f"SKIP animated: {path}")
+                              continue
+
+                          width, height = source.size
+                          if max(width, height) <= max_edge:
+                              continue
+
+                          image = ImageOps.exif_transpose(source)
+                          image.thumbnail((max_edge, max_edge), Image.Resampling.LANCZOS)
+
+                          # Keep alpha when present; WebP quality 90 balances clarity and size.
+                          has_alpha = "A" in image.getbands() or "transparency" in image.info
+                          if has_alpha:
+                              image = image.convert("RGBA")
+                          else:
+                              image = image.convert("RGB")
+
+                          temp_path = path.with_name(path.stem + ".resizing.webp")
+                          image.save(
+                              temp_path,
+                              "WEBP",
+                              quality=90,
+                              method=6,
+                              lossless=False,
+                              exact=True,
+                          )
+                          os.replace(temp_path, path)
+
+                      after_bytes = path.stat().st_size
+                      changed += 1
+                      total_before += before_bytes
+                      total_after += after_bytes
+                      print(
+                          f"RESIZED {path}: {width}x{height} -> {image.width}x{image.height}; "
+                          f"{before_bytes / 1024:.1f} KB -> {after_bytes / 1024:.1f} KB"
+                      )
+                  except Exception as exc:
+                      print(f"ERROR {path}: {exc}")
+                      raise
+
+          print(f"\nResized files: {changed}")
+          print(f"Before: {total_before / 1024 / 1024:.2f} MB")
+          print(f"After:  {total_after / 1024 / 1024:.2f} MB")
+          if changed == 0:
+              print("No oversized WebP images found; no image files changed.")
+          PY
+
+      - name: Commit resized images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pct 問題
+          if git diff --cached --quiet; then
+            echo "No resized images to commit."
+          else
+            git commit -m "Resize oversized WebP game assets"
+            git push
+          fi
