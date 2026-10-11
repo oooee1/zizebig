@@ -2873,8 +2873,8 @@ img { max-width:100%; }
 ];
 
 
-        // 啟動時只載入目前劇情需要的素材，不再一次下載整個 pct 資料夾。
-        // 問題資料夾尚未完成，因此不在啟動時預載它。
+        // 啟動時預載「問題」資料夾的全部題目介面圖片，以及第一幕需要的劇情素材。
+        // 其他劇情場景仍維持進入前才預載，避免一次下載整個 pct 資料夾。
         let loadedCount = 0;
         let totalCritical = 1;
         const assetLoadPromises = new Map();
@@ -3887,7 +3887,16 @@ if (scene.bgm) {
 
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
-            preloadSceneAssets(0, () => {
+
+            // 問題資料夾中的所有 UI、拼圖、選項與確認畫面素材一開始就全部預載。
+            // 與第一幕素材合併載入，避免分兩次重設載入進度。
+            const initialAssets = [
+                ...getQuestionAssetPaths(),
+                ...getSceneAssetPaths(0)
+            ];
+
+            preloadImages(initialAssets, () => {
+                readySceneIndexes.add(0);
                 enterGameAnimation();
                 renderScene(0);
             });
