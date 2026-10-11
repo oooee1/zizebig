@@ -755,8 +755,8 @@ img { max-width:100%; }
 
 #星辰苦惱-選項用 {
     width: 130% !important;
-    right: -90px !important;
-    bottom: -240px !important;
+    right: -80px !important;
+    bottom: -230px !important;
     z-index: 104 !important;
 
 }
@@ -764,6 +764,11 @@ img { max-width:100%; }
 #星辰苦惱-選項用 img {
     width: 140% !important;
     height: auto !important;
+}
+
+/* 只在看選項內容時把星辰苦惱往下移，其他畫面位置不變 */
+#page1.question-choice-mode #星辰苦惱-選項用 {
+    bottom: -230px !important;
 }
 
 /* 藍紙：壓在星辰上面 */
@@ -961,18 +966,63 @@ img { max-width:100%; }
     }
 }
 
-/* 第二階段選擇畫面：保留底部黃色線條，隱藏對話框背景、文字與名字 */
+/* 計分問題：保留上一幕對話當背景，只讓問題介面素材由下往上滑入 */
 #page1.question-choice-mode #對話框 {
-    background: transparent !important;
-    clip-path: none !important;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(15, 15, 15, 0.85) 100%
+    ) !important;
+    clip-path: polygon(0% 0%, 100% 15%, 100% 100%, 0% 100%) !important;
 }
 
-#page1.question-choice-mode #對話文本 {
-    display: none !important;
+/* 問題介面本身滑上來，不移動整個 page1，避免先露出新背景 */
+#page1.question-choice-mode:not(.question-animation-played) #背景選擇,
+#page1.question-choice-mode:not(.question-animation-played) #格子條紋紙,
+#page1.question-choice-mode:not(.question-animation-played) #藍色紙,
+#page1.question-choice-mode:not(.question-animation-played) #你會選擇？,
+#page1.question-choice-mode:not(.question-animation-played) #藍色拼圖,
+#page1.question-choice-mode:not(.question-animation-played) #紫色拼圖,
+#page1.question-choice-mode:not(.question-animation-played) #綠色拼圖,
+#page1.question-choice-mode:not(.question-animation-played) #粉色拼圖,
+#page1.question-choice-mode:not(.question-animation-played) #星辰苦惱-選項用 {
+    animation: question-ui-slide-up 0.65s cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
-#page1.question-choice-mode .player-svg {
-    display: none !important;
+/* 問題畫面：直接降低實際存在的對話框、名字與角色圖層。
+   HTML 裡沒有 .dialog-wrapper 元素，因此不能只靠它控制層級。 */
+#page1.question-choice-mode #對話框,
+#page1.question-choice-mode #對話框那條線,
+#page1.question-choice-mode #對話文本,
+#page1.question-choice-mode .player-svg,
+#page1.question-choice-mode .角色圖,
+#page1.question-choice-mode .全星辰 {
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+
+/* 問題素材在對話與角色上方；保留拼圖彼此原有的層級設定 */
+#page1.question-choice-mode #背景選擇 {
+    z-index: 99 !important;
+}
+#page1.question-choice-mode #格子條紋紙 {
+    z-index: 100 !important;
+}
+#page1.question-choice-mode #藍色紙,
+#page1.question-choice-mode #你會選擇？ {
+    z-index: 100 !important;
+}
+#page1.question-choice-mode #星辰苦惱-選項用 {
+    z-index: 2005 !important;
+}
+
+@keyframes question-ui-slide-up {
+    from {
+        transform: translateY(100vh);
+    }
+    to {
+        transform: translateY(0);
+    }
 }
 
 
@@ -982,6 +1032,36 @@ img { max-width:100%; }
         }
         #page1:not(.puzzle-confirm-mode) #藍色紙 {
             z-index: 2006 !important;
+        }
+
+        /* 問題選項畫面：用主舞台偽元素重畫黃線，避免被角色的堆疊環境壓住 */
+        #page1.question-choice-mode #對話框那條線 {
+            display: none !important;
+            pointer-events: none !important;
+        }
+        #page1.question-choice-mode::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 10px;
+            background: #ffb30f;
+            z-index: 99999 !important;
+            pointer-events: none !important;
+        }
+
+        /* 裝飾紙與角色只負責顯示，不能蓋住四塊拼圖的點擊區 */
+        #page1.question-choice-mode #藍色紙,
+        #page1.question-choice-mode #格子條紋紙,
+        #page1.question-choice-mode #星辰苦惱-選項用 {
+            pointer-events: none !important;
+        }
+
+        /* 四塊拼圖保持在可點擊層 */
+        #page1.question-choice-mode .ui.拼圖,
+        #page1.question-choice-mode .ui.拼圖 img {
+            pointer-events: auto !important;
         }
 
     </style>
@@ -2843,8 +2923,8 @@ img { max-width:100%; }
 ];
 
 
-        // 啟動時只載入目前劇情需要的素材，不再一次下載整個 pct 資料夾。
-        // 問題資料夾尚未完成，因此不在啟動時預載它。
+        // 啟動時預載「問題」資料夾的全部題目介面圖片，以及第一幕需要的劇情素材。
+        // 其他劇情場景仍維持進入前才預載，避免一次下載整個 pct 資料夾。
         let loadedCount = 0;
         let totalCritical = 1;
         const assetLoadPromises = new Map();
@@ -2887,7 +2967,14 @@ img { max-width:100%; }
                 const promise = new Promise(resolve => {
                     const img = new Image();
                     img.decoding = "async";
-                    img.onload = () => resolve();
+                    // 不只等圖片下載完成，也先完成解碼，避免切換到確認畫面時圖片晚一幀才繪製而閃一下。
+                    img.onload = () => {
+                        if (typeof img.decode === "function") {
+                            img.decode().catch(() => {}).finally(resolve);
+                        } else {
+                            resolve();
+                        }
+                    };
                     img.onerror = () => resolve();
                     img.src = src;
                 });
@@ -3024,66 +3111,60 @@ function renderScene(stepIndex) {
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     const pageEl = document.getElementById('page1');
-
-
-    // 1. 隱藏所有背景，並清除所有背景上的震動 Class
-document.querySelectorAll('.背景圖, .背景').forEach(el => {
-    el.style.display = 'none';
-    el.classList.remove('is-shaking', 'bg-impact-shake');
-});
-    
-// 2. 顯示當前劇情背景
-const currentBgId = scene.background || '好奇星草原'; // 預設背景
-const bgContainer = document.getElementById(currentBgId);
-
-if (bgContainer) {
-    activateImages(bgContainer);
-    bgContainer.style.display = 'block';
-
-    // 強制重繪 (Reflow)，確保連續觸發時動畫能重新播放
-    void bgContainer.offsetWidth;
-
-    // 3. 判斷並觸發對應的震動動畫
-    const sceneText = typeof scene.text === 'string' ? scene.text : '';
-    const isImpact = currentSceneId === 78; // 強烈撞擊情節
-    const isNormalShake = sceneText.includes("(背景搖晃)") || 
-                         [0, 76, 76.1, 77].includes(currentSceneId);
-
-    if (isImpact) {
-        bgContainer.classList.add('bg-impact-shake');
-    } else if (isNormalShake) {
-        bgContainer.classList.add('is-shaking');
-    }
-}
-
-    // 只有帶有計分 score 的選項才套用新版選擇畫面樣式；沒有 score 的選項保留一般對話框。
     const hasScoredOptions = Array.isArray(scene.options) && scene.options.some(
         opt => opt.score && Object.keys(opt.score).length > 0
     );
 
-    // 重置發言者 Class
-    if (pageEl) {
-        pageEl.className = "";
-        pageEl.classList.toggle('hide-dialog', !hasText);
 
-        // 計分選項隱藏對話文字與名字，保留底部黃色線。
-        pageEl.classList.toggle('question-choice-mode', hasScoredOptions);
+    // 1. 一般劇情才切換背景；計分問題先保留上一幕畫面，讓題目介面疊上來。
+if (!hasScoredOptions) {
+    document.querySelectorAll('.背景圖, .背景').forEach(el => {
+        el.style.display = 'none';
+        el.classList.remove('is-shaking', 'bg-impact-shake');
+    });
+
+    // 一般劇情才切換背景
+    const currentBgId = scene.background || '好奇星草原';
+    const bgContainer = document.getElementById(currentBgId);
+
+    if (bgContainer) {
+        activateImages(bgContainer);
+        bgContainer.style.display = 'block';
+        void bgContainer.offsetWidth;
+
+        const sceneText = typeof scene.text === 'string' ? scene.text : '';
+        const isImpact = currentSceneId === 78;
+        const isNormalShake = sceneText.includes("(背景搖晃)") ||
+                             [0, 76, 76.1, 77].includes(currentSceneId);
+
+        if (isImpact) bgContainer.classList.add('bg-impact-shake');
+        else if (isNormalShake) bgContainer.classList.add('is-shaking');
+    }
+}
+
+    // 計分問題保留上一幕的對話與角色；其他劇情照原本流程重設。
+    if (pageEl) {
+        if (hasScoredOptions) {
+            pageEl.classList.add('question-choice-mode');
+        } else {
+            pageEl.className = "";
+            pageEl.classList.toggle('hide-dialog', !hasText);
+        }
     }
 
-    // 直接控制對話框、裝飾線與名字標籤，避免其他 CSS / class 重設讓隱藏失效。
-    const dialogElements = [
-        document.getElementById('對話框'),
-        document.getElementById('對話框那條線'),
-        pageEl ? pageEl.querySelector('.player-svg') : null
-    ];
-    dialogElements.forEach(el => {
-        if (!el) return;
-        if (hasText) {
-            el.style.removeProperty('display');
-        } else {
-            el.style.setProperty('display', 'none', 'important');
-        }
-    });
+    // 只有一般劇情才依本幕文字切換對話框；問題介面出現時保留上一幕。
+    if (!hasScoredOptions) {
+        const dialogElements = [
+            document.getElementById('對話框'),
+            document.getElementById('對話框那條線'),
+            pageEl ? pageEl.querySelector('.player-svg') : null
+        ];
+        dialogElements.forEach(el => {
+            if (!el) return;
+            if (hasText) el.style.removeProperty('display');
+            else el.style.setProperty('display', 'none', 'important');
+        });
+    }
 
     // 重置打字計時器
     if (window.myTypingTimer) {
@@ -3092,8 +3173,8 @@ if (bgContainer) {
     }
     window.isTyping = false;
 
-    // 2. 切換背景
-    if (scene.background) {
+    // 計分問題保留上一幕背景；一般劇情才切換背景。
+    if (!hasScoredOptions && scene.background) {
         document.querySelectorAll('.背景圖, .背景').forEach(el => el.style.display = 'none');
         const targetBg = document.getElementById(scene.background);
         if (targetBg) targetBg.style.display = 'block';
@@ -3155,9 +3236,9 @@ if (scene.bgm) {
     fadeOutBGM(); // 若劇本寫 bgm: null，則慢慢淡出並停止播放
 }
     
-    // 6. 控制角色立繪與動畫
-    hideAllCharacters();
-    if (scene.characters && Array.isArray(scene.characters)) {
+    // 6. 計分問題保留上一幕角色；一般劇情才切換角色立繪。
+    if (!hasScoredOptions) hideAllCharacters();
+    if (!hasScoredOptions && scene.characters && Array.isArray(scene.characters)) {
         scene.characters.forEach(charName => {
             const charEl = document.getElementById(charName);
             if (charEl) {
@@ -3217,10 +3298,14 @@ if (scene.bgm) {
         }
     }
 
-    // 8. 開始打字特效
-    startTypingEffect(scene.text, () => {
+    // 8. 問題介面直接顯示選項，不覆蓋上一幕的對話文字。
+    if (hasScoredOptions) {
         renderOptions(scene);
-    });
+    } else {
+        startTypingEffect(scene.text, () => {
+            renderOptions(scene);
+        });
+    }
 
     // 只提前準備下一幕，不再把整個遊戲素材一次下載。
     const nextSceneIndex = scene.nextId !== undefined
@@ -3230,17 +3315,19 @@ if (scene.bgm) {
         setTimeout(() => preloadSceneAssets(nextSceneIndex), 0);
     }
 
-    // 最後再依照本幕是否有實際文字設定一次，避免本幕後續流程覆蓋顯示狀態。
-    const shouldShowDialog = typeof scene.text === "string" && scene.text.trim().length > 0;
-    const dialogParts = [
-        document.getElementById("對話框"),
-        document.getElementById("對話框那條線"),
-        document.querySelector("#page1 .player-svg")
-    ];
-    dialogParts.forEach(element => {
-        if (!element) return;
-        element.style.setProperty("display", shouldShowDialog ? "" : "none", shouldShowDialog ? "" : "important");
-    });
+    // 一般劇情才依照本幕文字更新對話框；問題介面保留上一幕畫面。
+    if (!hasScoredOptions) {
+        const shouldShowDialog = typeof scene.text === "string" && scene.text.trim().length > 0;
+        const dialogParts = [
+            document.getElementById("對話框"),
+            document.getElementById("對話框那條線"),
+            document.querySelector("#page1 .player-svg")
+        ];
+        dialogParts.forEach(element => {
+            if (!element) return;
+            element.style.setProperty("display", shouldShowDialog ? "" : "none", shouldShowDialog ? "" : "important");
+        });
+    }
 }
         
         function updateCharacterAnimation(characterId) {
@@ -3287,6 +3374,10 @@ if (scene.bgm) {
             if (!page || !option || !scene) return;
 
             pendingPuzzleConfirmation = { option, scene };
+
+            // 進入「看選項內容／確認選項」畫面時，隱藏第一幕的星辰苦惱立繪。
+            const thinkingStar = document.getElementById('星辰苦惱-選項用');
+            if (thinkingStar) thinkingStar.style.display = 'none';
 
             // 先收起選擇介面的素材，再顯示確認介面。
             document.querySelectorAll('#page1 .ui').forEach(el => {
@@ -3428,6 +3519,16 @@ if (scene.bgm) {
     if (usePuzzleUI) {
         // 隱藏原本四條橫向選項
         optBox.style.display = 'none';
+
+        // 動畫只在第一次進入這個問題畫面時播放；按「我再想想」不重新播放。
+        const questionPage = document.getElementById('page1');
+        const questionBg = document.getElementById('背景選擇');
+        if (questionPage && !questionPage.classList.contains('question-animation-played') && questionBg) {
+            questionBg.addEventListener('animationend', function markQuestionAnimationPlayed(event) {
+                if (event.animationName !== 'question-ui-slide-up') return;
+                questionPage.classList.add('question-animation-played');
+            }, { once: true });
+        }
 
         // 顯示新版介面素材
         uiIds.forEach(id => {
@@ -3857,7 +3958,16 @@ if (scene.bgm) {
 
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
-            preloadSceneAssets(0, () => {
+
+            // 問題資料夾中的所有 UI、拼圖、選項與確認畫面素材一開始就全部預載。
+            // 與第一幕素材合併載入，避免分兩次重設載入進度。
+            const initialAssets = [
+                ...getQuestionAssetPaths(),
+                ...getSceneAssetPaths(0)
+            ];
+
+            preloadImages(initialAssets, () => {
+                readySceneIndexes.add(0);
                 enterGameAnimation();
                 renderScene(0);
             });
