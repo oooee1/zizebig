@@ -984,10 +984,23 @@ img { max-width:100%; }
             z-index: 2006 !important;
         }
 
-        /* 問題選項畫面：黃線不攔截拼圖點擊，拼圖維持可點擊 */
+        /* 問題選項畫面：黃線顯示在上層，但不攔截任何點擊 */
         #page1.question-choice-mode #對話框那條線 {
-            z-index: 1000 !important;
+            z-index: 2007 !important;
             pointer-events: none !important;
+        }
+
+        /* 裝飾紙與角色只負責顯示，不能蓋住四塊拼圖的點擊區 */
+        #page1.question-choice-mode #藍色紙,
+        #page1.question-choice-mode #格子條紋紙,
+        #page1.question-choice-mode #星辰苦惱-選項用 {
+            pointer-events: none !important;
+        }
+
+        /* 四塊拼圖保持在可點擊層 */
+        #page1.question-choice-mode .ui.拼圖,
+        #page1.question-choice-mode .ui.拼圖 img {
+            pointer-events: auto !important;
         }
 
     </style>
