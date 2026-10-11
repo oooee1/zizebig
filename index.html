@@ -3375,6 +3375,10 @@ if (scene.bgm) {
 
             pendingPuzzleConfirmation = { option, scene };
 
+            // 進入「看選項內容／確認選項」畫面時，隱藏第一幕的星辰苦惱立繪。
+            const thinkingStar = document.getElementById('星辰苦惱-選項用');
+            if (thinkingStar) thinkingStar.style.display = 'none';
+
             // 先收起選擇介面的素材，再顯示確認介面。
             document.querySelectorAll('#page1 .ui').forEach(el => {
                 el.style.display = 'none';
