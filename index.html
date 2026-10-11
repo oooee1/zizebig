@@ -997,12 +997,18 @@ img { max-width:100%; }
 }
 
 /* 問題素材在對話與角色上方；保留拼圖彼此原有的層級設定 */
-#page1.question-choice-mode #背景選擇,
-#page1.question-choice-mode #格子條紋紙,
-#page1.question-choice-mode #藍色紙,
-#page1.question-choice-mode #你會選擇？,
-#page1.question-choice-mode #星辰苦惱-選項用 {
+#page1.question-choice-mode #背景選擇 {
+    z-index: 99 !important;
+}
+#page1.question-choice-mode #格子條紋紙 {
     z-index: 100 !important;
+}
+#page1.question-choice-mode #藍色紙,
+#page1.question-choice-mode #你會選擇？ {
+    z-index: 100 !important;
+}
+#page1.question-choice-mode #星辰苦惱-選項用 {
+    z-index: 2005 !important;
 }
 
 @keyframes question-ui-slide-up {
