@@ -394,8 +394,10 @@
     position: absolute;
     top: 606px !important;
     left: 20px;
-    width: 300px;
+    width: 500px;
+    max-width: calc(100vw - 40px);
     height: 70px;
+    overflow: visible;
     z-index: 1000;           /* 名字蓋在對話框上方 */
 }
 
@@ -1100,7 +1102,7 @@ img { max-width:100%; }
             <!-- 對話框 (100% 舊版 SVG 與文字標籤結構) -->
             <!-- 新增一個包裹容器 dialog-wrapper -->
 <!-- SVG 名字標籤 -->
-<svg class="player-svg" viewBox="0 0 300 70">
+<svg class="player-svg" viewBox="0 0 500 70">
     <!-- 💡 將這行的內容加上 id="name-star-text" -->
     <text x="10" y="50" id="name-star-text" class="player-text name-star" fill="#ffab0f">星辰</text>
     
