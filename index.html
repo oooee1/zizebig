@@ -984,16 +984,25 @@ img { max-width:100%; }
     animation: question-ui-slide-up 0.65s cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
-/* 問題介面滑入時，上一幕對話和角色留在底層，不可蓋過問題素材 */
-#page1.question-choice-mode .dialog-wrapper,
-#page1.question-choice-mode .player-svg {
-    z-index: 1 !important;
+/* 問題畫面：直接降低實際存在的對話框、名字與角色圖層。
+   HTML 裡沒有 .dialog-wrapper 元素，因此不能只靠它控制層級。 */
+#page1.question-choice-mode #對話框,
+#page1.question-choice-mode #對話框那條線,
+#page1.question-choice-mode #對話文本,
+#page1.question-choice-mode .player-svg,
+#page1.question-choice-mode .角色圖,
+#page1.question-choice-mode .全星辰 {
+    z-index: 0 !important;
     pointer-events: none !important;
 }
-#page1.question-choice-mode #對話框,
-#page1.question-choice-mode #對話文本,
-#page1.question-choice-mode .player-svg {
-    pointer-events: none !important;
+
+/* 問題素材在對話與角色上方；保留拼圖彼此原有的層級設定 */
+#page1.question-choice-mode #背景選擇,
+#page1.question-choice-mode #格子條紋紙,
+#page1.question-choice-mode #藍色紙,
+#page1.question-choice-mode #你會選擇？,
+#page1.question-choice-mode #星辰苦惱-選項用 {
+    z-index: 100 !important;
 }
 
 @keyframes question-ui-slide-up {
