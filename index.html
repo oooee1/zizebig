@@ -984,6 +984,12 @@ img { max-width:100%; }
             z-index: 2006 !important;
         }
 
+        /* 問題選項畫面：黃線不攔截拼圖點擊，拼圖維持可點擊 */
+        #page1.question-choice-mode #對話框那條線 {
+            z-index: 1000 !important;
+            pointer-events: none !important;
+        }
+
     </style>
 </head>
 
