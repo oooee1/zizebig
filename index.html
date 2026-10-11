@@ -984,9 +984,20 @@ img { max-width:100%; }
             z-index: 2006 !important;
         }
 
-        /* 問題選項畫面：黃線顯示在上層，但不攔截任何點擊 */
+        /* 問題選項畫面：用主舞台偽元素重畫黃線，避免被角色的堆疊環境壓住 */
         #page1.question-choice-mode #對話框那條線 {
-            z-index: 2007 !important;
+            display: none !important;
+            pointer-events: none !important;
+        }
+        #page1.question-choice-mode::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 10px;
+            background: #ffb30f;
+            z-index: 99999 !important;
             pointer-events: none !important;
         }
 
