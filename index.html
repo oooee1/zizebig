@@ -3942,7 +3942,8 @@ if (scene.bgm) {
 
             // 第一次點擊時收起「點擊推動劇情」提示；箭頭之後仍會留在一般對話畫面。
             const pageForHint = document.getElementById('page1');
-            if (pageForHint && pageForHint.classList.contains('scene-assets-loading')) return;\n            if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
+            if (pageForHint && pageForHint.classList.contains('scene-assets-loading')) return;
+            if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
                 pageForHint.classList.remove('show-dialogue-hint');
             }
 
