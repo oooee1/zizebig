@@ -3623,7 +3623,8 @@ if (scene.bgm) {
             if (selectedOption) {
                 const label = selectedOption.querySelector('.拼圖選項文字');
                 if (label) {
-                    label.textContent = option.text || '';
+                    // 支援選項文字中輸入字面上的 \\n 作為手動換行標記。
+                    label.textContent = (option.text || '').replace(/\\n/g, '\n');
                     fitPuzzleOptionText(label);
                 }
                 selectedOption.onclick = null;
