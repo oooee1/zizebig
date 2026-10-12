@@ -4185,7 +4185,10 @@ if (scene.bgm) {
             hideAllCharacters();
 
             // 必須先確認兩套自訂字體載入完成；不可因等待逾時就直接進入遊戲。
-            preloadGameFonts().then(() => {
+            preloadGameFonts().catch(error => {
+                // 字體失敗不應讓玩家永遠卡在錯誤畫面；先載入劇情素材並用備用字體進入。
+                console.warn("自訂字體載入失敗，改用備用字體繼續啟動：", error);
+            }).then(() => {
                 const initialAssets = [
                     ...getQuestionAssetPaths(),
                     ...getSceneAssetPaths(0)
@@ -4217,7 +4220,7 @@ if (scene.bgm) {
                     enterGameAnimation();
                     renderScene(0);
                 }, true);
-            }).catch(showFontLoadError);
+            });
         });
 
         // 跳轉// 在 <script> 底部加入這段代碼即可
