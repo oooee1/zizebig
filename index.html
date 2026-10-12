@@ -1336,6 +1336,35 @@ img { max-width:100%; }
     <audio id="bgm-player" loop></audio>
 
     <script>
+        // 獨立診斷主遊戲腳本：即使主腳本有語法錯誤，也能把錯誤顯示在載入畫面。
+        (() => {
+            const showStartupError = message => {
+                const percent = document.getElementById('loading-percent');
+                if (percent) {
+                    percent.textContent = '啟動錯誤：' + String(message).slice(0, 90);
+                    percent.style.width = 'auto';
+                    percent.style.fontSize = '12px';
+                    percent.style.overflowWrap = 'anywhere';
+                }
+                console.error('[zizebig 啟動診斷]', message);
+            };
+            window.addEventListener('error', event => {
+                if (event && (event.message || event.error)) {
+                    showStartupError(event.message || event.error);
+                }
+            });
+            window.addEventListener('unhandledrejection', event => {
+                showStartupError(event.reason && (event.reason.message || event.reason) || '未處理的非同步錯誤');
+            });
+            window.setTimeout(() => {
+                const percent = document.getElementById('loading-percent');
+                if (percent && percent.textContent.trim() === '0%') {
+                    showStartupError('啟動沒有開始；請截圖這行訊息回傳');
+                }
+            }, 20000);
+        })();
+    </script>
+<script>
         window.playerName = "星辰";
         let currentStep = 0;
 
