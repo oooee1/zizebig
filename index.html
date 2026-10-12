@@ -997,6 +997,18 @@ img { max-width:100%; }
     line-height: 1.2;
     font-weight: normal;
     pointer-events: none;
+    overflow: hidden;
+}
+
+#page1.puzzle-confirm-mode .拼圖選項文字 > span {
+    display: block;
+    width: 100%;
+    max-height: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 #page1.puzzle-confirm-mode #確認選項背景 {
@@ -1417,7 +1429,7 @@ img { max-width:100%; }
                 feedback: "呀厚！有人嗎？沒人嗎？" 
             },
             { 
-                text: "原地等人來", 
+                text: "原地//n等人來", 
                 nextId: 2.3, 
                 score: { "好奇星": 1 },
                 feedback: "原地等等吧，說不定會有人來救我呢。" 
@@ -3623,9 +3635,13 @@ if (scene.bgm) {
             if (selectedOption) {
                 const label = selectedOption.querySelector('.拼圖選項文字');
                 if (label) {
-                    // 支援選項文字中輸入字面上的 \\n 作為手動換行標記。
-                    label.textContent = (option.text || '').replace(/\/\/n|\\n/g, '\n');
-                    fitPuzzleOptionText(label);
+                    // 支援 //n 或 \\n 作為手動換行標記，並用獨立文字層測量，避免長文字超出拼圖框。
+                    const optionText = (option.text || '').replace(/\/\/n|\\\\n/g, '\n');
+                    label.textContent = '';
+                    const textSpan = document.createElement('span');
+                    textSpan.textContent = optionText;
+                    label.appendChild(textSpan);
+                    fitPuzzleOptionText(textSpan);
                 }
                 selectedOption.onclick = null;
             }
