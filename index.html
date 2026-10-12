@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="preload" href="./font/DelaGothicOne-Regular.woff?v=4" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="./font/CP--TRANS.woff2?v=4" as="font" type="font/woff2" crossorigin>
     <title>《 星辰之路》——情境式性格測驗</title>
     <style>
+        /* 載入玩家名字使用的 Dela Gothic One 字體（先用已確認可讀取的 WOFF） */
+        @font-face {
+            font-family: 'Dela Gothic One';
+            src: url('./font/DelaGothicOne-Regular.woff?v=4') format('woff');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
         * {
             user-select: none;
             -webkit-user-select: none;
@@ -78,6 +89,7 @@
             height: 12px;
             background: #62c6ff;
             width: 0%;
+            border-radius: 999px;
             transition: width 0.3s;
         }
 
@@ -389,6 +401,83 @@
     z-index: 1099;
 }
 
+/* 對話框右下角的推進箭頭；等待素材時切換成旋轉圓圈 */
+#dialogue-next-arrow {
+    position: absolute;
+    right: 24px;
+    bottom: 22px;
+    z-index: 1100;
+    width: 19px;
+    height: 15px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M3 3 Q2 3 3 5 L9 14 Q10 16 11 14 L17 5 Q18 3 16 3 Z' fill='%23ffb30f'/%3E%3C/svg%3E") center / contain no-repeat;
+    filter: drop-shadow(1px 2px 0 #111);
+    animation: dialogue-arrow-bob 0.9s ease-in-out infinite;
+    pointer-events: none;
+}
+
+#page1.scene-assets-loading {
+    pointer-events: none !important;
+}
+
+#page1.scene-assets-loading #dialogue-next-arrow {
+    width: 19px;
+    height: 19px;
+    bottom: 19px;
+    border: 3px solid rgba(255, 179, 15, 0.28);
+    border-top-color: #ffb30f;
+    border-radius: 50%;
+    background: none;
+    filter: drop-shadow(1px 2px 0 #111);
+    animation: dialogue-loading-spin 0.75s linear infinite;
+}
+
+#page1.scene-assets-loading #dialogue-next-hint {
+    display: block;
+}
+#page1.scene-assets-loading #dialogue-next-hint::after {
+    content: '載入中…';
+}
+
+#page1.scene-assets-loading #dialogue-next-hint {
+    font-size: 0;
+}
+#page1.scene-assets-loading #dialogue-next-hint::after {
+    font-size: 13px;
+}
+
+
+
+#dialogue-next-hint {
+    position: absolute;
+    right: 50px;
+    bottom: 17px;
+    z-index: 1100;
+    padding: 5px 9px;
+    border: 1px solid #ffb30f;
+    border-radius: 5px;
+    background: rgba(15, 15, 15, 0.92);
+    color: #fff;
+    font-family: 'CPTrans', sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    display: none;
+}
+
+#page1.show-dialogue-hint #dialogue-next-hint {
+    display: block;
+}
+
+@keyframes dialogue-arrow-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+}
+
+@keyframes dialogue-loading-spin {
+    to { transform: rotate(360deg); }
+}
+
 /* 3. SVG 名字定位：放在對話框左上方，與對話框交界融合 */
 .player-svg {
     position: absolute;
@@ -474,8 +563,8 @@
         /* 1. 將 @font-face 移至 CSS 最上方宣告 */
     @font-face {
   font-family: 'CPTrans';
-  src: url('./font/CP--TRANS.woff2?v=2') format('woff2'),
-       url('./font/CP--TRANS.woff?v=2') format('woff');
+  src: url('./font/CP--TRANS.woff2?v=4') format('woff2'),
+       url('./font/CP--TRANS.woff?v=4') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -738,7 +827,7 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
 }
 #對話框 { height:min(250px,35dvh); min-height:170px; }
 #對話框那條線 { top:auto; bottom:0; }
-.player-svg { top:auto !important; bottom: 175px; left:5%; width:500px; max-width:none; height:70px; aspect-ratio:auto; }
+.player-svg { top:auto !important; bottom: calc(max(170px, min(250px, 35dvh)) - 75px); left:5%; width:500px; max-width:none; height:70px; aspect-ratio:auto; }
 #對話文本 { width:86%; height:62%; font-size:clamp(17px,5.2vw,24px); line-height:1.45; padding-bottom:env(safe-area-inset-bottom); }
 #選項框 { width:100%; padding:0 12px; gap:clamp(8px,1.8vh,15px); }
 .選項按鈕 { min-height:48px; height:auto; padding:10px 12px; font-size:clamp(15px,4.6vw,20px); }
@@ -1207,6 +1296,8 @@ img { max-width:100%; }
     <div id="對話框">
         <div id="對話框那條線"></div>
         <div id="對話文本"></div>
+        <div id="dialogue-next-hint">點一下繼續</div>
+        <div id="dialogue-next-arrow" aria-hidden="true"></div>
     </div>
 </div>
 
@@ -1245,6 +1336,35 @@ img { max-width:100%; }
     <audio id="bgm-player" loop></audio>
 
     <script>
+        // 獨立診斷主遊戲腳本：即使主腳本有語法錯誤，也能把錯誤顯示在載入畫面。
+        (() => {
+            const showStartupError = message => {
+                const percent = document.getElementById('loading-percent');
+                if (percent) {
+                    percent.textContent = '啟動錯誤：' + String(message).slice(0, 90);
+                    percent.style.width = 'auto';
+                    percent.style.fontSize = '12px';
+                    percent.style.overflowWrap = 'anywhere';
+                }
+                console.error('[zizebig 啟動診斷]', message);
+            };
+            window.addEventListener('error', event => {
+                if (event && (event.message || event.error)) {
+                    showStartupError(event.message || event.error);
+                }
+            });
+            window.addEventListener('unhandledrejection', event => {
+                showStartupError(event.reason && (event.reason.message || event.reason) || '未處理的非同步錯誤');
+            });
+            window.setTimeout(() => {
+                const percent = document.getElementById('loading-percent');
+                if (percent && percent.textContent.trim() === '0%') {
+                    showStartupError('啟動沒有開始；請截圖這行訊息回傳');
+                }
+            }, 20000);
+        })();
+    </script>
+<script>
         window.playerName = "星辰";
         let currentStep = 0;
 
@@ -2051,19 +2171,19 @@ img { max-width:100%; }
         id: 78,
         text: "",
         characters: [""],
-        background: "同情星海灘",
+        background: "同情星初遇",
     },
     {
         id: 78.1,
         text: "火箭沒有燃料了...。",
         characters: ["星辰苦惱"],
-        background: "同情星海灘",
+        background: "同情星初遇",
     },
     {
         id: 79,
         text: "咦...怎麼會有這麼多貝殼？",
         characters: ["星辰苦惱"],
-        background: "同情星海灘",
+        background: "同情星初遇",
     },
     {
         id: 80,
@@ -2095,65 +2215,77 @@ img { max-width:100%; }
         id: 80.1,
         text: "一定是發生了什麼難過的事貝殼才會變成這樣...",
         nextId: 81, 
-        characters: ["星辰害怕"]
+        characters: ["星辰害怕"],
+        background: "同情星初遇",
     },
     {
         id: 80.2,
         text: "這顆星球究竟發生什麼事了，怎麼這麼多奇怪的貝殼。",
         nextId: 81, 
-        characters: ["星辰思考"]
+        characters: ["星辰思考"],
+        background: "同情星初遇",
     },
     {
         id: 80.3,
         text: "好餓啊，但閉著的沒辦法吃...",
         nextId: 81, 
-        characters: ["星辰害怕"]
+        characters: ["星辰害怕"],
+        background: "同情星初遇",
     },
     {
         id: 80.4,
         text: "不管了先走走看看。",
         nextId: 81, 
-        characters: ["星辰"]
+        characters: ["星辰"],
+        background: "同情星初遇",
     },
     {
         id: 81,
         text: "附近好像有哭聲。",
-        characters: ["星辰思考"]
+        characters: ["星辰思考"],
+        background: "同情星初遇",
     },
     {
         id: 82,
         text: "欸？角落有一隻在哭泣的海獺。",
-        characters: ["星辰思考"]
+        characters: ["星辰思考"],
+        background: "同情星初遇",
     },
     {
         id: 82.1,
         text: "嗚嗚、嗚、嗚嗚嗚嗚嗚嗚嗚嗚嗚——",
-        characters: ["同情星苦惱"]
+        characters: ["同情星苦惱"],
+        background: "同情星晚霞"
     },
     {
         id: 83,
         text: "哈囉，我是{playerName}•星辰，你叫什麼名字？",
-        characters: ["星辰微笑"]
+        characters: ["星辰微笑"],
+        background: "同情星晚霞"
     },
     {
         id: 83.1,
         text: "還有這個地方是哪裡？",
-        characters: ["星辰微笑"]
+        characters: ["星辰微笑"],
+        background: "同情星晚霞"
     },
     {
         id: 84,
         text: "嗚嗚嗚…我叫同情星，這裡是我的星球。",
-        characters: ["同情星苦惱"]
+        characters: ["同情星苦惱"],
+        background: "同情星晚霞"
     },
     {
         id: 85,
         text: "{playerName}...你長得好眼熟。",
-        characters: ["同情星"]
+        characters: ["同情星"],
+        background: "同情星晚霞"
     },
     {
         id: 85.1,
         text: "總覺得在哪裡見過？",
-        characters: ["同情星"]
+        characters: ["同情星"],
+        background: "同情星晚霞"
     },
     {
         id: 86,
@@ -2240,6 +2372,11 @@ img { max-width:100%; }
         id: 88,
         text: "嗚...{playerName}你跟我來吧。",
         characters: ["同情星苦惱"]
+    },
+    {
+        id: 88.1,
+        text: "",
+        background: "同情星貝殼"
     },
     {
         id: 89,
@@ -2449,7 +2586,8 @@ img { max-width:100%; }
     {
         id: 111,
         text: "謝謝你星辰，我感到輕鬆許多！",
-        characters: ["同情星自信"]
+        characters: ["同情星自信"],
+        background: "同情星沒貝殼"
     },
     {
         id: 112,
@@ -2558,6 +2696,11 @@ img { max-width:100%; }
         comicImages: ["/同情星拼圖降下"]
     },
     {
+        id: 123.1,
+        text: "",
+        background: "同情星海"
+    },
+    {
         id: 124,
         text: "嗒噠，我們最最最，最漂亮的海灘！",
         characters: ["同情星感動"]
@@ -2565,7 +2708,7 @@ img { max-width:100%; }
     {
         id: 125,
         text: "這個貝殼留給你當紀念品吧。",
-        characters: ["同情星"]
+        characters: [""]
     },
     {
         id: 126,
@@ -2581,17 +2724,17 @@ img { max-width:100%; }
     {
         id: 129,
         text: "恭喜你結束了第二次的旅程，這顆星球很美吧！",
-        comicImages: ["/貝殼裡的信"]
+        comicImages: ["/貝殼信"]
     },
     {
         id: 130,
         text: "我們也很喜歡在這裡渡假放鬆，",
-        comicImages: ["/貝殼裡的信"]
+        comicImages: ["/貝殼信"]
     },
     {
         id: 131,
         text: "如果感到勞累不彷停下來吧，最愛你的▇▇、▇▇。",
-        comicImages: ["/貝殼裡的信"]
+        comicImages: ["/貝殼信"]
     },
     {
         id: 132,
@@ -2936,7 +3079,7 @@ img { max-width:100%; }
         let sceneTransitionTarget = null;
 
 
-        function preloadImages(array, callback) {
+        function preloadImages(array, callback, strictTimeout = false) {
             const unique = [...new Set((array || []).filter(Boolean))];
             totalCritical = Math.max(unique.length, 1);
             loadedCount = 0;
@@ -2960,22 +3103,48 @@ img { max-width:100%; }
             }
 
             Promise.all(unique.map(src => {
+                // 舊的載入工作若一直沒有回應，也不能讓整個啟動畫面永遠停住。
+                const settleWithinLimit = promise => Promise.race([
+                    promise,
+                    new Promise((resolve, reject) => setTimeout(() => {
+                        const error = new Error("圖片載入逾時：" + src);
+                        console.warn(error.message);
+                        if (strictTimeout) reject(error);
+                        else resolve();
+                    }, 12000))
+                ]);
+
                 if (assetLoadPromises.has(src)) {
-                    return assetLoadPromises.get(src).then(updateProgress);
+                    return settleWithinLimit(assetLoadPromises.get(src)).then(updateProgress);
                 }
 
-                const promise = new Promise(resolve => {
+                const promise = new Promise((resolve, reject) => {
                     const img = new Image();
+                    let settled = false;
+                    const finish = error => {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timeoutId);
+                        if (error) reject(error);
+                        else resolve();
+                    };
+                    const timeoutId = setTimeout(() => {
+                        const error = new Error("圖片載入逾時：" + src);
+                        console.warn(error.message);
+                        if (strictTimeout) finish(error);
+                        else finish();
+                    }, 12000);
+
                     img.decoding = "async";
-                    // 不只等圖片下載完成，也先完成解碼，避免切換到確認畫面時圖片晚一幀才繪製而閃一下。
+                    // 圖片下載或解碼沒有回應時，逾時後仍會繼續啟動。
                     img.onload = () => {
                         if (typeof img.decode === "function") {
-                            img.decode().catch(() => {}).finally(resolve);
+                            img.decode().catch(() => {}).finally(finish);
                         } else {
-                            resolve();
+                            finish();
                         }
                     };
-                    img.onerror = () => resolve();
+                    img.onerror = () => finish();
                     img.src = src;
                 });
 
@@ -2983,6 +3152,9 @@ img { max-width:100%; }
                 return promise.then(updateProgress);
             })).then(() => {
                 if (typeof callback === "function") callback();
+            }).catch(error => {
+                console.error("圖片預載發生錯誤：", error);
+                if (typeof callback === "function") callback(error);
             });
         }
 
@@ -3327,6 +3499,13 @@ if (scene.bgm) {
             if (!element) return;
             element.style.setProperty("display", shouldShowDialog ? "" : "none", shouldShowDialog ? "" : "important");
         });
+
+        // 只在第一次出現有文字的普通對話框時顯示教學提示。
+        if (shouldShowDialog && !window.hasShownDialogueHint) {
+            const pageForHint = document.getElementById("page1");
+            if (pageForHint) pageForHint.classList.add("show-dialogue-hint");
+            window.hasShownDialogueHint = true;
+        }
     }
 }
         
@@ -3789,6 +3968,13 @@ if (scene.bgm) {
         // 一般劇情點擊事件
         document.addEventListener('click', function (e) {
 
+            // 第一次點擊時收起「點擊推動劇情」提示；箭頭之後仍會留在一般對話畫面。
+            const pageForHint = document.getElementById('page1');
+            if (pageForHint && pageForHint.classList.contains('scene-assets-loading')) return;
+            if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
+                pageForHint.classList.remove('show-dialogue-hint');
+            }
+
             // 第二階段是確認畫面：背景任意位置都不能推進劇情。
             // 「我再想想」與「是的」各自的 onclick 會自行處理，且會停止冒泡。
             const activePage = document.getElementById('page1');
@@ -3956,20 +4142,116 @@ if (scene.bgm) {
             if (element) element.classList.toggle('active');
         }
 
+        // 直接載入實際字體檔，確認 FontFace.load 成功後才允許進入遊戲。
+        function preloadGameFonts() {
+            if (typeof FontFace !== "function" || !document.fonts) {
+                return Promise.reject(new Error("這個瀏覽器不支援自訂字體載入確認"));
+            }
+
+            const fontFiles = [
+                new FontFace(
+                    "Dela Gothic One",
+                    'url("./font/DelaGothicOne-Regular.woff?v=4")',
+                    { weight: "400", style: "normal" }
+                ),
+                new FontFace(
+                    "CPTrans",
+                    'url("./font/CP--TRANS.woff2?v=4")',
+                    { weight: "400", style: "normal" }
+                )
+            ];
+
+            return Promise.all(fontFiles.map(fontFace =>
+                fontFace.load().then(loadedFace => {
+                    document.fonts.add(loadedFace);
+                    return loadedFace;
+                }).catch(error => {
+                    throw new Error("字體「" + fontFace.family + "」載入失敗：" +
+                        (error && error.message ? error.message : "請檢查字體檔案與路徑"));
+                })
+            )).then(() => {
+                if (!document.fonts.check('50px "Dela Gothic One"') ||
+                    !document.fonts.check('16px "CPTrans"')) {
+                    throw new Error("字體檔已讀取，但瀏覽器仍未確認字體可用");
+                }
+            });
+        }
+
+        function showFontLoadError(error) {
+            console.error("自訂字體載入失敗，遊戲暫停啟動：", error);
+            const loadingScreen = document.getElementById('loading-screen');
+            if (!loadingScreen) return;
+
+            const message = loadingScreen.querySelector('.loading-message') ||
+                loadingScreen.querySelector('div');
+            if (message) {
+                message.classList.add('loading-message');
+                message.textContent = '字體載入失敗，尚未進入遊戲';
+            }
+
+            const percent = document.getElementById('loading-percent');
+            if (percent) percent.textContent = '請確認網路後重試';
+
+            let retryButton = document.getElementById('font-load-retry');
+            if (!retryButton) {
+                retryButton = document.createElement('button');
+                retryButton.id = 'font-load-retry';
+                retryButton.textContent = '重新載入';
+                retryButton.style.cssText = 'margin-top:12px;padding:10px 22px;border:0;border-radius:8px;background:#62c6ff;color:#111;font-size:16px;font-weight:bold;cursor:pointer;';
+                retryButton.addEventListener('click', () => window.location.reload());
+                loadingScreen.appendChild(retryButton);
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
-            // 問題資料夾中的所有 UI、拼圖、選項與確認畫面素材一開始就全部預載。
-            // 與第一幕素材合併載入，避免分兩次重設載入進度。
-            const initialAssets = [
-                ...getQuestionAssetPaths(),
-                ...getSceneAssetPaths(0)
-            ];
+            // 字體失敗時可用備用字體；圖片載入較慢時則留在載入畫面並自動重試。
+            preloadGameFonts().catch(error => {
+                console.warn("自訂字體載入失敗，改用備用字體繼續啟動：", error);
+            }).then(() => {
+                const initialAssets = [
+                    ...getQuestionAssetPaths(),
+                    ...getSceneAssetPaths(0)
+                ];
 
-            preloadImages(initialAssets, () => {
-                readySceneIndexes.add(0);
-                enterGameAnimation();
-                renderScene(0);
+                const loadingScreen = document.getElementById('loading-screen');
+                const loadingMessage = loadingScreen &&
+                    (loadingScreen.querySelector('.loading-message') || loadingScreen.querySelector('div'));
+                const loadingPercent = document.getElementById('loading-percent');
+                let retryCount = 0;
+
+                function loadInitialAssets() {
+                    if (loadingMessage) {
+                        loadingMessage.classList.add('loading-message');
+                        loadingMessage.textContent = retryCount === 0
+                            ? '正在載入遊戲素材...'
+                            : '圖片還在載入，正在自動重試...';
+                    }
+
+                    preloadImages(initialAssets, error => {
+                        if (error) {
+                            retryCount++;
+                            console.warn("初始圖片尚未載入完成，將自動重試：", error);
+
+                            // 清除逾時那張圖片的失敗快取，下一輪重新建立 Image 再載一次。
+                            const prefix = '圖片載入逾時：';
+                            if (error.message && error.message.startsWith(prefix)) {
+                                assetLoadPromises.delete(error.message.slice(prefix.length));
+                            }
+
+                            if (loadingPercent) loadingPercent.textContent = '載入稍慢，正在重試（' + retryCount + '）';
+                            setTimeout(loadInitialAssets, 1200);
+                            return;
+                        }
+
+                        readySceneIndexes.add(0);
+                        enterGameAnimation();
+                        renderScene(0);
+                    }, true);
+                }
+
+                loadInitialAssets();
             });
         });
 
