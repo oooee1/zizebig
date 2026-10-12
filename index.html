@@ -1003,11 +1003,11 @@ img { max-width:100%; }
 #page1.puzzle-confirm-mode .拼圖選項文字 > span {
     display: block;
     width: 100%;
-    height: 100%;
-    max-height: 100%;
+    height: auto;
+    max-height: none;
     min-width: 0;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
     white-space: pre-line;
     overflow-wrap: anywhere;
     word-break: normal;
@@ -3583,21 +3583,22 @@ if (scene.bgm) {
     }
 }
         // 依照拼圖內文字範圍自動調整字級：先用最大字，放不下才逐步縮小。
-        function fitPuzzleOptionText(label) {
+        function fitPuzzleOptionText(textSpan) {
+            if (!textSpan) return;
+            const label = textSpan.parentElement;
             if (!label) return;
-            // 以 CSS 的 font-size 作為最大字級；之後只在文字放不下時縮小。
+            // 字級以外層文字框的 CSS 設定為上限；文字過長時才縮小。
             const maxFontSize = parseFloat(getComputedStyle(label).fontSize) || 30;
             const minFontSize = 12;
-            label.style.fontSize = maxFontSize + 'px';
+            textSpan.style.fontSize = maxFontSize + 'px';
 
-            // 等瀏覽器完成顯示與排版，再依實際可用範圍測量。
             requestAnimationFrame(() => {
                 let size = maxFontSize;
                 while (size > minFontSize &&
-                    (label.scrollHeight > label.clientHeight + 1 ||
-                     label.scrollWidth > label.clientWidth + 1)) {
+                    (textSpan.scrollHeight > label.clientHeight + 1 ||
+                     textSpan.scrollWidth > label.clientWidth + 1)) {
                     size -= 1;
-                    label.style.fontSize = size + 'px';
+                    textSpan.style.fontSize = size + 'px';
                 }
             });
         }
