@@ -400,22 +400,51 @@
     z-index: 1099;
 }
 
-/* 對話框右下角的推進提示箭頭 */
+/* 對話框右下角的推進箭頭；等待素材時切換成旋轉圓圈 */
 #dialogue-next-arrow {
     position: absolute;
     right: 24px;
     bottom: 22px;
     z-index: 1100;
-    width: 17px;
-    height: 17px;
-    border-right: 5px solid #ffb30f;
-    border-bottom: 5px solid #ffb30f;
-    border-radius: 3px;
-    transform: rotate(45deg) scale(0.78);
+    width: 19px;
+    height: 15px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M2 2 Q3 1 4 2 L10 8 L16 2 Q17 1 18 2 Q19 3 18 4 L11 11 Q10 12 9 11 L2 4 Q1 3 2 2Z' fill='%23ffb30f'/%3E%3C/svg%3E") center / contain no-repeat;
     filter: drop-shadow(1px 2px 0 #111);
     animation: dialogue-arrow-bob 0.9s ease-in-out infinite;
     pointer-events: none;
 }
+
+#page1.scene-assets-loading {
+    pointer-events: none !important;
+}
+
+#page1.scene-assets-loading #dialogue-next-arrow {
+    width: 19px;
+    height: 19px;
+    bottom: 19px;
+    border: 3px solid rgba(255, 179, 15, 0.28);
+    border-top-color: #ffb30f;
+    border-radius: 50%;
+    background: none;
+    filter: drop-shadow(1px 2px 0 #111);
+    animation: dialogue-loading-spin 0.75s linear infinite;
+}
+
+#page1.scene-assets-loading #dialogue-next-hint {
+    display: block;
+}
+#page1.scene-assets-loading #dialogue-next-hint::after {
+    content: '載入中…';
+}
+
+#page1.scene-assets-loading #dialogue-next-hint {
+    font-size: 0;
+}
+#page1.scene-assets-loading #dialogue-next-hint::after {
+    font-size: 13px;
+}
+
+
 
 #dialogue-next-hint {
     position: absolute;
@@ -1263,7 +1292,7 @@ img { max-width:100%; }
     <div id="對話框">
         <div id="對話框那條線"></div>
         <div id="對話文本"></div>
-        <div id="dialogue-next-hint">點擊推動劇情</div>
+        <div id="dialogue-next-hint">點一下繼續</div>
         <div id="dialogue-next-arrow" aria-hidden="true"></div>
     </div>
 </div>
@@ -3856,7 +3885,7 @@ if (scene.bgm) {
 
             // 第一次點擊時收起「點擊推動劇情」提示；箭頭之後仍會留在一般對話畫面。
             const pageForHint = document.getElementById('page1');
-            if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
+            if (pageForHint && pageForHint.classList.contains('scene-assets-loading')) return;\n            if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
                 pageForHint.classList.remove('show-dialogue-hint');
             }
 
