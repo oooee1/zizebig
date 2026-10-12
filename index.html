@@ -3297,8 +3297,9 @@ if (!hasScoredOptions) {
     });
 
     // 一般劇情才切換背景
-    const currentBgId = scene.background || '好奇星草原';
-    const bgContainer = document.getElementById(currentBgId);
+    // 只有明確指定背景時才切換；沒寫 background 就沿用上一幕的背景。
+    const currentBgId = scene.background;
+    const bgContainer = currentBgId ? document.getElementById(currentBgId) : null;
 
     if (bgContainer) {
         activateImages(bgContainer);
@@ -3352,6 +3353,7 @@ if (!hasScoredOptions) {
         const targetBg = document.getElementById(scene.background);
         if (targetBg) targetBg.style.display = 'block';
     }
+    // scene.background 未設定時不執行背景切換，保留目前顯示的背景。
 
     // 3. 解析發言者名字與樣式
     let displayName = "";
