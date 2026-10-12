@@ -4124,8 +4124,18 @@ if (scene.bgm) {
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
-            // 字體未全部成功載入時，不會啟動圖片預載、不會隱藏載入畫面，也不會進入劇情。
-            preloadGameFonts().then(() => {
+            // 字體載入不應讓遊戲永遠卡在「正在連結」；最多等待 8 秒，之後先進入遊戲。
+            const fontReady = Promise.race([
+                preloadGameFonts().catch(error => {
+                    console.warn("自訂字體載入失敗，改用備用字體繼續啟動：", error);
+                }),
+                new Promise(resolve => setTimeout(() => {
+                    console.warn("字體載入逾時，先繼續啟動遊戲。");
+                    resolve();
+                }, 8000))
+            ]);
+
+            fontReady.then(() => {
                 const initialAssets = [
                     ...getQuestionAssetPaths(),
                     ...getSceneAssetPaths(0)
@@ -4136,7 +4146,7 @@ if (scene.bgm) {
                     enterGameAnimation();
                     renderScene(0);
                 });
-            }).catch(showFontLoadError);
+            });
         });
 
         // 跳轉// 在 <script> 底部加入這段代碼即可
