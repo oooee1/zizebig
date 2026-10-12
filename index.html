@@ -4207,8 +4207,8 @@ if (scene.bgm) {
             preloadGameFonts().catch(error => {
                 console.warn("自訂字體載入失敗，改用備用字體繼續啟動：", error);
             }).then(() => {
+                // 開場只載入第一幕需要的素材；題目 UI 會在進入題目時再載入，避免開頭等待所有題目圖片。
                 const initialAssets = [
-                    ...getQuestionAssetPaths(),
                     ...getSceneAssetPaths(0)
                 ];
 
