@@ -3057,7 +3057,7 @@ img { max-width:100%; }
         let sceneTransitionTarget = null;
 
 
-        function preloadImages(array, callback) {
+        function preloadImages(array, callback, strictTimeout = false) {
             const unique = [...new Set((array || []).filter(Boolean))];
             totalCritical = Math.max(unique.length, 1);
             loadedCount = 0;
@@ -3084,9 +3084,11 @@ img { max-width:100%; }
                 // 舊的載入工作若一直沒有回應，也不能讓整個啟動畫面永遠停住。
                 const settleWithinLimit = promise => Promise.race([
                     promise,
-                    new Promise(resolve => setTimeout(() => {
-                        console.warn("圖片載入逾時，略過並繼續：", src);
-                        resolve();
+                    new Promise((resolve, reject) => setTimeout(() => {
+                        const error = new Error("圖片載入逾時：" + src);
+                        console.warn(error.message);
+                        if (strictTimeout) reject(error);
+                        else resolve();
                     }, 12000))
                 ]);
 
@@ -3094,18 +3096,21 @@ img { max-width:100%; }
                     return settleWithinLimit(assetLoadPromises.get(src)).then(updateProgress);
                 }
 
-                const promise = new Promise(resolve => {
+                const promise = new Promise((resolve, reject) => {
                     const img = new Image();
                     let settled = false;
-                    const finish = () => {
+                    const finish = error => {
                         if (settled) return;
                         settled = true;
                         clearTimeout(timeoutId);
-                        resolve();
+                        if (error) reject(error);
+                        else resolve();
                     };
                     const timeoutId = setTimeout(() => {
-                        console.warn("圖片載入逾時，略過並繼續：", src);
-                        finish();
+                        const error = new Error("圖片載入逾時：" + src);
+                        console.warn(error.message);
+                        if (strictTimeout) finish(error);
+                        else finish();
                     }, 12000);
 
                     img.decoding = "async";
@@ -3126,8 +3131,8 @@ img { max-width:100%; }
             })).then(() => {
                 if (typeof callback === "function") callback();
             }).catch(error => {
-                console.error("圖片預載發生錯誤，仍嘗試進入遊戲：", error);
-                if (typeof callback === "function") callback();
+                console.error("圖片預載發生錯誤：", error);
+                if (typeof callback === "function") callback(error);
             });
         }
 
@@ -4179,29 +4184,40 @@ if (scene.bgm) {
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
-            // 字體載入不應讓遊戲永遠卡在「正在連結」；最多等待 8 秒，之後先進入遊戲。
-            const fontReady = Promise.race([
-                preloadGameFonts().catch(error => {
-                    console.warn("自訂字體載入失敗，改用備用字體繼續啟動：", error);
-                }),
-                new Promise(resolve => setTimeout(() => {
-                    console.warn("字體載入逾時，先繼續啟動遊戲。");
-                    resolve();
-                }, 8000))
-            ]);
-
-            fontReady.then(() => {
+            // 必須先確認兩套自訂字體載入完成；不可因等待逾時就直接進入遊戲。
+            preloadGameFonts().then(() => {
                 const initialAssets = [
                     ...getQuestionAssetPaths(),
                     ...getSceneAssetPaths(0)
                 ];
 
-                preloadImages(initialAssets, () => {
+                // 初始畫面素材使用嚴格逾時：若重要圖片一直未載入，留在載入畫面並提示重試。
+                preloadImages(initialAssets, error => {
+                    if (error) {
+                        const loadingScreen = document.getElementById('loading-screen');
+                        const message = loadingScreen && (loadingScreen.querySelector('.loading-message') || loadingScreen.querySelector('div'));
+                        if (message) {
+                            message.classList.add('loading-message');
+                            message.textContent = '圖片載入太慢，尚未進入遊戲';
+                        }
+                        const percent = document.getElementById('loading-percent');
+                        if (percent) percent.textContent = '請確認網路後重新載入';
+                        let retryButton = document.getElementById('font-load-retry');
+                        if (!retryButton && loadingScreen) {
+                            retryButton = document.createElement('button');
+                            retryButton.id = 'font-load-retry';
+                            retryButton.textContent = '重新載入';
+                            retryButton.style.cssText = 'margin-top:12px;padding:10px 22px;border:0;border-radius:8px;background:#62c6ff;color:#111;font-size:16px;font-weight:bold;cursor:pointer;';
+                            retryButton.addEventListener('click', () => window.location.reload());
+                            loadingScreen.appendChild(retryButton);
+                        }
+                        return;
+                    }
                     readySceneIndexes.add(0);
                     enterGameAnimation();
                     renderScene(0);
-                });
-            });
+                }, true);
+            }).catch(showFontLoadError);
         });
 
         // 跳轉// 在 <script> 底部加入這段代碼即可
