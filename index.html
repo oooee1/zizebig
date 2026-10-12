@@ -3643,7 +3643,15 @@ if (scene.bgm) {
                     const textSpan = document.createElement('span');
                     textSpan.textContent = optionText;
                     label.appendChild(textSpan);
-                    fitPuzzleOptionText(textSpan);
+
+                    // 只手動縮小這個特長選項，不執行自動縮字，避免影響其他選項的版面。
+                    if (optionText === '抱怨自己運氣不好') {
+                        label.style.fontSize = '42px';
+                        textSpan.style.fontSize = '42px';
+                    } else {
+                        label.style.fontSize = '';
+                        fitPuzzleOptionText(textSpan);
+                    }
                 }
                 selectedOption.onclick = null;
             }
