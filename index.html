@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="preload" href="./font/DelaGothicOne-Regular.woff?v=3" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="./font/CP--TRANS.woff2?v=2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./font/CP--TRANS.woff2?v=3" as="font" type="font/woff2" crossorigin>
     <title>《 星辰之路》——情境式性格測驗</title>
     <style>
         /* 載入玩家名字使用的 Dela Gothic One 字體（先用已確認可讀取的 WOFF） */
@@ -485,8 +485,8 @@
         /* 1. 將 @font-face 移至 CSS 最上方宣告 */
     @font-face {
   font-family: 'CPTrans';
-  src: url('./font/CP--TRANS.woff2?v=2') format('woff2'),
-       url('./font/CP--TRANS.woff?v=2') format('woff');
+  src: url('./font/CP--TRANS.woff2?v=3') format('woff2'),
+       url('./font/CP--TRANS.woff?v=3') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3968,34 +3968,68 @@ if (scene.bgm) {
             if (element) element.classList.toggle('active');
         }
 
-        // 啟動時先確定兩套字體已載入，避免遊戲開始後名字先以系統字體閃現。
+        // 字體是進入遊戲的必要條件：兩套字體都確認載入成功後，才開始預載遊戲素材。
         function preloadGameFonts() {
-            if (!document.fonts || typeof document.fonts.load !== "function") return Promise.resolve();
+            if (!document.fonts || typeof document.fonts.load !== "function") {
+                return Promise.reject(new Error("此瀏覽器無法確認自訂字體是否載入"));
+            }
+
             return Promise.all([
                 document.fonts.load('50px "Dela Gothic One"'),
                 document.fonts.load('16px "CPTrans"')
-            ]).catch(error => {
-                console.warn("字體預載未能完成，將使用 CSS 後備字體：", error);
+            ]).then(results => {
+                if (results.some(fontFaces => !fontFaces || fontFaces.length === 0)) {
+                    throw new Error("至少有一套自訂字體沒有成功載入");
+                }
+                if (!document.fonts.check('50px "Dela Gothic One"') ||
+                    !document.fonts.check('16px "CPTrans"')) {
+                    throw new Error("自訂字體尚未準備完成");
+                }
             });
+        }
+
+        function showFontLoadError(error) {
+            console.error("自訂字體載入失敗，遊戲暫停啟動：", error);
+            const loadingScreen = document.getElementById('loading-screen');
+            if (!loadingScreen) return;
+
+            const message = loadingScreen.querySelector('.loading-message') ||
+                loadingScreen.querySelector('div');
+            if (message) {
+                message.classList.add('loading-message');
+                message.textContent = '字體載入失敗，尚未進入遊戲';
+            }
+
+            const percent = document.getElementById('loading-percent');
+            if (percent) percent.textContent = '請確認網路後重試';
+
+            let retryButton = document.getElementById('font-load-retry');
+            if (!retryButton) {
+                retryButton = document.createElement('button');
+                retryButton.id = 'font-load-retry';
+                retryButton.textContent = '重新載入';
+                retryButton.style.cssText = 'margin-top:12px;padding:10px 22px;border:0;border-radius:8px;background:#62c6ff;color:#111;font-size:16px;font-weight:bold;cursor:pointer;';
+                retryButton.addEventListener('click', () => window.location.reload());
+                loadingScreen.appendChild(retryButton);
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
-            // 問題資料夾中的所有 UI、拼圖、選項與確認畫面素材一開始就全部預載。
-            // 與第一幕素材合併載入，避免分兩次重設載入進度。
-            const initialAssets = [
-                ...getQuestionAssetPaths(),
-                ...getSceneAssetPaths(0)
-            ];
-
+            // 字體未全部成功載入時，不會啟動圖片預載、不會隱藏載入畫面，也不會進入劇情。
             preloadGameFonts().then(() => {
+                const initialAssets = [
+                    ...getQuestionAssetPaths(),
+                    ...getSceneAssetPaths(0)
+                ];
+
                 preloadImages(initialAssets, () => {
                     readySceneIndexes.add(0);
                     enterGameAnimation();
                     renderScene(0);
                 });
-            });
+            }).catch(showFontLoadError);
         });
 
         // 跳轉// 在 <script> 底部加入這段代碼即可
