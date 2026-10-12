@@ -3122,7 +3122,7 @@ img { max-width:100%; }
                             finish();
                         }
                     };
-                    img.onerror = finish;
+                    img.onerror = () => finish();
                     img.src = src;
                 });
 
