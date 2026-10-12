@@ -1002,9 +1002,8 @@ img { max-width:100%; }
 
 #page1.puzzle-confirm-mode .拼圖選項文字 > span {
     display: block;
-    align-self: flex-start;
     width: 100%;
-    height: 100%;
+    height: auto;
     max-height: 100%;
     min-width: 0;
     box-sizing: border-box;
@@ -3588,20 +3587,15 @@ if (scene.bgm) {
             if (!textSpan) return;
             const label = textSpan.parentElement;
             if (!label) return;
-            const maxFontSize = parseFloat(getComputedStyle(label).fontSize) || 60;
+            const maxFontSize = parseFloat(getComputedStyle(label).fontSize) || 30;
             const minFontSize = 12;
-
-            // 讓內層文字有固定可測量高度，超出時才能正確判斷並縮字。
-            textSpan.style.height = '100%';
-            textSpan.style.maxHeight = '100%';
-            textSpan.style.overflow = 'hidden';
             textSpan.style.fontSize = maxFontSize + 'px';
 
             requestAnimationFrame(() => {
                 let size = maxFontSize;
                 while (size > minFontSize &&
-                    (textSpan.scrollHeight > textSpan.clientHeight + 1 ||
-                     textSpan.scrollWidth > textSpan.clientWidth + 1)) {
+                    (textSpan.scrollHeight > label.clientHeight + 1 ||
+                     textSpan.scrollWidth > label.clientWidth + 1)) {
                     size -= 1;
                     textSpan.style.fontSize = size + 'px';
                 }
