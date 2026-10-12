@@ -977,22 +977,24 @@ img { max-width:100%; }
 }
 
 #page1.puzzle-confirm-mode .拼圖選項文字 {
-    /* 選項內容文字：以下位置與尺寸可自行微調 */
+    /* 文字範圍：限制在拼圖內；可調整 left/top/width/height */
     position: absolute;
     left: 18%;
     top: 20%;
     width: 64%;
     height: 58%;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     white-space: normal;
     overflow-wrap: anywhere;
+    word-break: normal;
     color: #fff;
     font-family: 'CPTrans', sans-serif !important;
-    font-size: clamp(17px, 4.6vw, 23px);
-    line-height: 1.35;
+    font-size: 30px; /* 最大字級；文字過多時由 JS 自動縮小 */
+    line-height: 1.2;
     font-weight: normal;
     text-shadow: 0 1px 4px rgba(0,0,0,.7);
     pointer-events: none;
@@ -3567,6 +3569,25 @@ if (scene.bgm) {
             break;
     }
 }
+        // 依照拼圖內文字範圍自動調整字級：先用最大字，放不下才逐步縮小。
+        function fitPuzzleOptionText(label) {
+            if (!label) return;
+            const maxFontSize = 30;
+            const minFontSize = 12;
+            label.style.fontSize = maxFontSize + 'px';
+
+            // 等瀏覽器完成顯示與排版，再依實際可用範圍測量。
+            requestAnimationFrame(() => {
+                let size = maxFontSize;
+                while (size > minFontSize &&
+                    (label.scrollHeight > label.clientHeight + 1 ||
+                     label.scrollWidth > label.clientWidth + 1)) {
+                    size -= 1;
+                    label.style.fontSize = size + 'px';
+                }
+            });
+        }
+
         // 玩家點選拼圖後，先進入確認畫面；只有按「是的」才正式計分並前往 nextId。
         let pendingPuzzleConfirmation = null;
 
@@ -3601,7 +3622,10 @@ if (scene.bgm) {
             const selectedOption = document.getElementById(selectedOptionId);
             if (selectedOption) {
                 const label = selectedOption.querySelector('.拼圖選項文字');
-                if (label) label.textContent = option.text || '';
+                if (label) {
+                    label.textContent = option.text || '';
+                    fitPuzzleOptionText(label);
+                }
                 selectedOption.onclick = null;
             }
 
