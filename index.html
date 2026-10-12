@@ -993,10 +993,7 @@ img { max-width:100%; }
     word-break: normal;
     color: #fff;
     font-family: 'CPTrans', sans-serif !important;
-    font-size: clamp(60px, 4.6vw, 23px);
-    line-height: 1.35;
-    font-weight: normal;
-    font-size: 60px; /* 最大字級；文字過多時由 JS 自動縮小 */
+    font-size: 60px; /* 想調整文字最大尺寸，改這裡 */
     line-height: 1.2;
     font-weight: normal;
     pointer-events: none;
@@ -3574,7 +3571,8 @@ if (scene.bgm) {
         // 依照拼圖內文字範圍自動調整字級：先用最大字，放不下才逐步縮小。
         function fitPuzzleOptionText(label) {
             if (!label) return;
-            const maxFontSize = 30;
+            // 以 CSS 的 font-size 作為最大字級；之後只在文字放不下時縮小。
+            const maxFontSize = parseFloat(getComputedStyle(label).fontSize) || 30;
             const minFontSize = 12;
             label.style.fontSize = maxFontSize + 'px';
 
