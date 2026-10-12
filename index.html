@@ -3051,28 +3051,52 @@ img { max-width:100%; }
             }
 
             Promise.all(unique.map(src => {
+                // 舊的載入工作若一直沒有回應，也不能讓整個啟動畫面永遠停住。
+                const settleWithinLimit = promise => Promise.race([
+                    promise,
+                    new Promise(resolve => setTimeout(() => {
+                        console.warn("圖片載入逾時，略過並繼續：", src);
+                        resolve();
+                    }, 12000))
+                ]);
+
                 if (assetLoadPromises.has(src)) {
-                    return assetLoadPromises.get(src).then(updateProgress);
+                    return settleWithinLimit(assetLoadPromises.get(src)).then(updateProgress);
                 }
 
                 const promise = new Promise(resolve => {
                     const img = new Image();
+                    let settled = false;
+                    const finish = () => {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timeoutId);
+                        resolve();
+                    };
+                    const timeoutId = setTimeout(() => {
+                        console.warn("圖片載入逾時，略過並繼續：", src);
+                        finish();
+                    }, 12000);
+
                     img.decoding = "async";
-                    // 不只等圖片下載完成，也先完成解碼，避免切換到確認畫面時圖片晚一幀才繪製而閃一下。
+                    // 圖片下載或解碼沒有回應時，逾時後仍會繼續啟動。
                     img.onload = () => {
                         if (typeof img.decode === "function") {
-                            img.decode().catch(() => {}).finally(resolve);
+                            img.decode().catch(() => {}).finally(finish);
                         } else {
-                            resolve();
+                            finish();
                         }
                     };
-                    img.onerror = () => resolve();
+                    img.onerror = finish;
                     img.src = src;
                 });
 
                 assetLoadPromises.set(src, promise);
                 return promise.then(updateProgress);
             })).then(() => {
+                if (typeof callback === "function") callback();
+            }).catch(error => {
+                console.error("圖片預載發生錯誤，仍嘗試進入遊戲：", error);
                 if (typeof callback === "function") callback();
             });
         }
