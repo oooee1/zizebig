@@ -1340,13 +1340,7 @@ img { max-width:100%; }
         // 獨立診斷主遊戲腳本：即使主腳本有語法錯誤，也能把錯誤顯示在載入畫面。
         (() => {
             const showStartupError = message => {
-                const percent = document.getElementById('loading-percent');
-                if (percent) {
-                    percent.textContent = '啟動錯誤：' + String(message).slice(0, 90);
-                    percent.style.width = 'auto';
-                    percent.style.fontSize = '12px';
-                    percent.style.overflowWrap = 'anywhere';
-                }
+                // 不在遊戲畫面顯示啟動錯誤文字，保留 Console 診斷方便日後排查。
                 console.error('[zizebig 啟動診斷]', message);
             };
             window.addEventListener('error', event => {
