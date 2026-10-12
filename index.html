@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="preload" href="./font/DelaGothicOne-Regular.woff?v=3" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="./font/CP--TRANS.woff2?v=2" as="font" type="font/woff2" crossorigin>
     <title>《 星辰之路》——情境式性格測驗</title>
     <style>
         /* 載入玩家名字使用的 Dela Gothic One 字體（先用已確認可讀取的 WOFF） */
@@ -747,7 +749,7 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
 }
 #對話框 { height:min(250px,35dvh); min-height:170px; }
 #對話框那條線 { top:auto; bottom:0; }
-.player-svg { top:auto !important; bottom: 175px; left:5%; width:500px; max-width:none; height:70px; aspect-ratio:auto; }
+.player-svg { top:auto !important; bottom: calc(max(170px, min(250px, 35dvh)) - 75px); left:5%; width:500px; max-width:none; height:70px; aspect-ratio:auto; }
 #對話文本 { width:86%; height:62%; font-size:clamp(17px,5.2vw,24px); line-height:1.45; padding-bottom:env(safe-area-inset-bottom); }
 #選項框 { width:100%; padding:0 12px; gap:clamp(8px,1.8vh,15px); }
 .選項按鈕 { min-height:48px; height:auto; padding:10px 12px; font-size:clamp(15px,4.6vw,20px); }
@@ -3965,6 +3967,17 @@ if (scene.bgm) {
             if (element) element.classList.toggle('active');
         }
 
+        // 啟動時先確定兩套字體已載入，避免遊戲開始後名字先以系統字體閃現。
+        function preloadGameFonts() {
+            if (!document.fonts || typeof document.fonts.load !== "function") return Promise.resolve();
+            return Promise.all([
+                document.fonts.load('50px "Dela Gothic One"'),
+                document.fonts.load('16px "CPTrans"')
+            ]).catch(error => {
+                console.warn("字體預載未能完成，將使用 CSS 後備字體：", error);
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
@@ -3975,10 +3988,12 @@ if (scene.bgm) {
                 ...getSceneAssetPaths(0)
             ];
 
-            preloadImages(initialAssets, () => {
-                readySceneIndexes.add(0);
-                enterGameAnimation();
-                renderScene(0);
+            preloadGameFonts().then(() => {
+                preloadImages(initialAssets, () => {
+                    readySceneIndexes.add(0);
+                    enterGameAnimation();
+                    renderScene(0);
+                });
             });
         });
 
