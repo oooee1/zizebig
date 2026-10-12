@@ -3636,7 +3636,7 @@ if (scene.bgm) {
                 const label = selectedOption.querySelector('.拼圖選項文字');
                 if (label) {
                     // 支援 //n 或 \\n 作為手動換行標記，並用獨立文字層測量，避免長文字超出拼圖框。
-                    const optionText = (option.text || '').replace(/\/\/n|\\\\n/g, '\n');
+                    const optionText = (option.text || '').replace(/\/\/n|\\n/g, '\n');
                     label.textContent = '';
                     const textSpan = document.createElement('span');
                     textSpan.textContent = optionText;
