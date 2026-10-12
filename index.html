@@ -3178,7 +3178,11 @@ function activateImages(container) { if (!container) return; container.querySele
             });
             if (Array.isArray(scene.comicImages)) paths.push(...scene.comicImages);
 
-            // 題目 UI 圖片改為進入選擇畫面時才載入，避免 iPhone Safari 一次佔用過多記憶體。
+            // 進入計分題時，一次準備好題目介面素材，避免拼圖與確認畫面逐張跑出來。
+            const hasScoredOptions = Array.isArray(scene.options) && scene.options.some(
+                opt => opt.score && Object.keys(opt.score).length > 0
+            );
+            if (hasScoredOptions) paths.push(...getQuestionAssetPaths());
 
             return [...new Set(paths.filter(Boolean))];
         }
@@ -3476,13 +3480,33 @@ if (scene.bgm) {
         });
     }
 
-    // 只提前準備下一幕，不再把整個遊戲素材一次下載。
-    const nextSceneIndex = scene.nextId !== undefined
-        ? storyScript.findIndex(s => s.id === scene.nextId)
-        : stepIndex + 1;
-    if (nextSceneIndex >= 0 && nextSceneIndex < storyScript.length) {
-        setTimeout(() => preloadSceneAssets(nextSceneIndex), 0);
+    // 提前載入所有可能接續的場景（包含題目分支），利用玩家閱讀對話的時間準備素材。
+    const nextSceneIds = [];
+    if (scene.nextId !== undefined) nextSceneIds.push(scene.nextId);
+    if (Array.isArray(scene.options)) {
+        scene.options.forEach(option => {
+            if (option && option.nextId !== undefined) nextSceneIds.push(option.nextId);
+        });
     }
+    if (nextSceneIds.length === 0 && stepIndex + 1 < storyScript.length) {
+        nextSceneIds.push(storyScript[stepIndex + 1].id);
+    }
+
+    const nextSceneIndexes = [...new Set(nextSceneIds)]
+        .map(id => storyScript.findIndex(item => Number(item.id) === Number(id)))
+        .filter(index => index >= 0 && index < storyScript.length);
+
+    // 先準備下一步，再順手預備下一步後的線性場景；不阻擋目前畫面操作。
+    setTimeout(() => {
+        nextSceneIndexes.forEach(index => preloadSceneAssets(index));
+        nextSceneIndexes.forEach(index => {
+            const upcoming = storyScript[index];
+            if (upcoming && upcoming.nextId !== undefined) {
+                const followingIndex = storyScript.findIndex(item => Number(item.id) === Number(upcoming.nextId));
+                if (followingIndex >= 0) preloadSceneAssets(followingIndex);
+            }
+        });
+    }, 0);
 
     // 一般劇情才依照本幕文字更新對話框；問題介面保留上一幕畫面。
     if (!hasScoredOptions) {
