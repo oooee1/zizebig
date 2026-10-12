@@ -77,19 +77,23 @@
         .progress-container {
             width: 70%;
             max-width: 250px;
-            /* background: #222; */
-            border-radius: 10px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.28);
+            border: 2px solid #222;
+            border-radius: 999px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: block;
+            box-sizing: border-box;
+            flex: 0 0 auto;
         }
 
         #progress-bar {
-            height: 12px;
-            background: #62c6ff;
+            display: block;
+            height: 100%;
             width: 0%;
-            transition: width 0.3s;
+            background: #62c6ff;
+            border-radius: 999px;
+            transition: width 0.3s ease;
         }
 
         /* ------------------------------------------
