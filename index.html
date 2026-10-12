@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <link rel="preload" href="./font/DelaGothicOne-Regular.woff?v=3" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="./font/CP--TRANS.woff2?v=3" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./font/DelaGothicOne-Regular.woff?v=4" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="./font/CP--TRANS.woff2?v=4" as="font" type="font/woff2" crossorigin>
     <title>《 星辰之路》——情境式性格測驗</title>
     <style>
         /* 載入玩家名字使用的 Dela Gothic One 字體（先用已確認可讀取的 WOFF） */
         @font-face {
             font-family: 'Dela Gothic One';
-            src: url('./font/DelaGothicOne-Regular.woff?v=3') format('woff');
+            src: url('./font/DelaGothicOne-Regular.woff?v=4') format('woff');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
@@ -485,8 +485,8 @@
         /* 1. 將 @font-face 移至 CSS 最上方宣告 */
     @font-face {
   font-family: 'CPTrans';
-  src: url('./font/CP--TRANS.woff2?v=3') format('woff2'),
-       url('./font/CP--TRANS.woff?v=3') format('woff');
+  src: url('./font/CP--TRANS.woff2?v=4') format('woff2'),
+       url('./font/CP--TRANS.woff?v=4') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -3968,22 +3968,37 @@ if (scene.bgm) {
             if (element) element.classList.toggle('active');
         }
 
-        // 字體是進入遊戲的必要條件：兩套字體都確認載入成功後，才開始預載遊戲素材。
+        // 直接載入實際字體檔，確認 FontFace.load 成功後才允許進入遊戲。
         function preloadGameFonts() {
-            if (!document.fonts || typeof document.fonts.load !== "function") {
-                return Promise.reject(new Error("此瀏覽器無法確認自訂字體是否載入"));
+            if (typeof FontFace !== "function" || !document.fonts) {
+                return Promise.reject(new Error("這個瀏覽器不支援自訂字體載入確認"));
             }
 
-            return Promise.all([
-                document.fonts.load('50px "Dela Gothic One"'),
-                document.fonts.load('16px "CPTrans"')
-            ]).then(results => {
-                if (results.some(fontFaces => !fontFaces || fontFaces.length === 0)) {
-                    throw new Error("至少有一套自訂字體沒有成功載入");
-                }
+            const fontFiles = [
+                new FontFace(
+                    "Dela Gothic One",
+                    'url("./font/DelaGothicOne-Regular.woff?v=4")',
+                    { weight: "400", style: "normal" }
+                ),
+                new FontFace(
+                    "CPTrans",
+                    'url("./font/CP--TRANS.woff2?v=4")',
+                    { weight: "400", style: "normal" }
+                )
+            ];
+
+            return Promise.all(fontFiles.map(fontFace =>
+                fontFace.load().then(loadedFace => {
+                    document.fonts.add(loadedFace);
+                    return loadedFace;
+                }).catch(error => {
+                    throw new Error("字體「" + fontFace.family + "」載入失敗：" +
+                        (error && error.message ? error.message : "請檢查字體檔案與路徑"));
+                })
+            )).then(() => {
                 if (!document.fonts.check('50px "Dela Gothic One"') ||
                     !document.fonts.check('16px "CPTrans"')) {
-                    throw new Error("自訂字體尚未準備完成");
+                    throw new Error("字體檔已讀取，但瀏覽器仍未確認字體可用");
                 }
             });
         }
