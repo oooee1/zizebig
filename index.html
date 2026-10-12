@@ -4184,9 +4184,8 @@ if (scene.bgm) {
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
-            // 必須先確認兩套自訂字體載入完成；不可因等待逾時就直接進入遊戲。
+            // 字體失敗時可用備用字體；圖片載入較慢時則留在載入畫面並自動重試。
             preloadGameFonts().catch(error => {
-                // 字體失敗不應讓玩家永遠卡在錯誤畫面；先載入劇情素材並用備用字體進入。
                 console.warn("自訂字體載入失敗，改用備用字體繼續啟動：", error);
             }).then(() => {
                 const initialAssets = [
@@ -4194,32 +4193,43 @@ if (scene.bgm) {
                     ...getSceneAssetPaths(0)
                 ];
 
-                // 初始畫面素材使用嚴格逾時：若重要圖片一直未載入，留在載入畫面並提示重試。
-                preloadImages(initialAssets, error => {
-                    if (error) {
-                        const loadingScreen = document.getElementById('loading-screen');
-                        const message = loadingScreen && (loadingScreen.querySelector('.loading-message') || loadingScreen.querySelector('div'));
-                        if (message) {
-                            message.classList.add('loading-message');
-                            message.textContent = '圖片載入太慢，尚未進入遊戲';
-                        }
-                        const percent = document.getElementById('loading-percent');
-                        if (percent) percent.textContent = '請確認網路後重新載入';
-                        let retryButton = document.getElementById('font-load-retry');
-                        if (!retryButton && loadingScreen) {
-                            retryButton = document.createElement('button');
-                            retryButton.id = 'font-load-retry';
-                            retryButton.textContent = '重新載入';
-                            retryButton.style.cssText = 'margin-top:12px;padding:10px 22px;border:0;border-radius:8px;background:#62c6ff;color:#111;font-size:16px;font-weight:bold;cursor:pointer;';
-                            retryButton.addEventListener('click', () => window.location.reload());
-                            loadingScreen.appendChild(retryButton);
-                        }
-                        return;
+                const loadingScreen = document.getElementById('loading-screen');
+                const loadingMessage = loadingScreen &&
+                    (loadingScreen.querySelector('.loading-message') || loadingScreen.querySelector('div'));
+                const loadingPercent = document.getElementById('loading-percent');
+                let retryCount = 0;
+
+                function loadInitialAssets() {
+                    if (loadingMessage) {
+                        loadingMessage.classList.add('loading-message');
+                        loadingMessage.textContent = retryCount === 0
+                            ? '正在載入遊戲素材...'
+                            : '圖片還在載入，正在自動重試...';
                     }
-                    readySceneIndexes.add(0);
-                    enterGameAnimation();
-                    renderScene(0);
-                }, true);
+
+                    preloadImages(initialAssets, error => {
+                        if (error) {
+                            retryCount++;
+                            console.warn("初始圖片尚未載入完成，將自動重試：", error);
+
+                            // 清除逾時那張圖片的失敗快取，下一輪重新建立 Image 再載一次。
+                            const prefix = '圖片載入逾時：';
+                            if (error.message && error.message.startsWith(prefix)) {
+                                assetLoadPromises.delete(error.message.slice(prefix.length));
+                            }
+
+                            if (loadingPercent) loadingPercent.textContent = '載入稍慢，正在重試（' + retryCount + '）';
+                            setTimeout(loadInitialAssets, 1200);
+                            return;
+                        }
+
+                        readySceneIndexes.add(0);
+                        enterGameAnimation();
+                        renderScene(0);
+                    }, true);
+                }
+
+                loadInitialAssets();
             });
         });
 
