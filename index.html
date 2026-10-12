@@ -400,6 +400,48 @@
     z-index: 1099;
 }
 
+/* 對話框右下角的推進提示箭頭 */
+#dialogue-next-arrow {
+    position: absolute;
+    right: 24px;
+    bottom: 22px;
+    z-index: 1100;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 13px solid #ffb30f;
+    filter: drop-shadow(1px 2px 0 #111);
+    animation: dialogue-arrow-bob 0.9s ease-in-out infinite;
+    pointer-events: none;
+}
+
+#dialogue-next-hint {
+    position: absolute;
+    right: 50px;
+    bottom: 17px;
+    z-index: 1100;
+    padding: 5px 9px;
+    border: 1px solid #ffb30f;
+    border-radius: 5px;
+    background: rgba(15, 15, 15, 0.92);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    display: none;
+}
+
+#page1.show-dialogue-hint #dialogue-next-hint {
+    display: block;
+}
+
+@keyframes dialogue-arrow-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+}
+
 /* 3. SVG 名字定位：放在對話框左上方，與對話框交界融合 */
 .player-svg {
     position: absolute;
@@ -1219,6 +1261,8 @@ img { max-width:100%; }
     <div id="對話框">
         <div id="對話框那條線"></div>
         <div id="對話文本"></div>
+        <div id="dialogue-next-hint">點擊推動劇情</div>
+        <div id="dialogue-next-arrow" aria-hidden="true"></div>
     </div>
 </div>
 
@@ -3339,6 +3383,13 @@ if (scene.bgm) {
             if (!element) return;
             element.style.setProperty("display", shouldShowDialog ? "" : "none", shouldShowDialog ? "" : "important");
         });
+
+        // 只在第一次出現有文字的普通對話框時顯示教學提示。
+        if (shouldShowDialog && !window.hasShownDialogueHint) {
+            const pageForHint = document.getElementById("page1");
+            if (pageForHint) pageForHint.classList.add("show-dialogue-hint");
+            window.hasShownDialogueHint = true;
+        }
     }
 }
         
@@ -3800,6 +3851,12 @@ if (scene.bgm) {
 
         // 一般劇情點擊事件
         document.addEventListener('click', function (e) {
+
+            // 第一次點擊時收起「點擊推動劇情」提示；箭頭之後仍會留在一般對話畫面。
+            const pageForHint = document.getElementById('page1');
+            if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
+                pageForHint.classList.remove('show-dialogue-hint');
+            }
 
             // 第二階段是確認畫面：背景任意位置都不能推進劇情。
             // 「我再想想」與「是的」各自的 onclick 會自行處理，且會停止冒泡。
