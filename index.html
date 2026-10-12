@@ -4188,9 +4188,10 @@ if (scene.bgm) {
             preloadGameFonts().catch(error => {
                 console.warn("自訂字體載入失敗，改用備用字體繼續啟動：", error);
             }).then(() => {
-                // 啟動時只載入第一幕真正需要的素材；題目圖片在進入題目時再載入，
-                // 避免一開始就下載整批題目圖片，拖慢進入遊戲。
-                const initialAssets = getSceneAssetPaths(0);
+                const initialAssets = [
+                    ...getQuestionAssetPaths(),
+                    ...getSceneAssetPaths(0)
+                ];
 
                 const loadingScreen = document.getElementById('loading-screen');
                 const loadingMessage = loadingScreen &&
