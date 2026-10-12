@@ -977,9 +977,10 @@ img { max-width:100%; }
 }
 
 #page1.puzzle-confirm-mode .拼圖選項文字 {
+    /* 選項內容文字：以下位置與尺寸可自行微調 */
     position: absolute;
-    left: 18%;
-    top: 20%;
+    left: 9%;
+    top: 23%;
     width: 64%;
     height: 58%;
     display: flex;
@@ -989,10 +990,10 @@ img { max-width:100%; }
     white-space: normal;
     overflow-wrap: anywhere;
     color: #fff;
-    font-size: clamp(17px, 4.6vw, 23px);
+    font-family: 'CPTrans', sans-serif !important;
+    font-size: clamp(60px, 4.6vw, 23px);
     line-height: 1.35;
-    font-weight: bold;
-    text-shadow: 0 1px 4px rgba(0,0,0,.7);
+    font-weight: normal;
     pointer-events: none;
 }
 
@@ -1402,25 +1403,25 @@ img { max-width:100%; }
         background: "好奇星草叢",
         options: [
             { 
-                text: "我到處走走好了", 
+                text: "到處走走看", 
                 nextId: 2.1, 
                 score: { "好奇星": 3 },
                 feedback: "" 
             },
             { 
-                text: "我選擇呼喊", 
+                text: "大聲呼喊求救", 
                 nextId: 2.2,  
                 score: { "好奇星": 2 },
                 feedback: "呀厚！有人嗎？沒人嗎？" 
             },
             { 
-                text: "我可以原地等", 
+                text: "原地等人來", 
                 nextId: 2.3, 
                 score: { "好奇星": 1 },
                 feedback: "原地等等吧，說不定會有人來救我呢。" 
             },
             { 
-                text: "我會埋怨", 
+                text: "抱怨自己運氣不好", 
                 nextId: 2.4, 
                 score: { "好奇星": 0 },
                 feedback: "好想回家啊..." 
@@ -1598,22 +1599,22 @@ img { max-width:100%; }
         background: "好奇星草原",
         options: [
             { 
-                text: "我想把棉花吹開", 
+                text: "把棉花吹開", 
                 nextId: 20.2, 
                 score: { "好奇星": 3 },
             },
             { 
-                text: "我可能吃得下棉花？", 
+                text: "吃下棉花", 
                 nextId: 20.3,  
                 score: { "好奇星": 2 },
             },
             { 
-                text: "看我大力出奇蹟", 
+                text: "大力出奇蹟", 
                 nextId: 20.4, 
                 score: { "好奇星": 1 },
             },
             { 
-                text: "我選擇徒手撥開", 
+                text: "徒手撥開", 
                 nextId: 20.5, 
                 score: { "好奇星": 0 },
             }
@@ -2022,22 +2023,22 @@ img { max-width:100%; }
         text: "你的未來？",
         options: [
             { 
-                text: "我想當一個充滿想像力，有自我思考的人。", 
+                text: "當一個充滿想像力，有自我思考的人。", 
                 nextId: 61, 
                 score: { "好奇星": 3 },
             },
             { 
-                text: "我想當一個樂觀開朗，願意協助大家的人。", 
+                text: "當一個樂觀開朗，願意協助大家的人。", 
                 nextId: 61,  
                 score: { "好奇星": 2 },
             },
             { 
-                text: "我想當一個細心的領袖，帶大家前進的人。", 
+                text: "當一個細心的領袖，帶大家前進的人。", 
                 nextId: 61, 
                 score: { "好奇星": 1 },
             },
             { 
-                text: "我想當一個有完美規範，有完美秩序的人。", 
+                text: "當一個有完美規範，有完美秩序的人。", 
                 nextId: 61, 
                 score: { "好奇星": 0 },
             }
@@ -2185,22 +2186,22 @@ img { max-width:100%; }
         text: "看到這顆星球的古怪，會怎麼想？",
         options: [
             { 
-                text: "我會感到很難過", 
+                text: "感到很難過", 
                 nextId: 80.1, 
                 score: { "同情星": 3 },
             },
             { 
-                text: "我想了解發生的原因", 
+                text: "想了解發生了什麼", 
                 nextId: 80.2,  
                 score: { "同情星": 2 },
             },
             { 
-                text: "我想吃", 
+                text: "肚子很餓先吃一口", 
                 nextId: 80.3, 
                 score: { "同情星": 1 },
             },
             { 
-                text: "我想先到處走", 
+                text: "到處走走看看", 
                 nextId: 80.4, 
                 score: { "同情星": 0 },
             }
@@ -2312,17 +2313,17 @@ img { max-width:100%; }
         text: "看見同情星哭泣，你的第一直覺？",
         options: [
             { 
-                text: "我能共情他", 
+                text: "能夠共情他", 
                 nextId: 87.1, 
                 score: { "同情星": 3 },
             },
             { 
-                text: "我想知道原因", 
+                text: "想詢問原因", 
                 nextId: 87.2,  
                 score: { "同情星": 2 },
             },
             { 
-                text: "我不知所措", 
+                text: "感到不知所措", 
                 nextId: 87.3, 
                 score: { "同情星": 1 },
             },
@@ -2408,22 +2409,22 @@ img { max-width:100%; }
         text: "了解原因後你會怎麼有效解決？",
         options: [
             { 
-                text: "我會耐心開導", 
+                text: "耐心開導", 
                 nextId: 95.1, 
                 score: { "同情星": 3 },
             },
             { 
-                text: "我會默默陪伴", 
+                text: "默默陪伴", 
                 nextId: 95.2,  
                 score: { "同情星": 2 },
             },
             { 
-                text: "不接受他人的求助", 
+                text: "提出實質建議", 
                 nextId: 95.3, 
                 score: { "同情星": 1 },
             },
             { 
-                text: "我會沒在聽只想吃蛤蜊", 
+                text: "沒在聽只想吃蛤蜊", 
                 nextId: 95.4, 
                 score: { "同情星": 0 },
             }
@@ -2609,17 +2610,17 @@ img { max-width:100%; }
         text: "看到同情星在自己的幫助下做回它自己會有怎樣的心情",
         options: [
             { 
-                text: "我原來也有照亮別人的能力", 
+                text: "原來我也有照亮別人的能力", 
                 nextId: 117.1, 
                 score: { "同情星": 3 },
             },
             { 
-                text: "我很開心能助他一臂之力", 
+                text: "很開心能助他一臂之力", 
                 nextId: 117.2,
                 score: { "同情星": 2 },
             },
             { 
-                text: "我覺得輕輕鬆鬆", 
+                text: "感覺輕輕鬆鬆", 
                 nextId: 117.3,
                 score: { "同情星": 1 },
             },
