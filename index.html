@@ -1444,7 +1444,7 @@ img { max-width:100%; }
                 feedback: "" 
             },
             { 
-                text: "大聲呼喊//n求救", 
+                text: "大聲//n呼喊求救", 
                 nextId: 2.2,  
                 score: { "好奇星": 2 },
                 feedback: "呀厚！有人嗎？沒人嗎？" 
@@ -5708,11 +5708,10 @@ if (scene.bgm) {
                     // 只有這兩個指定長選項維持 28px；其他選項直接固定 54px，避免自動縮字抵銷尺寸調整。
                     const compactOptionText = optionText.replace(/\s/g, '');
                     label.style.fontSize = '';
-                    if (
-                        compactOptionText === '抱怨自己運氣不好' ||
-                        compactOptionText === '大聲呼喊求救'
-                    ) {
+                    if (compactOptionText === '抱怨自己運氣不好') {
                         textSpan.style.fontSize = '28px';
+                    } else if (compactOptionText === '大聲呼喊求救') {
+                        textSpan.style.fontSize = '35px';
                     } else {
                         textSpan.style.fontSize = '54px';
                     }
