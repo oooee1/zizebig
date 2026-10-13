@@ -5708,12 +5708,10 @@ if (scene.bgm) {
                     // 指定選項個別設定字體大小；其他選項固定 54px，避免自動縮字抵銷尺寸調整。
                     const compactOptionText = optionText.replace(/\s/g, '');
                     label.style.fontSize = '';
-                    if (compactOptionText === '抱怨自己運氣不好') {
+                    if (compactOptionText.length === 6) {
+                        textSpan.style.fontSize = '45px';
+                    } else if (compactOptionText === '抱怨自己運氣不好') {
                         textSpan.style.fontSize = '38px';
-                    } else if (compactOptionText === '大聲呼喊求救') {
-                        textSpan.style.fontSize = '45px';
-                    } else if (compactOptionText === '到處走走看看') {
-                        textSpan.style.fontSize = '45px';
                     } else {
                         textSpan.style.fontSize = '54px';
                     }
