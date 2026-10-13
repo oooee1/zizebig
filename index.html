@@ -22,6 +22,14 @@
             box-sizing: border-box;
         }
 
+        /* 防止手機長按遊戲圖片時跳出「儲存照片／影像」選單 */
+        img {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
@@ -589,7 +597,7 @@
         background-repeat: no-repeat;
         color: white;
         cursor: pointer;
-        font-size: 20px;
+        font-size: 16px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -830,7 +838,7 @@ html, body { min-width:0; min-height:100%; height:100%; width:100%; overflow:hid
 .player-svg { top:auto !important; bottom: calc(max(170px, min(250px, 35dvh)) - 75px); left:5%; width:500px; max-width:none; height:70px; aspect-ratio:auto; }
 #對話文本 { width:86%; height:62%; font-size:clamp(17px,5.2vw,24px); line-height:1.45; padding-bottom:env(safe-area-inset-bottom); }
 #選項框 { width:100%; padding:0 12px; gap:clamp(8px,1.8vh,15px); }
-.選項按鈕 { min-height:48px; height:auto; padding:10px 12px; font-size:clamp(15px,4.6vw,20px); }
+.選項按鈕 { min-height:48px; height:auto; padding:10px 12px; font-size:clamp(11px,3.6vw,16px); }
 @media (min-width:500px) and (min-height:500px) {
  #game-container { height:min(90vh,932px); height:min(90dvh,932px); }
 }
@@ -979,24 +987,38 @@ img { max-width:100%; }
 #page1.puzzle-confirm-mode .拼圖選項文字 {
 
     position: absolute;
-    left: 9%;
+    left: 13%;
     top: 23%;
-    width: 64%;
+    width: 70%;
     height: 58%;
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    white-space: pre-line; /* 讓 option.text 裡的 \n 強制換行 */
+    justify-content: flex-start;
+    text-align: left;
+    white-space: pre-line; /* 讓 option.text 裡的換行標記強制換行 */
     overflow-wrap: anywhere;
     word-break: normal;
     color: #fff;
     font-family: 'CPTrans', sans-serif !important;
-    font-size: 60px; /* 想調整文字最大尺寸，改這裡 */
+    font-size: 58px; /* 一般拼圖選項文字 54px；兩個指定長選項仍為 28px */
     line-height: 1.2;
     font-weight: normal;
     pointer-events: none;
+    overflow: hidden;
+}
+
+#page1.puzzle-confirm-mode .拼圖選項文字 > span {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 #page1.puzzle-confirm-mode #確認選項背景 {
@@ -1217,6 +1239,17 @@ img { max-width:100%; }
             <div id="同情星沒貝殼" class="背景圖"><img data-src="./pct/沒貝殼.webp"></div>
             <div id="同情星海" class="背景圖"><img data-src="./pct/那個很美的海.webp"></div>
 
+            <!-- 爽快星背景 -->
+            <div id="爽快星普通場景" class="背景圖"><img data-src="./pct/普通場景.png" alt="爽快星普通場景"></div>
+            <div id="爽快星機器壞了" class="背景圖"><img data-src="./pct/機器壞了.png" alt="爽快星機器壞了"></div>
+            <div id="爽快星郵局" class="背景圖"><img data-src="./pct/郵局.png" alt="爽快星郵局"></div>
+            <div id="爽快星送信" class="背景圖"><img data-src="./pct/送信.png" alt="爽快星送信"></div>
+
+            <!-- 熱情星背景 -->
+            <div id="熱情星初遇" class="背景圖"><img data-src="./pct/初遇熱情星.png" alt="熱情星初遇"></div>
+            <div id="熱情星火焰村吵架中" class="背景圖"><img data-src="./pct/火焰村-吵架中.png" alt="熱情星火焰村吵架中"></div>
+            <div id="熱情星火焰村和好了" class="背景圖"><img data-src="./pct/火焰村-和好了.png" alt="熱情星火焰村和好了"></div>
+
             <!-- 好奇星系列 -->
             <div id="好奇星" class="角色圖 全好奇星"><img data-src="./pct/好奇星_p.webp" alt="好奇星"></div>
             <div id="好奇星開心" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心.webp" alt="好奇星開心"></div>    
@@ -1376,8 +1409,8 @@ img { max-width:100%; }
         document.addEventListener('contextmenu', event => event.preventDefault());
 
         const storyScript = [
-            {
-        id: 0,
+    {
+            id: 0,
         text: "呃...怎麼回事，頭好暈。",
         speaker: "星辰",
         background: "好奇星草叢",
@@ -1411,19 +1444,19 @@ img { max-width:100%; }
                 feedback: "" 
             },
             { 
-                text: "大聲呼喊求救", 
+                text: "大聲//n呼喊求救", 
                 nextId: 2.2,  
                 score: { "好奇星": 2 },
                 feedback: "呀厚！有人嗎？沒人嗎？" 
             },
             { 
-                text: "原地等人來", 
+                text: "原地//n等人來", 
                 nextId: 2.3, 
                 score: { "好奇星": 1 },
                 feedback: "原地等等吧，說不定會有人來救我呢。" 
             },
             { 
-                text: "抱怨自己運氣不好", 
+                text: "抱怨自己//n運氣不好", 
                 nextId: 2.4, 
                 score: { "好奇星": 0 },
                 feedback: "好想回家啊..." 
@@ -1601,7 +1634,7 @@ img { max-width:100%; }
         background: "好奇星草原",
         options: [
             { 
-                text: "把棉花吹開", 
+                text: "把棉花//n吹開", 
                 nextId: 20.2, 
                 score: { "好奇星": 3 },
             },
@@ -1611,7 +1644,7 @@ img { max-width:100%; }
                 score: { "好奇星": 2 },
             },
             { 
-                text: "大力出奇蹟", 
+                text: "大力//n出奇蹟", 
                 nextId: 20.4, 
                 score: { "好奇星": 1 },
             },
@@ -1673,7 +1706,7 @@ img { max-width:100%; }
                 nextId: 24, 
             },
             { 
-                text: "易如反掌！", 
+                text: "易如反掌", 
                 nextId: 24,  
             },
         ]
@@ -1813,22 +1846,22 @@ img { max-width:100%; }
         background: "好奇星棉花重災區",
         options: [
             { 
-                text: "試試看樹皮？", 
+                text: "試試看//n樹皮？", 
                 nextId: 36.2, 
                 score: { "好奇星": 3 },
             },
             { 
-                text: "試試看吹風機？", 
+                text: "試試看//n吹風機？", 
                 nextId: 35.3,  
                 score: { "好奇星": 2 },
             },
             { 
-                text: "試試看羊毛？", 
+                text: "試試看//n羊毛？", 
                 nextId: 35.3, 
                 score: { "好奇星": 1 },
             },
             { 
-                text: "嘗試先修理發電機？", 
+                text: "嘗試先修理//n發電機？", 
                 nextId: 35.4, 
                 score: { "好奇星": 0 },
             }
@@ -1916,13 +1949,25 @@ img { max-width:100%; }
     },
     {
         id: 41,
-        text: "嗚嗚嗚感謝{playerName}的吸塵器！現在我們都能享受吃草了咩！！QQ",
+        text: "嗚嗚嗚感謝{playerName}的吸塵器！",
+        characters: ["好奇星開心有尾巴"],
+        background: "好奇星草叢",
+    },
+    {
+        id: 41.1,
+        text: "現在我們都能享受吃草了咩！！QQ",
         characters: ["好奇星開心有尾巴"],
         background: "好奇星草叢",
     },
     {
         id: 42,
-        text: "嘿嘿，如願以償！現在我要告訴你回去的方法了咩。",
+        text: "嘿嘿，如願以償！",
+        characters: ["好奇星開心有尾巴"],
+        background: "好奇星草叢",
+    },
+    {
+        id: 42.1,
+        text: "現在我要告訴你回去的方法了咩。",
         characters: ["好奇星開心有尾巴"],
         background: "好奇星草叢",
     },
@@ -2025,22 +2070,22 @@ img { max-width:100%; }
         text: "你的未來？",
         options: [
             { 
-                text: "當一個充滿想像力，有自我思考的人。", 
+                text: "當一個充滿想像力，//n有自我思考的人。", 
                 nextId: 61, 
                 score: { "好奇星": 3 },
             },
             { 
-                text: "當一個樂觀開朗，願意協助大家的人。", 
+                text: "當一個樂觀開朗，//n願意協助大家的人。", 
                 nextId: 61,  
                 score: { "好奇星": 2 },
             },
             { 
-                text: "當一個細心的領袖，帶大家前進的人。", 
+                text: "當一個細心的領袖，//n帶大家前進的人。", 
                 nextId: 61, 
                 score: { "好奇星": 1 },
             },
             { 
-                text: "當一個有完美規範，有完美秩序的人。", 
+                text: "當一個有完美規範，//n有完美秩序的人。", 
                 nextId: 61, 
                 score: { "好奇星": 0 },
             }
@@ -2061,7 +2106,13 @@ img { max-width:100%; }
     },
     {
         id: 63,
-        text: "祝福你未來的旅途一帆風順！要常來玩咩。",
+        text: "祝福你未來的旅途一帆風順！",
+        characters: ["好奇星開心有尾巴"],
+        background: "好奇星黃色結局",
+    },
+    {
+        id: 63.1,
+        text: "要常來玩咩。",
         characters: ["好奇星開心有尾巴"],
         background: "好奇星黃色結局",
     },
@@ -2185,25 +2236,26 @@ img { max-width:100%; }
     },
     {
         id: 80,
+        background: "同情星初遇",
         text: "看到這顆星球的古怪，會怎麼想？",
         options: [
             { 
-                text: "感到很難過", 
+                text: "感到//n很難過", 
                 nextId: 80.1, 
                 score: { "同情星": 3 },
             },
             { 
-                text: "想了解發生了什麼", 
+                text: "想了解發生//n了什麼", 
                 nextId: 80.2,  
                 score: { "同情星": 2 },
             },
             { 
-                text: "肚子很餓先吃一口", 
+                text: "肚子很餓//n先吃一口", 
                 nextId: 80.3, 
                 score: { "同情星": 1 },
             },
             { 
-                text: "到處走走看看", 
+                text: "到處//n走走看看", 
                 nextId: 80.4, 
                 score: { "同情星": 0 },
             }
@@ -2253,55 +2305,59 @@ img { max-width:100%; }
         id: 82.1,
         text: "嗚嗚、嗚、嗚嗚嗚嗚嗚嗚嗚嗚嗚——",
         characters: ["同情星苦惱"],
-        background: "同情星晚霞"
+        background: "同情星初遇"
     },
     {
         id: 83,
         text: "哈囉，我是{playerName}•星辰，你叫什麼名字？",
         characters: ["星辰微笑"],
-        background: "同情星晚霞"
+        background: "同情星初遇"
     },
     {
         id: 83.1,
         text: "還有這個地方是哪裡？",
         characters: ["星辰微笑"],
-        background: "同情星晚霞"
+        background: "同情星初遇"
     },
     {
         id: 84,
         text: "嗚嗚嗚…我叫同情星，這裡是我的星球。",
         characters: ["同情星苦惱"],
-        background: "同情星晚霞"
+        background: "同情星初遇"
     },
     {
         id: 85,
         text: "{playerName}...你長得好眼熟。",
         characters: ["同情星"],
-        background: "同情星晚霞"
+        background: "同情星初遇"
     },
     {
         id: 85.1,
         text: "總覺得在哪裡見過？",
         characters: ["同情星"],
-        background: "同情星晚霞"
+        background: "同情星初遇"
     },
     {
         id: 86,
+        background: "同情星初遇",
         text: "同情星，很高興認識你！",
         characters: ["星辰驕傲"]
     },
     {
         id: 85.2,
+        background: "同情星初遇",
         text: "嗚嗚嗚、嗚嗚嗚嗚嗚。",
         characters: ["同情星苦惱"]
     },
     {
         id: 85.3,
+        background: "同情星初遇",
         text: "嗚、嗚、嗚、嗚嗚嗚嗚嗚嗚嗚嗚嗚",
         characters: ["同情星苦惱"]
     },
     {
         id: 85.4,
+        background: "同情星初遇",
         text: "嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚嗚",
         characters: ["同情星苦惱"]
     },
@@ -2312,25 +2368,26 @@ img { max-width:100%; }
     // },
     {
         id: 87,
+        background: "同情星初遇",
         text: "看見同情星哭泣，你的第一直覺？",
         options: [
             { 
-                text: "能夠共情他", 
+                text: "能夠//n共情他", 
                 nextId: 87.1, 
                 score: { "同情星": 3 },
             },
             { 
-                text: "想詢問原因", 
+                text: "想詢//n問原因", 
                 nextId: 87.2,  
                 score: { "同情星": 2 },
             },
             { 
-                text: "感到不知所措", 
+                text: "感到//n不知所措", 
                 nextId: 87.3, 
                 score: { "同情星": 1 },
             },
             { 
-                text: "多一事不如少一事", 
+                text: "多一事//n不如少一事", 
                 nextId: 87.4, 
                 score: { "同情星": 0 },
             }
@@ -2338,36 +2395,42 @@ img { max-width:100%; }
     },
     {
         id: 87.1,
+        background: "同情星初遇",
         text: "看他哭我也好難過...",
         nextId: 87.5, 
         characters: ["星辰害怕"]
     },
     {
         id: 87.2,
+        background: "同情星初遇",
         text: "你怎麼啦？為什麼躲在這裡哭？",
         nextId: 88, 
         characters: ["星辰"]
     },
     {
         id: 87.3,
+        background: "同情星初遇",
         text: "怎麼辦怎麼辦！",
         nextId: 87.5, 
         characters: ["星辰苦惱"]
     },
     {
         id: 87.4,
+        background: "同情星初遇",
         text: "我要安慰他嗎...",
         nextId: 87.5, 
         characters: ["星辰苦惱"]
     },
     {
         id: 87.5,
+        background: "同情星初遇",
         text: "（總之先釐清哭泣的原因吧）",
         nextId: 87.2, 
         characters: ["星辰"]
     },
     {
         id: 88,
+        background: "同情星初遇",
         text: "嗚...{playerName}你跟我來吧。",
         characters: ["同情星苦惱"]
     },
@@ -2378,36 +2441,43 @@ img { max-width:100%; }
     },
     {
         id: 89,
+        background: "同情星貝殼",
         text: "哇，這裡怎麼有這麼多貝殼？",
         comicImages: ["/同情星家裡"],
     },
     {
         id: 90,
+        background: "同情星貝殼",
         text: "因為...我太在意別人了，",
         comicImages: ["/同情星家裡"],
     },
     {
         id: 91,
+        background: "同情星貝殼",
         text: "想不斷地幫助他人...",
         comicImages: ["/同情星家裡"],
     },
     {
         id: 92,
+        background: "同情星貝殼",
         text: "但也忽略了自己，很擔心自己是否有真正幫助到人。",
         comicImages: ["/同情星家裡"],
     },
     {
         id: 93,
+        background: "同情星貝殼",
         text: "嗚…時間久了，收集貝殼的數量也會隨著壓力變多。",
         comicImages: ["/同情星家裡"],
     },
     {
         id: 94,
+        background: "同情星貝殼",
         text: "天啊…聽到你遭遇這些我也感到很難過。",
         character: ["星辰"]
     },
     {
         id: 95,
+        background: "同情星貝殼",
         text: "了解原因後你會怎麼有效解決？",
         options: [
             { 
@@ -2421,12 +2491,12 @@ img { max-width:100%; }
                 score: { "同情星": 2 },
             },
             { 
-                text: "提出實質建議", 
+                text: "提出//n實質建議", 
                 nextId: 95.3, 
                 score: { "同情星": 1 },
             },
             { 
-                text: "沒在聽只想吃蛤蜊", 
+                text: "沒在聽只想//n吃蛤蜊", 
                 nextId: 95.4, 
                 score: { "同情星": 0 },
             }
@@ -2434,50 +2504,59 @@ img { max-width:100%; }
     },
     {
         id: 95.1,
+        background: "同情星貝殼",
         text: "幫助別人是好事，但你要先把自己顧好才有能力和力氣去照顧別人哇！",
         nextId: 95.5,
         characters: ["星辰微笑"]
     },
     {
         id: 95.2,
+        background: "同情星貝殼",
         text: "（在旁邊安靜陪伴和抱抱他）",
         nextId: 95.6,
         characters: ["星辰微笑"]
     },
     {
         id: 95.3,
+        background: "同情星貝殼",
         text: "以後有人需要幫助你就直接拒絕就好，因為自己最重要！",
         nextId: 95.5,
         characters: ["星辰驕傲"]
     },
     {
         id: 95.4,
+        background: "同情星貝殼",
         text: "燒烤貝殼和水煮貝殼哪個比較好吃...？",
         nextId: 95.6,
         characters: ["星辰思考"]
     },
     {
         id: 95.5,
+        background: "同情星貝殼",
         text: "也對...要照顧好自己才行呢。",
         characters: ["同情星感動"]
     },
     {
         id: 95.6,
+        background: "同情星貝殼",
         text: "啊，我想到可以怎麼解決了！",
         characters: ["星辰驕傲"]
     },
     {
         id: 96,
+        background: "同情星貝殼",
         text: "嗚？",
         characters: ["同情星苦惱"]
     },
     {
         id: 97,
+        background: "同情星貝殼",
         text: "只要好好地玩一番，心情就會變很好。",
         characters: ["星辰微笑"]
     },
     {
         id: 98,
+        background: "同情星貝殼",
         text: "如何釋放壓力，讓心情變好！",
         options: [
             { 
@@ -2500,6 +2579,7 @@ img { max-width:100%; }
     },
     {
         id: 98.1,
+        background: "同情星貝殼",
         text: "去海邊衝浪！",
         nextId: 99, 
         characters: ["星辰驕傲"],
@@ -2507,6 +2587,7 @@ img { max-width:100%; }
     },
     {
         id: 98.2,
+        background: "同情星貝殼",
         text: "聽說吃東西會讓心情變好！",
         nextId: 99, 
         characters: ["星辰驕傲"],
@@ -2514,6 +2595,7 @@ img { max-width:100%; }
     },
     {
         id: 98.3,
+        background: "同情星貝殼",
         text: "把不開心全都唱出來！",
         nextId: 99, 
         characters: ["星辰驕傲"],
@@ -2521,6 +2603,7 @@ img { max-width:100%; }
     },
     {
         id: 98.4,
+        background: "同情星貝殼",
         text: "走！我們去爬山看風景吹吹風！",
         nextId: 99, 
         characters: ["星辰驕傲"],
@@ -2528,56 +2611,67 @@ img { max-width:100%; }
     },
     {
         id: 99,
+        background: "同情星晚霞",
         text: "嗚呼！好開心。",
         characters: ["同情星感動"]
     },
     {
         id: 100,
+        background: "同情星晚霞",
         text: "咦？你的貝殼...",
         characters: ["星辰"]
     },
     {
         id: 101,
+        background: "同情星晚霞",
         text: "打開了！",
         comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 102,
+        background: "同情星晚霞",
         text: "好漂亮的珍珠。",
         comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 103,
+        background: "同情星晚霞",
         text: "家裡的貝殼肯定都打開了呢。",
         comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 104,
+        background: "同情星晚霞",
         text: "這樣...我就能開設自己的珠寶店了！",
         comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 105,
+        background: "同情星晚霞",
         text: "珠寶店？",
         comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 106,
+        background: "同情星晚霞",
         text: "嗚…其實…我想開珠寶店很久了。",
         comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 107,
+        background: "同情星晚霞",
         text: "我也能趁這個機會實現夢想，還能幫助別人。",
         comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 108,
+        background: "同情星晚霞",
         text: "那麼，我來幫你一起開店吧！",
         comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 109,
+        background: "同情星貝殼",
         text: "嗚…能在自己的能力內幫助別人，真是太好了！",
         comicImages: ["/賣珠寶"]
     },
@@ -2589,45 +2683,50 @@ img { max-width:100%; }
     },
     {
         id: 112,
+        background: "同情星沒貝殼",
         text: "嘿嘿我也很開心幫助到你。",
         characters: ["星辰驕傲"]
     },
     {
         id: 113,
+        background: "同情星沒貝殼",
         text: "嗚嗚嗚嗚...",
         characters: ["同情星苦惱"]
     },
     {
         id: 114,
+        background: "同情星沒貝殼",
         text: "怎麼又哭了哇。",
         characters: ["星辰"]
     },
     {
         id: 115,
+        background: "同情星沒貝殼",
         text: "我嗚…太感動了。",
         characters: ["同情星苦惱"]
     },
     {
         id: 116,
+        background: "同情星沒貝殼",
         text: "看到同情星在自己的幫助下做回它自己會有怎樣的心情",
         options: [
             { 
-                text: "原來我也有照亮別人的能力", 
+                text: "原來我也有//n照亮別人的能力", 
                 nextId: 117.1, 
                 score: { "同情星": 3 },
             },
             { 
-                text: "很開心能助他一臂之力", 
+                text: "很開心能//n助他一臂之力", 
                 nextId: 117.2,
                 score: { "同情星": 2 },
             },
             { 
-                text: "感覺輕輕鬆鬆", 
+                text: "感覺//n輕輕鬆鬆", 
                 nextId: 117.3,
                 score: { "同情星": 1 },
             },
             { 
-                text: "我是勇者欣梅爾", 
+                text: "我是勇者//n欣梅爾", 
                 nextId: 117.4,
                 score: { "同情星": 0 },
             }
@@ -2635,61 +2734,72 @@ img { max-width:100%; }
     },
     {
         id: 117.1,
+        background: "同情星沒貝殼",
         text: "哇...我真的幫助到他了呢！",
         nextId: 118,
         characters: ["星辰"]
     },
     {
         id: 117.2,
+        background: "同情星沒貝殼",
         text: "看到他能做回自己，真是開心！",
         nextId: 118,
         characters: ["星辰"]
     },
     {
         id: 117.3,
+        background: "同情星沒貝殼",
         text: "哇賽！我真是太天才了。",
         nextId: 118,
         characters: ["星辰"]
     },
     {
         id: 117.4,
+        background: "同情星沒貝殼",
         text: "勇者欣梅爾說過，就算一點也好，",
         nextId: 117.5,
         characters: ["星辰"]
     },
     {
         id: 117.5,
+        background: "同情星沒貝殼",
         text: "能成為他前進的動力，那就足夠了。",
         nextId: 118,
         characters: ["星辰"]
     },
     {
         id: 118,
+        background: "同情星沒貝殼",
         text: "欸...這是什麼？",
         comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 119,
+        background: "同情星沒貝殼",
         text: "我也不太清楚，好像是火箭的燃料吧。",
         comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 120,
+        background: "同情星沒貝殼",
         text: "也真奇怪，每次解決完問題後都會出現...",
         comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 121,
+        background: "同情星沒貝殼",
         text: "所以...要告別了吧。",
         comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 122,
+        background: "同情星沒貝殼",
         text: "嗯！我得搭火箭走啦。",
         comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 123,
+        background: "同情星沒貝殼",
         text: "等等！離開之前我要帶你去一個地方。",
         comicImages: ["/同情星拼圖降下"]
     },
@@ -2700,52 +2810,62 @@ img { max-width:100%; }
     },
     {
         id: 124,
+        background: "同情星海",
         text: "嗒噠，我們最最最，最漂亮的海灘！",
         characters: ["同情星感動"]
     },
     {
         id: 125,
+        background: "同情星海",
         text: "這個貝殼留給你當紀念品吧。",
         characters: [""]
     },
     {
         id: 126,
+        background: "同情星海",
         text: "嘿嘿！真是謝謝你。",
         characters: ["星辰"]
     },
     {
         id: 127,
+        background: "同情星海",
         text: "貝殼裡面...又是信。",
         characters: ["星辰"],
         comicImages: ["/貝殼信"]
     },
     {
         id: 129,
+        background: "同情星海",
         text: "恭喜你結束了第二次的旅程，這顆星球很美吧！",
         comicImages: ["/貝殼信"]
     },
     {
         id: 130,
+        background: "同情星海",
         text: "我們也很喜歡在這裡渡假放鬆，",
         comicImages: ["/貝殼信"]
     },
     {
         id: 131,
+        background: "同情星海",
         text: "如果感到勞累不彷停下來吧，最愛你的▇▇、▇▇。",
         comicImages: ["/貝殼信"]
     },
     {
         id: 132,
+        background: "同情星海",
         text: "嘿嘿，這是之前來訪的旅人留下的。",
         characters: ["同情星自信"]
     },
     {
         id: 133,
+        background: "同情星海",
         text: "{playerName}•星辰，祝你的旅途順利。",
         characters: ["同情星"]
     },
     {
         id: 134,
+        background: "同情星海",
         text: "嗯！珠寶店也要營運順利喔！",
         characters: ["星辰驕傲"]
     },
@@ -2767,50 +2887,74 @@ img { max-width:100%; }
     {
         id: 137,
         text: "呃…這次是一座小鎮？",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["星辰微笑"],
     },
     {
         id: 138,
         text: "哎呀",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["爽快星害怕"],
     },
 
     {
         id: 139,
         text: "欸？？？你還好嗎？",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["星辰嚇死"],
     },
     {
         id: 140,
-        text: "信都散落一地了啊啊啊！這樣來不及送到其他人家…。",
-        background: "",
+        text: "信都散落一地了啊啊啊！",
+        background: "爽快星普通場景",
+        characters: ["爽快星害怕"],
+    },
+    {
+        id: 140.1,
+        text: "這樣來不及送到其他人家…。",
+        background: "爽快星普通場景",
         characters: ["爽快星害怕"],
     },
     {
         id: 141,
         text: "我幫你撿吧。",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["星辰微笑"],
     },
     {
         id: 142,
-        text: "謝謝你！我是爽快星，一位郵差。",
-        background: "",
+        text: "謝謝你！",
+        background: "爽快星普通場景",
+        characters: ["爽快星開心"],
+    },
+    {
+        id: 142.1,
+        text: "我是爽快星，一位郵差。",
+        background: "爽快星普通場景",
         characters: ["爽快星開心"],
     },
     {
         id: 143,
-        text: "我是{playerName}·星辰，剛來這裡，能夠跟著你參觀這顆星球嗎？不會打擾到你工作的。",
-        background: "",
+        text: "我是{playerName}·星辰，剛來這裡，能夠跟著你參觀這顆星球嗎？",
+        background: "爽快星普通場景",
+        characters: ["星辰微笑"],
+    },
+    {
+        id: 143.1,
+        text: "不會打擾到你工作的。",
+        background: "爽快星普通場景",
         characters: ["星辰微笑"],
     },
     {
         id: 144,
-        text: "當然可以！這是我的榮幸，那麼信件的規劃行程就交給您吧！",
-        background: "",
+        text: "當然可以！",
+        background: "爽快星普通場景",
+        characters: ["爽快星"],
+    },
+    {
+        id: 144.1,
+        text: "這是我的榮幸，那麼信件的規劃行程就交給您吧！",
+        background: "爽快星普通場景",
         characters: ["爽快星"],
     },
     {
@@ -2818,17 +2962,17 @@ img { max-width:100%; }
         text: "規劃參觀星球的行程？",
         options: [
             { 
-                text: "縝密的安排", 
+                text: "縝密//n的安排", 
                 nextId: 145.1, 
                 score: { "爽快星": 3 },
             },
             { 
-                text: "偶爾規劃就行", 
+                text: "偶爾//n規劃就行", 
                 nextId: 145.2,
                 score: { "爽快星": 2 },
             },
             { 
-                text: "想到再規劃", 
+                text: "想到//n再規劃", 
                 nextId: 145.3,
                 score: { "爽快星": 1 },
             },
@@ -2842,226 +2986,2159 @@ img { max-width:100%; }
     {
         id: 145.1,
         text: "必須用心規劃才行，所有景點我都要去！",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["星辰驕傲"],
+        nextId: 146,
     },
     {
         id: 145.2,
         text: "要排好行程，但偶爾隨性也沒關係～",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["星辰驕傲"],
+        nextId: 146,
     },
     {
         id: 145.3,
         text: "真的有想去的地方再排行程就好了。",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["星辰驕傲"],
+        nextId: 146,
     },
     {
         id: 145.4,
         text: "想去哪裡就去哪吧，放輕鬆！",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["星辰驕傲"],
+        nextId: 146,
     },
     {
         id: 146,
         text: "沒問題，交給我吧！",
-        background: "",
+        background: "爽快星普通場景",
         characters: ["爽快星開心"],
+    },
+    {
+        id: 146.1,
+        text: "",
+        background: "爽快星送信",
     },
     {
         id: 147,
         text: "嘿！嗚！咻！",
-        background: "",
+        background: "爽快星送信",
         comicImages: ["/"],
     },
     {
         id: 148,
         text: "爽快星！也太趕了！好累……。",
-        background: "",
+        background: "爽快星送信",
         comicImages: ["/"],
     },
     {
         id: 149,
         text: "咦…信又從信箱掉出來。",
-        background: "",
+        background: "爽快星送信",
         comicImages: ["/"],
     },
     {
         id: 150,
         text: "哎呀怎麼每次都這樣，明明想要趕快處理好的啊！",
-        background: "",
+        background: "爽快星送信",
         comicImages: ["/"],
     },
     {
         id: 151,
         text: "這樣的話，慢慢來就好了。",
-        background: "",
+        background: "爽快星送信",
         characters: ["星辰微笑"],
     },
 
     {
         id: 152,
         text: "慢慢來？",
-        background: "",
+        background: "爽快星送信",
         characters: ["爽快星"],
     },
     {
         id: 153,
         text: "如果急著想解決一件事，越想著快速解決反而越難處理。",
-        background: "",
+        background: "爽快星送信",
         characters: ["星辰驕傲"],
     },
     {
         id: 154,
         text: "只要放慢步伐好好地做，就能處理到每個細節！",
-        background: "",
+        background: "爽快星送信",
         characters: ["星辰驕傲"],
     },
     {
         id: 155,
         text: "嗯…那就照您說的做吧。",
-        background: "",
+        background: "爽快星送信",
         characters: ["爽快星"],
     },
     {
         id: 156,
         text: "（一段時間後）",
-        background: "",
+        background: "爽快星送信",
         characters: [""],
     },
     {
         id: 157,
-        text: "信件真的準時送完了呢！我平時總是容易送錯巷...今天真是謝謝您呀！星辰。",
-        background: "",
+        text: "信件真的準時送完了呢！",
+        background: "爽快星送信",
+        characters: ["爽快星開心"],
+    },
+    {
+        id: 157.1,
+        text: "我平時總是容易送錯巷...",
+        background: "爽快星送信",
+        characters: ["爽快星開心"],
+    },
+    {
+        id: 157.2,
+        text: "今天真是謝謝您呀！星辰。",
+        background: "爽快星送信",
         characters: ["爽快星開心"],
     },
     {
         id: 158,
         text: "沒有沒有，順手的事。",
-        background: "",
+        background: "爽快星送信",
         characters: ["星辰微笑"],
     },
     {
         id: 159,
         text: "好可愛的郵局，你們都是怎麼運作的？",
-        background: "",
+        background: "爽快星郵局",
         characters: ["星辰思考"],
     },
     {
         id: 160,
         text: "我們有很酷的機器，可以解決所有居民大小事！",
-        background: "",
+        background: "爽快星郵局",
         characters: ["爽快星"],
     },
     {
         id: 161,
         text: "不過最近...看看前方吧。",
-        background: "",
+        background: "爽快星郵局",
         characters: ["爽快星害怕"],
     },
     {
         id: 162,
         text: "那是...",
-        background: "",
+        background: "爽快星郵局",
         comicImages: ["/"],
     },
     {
         id: 163,
         text: "叫你們管事的出來！",
-        background: "",
+        background: "爽快星郵局",
         characters: ["居民們"],
     },
     {
         id: 164,
         text: "因為信件一直送到錯的地方，居民們突然集體抗議郵局。",
-        background: "",
+        background: "爽快星郵局",
         characters: ["爽快星害怕"],
     },
     {
         id: 165,
         text: "不知道怎麼處理才能平息怒火。",
-        background: "",
+        background: "爽快星郵局",
         characters: ["爽快星疑惑"],
     },
     {
         id: 166,
         text: "這個得想想解決辦法啊。",
-        background: "",
+        background: "爽快星郵局",
         characters: ["星辰苦惱"],
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 167,
+        "text": "解決混亂的信件？",
+        "options": [
+            {
+                "text": "找出最常//n出錯的地方",
+                "nextId": 167.1,
+                "score": {
+                    "爽快星": 3
+                }
+            },
+            {
+                "text": "先安撫//n居民",
+                "nextId": 167.2,
+                "score": {
+                    "爽快星": 2
+                }
+            },
+            {
+                "text": "把所有信//n重新送一次",
+                "nextId": 167.3,
+                "score": {
+                    "爽快星": 1
+                }
+            },
+            {
+                "text": "直接把居民//n的信全部收回來",
+                "nextId": 167.4,
+                "score": {
+                    "爽快星": 0
+                }
+            }
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 167.1,
+        "text": "先找出問題在哪個環節，才能真正解決。",
+        "nextId": 168,
+        "characters": [
+            "星辰思考"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 167.2,
+        "text": "大家先別著急，我們一件一件處理！",
+        "nextId": 168,
+        "characters": [
+            "星辰微笑"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 167.3,
+        "text": "那就全部重新送一遍！",
+        "nextId": 168,
+        "characters": [
+            "星辰驕傲"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 167.4,
+        "text": "先把信全部收回來！",
+        "nextId": 168,
+        "characters": [
+            "星辰苦惱"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 168,
+        "text": "（不管怎麼做，現場還是越來越混亂。）",
+        "characters": [
+            "星辰苦惱"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 169,
+        "text": "逼、逼——",
+        background: "爽快星機器壞了",
+        "characters": [
+            "爽快星慌張"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 170,
+        "text": "這台機器是？",
+        "characters": [
+            "星辰思考"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 171,
+        "text": "郵件分類機！",
+        "characters": [
+            "爽快星"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 171.1,
+        "text": "它會按照地址，把信件分到不同的區域。",
+        "characters": [
+            "爽快星"
+        ]
     },
     {
-        id: 1,
-        text: "",
-        background: "",
-        characters: [""],
+        "id": 172,
+        "text": "完蛋！分類機壞掉了，原來外面的騷亂是因為這個！",
+        "characters": [
+            "爽快星害怕"
+        ]
     },
-
+    {
+        "id": 173,
+        "text": "天啊！現在怎麼辦？",
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 173.1,
+        "text": "你有辦法嗎？",
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 174,
+        "text": "沒有，但可以先做再說！",
+        "characters": [
+            "爽快星慌張"
+        ]
+    },
+    {
+        "id": 174.1,
+        "text": "快快快，時間就是生命！",
+        "characters": [
+            "爽快星慌張"
+        ]
+    },
+    {
+        "id": 175,
+        "text": "（星辰和爽快星開始整理信件，準備分成兩輪分類。）"
+    },
+    {
+        "id": 176,
+        "text": "需要把對應的信封移動收入箱中。",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 176.1,
+        "text": "因為信件真的太多了，所以要分兩輪分類。",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 177,
+        "text": "第一輪先依照信封的顏色分類，記得仔細看清楚！",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 178,
+        "text": "接著第二輪改看信封上的圖案，別被上一輪的規則搞混了。",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 179,
+        "text": "（兩輪分類結束，信件終於全部整理好了。）",
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 180,
+        "text": "太好了！",
+        background: "爽快星郵局",
+        "characters": [
+            "爽快星開心"
+        ]
+    },
+    {
+        "id": 181,
+        "text": "分類也是很辛苦的呢。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 182,
+        "text": "如果...事情真的太多，星辰一般是怎麼解決的呢？",
+        "characters": [
+            "爽快星疑惑"
+        ]
+    },
+    {
+        "id": 183,
+        "text": "繁忙時的解決方法？",
+        "options": [
+            {
+                "text": "排列重要//n與不重要的事",
+                "nextId": 183.1,
+                "score": {
+                    "爽快星": 3
+                }
+            },
+            {
+                "text": "想做的//n先做",
+                "nextId": 183.2,
+                "score": {
+                    "爽快星": 2
+                }
+            },
+            {
+                "text": "全部//n一起做",
+                "nextId": 183.3,
+                "score": {
+                    "爽快星": 1
+                }
+            },
+            {
+                "text": "想到哪做到哪",
+                "nextId": 183.4,
+                "score": {
+                    "爽快星": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": 183.1,
+        "text": "我會先排出優先順序，一件一件完成。",
+        "nextId": 184,
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 183.2,
+        "text": "我會先做現在最想完成的事。",
+        "nextId": 184,
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 183.3,
+        "text": "我會試著同時處理，能快一點是一點！",
+        "nextId": 184,
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 183.4,
+        "text": "想到什麼就先做什麼，說不定會有靈感！",
+        "nextId": 184,
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 184,
+        "text": "原來是這樣，我學會了！",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 184.1,
+        "text": "嘿咻！把這些拿給外面的居民吧。",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 184.2,
+        "text": "",
+        background: "爽快星普通場景",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 185,
+        "text": "對！就是這些！",
+        "characters": [
+            "居民們"
+        ]
+    },
+    {
+        "id": 186,
+        "text": "真是太感謝了！",
+        "characters": [
+            "居民們"
+        ]
+    },
+    {
+        "id": 187,
+        "text": "不用客氣～",
+        "characters": [
+            "爽快星開心"
+        ]
+    },
+    {
+        "id": 188,
+        "text": "（雖然但是……還是得找時間把機器修好才行。）",
+        "characters": [
+            "爽快星疑惑"
+        ]
+    },
+    {
+        "id": 189,
+        "text": "啊對了，剛剛分類時有看到一封寫著特殊文字的信，沒有寫要送往哪裡。",
+        "characters": [
+            "爽快星疑惑"
+        ]
+    },
+    {
+        "id": 190,
+        "text": "中文？上面寫著……給星辰？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 191.1,
+        "text": "親愛的 {playerName}・星辰：",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 191.2,
+        "text": "哼哼～沒想到你也能靠自己抵達這裡呢。",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 191.3,
+        "text": "別急著趕路，慢慢走、慢慢看吧，",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 191.4,
+        "text": "沿途的風景也值得好好收藏喔！最愛小星辰的爸爸、媽媽。",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 192,
+        "text": "這個是媽媽的口吻……",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 193,
+        "text": "看！背面還有一張紙！",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 194,
+        "text": "問答嗎？",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 194.1,
+        "text": "真的很有媽媽的風格。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 195,
+        "text": "在沒有人告訴你下一步時，你會怎麼安排？",
+        "options": [
+            {
+                "text": "列出自己//n的計畫",
+                "nextId": 195.1,
+                "score": {
+                    "爽快星": 3
+                }
+            },
+            {
+                "text": "看看身邊的人//n怎麼做",
+                "nextId": 195.2,
+                "score": {
+                    "爽快星": 2
+                }
+            },
+            {
+                "text": "走一步算一步",
+                "nextId": 195.3,
+                "score": {
+                    "爽快星": 1
+                }
+            },
+            {
+                "text": "跟著當下的//n感覺走",
+                "nextId": 195.4,
+                "score": {
+                    "爽快星": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": 195.1,
+        "text": "肯定得有完整規劃，最好還有 A 方案和 B 方案。",
+        "nextId": 196,
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 195.2,
+        "text": "吸取別人的經驗，也是很好的方法。",
+        "nextId": 196,
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 195.3,
+        "text": "在未知的情況下，就先走一步看一步吧。",
+        "nextId": 196,
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 195.4,
+        "text": "那就跟著當下的感覺走吧！",
+        "nextId": 196,
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 196,
+        "text": "嘻嘻，好久沒有回答媽媽的題目了。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 197,
+        "text": "天上有一片拼圖，那也是您母親留下的嗎？",
+        "characters": [
+            "爽快星疑惑"
+        ]
+    },
+    {
+        "id": 198,
+        "text": "這是我通往其他星球的鑰匙……媽媽留下的嗎？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 199,
+        "text": "也就是說，星辰要去下一顆星球了吧。",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 199.1,
+        "text": "美好的時光總是特別短暫呢，希望我們能再次相遇！",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 200,
+        "text": "我們一定會再相見的～要記得寫信給我喔！",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 201,
+        "text": "一定會的，星辰！",
+        "characters": [
+            "爽快星開心"
+        ]
+    },
+    {
+        "id": 202,
+        "text": "（爽快星結束）",
+        "background": "火箭",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 203,
+        "text": "爸、媽？",
+        "background": "火箭",
+        "characters": [
+            "星辰害怕"
+        ]
+    },
+    {
+        "id": 203.1,
+        "text": "不對不對，他們已經好幾年沒回家了。",
+        "background": "火箭",
+        "characters": [
+            "星辰害怕"
+        ]
+    },
+    {
+        "id": 204,
+        "text": "又怎麼會在乎我的去向……回到家裡我該怎麼辦，跟從前一樣嗎？",
+        "background": "火箭",
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 205,
+        "text": "為什麼時間不能永遠停留在小時候呢……",
+        "background": "火箭",
+        "characters": [
+            "星辰害怕"
+        ]
+    },
+    {
+        "id": 205.1,
+        "text": "",
+        "background": "初遇熱情星"
+    },
+    {
+        "id": 206,
+        "text": "呼……意外平穩落地。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 207,
+        "text": "咳、咳，全是硝煙味，為什麼一個人都沒有？",
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 208,
+        "text": "那是……什麼？",
+        "characters": [
+            "星辰嚇死"
+        ]
+    },
+    {
+        "id": 209,
+        "text": "哈哈、哈哈哈！天外之人，勇者終於降臨了！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 209.1,
+        "text": "讓本王在這裡等了好久好久！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 210,
+        "text": "六角恐龍？",
+        "characters": [
+            "星辰嚇死"
+        ]
+    },
+    {
+        "id": 211,
+        "text": "才不是什麼恐龍，本王叫做熱情星！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 212,
+        "text": "六角……不對，國王殿下，我叫做 {playerName}・星辰。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 213,
+        "text": "哼，你這個勇者還算禮貌，允許你跟著本王行動。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 214,
+        "text": "那個……我大概不是勇者。",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 215,
+        "text": "或許我也不是國王。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 216,
+        "text": "啊？",
+        "characters": [
+            "星辰嚇死"
+        ]
+    },
+    {
+        "id": 217,
+        "text": "早聽聞勇者在各方遊歷的故事，兩位勇者二月時也到訪過熱情星。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 217.1,
+        "text": "但幾個月前的一場大雨，澆熄了居民們的熱情。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 217.2,
+        "text": "現在星球失去方向，沒有星球引導……",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 217.3,
+        "text": "勇者！你就是來拯救我們的英雄！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 218,
+        "text": "（還是第一次看到這麼多話的星球……）",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 219,
+        "text": "……好，麻煩帶路吧。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 220,
+        "text": "拿好旗幟～我們走！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 221,
+        "text": "喏，這裡就是火焰村。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 222,
+        "text": "可是這裡一點火也沒有呀？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 223,
+        "text": "那是當然，熱情星的居民只有和樂融融時，才會燃起火焰。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 224,
+        "text": "你把花盆放到我家門口了！",
+        "characters": [
+            "居民甲"
+        ]
+    },
+    {
+        "id": 225,
+        "text": "哪裡是你家？",
+        "characters": [
+            "居民乙"
+        ]
+    },
+    {
+        "id": 225.1,
+        "text": "我明明放在噴火池旁邊！",
+        "characters": [
+            "居民乙"
+        ]
+    },
+    {
+        "id": 225.2,
+        "text": "要是國王在就會挺我！",
+        "characters": [
+            "居民乙"
+        ]
+    },
+    {
+        "id": 226,
+        "text": "看吧，就這樣沒完沒了的。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 227,
+        "text": "居民發生爭執，你會怎麼處理？",
+        "options": [
+            {
+                "text": "冷靜溝通，//n找出公平解法",
+                "nextId": 227.1,
+                "score": {
+                    "熱情星": 3
+                }
+            },
+            {
+                "text": "召集大家//n一起討論",
+                "nextId": 227.2,
+                "score": {
+                    "熱情星": 2
+                }
+            },
+            {
+                "text": "讓他們//n自己協調",
+                "nextId": 227.3,
+                "score": {
+                    "熱情星": 1
+                }
+            },
+            {
+                "text": "不介入，//n等他們自己解決",
+                "nextId": 227.4,
+                "score": {
+                    "熱情星": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": 227.1,
+        "text": "大家先冷靜下來，把各自的想法說清楚吧。",
+        "nextId": 228,
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 227.2,
+        "text": "不如大家一起討論，找出彼此都能接受的方法。",
+        "nextId": 228,
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 227.3,
+        "text": "你們先試著談談看，也許能找到共識。",
+        "nextId": 228,
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 227.4,
+        "text": "（可是這樣下去，爭執似乎永遠不會結束……）",
+        "nextId": 228,
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 228,
+        "text": "我只是希望家門口不要被擋住……",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 229,
+        "text": "我只是想讓花盆靠近噴火池曬太陽。",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 230,
+        "text": "那把花盆移到噴火池另一邊，不擋住門口，這樣可以嗎？",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 231,
+        "text": "喔……這樣倒是不會擋住我。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 232,
+        "text": "當然沒問題。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 233,
+        "text": "你還挺有兩下子的嘛！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 234,
+        "text": "居民們平時都是這個樣子嗎？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 235,
+        "text": "以前不是這樣的，但自從大雨開始……父親……算了不說了，",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 235.1,
+        "text": "勇者，我們去下一個地方！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 236,
+        "text": "啊，好的。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 237,
+        "text": "這裡可是熱情星最陡峭的山喔！落石和……",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 238,
+        "text": "小心！前面好像有人！",
+        "characters": [
+            "星辰嚇死"
+        ]
+    },
+    {
+        "id": 239,
+        "text": "救命！有人在對面啊！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 240,
+        "text": "我在這裡！救我！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 241,
+        "text": "啊，是王子殿下，快救救我們！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 242,
+        "text": "看來她的朋友被困在石頭另一邊了。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 243,
+        "text": "這可怎麼辦才好……",
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 244,
+        "text": "該怎麼拯救對面的居民？",
+        "options": [
+            {
+                "text": "分配任務，//n看看能用的道具",
+                "nextId": 244.1,
+                "score": {
+                    "熱情星": 3
+                }
+            },
+            {
+                "text": "嘗試能不能//n直接過去",
+                "nextId": 244.2,
+                "score": {
+                    "熱情星": 2
+                }
+            },
+            {
+                "text": "問熱情星//n的意見",
+                "nextId": 244.3,
+                "score": {
+                    "熱情星": 1
+                }
+            },
+            {
+                "text": "此處//n不宜久留",
+                "nextId": 244.4,
+                "score": {
+                    "熱情星": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": 244.1,
+        "text": "不要慌張，先看看周圍有什麼能用的東西！",
+        "nextId": 245,
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 244.2,
+        "text": "我試著過去看看……看來真的過不去。",
+        "nextId": 245,
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 244.3,
+        "text": "熱情星，你覺得有什麼辦法嗎？",
+        "nextId": 245,
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 244.4,
+        "text": "可是這樣離開，她可能會一直被困住……",
+        "nextId": 245,
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 245,
+        "text": "要是有繩子就好了……",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 246,
+        "text": "等等，角落這邊有藤蔓！",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 246.1,
+        "text": "借火燒一下！",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 247,
+        "text": "啥？",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 248,
+        "text": "燒一燒、扭一扭……好！抓住這個！",
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 248.1,
+        "text": "我們一起拉，1、2、3！",
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 249,
+        "text": "嗚嗚嗚，得救了！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 250,
+        "text": "真是太謝謝你們了！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 251,
+        "text": "嘿嘿～",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 252,
+        "text": "走下山剛好來得及參加一場派對。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 253,
+        "text": "欸？已經能聽到音樂了。",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 254,
+        "text": "沒錯！就在前面。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 255,
+        "text": "哇！好熱鬧的地方。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 256,
+        "text": "對啊，本王也很久沒看到了。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 257,
+        "text": "啊啊！什麼都看不到了！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 258,
+        "text": "怎麼會？火焰沒有了！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 259,
+        "text": "嗯？怎麼回事，大家不要恐慌！",
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 260,
+        "text": "可能我就是那顆掃把星……到哪裡都會遇到麻煩。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 261,
+        "text": "該如何面對臨時混亂的場面？",
+        "options": [
+            {
+                "text": "上台//n控制場面",
+                "nextId": 261.1,
+                "score": {
+                    "熱情星": 3
+                }
+            },
+            {
+                "text": "找看看有沒有//n道具能用",
+                "nextId": 261.2,
+                "score": {
+                    "熱情星": 2
+                }
+            },
+            {
+                "text": "火速//n逃離現場",
+                "nextId": 261.3,
+                "score": {
+                    "熱情星": 1
+                }
+            },
+            {
+                "text": "天啊，//n好黑好可怕",
+                "nextId": 261.4,
+                "score": {
+                    "熱情星": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": 261.1,
+        "text": "大家冷靜！先不要推擠，我們一起找出臨時火源！",
+        "nextId": 262,
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 261.2,
+        "text": "附近有沒有能暫時照明的東西？",
+        "nextId": 262,
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 261.3,
+        "text": "不行，現在逃走只會讓大家互相推擠、受傷。",
+        "nextId": 262,
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 261.4,
+        "text": "（現在可不是害怕的時候，我得先讓大家安全下來！）",
+        "nextId": 262,
+        "characters": [
+            "星辰害怕"
+        ]
+    },
+    {
+        "id": 262,
+        "text": "哈……嘿！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 263,
+        "text": "這個火焰？是王子！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 264,
+        "text": "哇！是王子殿下！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 265,
+        "text": "啊哈哈，熱情星的子民們！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 265.1,
+        "text": "祝福你們有一個美好的夜晚！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 266,
+        "text": "謝謝王子殿下！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 267,
+        "text": "噓，我們快離開吧。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 268,
+        "text": "啊？好的……熱情星？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 269,
+        "text": "呼……終於，如果沒跑出來，他們會纏著本王一整天呢。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 270,
+        "text": "殿下原來在這裡，快要到加冕典禮了。",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 271,
+        "text": "加冕？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 272,
+        "text": "啊哈哈……給本王一點時間，勇者我們走！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 273,
+        "text": "從剛剛就覺得奇怪了，為什麼要跑來跑去的？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 274,
+        "text": "其實我一開始的目的，就是帶勇者來這裡。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 275,
+        "text": "我在其他勇者降臨的地方等待，就是希望星辰能代替我當上國王。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 276,
+        "text": "啊？",
+        "characters": [
+            "星辰嚇死"
+        ]
+    },
+    {
+        "id": 277,
+        "text": "幾個月前的一場大雨，我的父親去世了，熱情星上的火焰也越來越小。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 278,
+        "text": "當上國王的人能夠讓火焰重新回來。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 278.1,
+        "text": "但如果我沒有領導一切的能力，那火焰不是就……？",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 279,
+        "text": "我……和父親太不一樣了。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 279.1,
+        "text": "他能很好地掌控場面，而我只會添加麻煩。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 280,
+        "text": "所以我覺得星辰更適合當國王，能夠帶著大家前進！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 281,
+        "text": "{playerName}・星辰，你願意嗎？",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 282,
+        "text": "我當國王？真的假的？",
+        "options": [
+            {
+                "text": "我相信你適合//n當領導者",
+                "nextId": 282.1,
+                "score": {
+                    "熱情星": 3
+                }
+            },
+            {
+                "text": "還能//n慢慢考慮",
+                "nextId": 282.2,
+                "score": {
+                    "熱情星": 2
+                }
+            },
+            {
+                "text": "大臣//n可以當",
+                "nextId": 282.3,
+                "score": {
+                    "熱情星": 1
+                }
+            },
+            {
+                "text": "熱情星球//n不需要國王",
+                "nextId": 282.4,
+                "score": {
+                    "熱情星": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": 282.1,
+        "text": "一路上的故事我都看見了，沒人比熱情星更適合！",
+        "nextId": 283,
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 282.2,
+        "text": "距離加冕還有點時間，我們可以慢慢想。",
+        "nextId": 283,
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 282.3,
+        "text": "大臣的樣子可能很適合……不過這是你的國家，還是得由你決定。",
+        "nextId": 283,
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 282.4,
+        "text": "可是沒有國王，火焰可能就不會回來了……我們還是一起想辦法吧。",
+        "nextId": 283,
+        "characters": [
+            "星辰苦惱"
+        ]
+    },
+    {
+        "id": 283,
+        "text": "一路上遇到的麻煩，你都願意站出來面對。",
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 283.1,
+        "text": "就算害怕，你還是會帶著大家往前走。",
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 284,
+        "text": "真正的領導者，不是永遠不出錯，而是在混亂的時候，願意留下來、想辦法解決問題的人！",
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 285,
+        "text": "唔……",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 286,
+        "text": "所以不是我來當國王，而是由你親自證明，熱情星可以帶領這個國家。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 287,
+        "text": "如果我搞砸了……如果沒有火焰……",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 288,
+        "text": "那我們就一起找其他更好的方法。",
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 288.1,
+        "text": "拿上旗幟，下一站是加冕典禮！",
+        "characters": [
+            "星辰驕傲"
+        ]
+    },
+    {
+        "id": 289,
+        "text": "接下來是王子熱情星的皇室加冕典禮！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 290,
+        "text": "只要戴上王冠，熱情星球就會誕生新的國王！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 291,
+        "text": "耶！熱情星！熱情星！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 292,
+        "text": "火焰……火焰……",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 293,
+        "text": "不要緊張！",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 294,
+        "text": "（微弱的火光閃爍，接著越來越明亮。）",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 295,
+        "text": "這個是……火焰嗎？",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 296,
+        "text": "哇！火焰回來了！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 297,
+        "text": "火焰！國王！國王！",
+        "characters": [
+            ""
+        ]
+    },
+    {
+        "id": 298,
+        "text": "成功了！哈哈，星辰！本王成功了！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 299,
+        "text": "太好了～恭喜國王！",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 300,
+        "text": "哎呀，拼圖原來在椅子後面。",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 301,
+        "text": "（結局皆大歡喜，真是太好了。）",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 302,
+        "text": "{playerName}・星辰？這裡這裡。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 303,
+        "text": "嗯？爸爸……？",
+        "characters": [
+            "星辰嚇死"
+        ]
+    },
+    {
+        "id": 304,
+        "text": "熱情星，星辰要去哪裡呀？",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 305,
+        "text": "我……先離開一下！",
+        "characters": [
+            "星辰害怕"
+        ]
+    },
+    {
+        "id": 306,
+        "text": "爸？媽？你們在哪裡？",
+        "characters": [
+            "星辰害怕"
+        ]
+    },
+    {
+        "id": 307,
+        "text": "（拼圖合在一起，映出一張全家福。）",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 308,
+        "text": "哎呀小星辰，不會忘記我了吧？",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 309,
+        "text": "妳就別鬧他了。",
+        "characters": [
+            "爸爸微笑"
+        ]
+    },
+    {
+        "id": 310,
+        "text": "嗚嗚……",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 311,
+        "text": "歡迎回家，星辰。",
+        "characters": [
+            "爸爸微笑"
+        ]
+    },
+    {
+        "id": 312,
+        "text": "為什麼……為什麼你們現在才來？",
+        "characters": [
+            "星辰害怕"
+        ]
+    },
+    {
+        "id": 313,
+        "text": "因為我們已經……",
+        "characters": [
+            "爸爸難過"
+        ]
+    },
+    {
+        "id": 314,
+        "text": "噓，別說了。",
+        "characters": [
+            "媽媽難過"
+        ]
+    },
+    {
+        "id": 315,
+        "text": "爸爸媽媽真的很抱歉，因為一時沒辦法走開。",
+        "characters": [
+            "媽媽難過"
+        ]
+    },
+    {
+        "id": 316,
+        "text": "我每天都好想好想你們……每天都有寫信，希望得到你們的回信。",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 317,
+        "text": "好想回到從前，我們能一起分享心事、一起看報紙、一起玩太空遊戲。",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 318,
+        "text": "……",
+        "characters": [
+            "爸爸難過"
+        ]
+    },
+    {
+        "id": 319,
+        "text": "星辰，你有屬於自己的路要走，爸爸和媽媽不能陪你走完每一段旅程。",
+        "characters": [
+            "爸爸微笑"
+        ]
+    },
+    {
+        "id": 320,
+        "text": "但如果有一天累了、想家了，就回頭看看我們。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 321,
+        "text": "家不是要你永遠停留的地方，而是無論你走到哪裡，都知道自己還有一個可以回來的地方。",
+        "characters": [
+            "爸爸微笑"
+        ]
+    },
+    {
+        "id": 322,
+        "text": "你爸爸真的很喜歡這句話呢，哈哈哈。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 323,
+        "text": "我……",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 324,
+        "text": "往前走吧，星辰。",
+        "characters": [
+            "爸爸微笑"
+        ]
+    },
+    {
+        "id": 325,
+        "text": "你的朋友們還在等你呢！",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 326,
+        "text": "嗯！我愛你們。",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 327,
+        "text": "（星辰走進腳下有巨大拼圖的空間。）",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 328,
+        "text": "哼哼，本王等你好久了！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 329,
+        "text": "嗚……又見面了！",
+        "characters": [
+            "同情星感動"
+        ]
+    },
+    {
+        "id": 330,
+        "text": "咩！",
+        "characters": [
+            "好奇星"
+        ]
+    },
+    {
+        "id": 331,
+        "text": "你們……怎麼都在這裡？",
+        "characters": [
+            "星辰嚇死"
+        ]
+    },
+    {
+        "id": 332,
+        "text": "莫名被兩個好高的人拉來這裡了，他們說結束後會帶我們回去。",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 333,
+        "text": "大概就是……需要星辰決定帶回地球的拼圖吧。",
+        "characters": [
+            "同情星"
+        ]
+    },
+    {
+        "id": 334,
+        "text": "帶本王的性格回地球可是很吃香的喔！",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 335,
+        "text": "咩！",
+        "characters": [
+            "好奇星"
+        ]
+    },
+    {
+        "id": 336,
+        "text": "還是得看星辰一路上的選擇啦。",
+        "characters": [
+            "爽快星"
+        ]
+    },
+    {
+        "id": 337,
+        "text": "我的……選擇嗎？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 338,
+        "text": "看來，這就是我。",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 338.1,
+        "text": "這一路上，謝謝你們！",
+        "characters": [
+            "星辰微笑"
+        ]
+    },
+    {
+        "id": 339,
+        "text": "沒有你們的出現，就沒有今天的我。",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 340,
+        "text": "煽情的話就別多說了。",
+        "characters": [
+            "熱情星"
+        ]
+    },
+    {
+        "id": 341,
+        "text": "我們也很感謝星辰的幫助。",
+        "characters": [
+            "爽快星開心"
+        ]
+    },
+    {
+        "id": 342,
+        "text": "下……下次記得來我的店光顧喔！",
+        "characters": [
+            "同情星感動"
+        ]
+    },
+    {
+        "id": 343,
+        "text": "期待再相見咩～",
+        "characters": [
+            "好奇星開心"
+        ]
+    },
+    {
+        "id": 344,
+        "text": "（星辰醒來了。）",
+        "background": "好奇星黃色結局",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 345,
+        "text": "是一場夢嗎……",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 345.1,
+        "text": "還好今天是暑假。",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 345.2,
+        "text": "西元 1969 年 7 月 30 日。",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 346,
+        "text": "日記日記～欸，找到了，嗯？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 346.1,
+        "text": "裡面夾了東西？",
+        "characters": [
+            "星辰思考"
+        ]
+    },
+    {
+        "id": 347,
+        "text": "星辰，也許有一天，你會走得很遠，遠到看不見我們；",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 347.1,
+        "text": "也許你會迷路、會害怕，也會不知道下一步該往哪裡走。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 347.2,
+        "text": "但沒關係，慢慢走就好了。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 348,
+        "text": "如果有一天你累了、想家了，就回頭看看吧。",
+        "characters": [
+            "爸爸微笑"
+        ]
+    },
+    {
+        "id": 348.1,
+        "text": "不管你走了多遠、變成什麼樣子，爸爸媽媽都會在這裡，為你留著一盞燈。",
+        "characters": [
+            "爸爸微笑"
+        ]
+    },
+    {
+        "id": 349,
+        "text": "因為我們從來不需要你走得多快，",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 349.1,
+        "text": "只希望你能找到真正屬於自己的方向。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 349.2,
+        "text": "所以，去吧，星辰。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 349.3,
+        "text": "放心地走向你的未來。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 349.4,
+        "text": "愛你的爸爸媽媽。",
+        "characters": [
+            "媽媽微笑"
+        ]
+    },
+    {
+        "id": 350,
+        "text": "真是的……總算是回信了啊。",
+        "characters": [
+            "星辰感動"
+        ]
+    },
+    {
+        "id": 351,
+        "text": "謝謝你們，愛你的星辰。",
+        "characters": [
+            "星辰感動"
+        ]
+    }
 
 
     
 
 ];
+
 
 
         // 啟動時預載「問題」資料夾的全部題目介面圖片，以及第一幕需要的劇情素材。
@@ -3284,6 +5361,20 @@ function renderScene(stepIndex) {
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
+    // 對話若以「角色名稱：」開頭，發言者以文字標示為準，不沿用上一幕角色名稱。
+    const rawDialogueText = typeof scene.text === "string" ? scene.text : "";
+    const speakerPrefixMatch = rawDialogueText.match(/^([^：:]{1,12})[：:]\s*/);
+    const inferredSpeaker = speakerPrefixMatch ? speakerPrefixMatch[1].replace(/^[🤬😡😠😰😨😱\s]+/, "").trim() : "";
+    const sceneSpeaker = scene.speaker || (
+        [163, 185, 186].includes(Number(scene.id)) ? "居民們" :
+        Number(scene.id) === 225 ? "煩躁的居民" :
+        [239, 240].includes(Number(scene.id)) ? "慌張的居民" :
+        Number(scene.id) === 241 ? "居民們" :
+        (inferredSpeaker.includes("居民") ? inferredSpeaker : "")
+    );
+    const dialogueTextForDisplay = speakerPrefixMatch && sceneSpeaker
+        ? rawDialogueText.slice(speakerPrefixMatch[0].length)
+        : rawDialogueText;
     const pageEl = document.getElementById('page1');
     const hasScoredOptions = Array.isArray(scene.options) && scene.options.some(
         opt => opt.score && Object.keys(opt.score).length > 0
@@ -3359,9 +5450,9 @@ if (!hasScoredOptions) {
     // 3. 解析發言者名字與樣式
     let displayName = "";
     if (hasText) {
-        if (scene.speaker) {
-            displayName = (scene.speaker === "玩家") ? 
-                (window.playerName ? `${window.playerName}・星辰` : "星辰") : scene.speaker;
+        if (sceneSpeaker) {
+            displayName = (sceneSpeaker === "玩家") ?
+                (window.playerName ? `${window.playerName}・星辰` : "星辰") : sceneSpeaker;
         } else if (scene.characters && scene.characters.length > 0) {
             let charName = scene.characters[0];
             if (charName.includes("路人") || charName.includes("好奇星張嘴") || charName.includes("好奇星閉嘴")) {
@@ -3478,7 +5569,7 @@ if (scene.bgm) {
     if (hasScoredOptions) {
         renderOptions(scene);
     } else {
-        startTypingEffect(scene.text, () => {
+        startTypingEffect(dialogueTextForDisplay, () => {
             renderOptions(scene);
         });
     }
@@ -3569,21 +5660,23 @@ if (scene.bgm) {
     }
 }
         // 依照拼圖內文字範圍自動調整字級：先用最大字，放不下才逐步縮小。
-        function fitPuzzleOptionText(label) {
+        function fitPuzzleOptionText(textSpan) {
+            if (!textSpan) return;
+            const label = textSpan.parentElement;
             if (!label) return;
             // 以 CSS 的 font-size 作為最大字級；之後只在文字放不下時縮小。
             const maxFontSize = parseFloat(getComputedStyle(label).fontSize) || 30;
             const minFontSize = 12;
-            label.style.fontSize = maxFontSize + 'px';
+            textSpan.style.fontSize = maxFontSize + 'px';
 
             // 等瀏覽器完成顯示與排版，再依實際可用範圍測量。
             requestAnimationFrame(() => {
                 let size = maxFontSize;
                 while (size > minFontSize &&
-                    (label.scrollHeight > label.clientHeight + 1 ||
-                     label.scrollWidth > label.clientWidth + 1)) {
+                    (textSpan.scrollHeight > label.clientHeight + 1 ||
+                     textSpan.scrollWidth > label.clientWidth + 1)) {
                     size -= 1;
-                    label.style.fontSize = size + 'px';
+                    textSpan.style.fontSize = size + 'px';
                 }
             });
         }
@@ -3623,9 +5716,25 @@ if (scene.bgm) {
             if (selectedOption) {
                 const label = selectedOption.querySelector('.拼圖選項文字');
                 if (label) {
-                    // 支援選項文字中輸入字面上的 \\n 作為手動換行標記。
-                    label.textContent = (option.text || '').replace(/\\n/g, '\n');
-                    fitPuzzleOptionText(label);
+                    // 支援 //n 或 \\n 作為手動換行標記，並用獨立文字層測量，避免長文字超出拼圖框。
+                    const optionText = (option.text || '').replace(/\/\/n|\\n/g, '\n');
+                    label.textContent = '';
+                    const textSpan = document.createElement('span');
+                    textSpan.textContent = optionText;
+                    label.appendChild(textSpan);
+
+                    // 指定選項個別設定字體大小；其他選項固定 54px，避免自動縮字抵銷尺寸調整。
+                    const compactOptionText = optionText.replace(/\s/g, '');
+                    label.style.fontSize = '';
+                    if (compactOptionText.length === 6) {
+                        textSpan.style.fontSize = '45px';
+                    } else if (compactOptionText.length === 5) {
+                        textSpan.style.fontSize = '58px';
+                    } else if (compactOptionText === '抱怨自己運氣不好') {
+                        textSpan.style.fontSize = '45px';
+                    } else {
+                        textSpan.style.fontSize = '54px';
+                    }
                 }
                 selectedOption.onclick = null;
             }
@@ -4121,23 +6230,18 @@ if (scene.bgm) {
 }
 
     function hideAllCharacters() {
-    const chars = [
-        "星辰", "星辰害怕", "星辰嚇死", "星辰點頭", "星辰微笑", "星辰思考", "星辰苦惱", "星辰苦惱-選項用", "星辰感動", "星辰驕傲",
-        "好奇星", "好奇星開心", "好奇星有尾巴", "好奇星會跳", "好奇星開心有尾巴", "路人好奇星張嘴", "路人好奇星閉嘴", 
-        "好奇星哭", "一群好奇星", "好奇星哭小尾巴", "好奇星開心閉眼",
-        "同情星", "同情星苦惱", "同情星感動", "同情星自信", 
-        "爽快星", "爽快星生氣", "爽快星害怕", "爽快星開心", "爽快星疑惑",
-        "熱情星"
-    ];
-    chars.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.style.display = 'none';
-            // 💡 清除所有動畫 Class
-            el.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-cry', 'anim-nod', 'anim-excited');
-            // 💡 強制重置行內 transform 屬性，徹底消除殘留
-            el.style.transform = '';
-        }
+    // 直接隱藏所有角色立繪，避免新增角色（例如爽快星慌張、媽媽）漏加進清單。
+    document.querySelectorAll('.角色圖').forEach(el => {
+        el.style.display = 'none';
+
+        // 清除角色動畫，避免下次登場時殘留上一幕的狀態。
+        el.classList.remove(
+            'anim-bounce', 'anim-sway', 'anim-depress',
+            'anim-cry', 'anim-nod', 'anim-excited',
+            'curious-pop', 'slide-in-right', 'scared-bounce',
+            'curious-bounce', 'curious-wiggle', 'nod-head'
+        );
+        el.style.transform = '';
     });
 }
 
