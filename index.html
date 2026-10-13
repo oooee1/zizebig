@@ -5974,6 +5974,9 @@ if (scene.bgm) {
 
         if (opt.text.length > 12) {
             btn.classList.add('small-text');
+            btn.style.fontSize = '24px'; // 原本 14px，無計分選項放大 10px
+        } else {
+            btn.style.fontSize = '26px'; // 原本 16px，無計分選項放大 10px
         }
 
         btn.innerText = opt.text;
