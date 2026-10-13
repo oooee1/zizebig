@@ -5705,8 +5705,12 @@ if (scene.bgm) {
                     textSpan.textContent = optionText;
                     label.appendChild(textSpan);
 
-                    // 只手動縮小這個特長選項，不執行自動縮字，避免影響其他選項的版面。
-                    if (optionText === '抱怨自己運氣不好') {
+                    // 這兩個較長的選項固定使用 28px，忽略文字中的換行與空白差異。
+                    const compactOptionText = optionText.replace(/\s/g, '');
+                    if (
+                        compactOptionText.includes('抱怨自己運氣不好') ||
+                        compactOptionText.includes('大聲呼喊求救')
+                    ) {
                         label.style.fontSize = '28px';
                         textSpan.style.fontSize = '28px';
                     } else {
