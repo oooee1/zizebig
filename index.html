@@ -5705,16 +5705,16 @@ if (scene.bgm) {
                     textSpan.textContent = optionText;
                     label.appendChild(textSpan);
 
-                    // 這兩個較長的選項固定使用 28px，忽略文字中的換行與空白差異。
+                    // 只有這兩個指定選項使用 28px；其他選項一律沿用 46px 上限並自動縮字。
                     const compactOptionText = optionText.replace(/\s/g, '');
+                    label.style.fontSize = '';
                     if (
-                        compactOptionText.includes('抱怨自己運氣不好') ||
-                        compactOptionText.includes('大聲呼喊求救')
+                        compactOptionText === '抱怨自己運氣不好' ||
+                        compactOptionText === '大聲呼喊求救'
                     ) {
-                        label.style.fontSize = '28px';
                         textSpan.style.fontSize = '28px';
                     } else {
-                        label.style.fontSize = '';
+                        textSpan.style.fontSize = '';
                         fitPuzzleOptionText(textSpan);
                     }
                 }
