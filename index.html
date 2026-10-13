@@ -22,6 +22,14 @@
             box-sizing: border-box;
         }
 
+        /* 防止手機長按遊戲圖片時跳出「儲存照片／影像」選單 */
+        img {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
