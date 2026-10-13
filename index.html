@@ -5983,16 +5983,16 @@ if (scene.bgm) {
 
         if (opt.text.length > 12) {
             btn.classList.add('small-text');
-            btn.style.fontSize = '24px'; // 原本 14px，無計分選項放大 10px
+            btn.style.fontSize = '21px'; // 字體比原本設定縮小 3px
         } else {
-            btn.style.fontSize = '26px'; // 原本 16px，無計分選項放大 10px
+            btn.style.fontSize = '23px'; // 字體比原本設定縮小 3px
         }
 
-        // 無計分選項只將文字往下移 2%，不移動整個選項按鈕。
+        // 只將文字本身往下移 4px，按鈕位置與大小維持不變。
         const optionLabel = document.createElement('span');
         optionLabel.textContent = opt.text;
-        optionLabel.style.position = 'relative';
-        optionLabel.style.top = '4%';
+        optionLabel.style.display = 'inline-block';
+        optionLabel.style.transform = 'translateY(4px)';
         btn.appendChild(optionLabel);
 
         btn.onclick = (e) => {
