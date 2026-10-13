@@ -5988,7 +5988,12 @@ if (scene.bgm) {
             btn.style.fontSize = '26px'; // 原本 16px，無計分選項放大 10px
         }
 
-        btn.innerText = opt.text;
+        // 無計分選項只將文字往下移 2%，不移動整個選項按鈕。
+        const optionLabel = document.createElement('span');
+        optionLabel.textContent = opt.text;
+        optionLabel.style.position = 'relative';
+        optionLabel.style.top = '2%';
+        btn.appendChild(optionLabel);
 
         btn.onclick = (e) => {
             e.stopPropagation();
