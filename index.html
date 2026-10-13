@@ -2075,22 +2075,22 @@ img { max-width:100%; }
         text: "你的未來？",
         options: [
             { 
-                text: "當一個充滿想像力，//n有自我思考的人。", 
+                text: "當一個充滿想像力，有自我思考的人。", 
                 nextId: 61, 
                 score: { "好奇星": 3 },
             },
             { 
-                text: "當一個樂觀開朗，//n願意協助大家的人。", 
+                text: "當一個樂觀開朗，願意協助大家的人。", 
                 nextId: 61,  
                 score: { "好奇星": 2 },
             },
             { 
-                text: "當一個細心的領袖，//n帶大家前進的人。", 
+                text: "當一個細心的領袖，帶大家前進的人。", 
                 nextId: 61, 
                 score: { "好奇星": 1 },
             },
             { 
-                text: "當一個有完美規範，//n有完美秩序的人。", 
+                text: "當一個有完美規範，有完美秩序的人。", 
                 nextId: 61, 
                 score: { "好奇星": 0 },
             }
@@ -5713,7 +5713,14 @@ if (scene.bgm) {
                     // 指定選項個別設定字體大小；13～15 字的選項使用 40px。
                     const compactOptionText = optionText.replace(/\s/g, '');
                     label.style.fontSize = '';
-                    if (compactOptionText === '嘗試先修理發電機') {
+                    if ([
+                        '當一個充滿想像力，有自我思考的人。',
+                        '當一個樂觀開朗，願意協助大家的人。',
+                        '當一個細心的領袖，帶大家前進的人。',
+                        '當一個有完美規範，有完美秩序的人。'
+                    ].includes(compactOptionText)) {
+                        textSpan.style.fontSize = '38px';
+                    } else if (compactOptionText === '嘗試先修理發電機') {
                         textSpan.style.fontSize = '46px';
                     } else if (compactOptionText.length >= 13 && compactOptionText.length <= 15) {
                         textSpan.style.fontSize = '40px';
