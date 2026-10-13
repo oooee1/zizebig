@@ -5017,6 +5017,20 @@ function renderScene(stepIndex) {
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
+    // 對話若以「角色名稱：」開頭，發言者以文字標示為準，不沿用上一幕角色名稱。
+    const rawDialogueText = typeof scene.text === "string" ? scene.text : "";
+    const speakerPrefixMatch = rawDialogueText.match(/^([^：:]{1,12})[：:]\s*/);
+    const inferredSpeaker = speakerPrefixMatch ? speakerPrefixMatch[1].replace(/^[🤬😡😠😰😨😱\s]+/, "").trim() : "";
+    const sceneSpeaker = scene.speaker || (
+        [163, 185, 186].includes(Number(scene.id)) ? "居民們" :
+        Number(scene.id) === 225 ? "煩躁的居民" :
+        [239, 240].includes(Number(scene.id)) ? "慌張的居民" :
+        Number(scene.id) === 241 ? "居民們" :
+        (inferredSpeaker.includes("居民") ? inferredSpeaker : "")
+    );
+    const dialogueTextForDisplay = speakerPrefixMatch && sceneSpeaker
+        ? rawDialogueText.slice(speakerPrefixMatch[0].length)
+        : rawDialogueText;
     const pageEl = document.getElementById('page1');
     const hasScoredOptions = Array.isArray(scene.options) && scene.options.some(
         opt => opt.score && Object.keys(opt.score).length > 0
@@ -5092,9 +5106,9 @@ if (!hasScoredOptions) {
     // 3. 解析發言者名字與樣式
     let displayName = "";
     if (hasText) {
-        if (scene.speaker) {
-            displayName = (scene.speaker === "玩家") ? 
-                (window.playerName ? `${window.playerName}・星辰` : "星辰") : scene.speaker;
+        if (sceneSpeaker) {
+            displayName = (sceneSpeaker === "玩家") ?
+                (window.playerName ? `${window.playerName}・星辰` : "星辰") : sceneSpeaker;
         } else if (scene.characters && scene.characters.length > 0) {
             let charName = scene.characters[0];
             if (charName.includes("路人") || charName.includes("好奇星張嘴") || charName.includes("好奇星閉嘴")) {
@@ -5211,7 +5225,7 @@ if (scene.bgm) {
     if (hasScoredOptions) {
         renderOptions(scene);
     } else {
-        startTypingEffect(scene.text, () => {
+        startTypingEffect(dialogueTextForDisplay, () => {
             renderOptions(scene);
         });
     }
