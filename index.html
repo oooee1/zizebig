@@ -5710,10 +5710,12 @@ if (scene.bgm) {
                     textSpan.textContent = optionText;
                     label.appendChild(textSpan);
 
-                    // 指定選項個別設定字體大小；其他選項固定 54px，避免自動縮字抵銷尺寸調整。
+                    // 指定選項個別設定字體大小；13～15 字的選項使用 40px。
                     const compactOptionText = optionText.replace(/\s/g, '');
                     label.style.fontSize = '';
-                    if (compactOptionText.length === 6) {
+                    if (compactOptionText.length >= 13 && compactOptionText.length <= 15) {
+                        textSpan.style.fontSize = '40px';
+                    } else if (compactOptionText.length === 6) {
                         textSpan.style.fontSize = '55px';
                     } else if (compactOptionText.length === 5) {
                         textSpan.style.fontSize = '55px';
