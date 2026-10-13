@@ -5859,23 +5859,18 @@ if (scene.bgm) {
 }
 
     function hideAllCharacters() {
-    const chars = [
-        "星辰", "星辰害怕", "星辰嚇死", "星辰點頭", "星辰微笑", "星辰思考", "星辰苦惱", "星辰苦惱-選項用", "星辰感動", "星辰驕傲",
-        "好奇星", "好奇星開心", "好奇星有尾巴", "好奇星會跳", "好奇星開心有尾巴", "路人好奇星張嘴", "路人好奇星閉嘴", 
-        "好奇星哭", "一群好奇星", "好奇星哭小尾巴", "好奇星開心閉眼",
-        "同情星", "同情星苦惱", "同情星感動", "同情星自信", 
-        "爽快星", "爽快星生氣", "爽快星害怕", "爽快星開心", "爽快星疑惑",
-        "熱情星"
-    ];
-    chars.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.style.display = 'none';
-            // 💡 清除所有動畫 Class
-            el.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-cry', 'anim-nod', 'anim-excited');
-            // 💡 強制重置行內 transform 屬性，徹底消除殘留
-            el.style.transform = '';
-        }
+    // 直接隱藏所有角色立繪，避免新增角色（例如爽快星慌張、媽媽）漏加進清單。
+    document.querySelectorAll('.角色圖').forEach(el => {
+        el.style.display = 'none';
+
+        // 清除角色動畫，避免下次登場時殘留上一幕的狀態。
+        el.classList.remove(
+            'anim-bounce', 'anim-sway', 'anim-depress',
+            'anim-cry', 'anim-nod', 'anim-excited',
+            'curious-pop', 'slide-in-right', 'scared-bounce',
+            'curious-bounce', 'curious-wiggle', 'nod-head'
+        );
+        el.style.transform = '';
     });
 }
 
