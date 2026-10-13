@@ -7,6 +7,11 @@
     <link rel="preload" href="./font/CP--TRANS.woff2?v=4" as="font" type="font/woff2" crossorigin>
     <title>《 星辰之路》——情境式性格測驗</title>
     <style>
+        /* 固定使用淺色配色，避免裝置深色模式自動改變遊戲介面 */
+        :root {
+            color-scheme: only light;
+        }
+
         /* 載入玩家名字使用的 Dela Gothic One 字體（先用已確認可讀取的 WOFF） */
         @font-face {
             font-family: 'Dela Gothic One';
