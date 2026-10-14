@@ -7025,51 +7025,54 @@ if (scene.bgm) {
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
-            // 字體在背景載入，不可阻擋遊戲啟動；失敗時使用 CSS 備用字體。
-            preloadGameFonts().catch(showFontLoadError);
+            // 必須先成功載入兩個自訂字體，才開始載入第一幕素材。
+            preloadGameFonts().catch(error => {
+                // 字體載入失敗或逾時時，記錄原因並使用系統備用字體啟動，避免遊戲永遠卡在「正在連結」。
+                showFontLoadError(error);
+            }).then(() => {
+                // 開場只載入第一幕需要的素材；題目 UI 會在進入題目時再載入，避免開頭等待所有題目圖片。
+                const initialAssets = [
+                    ...getSceneAssetPaths(0)
+                ];
 
-            // 開場只載入第一幕需要的素材；題目 UI 會在進入題目時再載入。
-            const initialAssets = [
-                ...getSceneAssetPaths(0)
-            ];
+                const loadingScreen = document.getElementById('loading-screen');
+                const loadingMessage = loadingScreen &&
+                    (loadingScreen.querySelector('.loading-message') || loadingScreen.querySelector('div'));
+                const loadingPercent = document.getElementById('loading-percent');
+                let retryCount = 0;
 
-            const loadingScreen = document.getElementById('loading-screen');
-            const loadingMessage = loadingScreen &&
-                (loadingScreen.querySelector('.loading-message') || loadingScreen.querySelector('div'));
-            const loadingPercent = document.getElementById('loading-percent');
-            let retryCount = 0;
-
-            function loadInitialAssets() {
-                if (loadingMessage) {
-                    loadingMessage.classList.add('loading-message');
-                    loadingMessage.textContent = retryCount === 0
-                        ? '正在載入遊戲素材...'
-                        : '圖片還在載入，正在自動重試...';
-                }
-
-                preloadImages(initialAssets, error => {
-                    if (error) {
-                        retryCount++;
-                        console.warn("初始圖片尚未載入完成，將自動重試：", error);
-
-                        // 清除逾時那張圖片的失敗快取，下一輪重新建立 Image 再載一次。
-                        const prefix = '圖片載入逾時：';
-                        if (error.message && error.message.startsWith(prefix)) {
-                            assetLoadPromises.delete(error.message.slice(prefix.length));
-                        }
-
-                        if (loadingPercent) loadingPercent.textContent = '載入稍慢，正在重試（' + retryCount + '）';
-                        setTimeout(loadInitialAssets, 1200);
-                        return;
+                function loadInitialAssets() {
+                    if (loadingMessage) {
+                        loadingMessage.classList.add('loading-message');
+                        loadingMessage.textContent = retryCount === 0
+                            ? '正在載入遊戲素材...'
+                            : '圖片還在載入，正在自動重試...';
                     }
 
-                    readySceneIndexes.add(0);
-                    enterGameAnimation();
-                    renderScene(0);
-                }, true);
-            }
+                    preloadImages(initialAssets, error => {
+                        if (error) {
+                            retryCount++;
+                            console.warn("初始圖片尚未載入完成，將自動重試：", error);
 
-            loadInitialAssets();
+                            // 清除逾時那張圖片的失敗快取，下一輪重新建立 Image 再載一次。
+                            const prefix = '圖片載入逾時：';
+                            if (error.message && error.message.startsWith(prefix)) {
+                                assetLoadPromises.delete(error.message.slice(prefix.length));
+                            }
+
+                            if (loadingPercent) loadingPercent.textContent = '載入稍慢，正在重試（' + retryCount + '）';
+                            setTimeout(loadInitialAssets, 1200);
+                            return;
+                        }
+
+                        readySceneIndexes.add(0);
+                        enterGameAnimation();
+                        renderScene(0);
+                    }, true);
+                }
+
+                loadInitialAssets();
+            }).catch(showFontLoadError);
         });
 
         // 開發者工具：展開／收合角色劇情清單
