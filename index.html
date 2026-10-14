@@ -1297,13 +1297,21 @@ img { max-width:100%; }
 
         /* 開發者劇情快速跳轉 */
         #developer-tools {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            z-index: 200010;
+            position: absolute !important;
+            top: 14px !important;
+            right: 14px !important;
+            z-index: 2147483647 !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
             font-family: 'CPTrans', sans-serif;
         }
         #developer-tools-toggle {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
             padding: 10px 13px;
             border: 1px solid rgba(255,255,255,.35);
             border-radius: 10px;
