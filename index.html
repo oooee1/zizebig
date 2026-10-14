@@ -1471,7 +1471,8 @@ img { max-width:100%; }
                 0 0 12px rgba(0,0,0,.55) !important;
             filter: none !important;
             text-align: right !important;
-            white-space: normal !important;
+            /* 題目中的 //n 已轉成真正換行，這裡不能用 normal 把換行摺疊成空格。 */
+            white-space: pre-line !important;
             text-wrap: initial !important;
             pointer-events: none !important;
             -webkit-font-smoothing: antialiased;
