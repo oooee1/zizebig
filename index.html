@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <link rel="preload" href="./font/DelaGothicOne-Regular.woff?v=4" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="./font/CP--TRANS.woff2?v=4" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./font/DelaGothicOne-Regular.woff?v=6" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="./font/CP--TRANS.woff2?v=6" as="font" type="font/woff2" crossorigin>
     <meta name="description" content="《星辰之路》情境式性格測驗，穿梭於各顆星球，發現屬於你的性格。">
     <meta property="og:type" content="website">
     <meta property="og:title" content="《星辰之路》——情境式性格測驗">
@@ -6955,7 +6955,7 @@ if (scene.bgm) {
                 )
             ];
 
-            return Promise.all(fontFiles.map(fontFace =>
+            const fontLoad = Promise.all(fontFiles.map(fontFace =>
                 fontFace.load().then(loadedFace => {
                     document.fonts.add(loadedFace);
                     return loadedFace;
@@ -6969,6 +6969,12 @@ if (scene.bgm) {
                     throw new Error("字體檔已讀取，但瀏覽器仍未確認字體可用");
                 }
             });
+
+            // 字體網路請求若一直沒有回應，最多等待 20 秒，避免永遠卡在「正在連結」。
+            const fontTimeout = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error("自訂字體載入超過 20 秒")), 20000);
+            });
+            return Promise.race([fontLoad, fontTimeout]);
         }
 
         function showFontLoadError(error) {
@@ -6981,7 +6987,10 @@ if (scene.bgm) {
             hideAllCharacters();
 
             // 必須先成功載入兩個自訂字體，才開始載入第一幕素材。
-            preloadGameFonts().then(() => {
+            preloadGameFonts().catch(error => {
+                // 字體載入失敗或逾時時，記錄原因並使用系統備用字體啟動，避免遊戲永遠卡在「正在連結」。
+                showFontLoadError(error);
+            }).then(() => {
                 // 開場只載入第一幕需要的素材；題目 UI 會在進入題目時再載入，避免開頭等待所有題目圖片。
                 const initialAssets = [
                     ...getSceneAssetPaths(0)
