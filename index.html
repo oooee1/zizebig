@@ -1158,6 +1158,61 @@ img { max-width:100%; }
 }
 
 
+
+        /* 問題畫面依螢幕比例微調上下分組：
+           比例越窄，背景與拼圖越往上；星辰與兩張紙越往下。
+           使用 margin-top，避免干擾第一次進場的 slide-up 動畫。 */
+        @media (max-aspect-ratio: 9/17) {
+            #page1.question-choice-mode #背景選擇,
+            #page1.question-choice-mode #你會選擇？,
+            #page1.question-choice-mode #藍色拼圖,
+            #page1.question-choice-mode #紫色拼圖,
+            #page1.question-choice-mode #綠色拼圖,
+            #page1.question-choice-mode #粉色拼圖 {
+                margin-top: -16px !important;
+            }
+
+            #page1.question-choice-mode #星辰苦惱-選項用,
+            #page1.question-choice-mode #藍色紙,
+            #page1.question-choice-mode #格子條紋紙 {
+                margin-top: 16px !important;
+            }
+        }
+
+        @media (max-aspect-ratio: 9/18) {
+            #page1.question-choice-mode #背景選擇,
+            #page1.question-choice-mode #你會選擇？,
+            #page1.question-choice-mode #藍色拼圖,
+            #page1.question-choice-mode #紫色拼圖,
+            #page1.question-choice-mode #綠色拼圖,
+            #page1.question-choice-mode #粉色拼圖 {
+                margin-top: -32px !important;
+            }
+
+            #page1.question-choice-mode #星辰苦惱-選項用,
+            #page1.question-choice-mode #藍色紙,
+            #page1.question-choice-mode #格子條紋紙 {
+                margin-top: 32px !important;
+            }
+        }
+
+        @media (max-aspect-ratio: 9/19) {
+            #page1.question-choice-mode #背景選擇,
+            #page1.question-choice-mode #你會選擇？,
+            #page1.question-choice-mode #藍色拼圖,
+            #page1.question-choice-mode #紫色拼圖,
+            #page1.question-choice-mode #綠色拼圖,
+            #page1.question-choice-mode #粉色拼圖 {
+                margin-top: -48px !important;
+            }
+
+            #page1.question-choice-mode #星辰苦惱-選項用,
+            #page1.question-choice-mode #藍色紙,
+            #page1.question-choice-mode #格子條紋紙 {
+                margin-top: 48px !important;
+            }
+        }
+
         /* 問題選項畫面：星辰苦惱在拼圖上方，但仍被藍色紙覆蓋 */
         #page1:not(.puzzle-confirm-mode) #星辰苦惱-選項用 {
             z-index: 2005 !important;
