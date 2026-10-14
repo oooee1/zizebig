@@ -1433,18 +1433,35 @@ img { max-width:100%; }
         }
         #developer-tools-panel button:active { background: #51401d; }
     
-        /* HOTFIX：題目標題完整顯示、恢復拼圖點擊與正確層級 */
+        /* HOTFIX：題目標題只在拼圖選擇首頁顯示；確認選項頁完全隱藏。
+           標題加大、整體靠右，並為字體頂部預留空間，避免切掉字頭。 */
         #page1.question-choice-mode #question-title {
+            display: block !important;
             z-index: 3000 !important;
+            left: auto !important;
+            right: 4% !important;
+            width: 88% !important;
             max-height: none !important;
             height: auto !important;
             min-height: 0 !important;
             overflow: visible !important;
-            padding: 12px 4px 8px !important;
+            padding: 14px 5px 8px !important;
             line-height: 1.35 !important;
             bottom: clamp(22px, 5.5dvh, 54px) !important;
+            font-size: clamp(29px, 7.6vw, 44px) !important;
+            text-align: right !important;
+            white-space: normal !important;
+            text-wrap: initial !important;
             pointer-events: none !important;
             -webkit-font-smoothing: antialiased;
+        }
+        #page1.puzzle-confirm-mode #question-title {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        #question-title br {
+            display: block;
+            content: "";
         }
 
         /* 問題畫面的紙張只作裝飾，不得攔截拼圖點擊。
@@ -6358,29 +6375,40 @@ if (scene.bgm) {
             const titleText = String(scene.text || '').replace(/\{playerName\}/g, window.playerName || '').trim();
             questionTitle.replaceChildren();
             if (titleText) {
-                const highlightTerms = [
-                    '初次來到陌生環境', '陌生環境', '陌生的環境', '第一次見面',
-                    '遇到困難', '面對挑戰', '幫助別人', '朋友', '家人', '父母',
-                    '勇氣', '危險', '選擇', '未知', '情緒', '衝突', '決定'
-                ];
-                const term = highlightTerms.filter(word => titleText.includes(word)).sort((a, b) => b.length - a.length)[0];
-                if (term) {
-                    const start = titleText.indexOf(term);
-                    questionTitle.append(document.createTextNode(titleText.slice(0, start)));
+                // 「初次來到陌生環境」固定在「初次」後換行。
+                if (titleText.includes('初次來到陌生環境')) {
+                    const titleStart = titleText.indexOf('初次來到陌生環境');
+                    questionTitle.append(document.createTextNode(titleText.slice(0, titleStart) + '初次'));
+                    questionTitle.append(document.createElement('br'));
                     const highlight = document.createElement('span');
                     highlight.className = 'question-title-highlight';
-                    highlight.textContent = term;
-                    questionTitle.append(highlight, document.createTextNode(titleText.slice(start + term.length)));
+                    highlight.textContent = '來到陌生環境';
+                    questionTitle.append(highlight, document.createTextNode(titleText.slice(titleStart + '初次來到陌生環境'.length)));
                 } else {
-                    const match = titleText.match(/^([\s\S]*?)([^，。！？、：；]{2,5}[！？。]?)$/);
-                    if (match) {
-                        questionTitle.append(document.createTextNode(match[1]));
+                    const highlightTerms = [
+                        '陌生環境', '陌生的環境', '第一次見面',
+                        '遇到困難', '面對挑戰', '幫助別人', '朋友', '家人', '父母',
+                        '勇氣', '危險', '選擇', '未知', '情緒', '衝突', '決定'
+                    ];
+                    const term = highlightTerms.filter(word => titleText.includes(word)).sort((a, b) => b.length - a.length)[0];
+                    if (term) {
+                        const termStart = titleText.indexOf(term);
+                        questionTitle.append(document.createTextNode(titleText.slice(0, termStart)));
                         const highlight = document.createElement('span');
                         highlight.className = 'question-title-highlight';
-                        highlight.textContent = match[2];
-                        questionTitle.append(highlight);
+                        highlight.textContent = term;
+                        questionTitle.append(highlight, document.createTextNode(titleText.slice(termStart + term.length)));
                     } else {
-                        questionTitle.textContent = titleText;
+                        const match = titleText.match(/^([\s\S]*?)([^，。！？、：；]{2,5}[！？。]?)$/);
+                        if (match) {
+                            questionTitle.append(document.createTextNode(match[1]));
+                            const highlight = document.createElement('span');
+                            highlight.className = 'question-title-highlight';
+                            highlight.textContent = match[2];
+                            questionTitle.append(highlight);
+                        } else {
+                            questionTitle.textContent = titleText;
+                        }
                     }
                 }
             }
