@@ -5108,7 +5108,7 @@ img { max-width:100%; }
     },
     {
         "id": 287,
-        "text": "如果我搞砸了...如果沒有火焰...,
+        "text": "如果我搞砸了...如果沒有火焰...",
         "characters": [
             "熱情星"
         ]
@@ -6932,47 +6932,37 @@ if (scene.bgm) {
             if (element) element.classList.toggle('active');
         }
 
-        // 載入自訂字體，但不得讓字體網路請求卡住整個遊戲啟動。
+        // 必須等兩個自訂字體都成功載入後，才開始載入遊戲素材。
         function preloadGameFonts() {
             if (typeof FontFace !== "function" || !document.fonts) {
-                return Promise.resolve();
+                return Promise.reject(new Error("這個瀏覽器不支援自訂字體載入確認"));
             }
 
             const fontFiles = [
                 new FontFace(
                     "Dela Gothic One",
-                    'url("./font/DelaGothicOne-Regular.woff?v=5")',
+                    'url("./font/DelaGothicOne-Regular.woff?v=6")',
                     { weight: "400", style: "normal" }
                 ),
                 new FontFace(
                     "CPTrans",
-                    'url("./font/CP--TRANS.woff?v=5")',
+                    'url("./font/CP--TRANS.woff2?v=6")',
                     { weight: "400", style: "normal" }
                 )
             ];
 
-            const loadFonts = Promise.all(fontFiles.map(fontFace =>
+            return Promise.all(fontFiles.map(fontFace =>
                 fontFace.load().then(loadedFace => {
                     document.fonts.add(loadedFace);
                     return loadedFace;
                 }).catch(error => {
-                    console.warn("自訂字體載入失敗，將使用備用字體：", fontFace.family, error);
-                    return null;
+                    throw new Error("字體「" + fontFace.family + "」載入失敗：" +
+                        (error && error.message ? error.message : "請檢查字體檔案與路徑"));
                 })
-            ));
-
-            let timeoutId;
-            const timeout = new Promise(resolve => {
-                timeoutId = setTimeout(() => {
-                    console.warn("自訂字體載入逾時，先繼續啟動遊戲並使用備用字體。");
-                    resolve([]);
-                }, 8000);
-            });
-
-            return Promise.race([loadFonts, timeout]).then(() => {
-                clearTimeout(timeoutId);
-                if (document.fonts) {
-                    document.fonts.load('16px sans-serif').catch(() => {});
+            )).then(() => {
+                if (!document.fonts.check('50px "Dela Gothic One"') ||
+                    !document.fonts.check('16px "CPTrans"')) {
+                    throw new Error("字體檔已讀取，但瀏覽器仍未確認字體可用");
                 }
             });
         }
@@ -7006,10 +6996,8 @@ if (scene.bgm) {
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
-            // 字體失敗時可用備用字體；圖片載入較慢時則留在載入畫面並自動重試。
-            preloadGameFonts().catch(error => {
-                console.warn("自訂字體載入失敗，改用備用字體繼續啟動：", error);
-            }).then(() => {
+            // 必須先成功載入兩個自訂字體，才開始載入第一幕素材。
+            preloadGameFonts().then(() => {
                 // 開場只載入第一幕需要的素材；題目 UI 會在進入題目時再載入，避免開頭等待所有題目圖片。
                 const initialAssets = [
                     ...getSceneAssetPaths(0)
@@ -7052,7 +7040,7 @@ if (scene.bgm) {
                 }
 
                 loadInitialAssets();
-            });
+            }).catch(showFontLoadError);
         });
 
         // 開發者工具：展開／收合角色劇情清單
