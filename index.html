@@ -218,20 +218,22 @@
             bottom: 205px;
             width: 95%;
         }
-        .全同情星 {
-    position: absolute;
-    left: -2%;
-    bottom: 200px;
-    width: 90%;
-}
+        /* 同情星、爽快星、熱情星與好奇星共用相同的固定位置 */
+        .全同情星,
+        .全爽快星,
+        .全熱情星 {
+            position: absolute !important;
+            left: -12% !important;
+            bottom: 180px !important;
+            width: 90% !important;
+        }
 
-.全同情星 img {
-    width: 135%;
-    height: auto;
-}
-
-        .全爽快星 { position: absolute !important; left: -20% !important; bottom: 120px !important; width: 110% !important; } 
-        .全爽快星 img { width: 110% !important; height: auto !important; }
+        .全同情星 img,
+        .全爽快星 img,
+        .全熱情星 img {
+            width: 135% !important;
+            height: auto !important;
+        }
 
 /* 💡 輸入框容器專用動畫 Class */
 .modal-pop-in {
