@@ -6050,14 +6050,10 @@ if (scene.bgm) {
     fadeOutBGM(); // 若劇本寫 bgm: null，則慢慢淡出並停止播放
 }
     
-    // 6. 計分問題保留上一幕角色；一般劇情才切換角色立繪。
-    if (!hasScoredOptions) hideAllCharacters();
-
-    // 進入計分問題畫面時，隱藏上一幕殘留的熱情星立繪。
-    if (hasScoredOptions) {
-        const passionStarEl = document.getElementById("熱情星");
-        if (passionStarEl) passionStarEl.style.display = "none";
-    }
+    // 6. 每次渲染場景都先清掉上一幕的角色立繪。
+    // 計分問題會由 renderOptions() 另外顯示「星辰苦惱-選項用」；
+    // 不可保留上一幕的「星辰嚇死」等角色，否則會疊在題目最上方。
+    hideAllCharacters();
 
     if (!hasScoredOptions && scene.characters && Array.isArray(scene.characters)) {
         scene.characters.forEach(charName => {
