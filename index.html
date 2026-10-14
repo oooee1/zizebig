@@ -5917,6 +5917,13 @@ if (!hasScoredOptions) {
         } else {
             pageEl.className = "";
             pageEl.classList.toggle('hide-dialog', !hasText);
+
+            // 離開計分問題後，立刻隱藏題目標題，不能等對話打字動畫結束。
+            const questionTitle = document.getElementById('question-title');
+            if (questionTitle) {
+                questionTitle.style.setProperty('display', 'none', 'important');
+                questionTitle.style.removeProperty('visibility');
+            }
         }
         // 同情星哭泣分三階段：85.3 顫抖哭、85.34 大哭、86 爆哭；進入 87 後全部移除。
         pageEl.classList.toggle('同情星顫抖哭', currentSceneId === 85.3);
