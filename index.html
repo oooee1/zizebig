@@ -6961,14 +6961,16 @@ if (scene.bgm) {
                 })
             ));
 
+            let timeoutId;
             const timeout = new Promise(resolve => {
-                setTimeout(() => {
+                timeoutId = setTimeout(() => {
                     console.warn("自訂字體載入逾時，先繼續啟動遊戲並使用備用字體。");
                     resolve([]);
                 }, 8000);
             });
 
             return Promise.race([loadFonts, timeout]).then(() => {
+                clearTimeout(timeoutId);
                 if (document.fonts) {
                     document.fonts.load('16px sans-serif').catch(() => {});
                 }
