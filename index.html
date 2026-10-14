@@ -1448,13 +1448,15 @@ img { max-width:100%; }
             padding: 14px 5px 8px !important;
             line-height: 1.27 !important;
             bottom: clamp(22px, 5.5dvh, 54px) !important;
-            font-size: clamp(29px, 7.6vw, 44px) !important;
+            /* 白色一般文字加大約 7px；明確取消額外粗體設定。 */
+            font-size: clamp(36px, calc(7.6vw + 7px), 51px) !important;
             font-family: 'Dela Gothic One', sans-serif !important;
-            /* 真正的字形投影：不描邊、不用多方向 text-shadow 假裝外框。 */
+            font-weight: 400 !important;
+            /* 加深並加厚文字後方的投影，不做字體描邊。 */
             -webkit-text-stroke: 0 !important;
             text-shadow: none !important;
-            filter: drop-shadow(0 2px 1px rgba(23,19,19,.9))
-                    drop-shadow(0 4px 3px rgba(0,0,0,.38));
+            filter: drop-shadow(0 3px 2px rgba(0,0,0,.98))
+                    drop-shadow(0 6px 4px rgba(0,0,0,.72));
             text-align: right !important;
             white-space: normal !important;
             text-wrap: initial !important;
@@ -1464,7 +1466,9 @@ img { max-width:100%; }
         /* 只有 highlightTerms 命中的關鍵詞放大；其他標題文字維持原本大小。 */
         #page1.question-choice-mode #question-title .question-title-highlight {
             font-family: 'Dela Gothic One', sans-serif !important;
-            font-size: 1.35em !important;
+            /* 保持橘色關鍵字原本的視覺大小，僅放大白色一般文字。 */
+            font-size: calc(1.35em - 7px) !important;
+            font-weight: 400 !important;
             /* 比原本橘色只往黃色微調一點，不使用亮黃。 */
             color: #ffad36 !important;
             -webkit-text-stroke: 0 !important;
