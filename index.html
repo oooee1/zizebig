@@ -236,11 +236,18 @@
 
         /* 同情星整體稍微往右；感動立繪保留原本圖片大小 */
         #page1 .角色圖.全同情星 {
-            transform: translate(28px, -18px) !important;
+            transform: translate(28px, -24px) !important;
         }
 
         #page1 .角色圖.全同情星:not(#同情星感動) img {
-            width: 78% !important; /* 一般同情星立繪再縮小一點 */
+            width: 78% !important; /* 一般同情星立繪 */
+            max-width: none !important;
+            height: auto !important;
+        }
+
+        /* 感動立繪也統一尺寸，避免吃到共用的 135% 而比其他表情大很多 */
+        #page1 .角色圖.全同情星#同情星感動 img {
+            width: 78% !important;
             max-width: none !important;
             height: auto !important;
         }
