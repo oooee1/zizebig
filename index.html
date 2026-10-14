@@ -377,34 +377,39 @@
   100% { transform: translateY(0) scale(1, 1); }          /* 恢復完美原狀 */
 }
 
-.anim-excited {
+/* 動畫只作用在立繪圖片，不動角色容器的位置／transform。
+   這樣不會被角色定位用的 !important 覆蓋，動畫結束也能保留 forwards 的最終姿勢。 */
+.anim-excited,
+.anim-bounce,
+.anim-sway,
+.anim-depress,
+.anim-cry {
   display: block !important;
-  animation: excited-bounce-smooth 0.8s ease-out !important; 
+  animation: none !important;
+}
+
+.anim-excited img {
+  animation: excited-bounce-smooth 0.8s ease-out forwards !important;
   transform-origin: bottom center;
 }
 
-/* 套用 Class (只播放一次, fill-mode 為 forwards 保持最終狀態) */
-.anim-bounce { 
-  display: block !important;
-  animation: bounce-once 0.8s ease-in-out forwards !important; 
+.anim-bounce img {
+  animation: bounce-once 0.8s ease-in-out forwards !important;
   transform-origin: bottom center;
 }
 
-.anim-sway { 
-  display: block !important;
-  animation: sway-once 1s ease-in-out forwards !important; 
+.anim-sway img {
+  animation: sway-once 1s ease-in-out forwards !important;
   transform-origin: bottom center;
 }
 
-.anim-depress { 
-  display: block !important;
-  animation: depress-down 1.2s ease-out forwards !important; 
+.anim-depress img {
+  animation: depress-down 1.2s ease-out forwards !important;
   transform-origin: bottom center;
 }
 
-.anim-cry { 
-  display: block !important;
-  animation: cry-once 0.6s ease-in-out forwards !important; 
+.anim-cry img {
+  animation: cry-once 0.6s ease-in-out forwards !important;
   transform-origin: center center;
 }
 
