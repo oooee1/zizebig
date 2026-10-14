@@ -6854,9 +6854,10 @@ if (scene.bgm) {
         }, 400);
     }
 
-    // 4. 從原本的劇情開頭第 1 幕開始
-    currentStep = storyScript.findIndex(s => Number(s.id) === 1);
-    if (currentStep !== -1) {
+    // 4. 名字輸入完成後，接續 ID 8 後面的 ID 9；不可重設回 ID 1，否則劇情會循環。
+    const nextIndex = storyScript.findIndex(s => Number(s.id) === 9);
+    if (nextIndex !== -1) {
+        currentStep = nextIndex;
         renderScene(currentStep);
     }
 }
