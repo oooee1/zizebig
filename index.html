@@ -1641,6 +1641,24 @@ img { max-width:100%; }
         document.addEventListener('contextmenu', event => event.preventDefault());
 
         const storyScript = [
+    {
+        id: -3,
+        text: "親愛的日記：爸、媽，今天過得真快，就如往常一樣，但我已經要成年了，仍對未來感到迷茫，我究竟擅長什麼？想要什麼？我到底適合什麼？",
+        speaker: "星辰",
+        characters: ["星辰思考"],
+        nextId: -2
+    },
+    {
+        id: -2,
+        text: "真希望能收到你們的回覆。",
+        speaker: "星辰",
+        characters: ["星辰思考"],
+        nextId: -1
+    },
+    {
+        id: -1,
+        nextId: 0
+    },
             {
         id: 0,
         text: "呃...怎麼回事，頭好暈。",
@@ -1791,7 +1809,7 @@ img { max-width:100%; }
     },
     {
         id: 11,
-        text: "你要不要來參觀我們的星球咩？",
+        text: "你要不要參觀我們的星球咩？",
         characters: ["好奇星會跳"],
         background: "好奇星草叢",
     },
@@ -5023,7 +5041,7 @@ img { max-width:100%; }
     },
     {
         "id": 315,
-        "text": "爸爸媽媽真的很抱歉，因為一時沒辦法走開。",
+        "text": "爸爸媽媽真的感到很抱歉，因為一時沒辦法走開。",
         "characters": [
             "媽媽難過"
         ]
@@ -6497,7 +6515,7 @@ if (scene.bgm) {
     }
 
     // 4. 推進劇情至第 9 幕
-    currentStep = storyScript.findIndex(s => Number(s.id) === 9);
+    currentStep = storyScript.findIndex(s => Number(s.id) === -3);
     if (currentStep !== -1) {
         renderScene(currentStep);
     }
