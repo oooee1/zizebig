@@ -6176,6 +6176,7 @@ if (scene.bgm) {
         // 顯示本幕題目標題，完整保留文字並以橘色強調關鍵詞。
         const questionTitle = document.getElementById('question-title');
         if (questionTitle) {
+            questionTitle.style.display = 'block';
             const titleText = String(scene.text || '').replace(/\{playerName\}/g, window.playerName || '').trim();
             questionTitle.replaceChildren();
             if (titleText) {
