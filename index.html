@@ -6458,13 +6458,19 @@ if (scene.bgm) {
 
                 let textToHighlight = titleText;
 
+                // 將文字中的換行符號直接建立成 <br>，不依賴 CSS 是否保留文字換行。
+                const appendTitleText = (text) => {
+                    String(text).split(/\r?\n/).forEach((line, index) => {
+                        if (index > 0) questionTitle.append(document.createElement('br'));
+                        questionTitle.append(document.createTextNode(line));
+                    });
+                };
+
                 // 「初次來到陌生環境」仍固定在「初次」後換行；
                 // 換行後的文字也使用 highlightTerms 決定哪些詞要變橘色。
                 if (titleText.includes('初次來到陌生環境')) {
                     const titleStart = titleText.indexOf('初次來到陌生環境');
-                    questionTitle.append(
-                        document.createTextNode(titleText.slice(0, titleStart) + '初次')
-                    );
+                    appendTitleText(titleText.slice(0, titleStart) + '初次');
                     questionTitle.append(document.createElement('br'));
                     textToHighlight = titleText.slice(titleStart + '初次'.length);
                 }
@@ -6475,17 +6481,15 @@ if (scene.bgm) {
 
                 if (term) {
                     const termStart = textToHighlight.indexOf(term);
-                    questionTitle.append(document.createTextNode(textToHighlight.slice(0, termStart)));
+                    appendTitleText(textToHighlight.slice(0, termStart));
                     const highlight = document.createElement('span');
                     highlight.className = 'question-title-highlight';
                     highlight.textContent = term;
-                    questionTitle.append(
-                        highlight,
-                        document.createTextNode(textToHighlight.slice(termStart + term.length))
-                    );
+                    questionTitle.append(highlight);
+                    appendTitleText(textToHighlight.slice(termStart + term.length));
                 } else {
                     // 沒有命中 highlightTerms 的文字全部維持原色，不再自動把句尾染橘色。
-                    questionTitle.append(document.createTextNode(textToHighlight));
+                    appendTitleText(textToHighlight);
                 }
             }
         }
