@@ -1869,24 +1869,6 @@ img { max-width:100%; }
         window.PROJECT_ASSET_CATALOG = PROJECT_ASSET_CATALOG;
 
         const storyScript = [
-    {
-        id: -3,
-        text: "親愛的日記：爸、媽，今天過得真快，就如往常一樣，但我已經要成年了，仍對未來感到迷茫，我究竟擅長什麼？想要什麼？我到底適合什麼？",
-        speaker: "星辰",
-        characters: ["星辰思考"],
-        nextId: -2
-    },
-    {
-        id: -2,
-        text: "真希望能收到你們的回覆。",
-        speaker: "星辰",
-        characters: ["星辰思考"],
-        nextId: -1
-    },
-    {
-        id: -1,
-        nextId: 0
-    },
             {
         id: 0,
         text: "呃...怎麼回事，頭好暈。",
@@ -6781,8 +6763,8 @@ if (scene.bgm) {
         }, 400);
     }
 
-    // 4. 推進劇情至第 9 幕
-    currentStep = storyScript.findIndex(s => Number(s.id) === -3);
+    // 4. 從原本的劇情開頭第 1 幕開始
+    currentStep = storyScript.findIndex(s => Number(s.id) === 1);
     if (currentStep !== -1) {
         renderScene(currentStep);
     }
