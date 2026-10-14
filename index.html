@@ -6447,7 +6447,12 @@ if (scene.bgm) {
         const questionTitle = document.getElementById('question-title');
         if (questionTitle) {
             questionTitle.style.display = 'block';
-            const titleText = String(scene.text || '').replace(/\{playerName\}/g, window.playerName || '').replace(/\/\/n|\\n/g, String.fromCharCode(10)).trim();
+            const titleText = String(scene.text || '')
+                .replace(/\{playerName\}/g, window.playerName || '')
+                // 不用正規表示式判斷斜線，直接將資料中的 //n 和字面上的 \n 都轉成真正換行。
+                .split('//n').join(String.fromCharCode(10))
+                .split('\\n').join(String.fromCharCode(10))
+                .trim();
             questionTitle.replaceChildren();
             if (titleText) {
                 // 所有題目的橘色關鍵詞統一由這份清單控制。
