@@ -236,11 +236,11 @@
 
         /* 同情星立繪縮至 85%，整體往右 15px、往上 10px */
         #page1 .角色圖.全同情星 {
-            transform: translate(15px, -10px) !important;
+            transform: translate(22px, -10px) !important; /* 同情星整體稍微往右 */
         }
 
         #page1 .角色圖.全同情星 img {
-            width: 85% !important;
+            width: 82% !important; /* 同情星一般立繪稍微縮小 */
             max-width: none !important;
             height: auto !important;
         }
@@ -248,19 +248,19 @@
         /* 同情星哭泣三階段：85.3 顫抖哭、85.34 大哭、86 爆哭。
            每一幕都由 page1 的場景 class 控制，離開 86 後自動恢復原本立繪尺寸。 */
         #page1.同情星顫抖哭 .角色圖.全同情星 img {
-            width: 85% !important;
+            width: 82% !important;
             transform-origin: 50% 85%;
             animation: sympathy-tremble-cry 0.42s ease-in-out infinite !important;
         }
 
         #page1.同情星大哭 .角色圖.全同情星 img {
-            width: 100% !important;
+            width: 96% !important;
             transform-origin: 50% 85%;
             animation: sympathy-big-cry 0.34s ease-in-out infinite !important;
         }
 
         #page1.同情星爆哭 .角色圖.全同情星 img {
-            width: 112% !important;
+            width: 108% !important;
             transform-origin: 50% 85%;
             animation: sympathy-explosive-cry 0.24s linear infinite !important;
         }
