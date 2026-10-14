@@ -230,14 +230,11 @@
 
         .全同情星 img {
             width: 114.75% !important; /* 同情星角色尺寸縮小 15% */
+            max-width: none !important; /* 避免全域 img max-width:100% 把縮放限制住 */
             height: auto !important;
         }
 
-        /* 爽快星所有立繪放大 3%，並整體往下微調 */
-        .全爽快星 {
-            bottom: 170px !important;
-        }
-
+        /* 爽快星所有立繪放大 3%，維持原本的垂直位置 */
         .全爽快星 img {
             width: 139.05% !important;
             height: auto !important;
