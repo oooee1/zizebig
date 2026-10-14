@@ -6431,16 +6431,8 @@ if (scene.bgm) {
                         document.createTextNode(textToHighlight.slice(termStart + term.length))
                     );
                 } else {
-                    const match = textToHighlight.match(/^([\s\S]*?)([^，。！？、：；]{2,5}[！？。]?)$/);
-                    if (match) {
-                        questionTitle.append(document.createTextNode(match[1]));
-                        const highlight = document.createElement('span');
-                        highlight.className = 'question-title-highlight';
-                        highlight.textContent = match[2];
-                        questionTitle.append(highlight);
-                    } else {
-                        questionTitle.append(document.createTextNode(textToHighlight));
-                    }
+                    // 沒有命中 highlightTerms 的文字全部維持原色，不再自動把句尾染橘色。
+                    questionTitle.append(document.createTextNode(textToHighlight));
                 }
             }
         }
