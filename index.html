@@ -1198,6 +1198,7 @@ img { max-width:100%; }
 #page1.question-choice-mode:not(.question-animation-played) #格子條紋紙,
 #page1.question-choice-mode:not(.question-animation-played) #藍色紙,
 #page1.question-choice-mode:not(.question-animation-played) #你會選擇？,
+            #page1.question-choice-mode:not(.question-animation-played) #question-title,
 #page1.question-choice-mode:not(.question-animation-played) #藍色拼圖,
 #page1.question-choice-mode:not(.question-animation-played) #紫色拼圖,
 #page1.question-choice-mode:not(.question-animation-played) #綠色拼圖,
@@ -1326,6 +1327,7 @@ img { max-width:100%; }
         /* 裝飾紙與角色只負責顯示，不能蓋住四塊拼圖的點擊區 */
         #page1.question-choice-mode #藍色紙,
         #page1.question-choice-mode #格子條紋紙,
+        #page1.question-choice-mode #question-title { z-index: 90000 !important; }
         #page1.question-choice-mode #星辰苦惱-選項用 {
             pointer-events: none !important;
         }
@@ -1337,6 +1339,39 @@ img { max-width:100%; }
         }
 
 
+
+        /* 計分問題標題：位於角色立繪下方、黃色底線上方，並隨螢幕尺寸縮放 */
+        #question-title {
+            display: none;
+            position: absolute;
+            left: 5%;
+            bottom: clamp(22px, 5.5dvh, 54px);
+            width: 90%;
+            max-height: 22%;
+            overflow: hidden;
+            box-sizing: border-box;
+            z-index: 90000;
+            padding: 0 2px 4px;
+            color: #fff;
+            font-family: 'CPTrans', sans-serif;
+            font-size: clamp(23px, 6.2vw, 36px);
+            font-weight: 900;
+            line-height: 1.22;
+            letter-spacing: .02em;
+            text-align: center;
+            text-wrap: balance;
+            overflow-wrap: anywhere;
+            text-shadow: -2px -2px 0 #171313, 2px -2px 0 #171313, -2px 2px 0 #171313, 2px 2px 0 #171313, 0 4px 0 #171313, 0 5px 8px rgba(0,0,0,.75);
+            pointer-events: none;
+        }
+        #page1.question-choice-mode #question-title { display: block; }
+        #question-title .question-title-highlight { color: #ff9b35; }
+        @media (max-height: 680px) {
+            #question-title { bottom: 20px; max-height: 24%; font-size: clamp(20px, 5.2vw, 30px); line-height: 1.15; }
+        }
+        @media (min-width: 500px) and (min-height: 700px) {
+            #question-title { font-size: clamp(28px, 4.2vw, 40px); bottom: clamp(28px, 5dvh, 56px); }
+        }
 
         /* 開發者劇情快速跳轉 */
         #developer-tools {
@@ -1530,6 +1565,7 @@ img { max-width:100%; }
             <div id="確認選項背景" class="ui"><img data-src="./問題/背景+文字：確定是這個選項嗎？.webp" ></div>
             <div id="是的" class="ui"><img data-src="./問題/文字：是的.webp" ></div>
             <div id="你會選擇？" class="ui"><img data-src="./問題/文字：你會選擇？.webp" ></div>
+            <div id="question-title" aria-live="polite"></div>
             <div id="我再想想" class="ui"><img data-src="./問題/文字：我再想想....webp" ></div>
             <div id="藍色背景" class="ui"><img data-src="./問題/背景藍色背景.webp" ></div>
             <div id="紫色背景" class="ui"><img data-src="./問題/背景紫色背景.webp" ></div>
@@ -6110,7 +6146,7 @@ if (scene.bgm) {
         const allQuestionUiIds = [
             ...uiIds,
             '黑色紙', '確認選項背景', '是的', '我再想想',
-            '藍色背景', '紫色背景', '綠色背景', '紅色背景',
+            '藍色背景', '紫色背景', '綠色背景', '紅色背景', 'question-title',
             '藍色選項', '紫色選項', '綠色選項', '粉色選項'
         ];
         allQuestionUiIds.forEach(id => {
@@ -6137,6 +6173,40 @@ if (scene.bgm) {
     );
 
     if (usePuzzleUI) {
+        // 顯示本幕題目標題，完整保留文字並以橘色強調關鍵詞。
+        const questionTitle = document.getElementById('question-title');
+        if (questionTitle) {
+            const titleText = String(scene.text || '').replace(/\{playerName\}/g, window.playerName || '').trim();
+            questionTitle.replaceChildren();
+            if (titleText) {
+                const highlightTerms = [
+                    '初次來到陌生環境', '陌生環境', '陌生的環境', '第一次見面',
+                    '遇到困難', '面對挑戰', '幫助別人', '朋友', '家人', '父母',
+                    '勇氣', '危險', '選擇', '未知', '情緒', '衝突', '決定'
+                ];
+                const term = highlightTerms.filter(word => titleText.includes(word)).sort((a, b) => b.length - a.length)[0];
+                if (term) {
+                    const start = titleText.indexOf(term);
+                    questionTitle.append(document.createTextNode(titleText.slice(0, start)));
+                    const highlight = document.createElement('span');
+                    highlight.className = 'question-title-highlight';
+                    highlight.textContent = term;
+                    questionTitle.append(highlight, document.createTextNode(titleText.slice(start + term.length)));
+                } else {
+                    const match = titleText.match(/^([\s\S]*?)([^，。！？、：；]{2,5}[！？。]?)$/);
+                    if (match) {
+                        questionTitle.append(document.createTextNode(match[1]));
+                        const highlight = document.createElement('span');
+                        highlight.className = 'question-title-highlight';
+                        highlight.textContent = match[2];
+                        questionTitle.append(highlight);
+                    } else {
+                        questionTitle.textContent = titleText;
+                    }
+                }
+            }
+        }
+
         // 隱藏原本四條橫向選項
         optBox.style.display = 'none';
 
