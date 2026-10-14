@@ -1486,6 +1486,13 @@ img { max-width:100%; }
                 0 0 12px rgba(0,0,0,.55) !important;
         }
 
+        /* 手機／窄螢幕：題目字再放大一點，維持右對齊與原本換行。 */
+        @media (max-width: 500px), (max-aspect-ratio: 9/17) {
+            #page1.question-choice-mode #question-title {
+                font-size: clamp(39px, calc(7.8vw + 8px), 46px) !important;
+            }
+        }
+
         #page1.puzzle-confirm-mode #question-title {
             display: none !important;
             visibility: hidden !important;
@@ -1505,12 +1512,14 @@ img { max-width:100%; }
             z-index: 100 !important;
             pointer-events: none !important;
         }
+        /* 拼圖在星辰後方；藍色紙仍可壓在星辰前面。 */
+        #page1.question-choice-mode .全星辰,
         #page1.question-choice-mode #星辰苦惱-選項用 {
-            z-index: 102 !important;
+            z-index: 2005 !important;
             pointer-events: none !important;
         }
         #page1.question-choice-mode #藍色紙 {
-            z-index: 103 !important;
+            z-index: 2006 !important;
             pointer-events: none !important;
         }
         #page1.question-choice-mode #你會選擇？ {
