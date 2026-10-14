@@ -245,6 +245,20 @@
             height: auto !important;
         }
 
+        /* 85.3～86：同情星爆哭，立繪放大並持續誇張顫抖 */
+        #page1.同情星爆哭 .角色圖.全同情星 img {
+            width: 112% !important;
+            transform-origin: 50% 85%;
+            animation: sympathy-big-cry 0.48s ease-in-out infinite;
+        }
+
+        @keyframes sympathy-big-cry {
+            0%, 100% { transform: scale(1.04) rotate(-2deg) translateY(0); }
+            25% { transform: scale(1.12) rotate(2.8deg) translateY(-5px); }
+            50% { transform: scale(1.17) rotate(-3deg) translateY(2px); }
+            75% { transform: scale(1.10) rotate(3deg) translateY(-3px); }
+        }
+
         /* 爽快星所有立繪放大 3%，維持原本的垂直位置 */
         .全爽快星 img {
             width: 139.05% !important;
@@ -5497,6 +5511,8 @@ if (!hasScoredOptions) {
             pageEl.className = "";
             pageEl.classList.toggle('hide-dialog', !hasText);
         }
+        // 只在 85.3、85.34、86 爆哭；進入 87 後自動恢復原本立繪。
+        pageEl.classList.toggle('同情星爆哭', [85.3, 85.34, 86].includes(currentSceneId));
     }
 
     // 只有一般劇情才依本幕文字切換對話框；問題介面出現時保留上一幕。
