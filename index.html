@@ -6396,40 +6396,50 @@ if (scene.bgm) {
             const titleText = String(scene.text || '').replace(/\{playerName\}/g, window.playerName || '').trim();
             questionTitle.replaceChildren();
             if (titleText) {
-                // 「初次來到陌生環境」固定在「初次」後換行。
+                // 所有題目的橘色關鍵詞統一由這份清單控制。
+                const highlightTerms = [
+                    '陌生環境', '陌生的環境', '第一次見面',
+                    '遇到困難', '面對挑戰', '幫助別人', '朋友', '家人', '父母',
+                    '勇氣', '危險', '選擇', '未知', '情緒', '衝突', '決定'
+                ];
+
+                let textToHighlight = titleText;
+
+                // 「初次來到陌生環境」仍固定在「初次」後換行；
+                // 換行後的文字也使用 highlightTerms 決定哪些詞要變橘色。
                 if (titleText.includes('初次來到陌生環境')) {
                     const titleStart = titleText.indexOf('初次來到陌生環境');
-                    questionTitle.append(document.createTextNode(titleText.slice(0, titleStart) + '初次'));
+                    questionTitle.append(
+                        document.createTextNode(titleText.slice(0, titleStart) + '初次')
+                    );
                     questionTitle.append(document.createElement('br'));
+                    textToHighlight = titleText.slice(titleStart + '初次'.length);
+                }
+
+                const term = highlightTerms
+                    .filter(word => textToHighlight.includes(word))
+                    .sort((a, b) => b.length - a.length)[0];
+
+                if (term) {
+                    const termStart = textToHighlight.indexOf(term);
+                    questionTitle.append(document.createTextNode(textToHighlight.slice(0, termStart)));
                     const highlight = document.createElement('span');
                     highlight.className = 'question-title-highlight';
-                    highlight.textContent = '來到陌生環境';
-                    questionTitle.append(highlight, document.createTextNode(titleText.slice(titleStart + '初次來到陌生環境'.length)));
+                    highlight.textContent = term;
+                    questionTitle.append(
+                        highlight,
+                        document.createTextNode(textToHighlight.slice(termStart + term.length))
+                    );
                 } else {
-                    const highlightTerms = [
-                        '陌生環境', '陌生的環境', '第一次見面',
-                        '遇到困難', '面對挑戰', '幫助別人', '朋友', '家人', '父母',
-                        '勇氣', '危險', '選擇', '未知', '情緒', '衝突', '決定'
-                    ];
-                    const term = highlightTerms.filter(word => titleText.includes(word)).sort((a, b) => b.length - a.length)[0];
-                    if (term) {
-                        const termStart = titleText.indexOf(term);
-                        questionTitle.append(document.createTextNode(titleText.slice(0, termStart)));
+                    const match = textToHighlight.match(/^([\s\S]*?)([^，。！？、：；]{2,5}[！？。]?)$/);
+                    if (match) {
+                        questionTitle.append(document.createTextNode(match[1]));
                         const highlight = document.createElement('span');
                         highlight.className = 'question-title-highlight';
-                        highlight.textContent = term;
-                        questionTitle.append(highlight, document.createTextNode(titleText.slice(termStart + term.length)));
+                        highlight.textContent = match[2];
+                        questionTitle.append(highlight);
                     } else {
-                        const match = titleText.match(/^([\s\S]*?)([^，。！？、：；]{2,5}[！？。]?)$/);
-                        if (match) {
-                            questionTitle.append(document.createTextNode(match[1]));
-                            const highlight = document.createElement('span');
-                            highlight.className = 'question-title-highlight';
-                            highlight.textContent = match[2];
-                            questionTitle.append(highlight);
-                        } else {
-                            questionTitle.textContent = titleText;
-                        }
+                        questionTitle.append(document.createTextNode(textToHighlight));
                     }
                 }
             }
