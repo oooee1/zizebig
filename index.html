@@ -5736,30 +5736,46 @@ if (scene.bgm) {
     charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-cry', 'anim-nod', 'anim-excited');
     void charElement.offsetWidth; // 強制重繪 (Reflow)
 
-    // 依角色加入對應的單次動畫
+    // 依角色加入對應的單次動畫；已由 playCuriousAnim / playHappyJumpAnim 處理的角色不重複加入。
     switch (characterId) {
         case '星辰微笑':
         case '星辰感動':
         case '好奇星開心閉眼':
+        case '同情星感動':
+        case '爽快星開心':
+        case '爸爸微笑':
+        case '媽媽微笑':
             charElement.classList.add('anim-bounce');
             break;
 
         case '星辰思考':
+        case '同情星':
+        case '爽快星疑惑':
+        case '熱情星':
+        case '爸爸':
+        case '媽媽':
             charElement.classList.add('anim-sway');
             break;
 
         case '星辰苦惱':
         case '同情星苦惱':
-            charElement.classList.add('anim-depress'); // 💡 苦惱改為沮喪下沉動畫
+        case '爽快星害怕':
+        case '爽快星慌張':
+            charElement.classList.add('anim-depress');
             break;
 
         case '好奇星哭':
         case '好奇星哭小尾巴':
+        case '爸爸難過':
+        case '媽媽難過':
             charElement.classList.add('anim-cry');
             break;
 
         case '路人好奇星張嘴':
-            charElement.classList.add('anim-excited'); // 💡 換成激烈的開心跳躍動畫！
+        case '路人好奇星閉嘴':
+        case '同情星自信':
+        case '爽快星生氣':
+            charElement.classList.add('anim-excited');
             break;
     }
 }
