@@ -6953,29 +6953,9 @@ if (scene.bgm) {
         }
 
         function showFontLoadError(error) {
+            // 不另外顯示「字體載入失敗」錯誤畫面；仍保留原本載入畫面。
+            // 字體未成功載入前不會啟動遊戲，錯誤原因可在開發者工具 Console 查看。
             console.error("自訂字體載入失敗，遊戲暫停啟動：", error);
-            const loadingScreen = document.getElementById('loading-screen');
-            if (!loadingScreen) return;
-
-            const message = loadingScreen.querySelector('.loading-message') ||
-                loadingScreen.querySelector('div');
-            if (message) {
-                message.classList.add('loading-message');
-                message.textContent = '字體載入失敗，尚未進入遊戲';
-            }
-
-            const percent = document.getElementById('loading-percent');
-            if (percent) percent.textContent = '請確認網路後重試';
-
-            let retryButton = document.getElementById('font-load-retry');
-            if (!retryButton) {
-                retryButton = document.createElement('button');
-                retryButton.id = 'font-load-retry';
-                retryButton.textContent = '重新載入';
-                retryButton.style.cssText = 'margin-top:12px;padding:10px 22px;border:0;border-radius:8px;background:#62c6ff;color:#111;font-size:16px;font-weight:bold;cursor:pointer;';
-                retryButton.addEventListener('click', () => window.location.reload());
-                loadingScreen.appendChild(retryButton);
-            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
