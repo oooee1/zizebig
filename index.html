@@ -5505,6 +5505,13 @@ if (scene.bgm) {
     
     // 6. 計分問題保留上一幕角色；一般劇情才切換角色立繪。
     if (!hasScoredOptions) hideAllCharacters();
+
+    // 進入計分問題畫面時，隱藏上一幕殘留的熱情星立繪。
+    if (hasScoredOptions) {
+        const passionStarEl = document.getElementById("熱情星");
+        if (passionStarEl) passionStarEl.style.display = "none";
+    }
+
     if (!hasScoredOptions && scene.characters && Array.isArray(scene.characters)) {
         scene.characters.forEach(charName => {
             const charEl = document.getElementById(charName);
