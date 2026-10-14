@@ -1293,6 +1293,59 @@ img { max-width:100%; }
             pointer-events: auto !important;
         }
 
+
+
+        /* 開發者劇情快速跳轉 */
+        #developer-tools {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 200010;
+            font-family: 'CPTrans', sans-serif;
+        }
+        #developer-tools-toggle {
+            padding: 10px 13px;
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 10px;
+            background: rgba(0,0,0,.78);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,.25);
+        }
+        #developer-tools-panel {
+            display: none;
+            position: absolute;
+            top: 48px;
+            right: 0;
+            width: 190px;
+            padding: 12px;
+            border: 1px solid #ffb30f;
+            border-radius: 12px;
+            background: rgba(15,15,15,.96);
+            box-shadow: 0 5px 20px rgba(0,0,0,.45);
+        }
+        #developer-tools-panel.open { display: block; }
+        #developer-tools-panel .developer-tools-title {
+            margin: 0 0 9px;
+            color: #ffb30f;
+            font-size: 14px;
+        }
+        #developer-tools-panel button {
+            display: block;
+            width: 100%;
+            margin-top: 7px;
+            padding: 10px 8px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            background: #292929;
+            color: #fff;
+            font: inherit;
+            font-size: 14px;
+            text-align: left;
+            cursor: pointer;
+        }
+        #developer-tools-panel button:active { background: #51401d; }
     </style>
 </head>
 
@@ -1314,6 +1367,18 @@ img { max-width:100%; }
                 <div class="nav-item" id="volume-btn" onclick="event.stopPropagation(); toggleBGM(this);">
                     <img src="./pct/2音量.webp" alt="音量">
                 </div>
+        </div>
+    </div>
+
+    <!-- 右上角開發者工具：快速進入各星球劇情 -->
+    <div id="developer-tools" onclick="event.stopPropagation();">
+        <button id="developer-tools-toggle" type="button" onclick="toggleDeveloperTools(event)">開發者 ▾</button>
+        <div id="developer-tools-panel">
+            <p class="developer-tools-title">跳轉至角色劇情</p>
+            <button type="button" onclick="jumpToCharacterStory(0, event)">好奇星劇情</button>
+            <button type="button" onclick="jumpToCharacterStory(78, event)">同情星劇情</button>
+            <button type="button" onclick="jumpToCharacterStory(137, event)">爽快星劇情</button>
+            <button type="button" onclick="jumpToCharacterStory(205.1, event)">熱情星劇情</button>
         </div>
     </div>
 
@@ -6550,7 +6615,38 @@ if (scene.bgm) {
             });
         });
 
-        // 跳轉// 在 <script> 底部加入這段代碼即可
+        // 開發者工具：展開／收合角色劇情清單
+function toggleDeveloperTools(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    const panel = document.getElementById('developer-tools-panel');
+    if (panel) panel.classList.toggle('open');
+}
+
+// 從各星球劇情的第一幕開始播放；使用 renderScene 保留原本素材載入流程。
+function jumpToCharacterStory(sceneId, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    const targetIndex = storyScript.findIndex(scene => Number(scene.id) === Number(sceneId));
+    const panel = document.getElementById('developer-tools-panel');
+    if (panel) panel.classList.remove('open');
+
+    if (targetIndex === -1) {
+        alert('找不到這個角色的劇情起點：' + sceneId);
+        return;
+    }
+
+    // 清除可能殘留的輸入視窗，並讓場景使用原本的載入／轉場機制。
+    if (typeof hideInputBox === 'function') hideInputBox();
+    currentStep = targetIndex;
+    renderScene(currentStep);
+}
+
+// 跳轉// 在 <script> 底部加入這段代碼即可
 document.addEventListener('keydown', function(e) {
     // 按下小寫或大寫 J 鍵 (Jump)
     if (e.key === 'j' || e.key === 'J') {
