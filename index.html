@@ -190,6 +190,14 @@
         }
 
         .全星辰 img { width: 160%; height: auto; }
+        /* 所有手動換行標記 //n 轉成換行後，讓題目標題、拼圖文字與一般選項都真的換行。 */
+        #page1 #question-title,
+        #page1 #對話文本,
+        #page1 .拼圖選項文字,
+        #page1 .選項按鈕 {
+            white-space: pre-line;
+        }
+
 
         #星辰思考 {
             width: 100%;
@@ -5898,7 +5906,7 @@ function renderScene(stepIndex) {
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     // 對話若以「角色名稱：」開頭，發言者以文字標示為準，不沿用上一幕角色名稱。
-    const rawDialogueText = typeof scene.text === "string" ? scene.text : "";
+    const rawDialogueText = typeof scene.text === "string" ? scene.text.replace(/\/\/n|\\\\n/g, '\\n') : "";
     const speakerPrefixMatch = rawDialogueText.match(/^([^：:]{1,12})[：:]\s*/);
     const inferredSpeaker = speakerPrefixMatch ? speakerPrefixMatch[1].replace(/^[🤬😡😠😰😨😱\s]+/, "").trim() : "";
     const sceneSpeaker = scene.speaker || (
@@ -6438,7 +6446,7 @@ if (scene.bgm) {
         const questionTitle = document.getElementById('question-title');
         if (questionTitle) {
             questionTitle.style.display = 'block';
-            const titleText = String(scene.text || '').replace(/\{playerName\}/g, window.playerName || '').trim();
+            const titleText = String(scene.text || '').replace(/\{playerName\}/g, window.playerName || '').replace(/\/\/n|\\\\n/g, '\\n').trim();
             questionTitle.replaceChildren();
             if (titleText) {
                 // 所有題目的橘色關鍵詞統一由這份清單控制。
@@ -6627,7 +6635,7 @@ if (scene.bgm) {
 
         // 只將文字本身往下移 4px，按鈕位置與大小維持不變。
         const optionLabel = document.createElement('span');
-        optionLabel.textContent = opt.text;
+        optionLabel.textContent = String(opt.text || '').replace(/\/\/n|\\\\n/g, '\\n');
         optionLabel.style.display = 'inline-block';
         optionLabel.style.transform = 'translate(-1px, 1px)';
         btn.appendChild(optionLabel);
