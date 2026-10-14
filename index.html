@@ -5728,33 +5728,35 @@ if (scene.bgm) {
                     textSpan.textContent = optionText;
                     label.appendChild(textSpan);
 
-                    // 指定選項個別設定字體大小；13～15 字的選項使用 40px。
+                    // 先依選項內容決定 430px 設計寬度下的字級，再按遊戲畫面實際寬度等比例縮放。
+                    // 小螢幕的字會同步縮小，避免拼圖選項被擠到一直換行；原本各選項的字級比例保留。
                     const compactOptionText = optionText.replace(/\s/g, '');
                     label.style.fontSize = '';
+                    let designFontSize = 48;
                     if ([
                         '當一個充滿想像力，有自我思考的人。',
                         '當一個樂觀開朗，願意協助大家的人。',
                         '當一個細心的領袖，帶大家前進的人。',
                         '當一個有完美規範，有完美秩序的人。'
                     ].includes(compactOptionText)) {
-                        textSpan.style.fontSize = '38px';
+                        designFontSize = 38;
                     } else if (compactOptionText === '嘗試先修理發電機') {
-                        textSpan.style.fontSize = '43px';
+                        designFontSize = 43;
                     } else if (compactOptionText.length >= 13 && compactOptionText.length <= 15) {
-                        textSpan.style.fontSize = '40px';
-                    } else if (compactOptionText.length === 6) {
-                        textSpan.style.fontSize = '55px';
-                    } else if (compactOptionText.length === 5) {
-                        textSpan.style.fontSize = '55px';
+                        designFontSize = 40;
+                    } else if (compactOptionText.length === 6 || compactOptionText.length === 5) {
+                        designFontSize = 55;
                     } else if (compactOptionText.length === 4) {
-                        textSpan.style.fontSize = '55px';
+                        designFontSize = 55;
                         textSpan.style.position = 'relative';
                         textSpan.style.top = '2%';
                     } else if (compactOptionText === '抱怨自己運氣不好') {
-                        textSpan.style.fontSize = '48px';
-                    } else {
-                        textSpan.style.fontSize = '48px';
+                        designFontSize = 48;
                     }
+
+                    const gameContainer = document.getElementById('game-container');
+                    const widthScale = gameContainer ? Math.min(1, gameContainer.clientWidth / 430) : 1;
+                    textSpan.style.fontSize = (designFontSize * widthScale) + 'px';
                 }
                 selectedOption.onclick = null;
             }
