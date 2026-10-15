@@ -6425,6 +6425,12 @@ if (scene.bgm) {
             charElement.classList.add('anim-excited');
             break;
         default:
+            // 已由 playCuriousAnim / playScaredAnim / playNodAnim 處理的角色不再疊加動畫。
+            if ([
+                '星辰', '星辰害怕', '星辰嚇死', '星辰驕傲', '星辰點頭',
+                '一群好奇星', '好奇星', '好奇星開心', '好奇星會跳',
+                '好奇星有尾巴', '好奇星開心有尾巴'
+            ].includes(characterId)) break;
             // 其他尚未指定動畫的立繪，至少播放一次輕快彈跳。
             charElement.classList.add('anim-bounce');
             break;
