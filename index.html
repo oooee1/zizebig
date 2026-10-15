@@ -7338,6 +7338,30 @@ window.bgmFadeTimer = null;
  */
 window.pendingBGMSource = window.pendingBGMSource || null;
 
+// 切到其他 App／分頁或把瀏覽器放到背景時暫停背景音樂；回到遊戲時再繼續。
+window.bgmWasPlayingBeforeHidden = false;
+document.addEventListener('visibilitychange', function () {
+    const player = document.getElementById('bgm-player');
+    if (!player) return;
+
+    if (document.hidden) {
+        window.bgmWasPlayingBeforeHidden = !player.paused && !window.isMuted;
+        if (window.bgmFadeTimer) {
+            clearInterval(window.bgmFadeTimer);
+            window.bgmFadeTimer = null;
+        }
+        player.pause();
+    } else if (window.bgmWasPlayingBeforeHidden && !window.isMuted && window.pendingBGMSource) {
+        window.bgmWasPlayingBeforeHidden = false;
+        const resumePromise = player.play();
+        if (resumePromise && typeof resumePromise.catch === 'function') {
+            resumePromise.catch(() => {
+                // 若瀏覽器阻擋自動續播，等待玩家下一次點擊後再播放。
+            });
+        }
+    }
+});
+
 document.addEventListener('pointerdown', function unlockBackgroundMusic() {
     const player = document.getElementById('bgm-player');
     if (player && player.paused && window.pendingBGMSource && !window.isMuted) {
