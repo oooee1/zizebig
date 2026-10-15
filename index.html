@@ -3431,6 +3431,12 @@ img { max-width:100%; }
         background: "火箭",
         characters: ["星辰"],
     },
+    {
+        id: 136.1,
+        text: "",
+        background: "爽快星普通場景",
+        characters: [""],
+    },
     
     // 爽快星
     {
@@ -6048,7 +6054,7 @@ if (!hasScoredOptions) {
         void bgContainer.offsetWidth;
 
         const sceneText = typeof scene.text === 'string' ? scene.text : '';
-        const isImpact = currentSceneId === 78;
+        const isImpact = [78, 136.1, 205.1].includes(currentSceneId);
         const isNormalShake = sceneText.includes("(背景搖晃)") ||
                              [0, 76, 76.1, 77].includes(currentSceneId);
 
