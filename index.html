@@ -329,7 +329,7 @@
 
         #page1 #熱情星戴上王冠 {
             bottom: 157px !important;
-            transform: translate(5px, 22px) scale(0.90) !important;
+            transform: translate(8px, 28px) scale(0.90) !important;
             transform-origin: top left;
         }
 
@@ -472,7 +472,31 @@
 }
 
 
-        /* ------------------------------------------
+        /* 熱情星專屬動畫：火焰眼睛更有活力；戴皇冠時更開心、更有慶祝感。 */
+.anim-passion-fire img {
+  animation: passion-flame-energy 0.95s ease-in-out infinite !important;
+  transform-origin: bottom center;
+}
+@keyframes passion-flame-energy {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
+  20% { transform: translateY(3px) rotate(-2deg) scale(1.04, 0.96); }
+  45% { transform: translateY(-17px) rotate(2deg) scale(0.96, 1.08); }
+  65% { transform: translateY(-3px) rotate(-1.5deg) scale(1.05, 0.97); }
+  82% { transform: translateY(-10px) rotate(1.5deg) scale(0.98, 1.03); }
+}
+.anim-crowned-king img {
+  animation: crowned-king-celebrate 0.85s ease-in-out infinite !important;
+  transform-origin: bottom center;
+}
+@keyframes crowned-king-celebrate {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
+  18% { transform: translateY(5px) rotate(-2deg) scale(1.08, 0.92); }
+  42% { transform: translateY(-26px) rotate(3deg) scale(0.94, 1.09); }
+  60% { transform: translateY(-4px) rotate(-2deg) scale(1.06, 0.96); }
+  78% { transform: translateY(-15px) rotate(2deg) scale(0.98, 1.04); }
+}
+
+/* ------------------------------------------
    💬 3. 對話框與名字（外框共用底色融合）
    ------------------------------------------ */
 
@@ -4860,7 +4884,7 @@ img { max-width:100%; }
         "id": 250,
         "text": "真是太謝謝你們了！",
         "characters": [
-            ""
+            "居民B"
         ]
         , "background": "熱情星貢丸"
     },
@@ -4914,14 +4938,14 @@ img { max-width:100%; }
         "id": 257,
         "text": "啊啊！什麼都看不到了！",
         "characters": [
-            ""
+            "嚇到的居民"
         ]
     },
     {
         "id": 258,
         "text": "怎麼會？火焰沒有了！",
         "characters": [
-            ""
+            "恐慌的居民"
         ]
     },
     {
@@ -5015,14 +5039,14 @@ img { max-width:100%; }
         "id": 263,
         "text": "這個火焰？是王子！",
         "characters": [
-            ""
+            "嚇到的居民"
         ]
     },
     {
         "id": 264,
         "text": "哇！是王子殿下！",
         "characters": [
-            ""
+            "居民們"
         ]
     },
     {
@@ -5043,7 +5067,7 @@ img { max-width:100%; }
         "id": 266,
         "text": "謝謝王子殿下！",
         "characters": [
-            ""
+            "恐慌的居民"
         ]
     },
     {
@@ -5071,7 +5095,7 @@ img { max-width:100%; }
         "id": 270,
         "text": "殿下原來在這裡，快要到加冕典禮了。",
         "characters": [
-            ""
+            "大臣"
         ]
     },
     {
@@ -5291,21 +5315,21 @@ img { max-width:100%; }
         "id": 289,
         "text": "接下來是王子熱情星的皇室加冕典禮！",
         "characters": [
-            ""
+            "大臣"
         ]
     },
     {
         "id": 290,
         "text": "只要戴上王冠，熱情星球就會誕生新的國王！",
         "characters": [
-            ""
+            "大臣"
         ]
     },
     {
         "id": 291,
         "text": "耶！熱情星！熱情星！",
         "characters": [
-            ""
+            "居民們"
         ]
     },
     {
@@ -5340,14 +5364,14 @@ img { max-width:100%; }
         "id": 296,
         "text": "哇！火焰回來了！",
         "characters": [
-            ""
+            "憤怒的居民"
         ]
     },
     {
         "id": 297,
         "text": "火焰！國王！國王！",
         "characters": [
-            ""
+            "居民們"
         ]
     },
     {
@@ -5738,6 +5762,7 @@ img { max-width:100%; }
     },
     {
         "id": 346.1,
+        "speaker": "星辰",
         "text": "裡面夾了東西？",
         "characters": [
             "星辰思考"
@@ -5745,50 +5770,62 @@ img { max-width:100%; }
     },
     {
         "id": 347,
+        "speaker": "星辰",
         "text": "星辰，也許有一天，你會走得很遠，遠到看不見我們；",
     },
     {
         "id": 347.1,
+        "speaker": "星辰",
         "text": "也許你會迷路、會害怕，也會不知道下一步該往哪裡走。",
     },
     {
         "id": 347.2,
+        "speaker": "星辰",
         "text": "但沒關係，慢慢走就好了。",
     },
     {
         "id": 348,
+        "speaker": "星辰",
         "text": "如果有一天你累了、想家了，就回頭看看吧。",
     },
     {
         "id": 348.1,
+        "speaker": "星辰",
         "text": "不管你走了多遠、變成什麼樣子，爸爸媽媽都會在這裡，為你留著一盞燈。",
     },
     {
         "id": 349,
+        "speaker": "星辰",
         "text": "因為我們從來不需要你走得多快，",
     },
     {
         "id": 349.1,
+        "speaker": "星辰",
         "text": "只希望你能找到真正屬於自己的方向。",
     },
     {
         "id": 349.2,
+        "speaker": "星辰",
         "text": "所以，去吧，星辰。",
     },
     {
         "id": 349.3,
+        "speaker": "星辰",
         "text": "放心地走向你的未來。",
     },
     {
         "id": 349.4,
+        "speaker": "星辰",
         "text": "愛你的爸爸媽媽。",
     },
     {
         "id": 350,
+        "speaker": "星辰",
         "text": "真是的...總算是回信了啊。",
     },
     {
         "id": 351,
+        "speaker": "星辰",
         "text": "謝謝你們，愛你的星辰。",
     }
 
@@ -6337,11 +6374,17 @@ if (scene.bgm) {
     if (!charElement) return;
 
     // 清除舊動畫 Class 並重置
-    charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-cry', 'anim-nod', 'anim-excited');
+    charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-crowned-king');
     void charElement.offsetWidth; // 強制重繪 (Reflow)
 
     // 依角色加入對應的單次動畫；已由 playCuriousAnim / playHappyJumpAnim 處理的角色不重複加入。
     switch (characterId) {
+        case '熱情星出場火焰':
+            charElement.classList.add('anim-passion-fire');
+            break;
+        case '熱情星戴上王冠':
+            charElement.classList.add('anim-crowned-king');
+            break;
         case '星辰微笑':
         case '星辰感動':
         case '好奇星開心閉眼':
@@ -6380,6 +6423,10 @@ if (scene.bgm) {
         case '同情星自信':
         case '爽快星生氣':
             charElement.classList.add('anim-excited');
+            break;
+        default:
+            // 其他尚未指定動畫的立繪，至少播放一次輕快彈跳。
+            charElement.classList.add('anim-bounce');
             break;
     }
 }
@@ -7041,7 +7088,7 @@ if (scene.bgm) {
         // 清除角色動畫，避免下次登場時殘留上一幕的狀態。
         el.classList.remove(
             'anim-bounce', 'anim-sway', 'anim-depress',
-            'anim-cry', 'anim-nod', 'anim-excited',
+            'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-crowned-king',
             'curious-pop', 'slide-in-right', 'scared-bounce',
             'curious-bounce', 'curious-wiggle', 'nod-head'
         );
