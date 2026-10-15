@@ -644,6 +644,18 @@
 .name-sympathy { fill: #f2aeff; }
 .name-passionate { fill: #ff8b8b; }
 
+/* 尚未有專屬名字標籤的居民、父母與其他 NPC 共用動態文字；依角色設定各自顏色 */
+.name-npc { fill: #ffffff; }
+#page1.speaker-residents .name-npc { fill: #ffcf70; }
+#page1.speaker-resident-anxious .name-npc { fill: #ff9a8f; }
+#page1.speaker-resident-panicked .name-npc { fill: #9de8ff; }
+#page1.speaker-resident-a .name-npc,
+#page1.speaker-resident-b .name-npc { fill: #ffcf70; }
+#page1.speaker-mom .name-npc { fill: #ffb8d4; }
+#page1.speaker-dad .name-npc { fill: #a9d7ff; }
+#page1.speaker-unknown .name-npc { fill: #d6c8ff; }
+#page1.speaker-npc .name-npc { display: block !important; }
+
 /* 5. 顯示與角色名稱匹配 */
 #page1.speaker-star .name-star { display: block !important; }
 #page1.speaker-curious .name-curious { display: block !important; }
@@ -1725,6 +1737,7 @@ img { max-width:100%; }
     <text x="10" y="50" class="player-text name-refreshing" fill="#ff8b8b">爽快星</text>
     <text x="10" y="50" class="player-text name-sympathy" fill="#f2aeff">同情星</text>
     <text x="10" y="50" class="player-text name-passionate" fill="#c3ff9b">熱情星</text>
+    <text x="10" y="50" class="player-text name-npc" fill="#ffffff">居民</text>
 </svg>
 
     <!-- 對話框本體 -->
@@ -4710,7 +4723,7 @@ img { max-width:100%; }
     },
     {
         "id": 244,
-        "text": "想辦法//n拯救對面的居民時",
+        "text": "想辦法//n拯救對面的居民",
         "options": [
             {
                 "text": "分配任務，//n看看能用的道具",
@@ -6116,6 +6129,18 @@ if (!hasScoredOptions) {
                 displayName = "熱情星";
             } else if (charName.includes("爽快星")) {
                 displayName = "爽快星";
+            } else if (charName.includes("居民們")) {
+                displayName = "居民們";
+            } else if (charName.includes("居民甲")) {
+                displayName = "居民甲";
+            } else if (charName.includes("居民乙")) {
+                displayName = "居民乙";
+            } else if (charName.includes("媽媽")) {
+                displayName = "媽媽";
+            } else if (charName.includes("爸爸")) {
+                displayName = "爸爸";
+            } else if (charName.includes("？？？")) {
+                displayName = "？？？";
             } else {
                 displayName = charName;
             }
@@ -6130,7 +6155,20 @@ if (!hasScoredOptions) {
             else if (displayName.includes("同情星")) pageEl.classList.add('speaker-sympathy');
             else if (displayName.includes("熱情星")) pageEl.classList.add('speaker-passion');
             else if (displayName.includes("爽快星")) pageEl.classList.add('speaker-refreshing');
-            else pageEl.classList.add('speaker-star');
+            else {
+                const normalized = displayName.replace(/\\s+/g, "");
+                if (normalized.includes("居民們")) pageEl.classList.add('speaker-residents', 'speaker-npc');
+                else if (normalized.includes("煩躁的居民")) pageEl.classList.add('speaker-resident-anxious', 'speaker-npc');
+                else if (normalized.includes("慌張的居民")) pageEl.classList.add('speaker-resident-panicked', 'speaker-npc');
+                else if (normalized.includes("居民甲")) pageEl.classList.add('speaker-resident-a', 'speaker-npc');
+                else if (normalized.includes("居民乙")) pageEl.classList.add('speaker-resident-b', 'speaker-npc');
+                else if (normalized.includes("媽媽")) pageEl.classList.add('speaker-mom', 'speaker-npc');
+                else if (normalized.includes("爸爸")) pageEl.classList.add('speaker-dad', 'speaker-npc');
+                else if (normalized.includes("？？？")) pageEl.classList.add('speaker-unknown', 'speaker-npc');
+                else pageEl.classList.add('speaker-npc');
+                const npcName = pageEl.querySelector('.name-npc');
+                if (npcName) npcName.textContent = displayName || "居民";
+            }
         }
     }
 
