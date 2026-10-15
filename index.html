@@ -4543,7 +4543,7 @@ img { max-width:100%; }
         "text": "當居民//n發生激烈爭執",
         "options": [
             {
-                "text": "冷靜溝通，//n找出公平解法",
+                "text": "冷靜溝通，找出公平解法",
                 "nextId": 227.1,
                 "score": {
                     "熱情星": 3
@@ -6532,6 +6532,11 @@ if (scene.bgm) {
                         textSpan.style.top = '2%';
                     } else if (compactOptionText === '抱怨自己運氣不好') {
                         designFontSize = 48;
+                    }
+
+                    // 11、12、13 個字的選項統一再縮小 4px。
+                    if ([11, 12, 13].includes(compactOptionText.length)) {
+                        designFontSize -= 4;
                     }
 
                     const gameContainer = document.getElementById('game-container');
