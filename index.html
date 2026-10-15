@@ -7338,33 +7338,35 @@ window.bgmFadeTimer = null;
  */
 window.pendingBGMSource = window.pendingBGMSource || null;
 
-// 切到其他 App／分頁或把瀏覽器放到背景時暫停背景音樂；回到遊戲時再繼續。
+// 手機切到其他 App、鎖定螢幕或頁面進入背景時，立即暫停背景音樂。
 window.bgmWasPlayingBeforeHidden = false;
-document.addEventListener('visibilitychange', function () {
+window.pauseBGMWhenBackgrounded = function () {
     const player = document.getElementById('bgm-player');
     if (!player) return;
-
-    if (document.hidden) {
-        window.bgmWasPlayingBeforeHidden = !player.paused && !window.isMuted;
-        if (window.bgmFadeTimer) {
-            clearInterval(window.bgmFadeTimer);
-            window.bgmFadeTimer = null;
-        }
-        player.pause();
-    } else if (window.bgmWasPlayingBeforeHidden && !window.isMuted && window.pendingBGMSource) {
-        window.bgmWasPlayingBeforeHidden = false;
-        const resumePromise = player.play();
-        if (resumePromise && typeof resumePromise.catch === 'function') {
-            resumePromise.catch(() => {
-                // 若瀏覽器阻擋自動續播，等待玩家下一次點擊後再播放。
-            });
-        }
+    if (!player.paused && !window.isMuted) window.bgmWasPlayingBeforeHidden = true;
+    if (window.bgmFadeTimer) {
+        clearInterval(window.bgmFadeTimer);
+        window.bgmFadeTimer = null;
     }
+    player.pause();
+};
+document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+        window.pauseBGMWhenBackgrounded();
+    } else {
+        // 回到遊戲畫面時不自動播放；由玩家下一次操作時再解鎖播放。
+        window.bgmWasPlayingBeforeHidden = false;
+    }
+});
+window.addEventListener('pagehide', window.pauseBGMWhenBackgrounded);
+window.addEventListener('blur', function () {
+    // 手機瀏覽器切到背景時通常也會觸發 blur，作為額外保險。
+    window.pauseBGMWhenBackgrounded();
 });
 
 document.addEventListener('pointerdown', function unlockBackgroundMusic() {
     const player = document.getElementById('bgm-player');
-    if (player && player.paused && window.pendingBGMSource && !window.isMuted) {
+    if (player && player.paused && window.pendingBGMSource && !window.isMuted && !document.hidden) {
         playBGM(window.pendingBGMSource);
     }
 }, true);
