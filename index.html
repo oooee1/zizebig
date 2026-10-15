@@ -4478,7 +4478,7 @@ img { max-width:100%; }
         "id": 224,
         "text": "你把花盆放到我家門口了！",
         "characters": [
-            "居民甲"
+            "憤怒的居民"
         ]
         , "background": "熱情星火焰村吵架中"
     },
@@ -4486,7 +4486,7 @@ img { max-width:100%; }
         "id": 225,
         "text": "哪裡是你家？",
         "characters": [
-            "居民乙"
+            "煩躁的居民"
         ]
         , "background": "熱情星火焰村吵架中"
     },
@@ -4494,7 +4494,7 @@ img { max-width:100%; }
         "id": 225.1,
         "text": "我明明放在噴火池旁邊！",
         "characters": [
-            "居民乙"
+            "煩躁的居民"
         ]
         , "background": "熱情星火焰村吵架中"
     },
@@ -4502,7 +4502,7 @@ img { max-width:100%; }
         "id": 225.2,
         "text": "要是國王在就會挺我！",
         "characters": [
-            "居民乙"
+            "煩躁的居民"
         ]
         , "background": "熱情星火焰村吵架中"
     },
@@ -4589,7 +4589,7 @@ img { max-width:100%; }
         "id": 228,
         "text": "我只是希望家門口不要被擋住...",
         "characters": [
-            ""
+            "憤怒的居民"
         ]
         , "background": "熱情星火焰村吵架中"
     },
@@ -4597,7 +4597,7 @@ img { max-width:100%; }
         "id": 229,
         "text": "我只是想讓花盆靠近噴火池曬太陽。",
         "characters": [
-            ""
+            "煩躁的居民"
         ]
         , "background": "熱情星火焰村吵架中"
     },
@@ -4614,14 +4614,14 @@ img { max-width:100%; }
         "text": "喔...這樣倒是不會擋住我。",
         "background": "熱情星火焰村吵架中",
         "characters": [
-            "熱情星"
+            "憤怒的居民"
         ]
     },
     {
         "id": 232,
         "text": "當然沒問題。",
         "characters": [
-            "熱情星"
+            "煩躁的居民"
         ]
         , "background": "熱情星火焰村吵架中"
     },
@@ -4693,7 +4693,7 @@ img { max-width:100%; }
         "id": 239,
         "text": "救命！有人在對面啊！",
         "characters": [
-            ""
+            "慌張的居民"
         ]
         , "background": "熱情星貢丸"
     },
@@ -4701,7 +4701,7 @@ img { max-width:100%; }
         "id": 240,
         "text": "我在這裡！救我！",
         "characters": [
-            ""
+            "害怕的居民"
         ]
         , "background": "熱情星貢丸"
     },
@@ -4709,7 +4709,7 @@ img { max-width:100%; }
         "id": 241,
         "text": "啊，是王子殿下，快救救我們！",
         "characters": [
-            ""
+            "慌張的居民"
         ]
         , "background": "熱情星貢丸"
     },
@@ -6024,9 +6024,9 @@ function renderScene(stepIndex) {
     const inferredSpeaker = speakerPrefixMatch ? speakerPrefixMatch[1].replace(/^[🤬😡😠😰😨😱\s]+/, "").trim() : "";
     const sceneSpeaker = scene.speaker || (
         [163, 185, 186].includes(Number(scene.id)) ? "居民們" :
-        Number(scene.id) === 225 ? "煩躁的居民" :
-        [239, 240].includes(Number(scene.id)) ? "慌張的居民" :
-        Number(scene.id) === 241 ? "居民們" :
+        Number(scene.id) === 225 || Number(scene.id) === 225.1 || Number(scene.id) === 225.2 ? "煩躁的居民" :
+        Number(scene.id) === 239 || Number(scene.id) === 241 ? "慌張的居民" :
+        Number(scene.id) === 240 ? "害怕的居民" :
         (inferredSpeaker.includes("居民") ? inferredSpeaker : "")
     );
     const dialogueTextForDisplay = speakerPrefixMatch && sceneSpeaker
@@ -6139,6 +6139,14 @@ if (!hasScoredOptions) {
                 displayName = "爽快星";
             } else if (charName.includes("居民們")) {
                 displayName = "居民們";
+            } else if (charName.includes("憤怒的居民")) {
+                displayName = "憤怒的居民";
+            } else if (charName.includes("煩躁的居民")) {
+                displayName = "煩躁的居民";
+            } else if (charName.includes("慌張的居民")) {
+                displayName = "慌張的居民";
+            } else if (charName.includes("害怕的居民")) {
+                displayName = "害怕的居民";
             } else if (charName.includes("居民甲")) {
                 displayName = "居民甲";
             } else if (charName.includes("居民乙")) {
@@ -6168,6 +6176,10 @@ if (!hasScoredOptions) {
                 if (normalized.includes("居民們")) pageEl.classList.add('speaker-residents', 'speaker-npc');
                 else if (normalized.includes("煩躁的居民")) pageEl.classList.add('speaker-resident-anxious', 'speaker-npc');
                 else if (normalized.includes("慌張的居民")) pageEl.classList.add('speaker-resident-panicked', 'speaker-npc');
+                else if (normalized.includes("憤怒的居民")) pageEl.classList.add('speaker-resident-a', 'speaker-npc');
+                else if (normalized.includes("煩躁的居民")) pageEl.classList.add('speaker-resident-anxious', 'speaker-npc');
+                else if (normalized.includes("慌張的居民")) pageEl.classList.add('speaker-resident-panicked', 'speaker-npc');
+                else if (normalized.includes("害怕的居民")) pageEl.classList.add('speaker-resident-b', 'speaker-npc');
                 else if (normalized.includes("居民甲")) pageEl.classList.add('speaker-resident-a', 'speaker-npc');
                 else if (normalized.includes("居民乙")) pageEl.classList.add('speaker-resident-b', 'speaker-npc');
                 else if (normalized.includes("媽媽")) pageEl.classList.add('speaker-mom', 'speaker-npc');
