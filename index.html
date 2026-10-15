@@ -6196,9 +6196,9 @@ if (!hasScoredOptions) {
             } else if (charName.includes("居民乙")) {
                 displayName = "居民乙";
             } else if (charName.includes("媽媽")) {
-                displayName = "媽媽";
+                displayName = "母親";
             } else if (charName.includes("爸爸")) {
-                displayName = "爸爸";
+                displayName = "父親";
             } else if (charName.includes("？？？")) {
                 displayName = "？？？";
             } else {
@@ -6226,8 +6226,8 @@ if (!hasScoredOptions) {
                 else if (normalized.includes("害怕的居民")) pageEl.classList.add('speaker-resident-b', 'speaker-npc');
                 else if (normalized.includes("居民甲")) pageEl.classList.add('speaker-resident-a', 'speaker-npc');
                 else if (normalized.includes("居民乙")) pageEl.classList.add('speaker-resident-b', 'speaker-npc');
-                else if (normalized.includes("媽媽")) pageEl.classList.add('speaker-mom', 'speaker-npc');
-                else if (normalized.includes("爸爸")) pageEl.classList.add('speaker-dad', 'speaker-npc');
+                else if (normalized.includes("母親") || normalized.includes("媽媽")) pageEl.classList.add('speaker-mom', 'speaker-npc');
+                else if (normalized.includes("父親") || normalized.includes("爸爸")) pageEl.classList.add('speaker-dad', 'speaker-npc');
                 else if (normalized.includes("？？？")) pageEl.classList.add('speaker-unknown', 'speaker-npc');
                 else pageEl.classList.add('speaker-npc');
                 const npcName = pageEl.querySelector('.name-npc');
