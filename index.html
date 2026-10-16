@@ -6230,7 +6230,7 @@ if (!hasScoredOptions) {
 
     // 沒有對話、也沒有角色的純背景幕：等背景動畫（最長約 0.5 秒）結束後顯示提示。
     const hasCharacters = Array.isArray(scene.characters) && scene.characters.length > 0;
-    const isBackgroundOnlyScene = !hasScoredOptions && !hasText && !hasCharacters && !!scene.background && !(Array.isArray(scene.comicImages) && scene.comicImages.length > 0);
+    const isBackgroundOnlyScene = !hasScoredOptions && !hasText && !hasCharacters;
     if (isBackgroundOnlyScene && pageEl) {
         window.emptySceneHintTimer = setTimeout(() => {
             if (currentStep === stepIndex) {
@@ -6262,78 +6262,35 @@ if (!hasScoredOptions) {
     }
     // scene.background 未設定時不執行背景切換，保留目前顯示的背景。
 
-    // 3. 解析發言者名字與樣式
+    // 3. 只有明確知道本幕發言者時才顯示名字，不再根據畫面上的角色猜測。
     let displayName = "";
-    if (hasText) {
-        if (sceneSpeaker) {
-            displayName = (sceneSpeaker === "玩家") ?
-                (window.playerName ? `${window.playerName}・星辰` : "星辰") : sceneSpeaker;
-        } else if (scene.characters && scene.characters.length > 0) {
-            let charName = scene.characters[0];
-            if (charName.includes("路人") || charName.includes("好奇星張嘴") || charName.includes("好奇星閉嘴")) {
-                displayName = "路人好奇星";
-            } else if (charName.includes("一群好奇星")) {
-                displayName = "好奇星們";
-            } else if (charName.includes("星辰")) {
-                displayName = (currentSceneId < 8) ? "星辰" : (window.playerName ? `${window.playerName}・星辰` : "星辰");
-            } else if (charName.includes("好奇星")) {
-                displayName = "好奇星";
-            } else if (charName.includes("同情星")) {
-                displayName = "同情星";
-            } else if (charName.includes("熱情星")) {
-                displayName = "熱情星";
-            } else if (charName.includes("爽快星")) {
-                displayName = "爽快星";
-            } else if (charName.includes("居民們")) {
-                displayName = "居民們";
-            } else if (charName.includes("憤怒的居民")) {
-                displayName = "憤怒的居民";
-            } else if (charName.includes("煩躁的居民")) {
-                displayName = "煩躁的居民";
-            } else if (charName.includes("慌張的居民")) {
-                displayName = "慌張的居民";
-            } else if (charName.includes("害怕的居民")) {
-                displayName = "害怕的居民";
-            } else if (charName.includes("居民甲")) {
-                displayName = "居民甲";
-            } else if (charName.includes("居民乙")) {
-                displayName = "居民乙";
-            } else if (charName.includes("媽媽")) {
-                displayName = "母親";
-            } else if (charName.includes("爸爸")) {
-                displayName = "父親";
-            } else if (charName.includes("？？？")) {
-                displayName = "？？？";
-            } else {
-                displayName = charName;
-            }
-        }
-        
-        // 設定對應角色的名字框樣式
+    if (hasText && sceneSpeaker) {
+        displayName = (sceneSpeaker === "玩家")
+            ? (window.playerName ? `${window.playerName}・星辰` : "星辰")
+            : sceneSpeaker;
+
         if (pageEl) {
-            if (displayName.includes("路人好奇星")) pageEl.classList.add('speaker-curious-random-person');
-            else if (displayName.includes("好奇星們")) pageEl.classList.add('speaker-curious-group');
-            else if (displayName.includes("星辰") || scene.speaker === "玩家") pageEl.classList.add('speaker-star');
-            else if (displayName.includes("好奇星")) pageEl.classList.add('speaker-curious');
-            else if (displayName.includes("同情星")) pageEl.classList.add('speaker-sympathy');
-            else if (displayName.includes("熱情星")) pageEl.classList.add('speaker-passion');
-            else if (displayName.includes("爽快星")) pageEl.classList.add('speaker-refreshing');
+            if (displayName.includes("路人好奇星")) pageEl.classList.add("speaker-curious-random-person");
+            else if (displayName.includes("好奇星們")) pageEl.classList.add("speaker-curious-group");
+            else if (displayName.includes("星辰") || sceneSpeaker === "玩家") pageEl.classList.add("speaker-star");
+            else if (displayName.includes("好奇星")) pageEl.classList.add("speaker-curious");
+            else if (displayName.includes("同情星")) pageEl.classList.add("speaker-sympathy");
+            else if (displayName.includes("熱情星")) pageEl.classList.add("speaker-passion");
+            else if (displayName.includes("爽快星")) pageEl.classList.add("speaker-refreshing");
             else {
-                const normalized = displayName.replace(/\\s+/g, "");
-                if (normalized.includes("居民們")) pageEl.classList.add('speaker-residents', 'speaker-npc');
-                else if (normalized.includes("煩躁的居民")) pageEl.classList.add('speaker-resident-anxious', 'speaker-npc');
-                else if (normalized.includes("慌張的居民")) pageEl.classList.add('speaker-resident-panicked', 'speaker-npc');
-                else if (normalized.includes("憤怒的居民")) pageEl.classList.add('speaker-resident-a', 'speaker-npc');
-                else if (normalized.includes("煩躁的居民")) pageEl.classList.add('speaker-resident-anxious', 'speaker-npc');
-                else if (normalized.includes("慌張的居民")) pageEl.classList.add('speaker-resident-panicked', 'speaker-npc');
-                else if (normalized.includes("害怕的居民")) pageEl.classList.add('speaker-resident-b', 'speaker-npc');
-                else if (normalized.includes("居民甲")) pageEl.classList.add('speaker-resident-a', 'speaker-npc');
-                else if (normalized.includes("居民乙")) pageEl.classList.add('speaker-resident-b', 'speaker-npc');
-                else if (normalized.includes("母親") || normalized.includes("媽媽")) pageEl.classList.add('speaker-mom', 'speaker-npc');
-                else if (normalized.includes("父親") || normalized.includes("爸爸")) pageEl.classList.add('speaker-dad', 'speaker-npc');
-                else if (normalized.includes("？？？")) pageEl.classList.add('speaker-unknown', 'speaker-npc');
-                else pageEl.classList.add('speaker-npc');
-                const npcName = pageEl.querySelector('.name-npc');
+                const normalized = displayName.replace(/\s+/g, "");
+                if (normalized.includes("居民們")) pageEl.classList.add("speaker-residents", "speaker-npc");
+                else if (normalized.includes("煩躁的居民")) pageEl.classList.add("speaker-resident-anxious", "speaker-npc");
+                else if (normalized.includes("慌張的居民")) pageEl.classList.add("speaker-resident-panicked", "speaker-npc");
+                else if (normalized.includes("憤怒的居民")) pageEl.classList.add("speaker-resident-a", "speaker-npc");
+                else if (normalized.includes("害怕的居民")) pageEl.classList.add("speaker-resident-b", "speaker-npc");
+                else if (normalized.includes("居民甲")) pageEl.classList.add("speaker-resident-a", "speaker-npc");
+                else if (normalized.includes("居民乙")) pageEl.classList.add("speaker-resident-b", "speaker-npc");
+                else if (normalized.includes("母親") || normalized.includes("媽媽")) pageEl.classList.add("speaker-mom", "speaker-npc");
+                else if (normalized.includes("父親") || normalized.includes("爸爸")) pageEl.classList.add("speaker-dad", "speaker-npc");
+                else if (normalized.includes("？？？")) pageEl.classList.add("speaker-unknown", "speaker-npc");
+                else pageEl.classList.add("speaker-npc");
+                const npcName = pageEl.querySelector(".name-npc");
                 if (npcName) npcName.textContent = displayName || "居民";
             }
         }
