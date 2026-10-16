@@ -1810,31 +1810,15 @@ img { max-width:100%; }
     <audio id="bgm-player" loop></audio>
 
     <script>
-        // 獨立診斷主遊戲腳本：即使主腳本有語法錯誤，也能直接在載入畫面顯示原因。
+        // 獨立診斷主遊戲腳本：即使主腳本有語法錯誤，也能把錯誤顯示在載入畫面。
         (() => {
-            window.__zizebigDiagnosticDOMContentLoaded = false;
-            window.addEventListener('DOMContentLoaded', () => {
-                window.__zizebigDiagnosticDOMContentLoaded = true;
-            });
-            let diagnosticShown = false;
             const showStartupError = message => {
+                // 不在遊戲畫面顯示啟動錯誤文字，保留 Console 診斷方便日後排查。
                 console.error('[zizebig 啟動診斷]', message);
-                const screen = document.getElementById('loading-screen');
-                if (!screen) return;
-                let panel = document.getElementById('startup-diagnostic');
-                if (!panel) {
-                    panel = document.createElement('div');
-                    panel.id = 'startup-diagnostic';
-                    panel.style.cssText = 'position:absolute;left:8%;right:8%;bottom:8%;z-index:99999;padding:12px;background:#fff4f4;color:#8b0000;border:2px solid #8b0000;border-radius:8px;font:14px/1.45 sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:35%;overflow:auto;text-align:left;';
-                    screen.appendChild(panel);
-                }
-                const detail = typeof message === 'string' ? message : (message && message.message) || String(message);
-                panel.textContent = '啟動錯誤（請截圖回傳）：\n' + detail;
-                diagnosticShown = true;
             };
             window.addEventListener('error', event => {
                 if (event && (event.message || event.error)) {
-                    showStartupError((event.message || event.error) + (event.filename ? '\n檔案：' + event.filename.split('/').pop() : '') + (event.lineno ? '\n行數：' + event.lineno : ''));
+                    showStartupError(event.message || event.error);
                 }
             });
             window.addEventListener('unhandledrejection', event => {
@@ -1842,21 +1826,13 @@ img { max-width:100%; }
             });
             window.setTimeout(() => {
                 const percent = document.getElementById('loading-percent');
-                if (!diagnosticShown && percent && percent.textContent.trim() === '0%') {
-                    const mainStarted = window.__zizebigMainScriptStarted === true;
-                    const domReady = window.__zizebigDiagnosticDOMContentLoaded === true;
-                    showStartupError(
-                        '20 秒後進度仍是 0%。\n' +
-                        '主程式是否開始執行：' + (mainStarted ? '是' : '否') + '\n' +
-                        'DOMContentLoaded 是否觸發：' + (domReady ? '是' : '否') + '\n' +
-                        '請截圖回傳，這能區分主程式語法錯誤與啟動事件未觸發。'
-                    );
+                if (percent && percent.textContent.trim() === '0%') {
+                    showStartupError('啟動沒有開始；請截圖這行訊息回傳');
                 }
             }, 20000);
         })();
     </script>
 <script>
-        window.__zizebigMainScriptStarted = true;
         window.playerName = "星辰";
         let currentStep = 0;
 
