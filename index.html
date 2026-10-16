@@ -1812,6 +1812,10 @@ img { max-width:100%; }
     <script>
         // 獨立診斷主遊戲腳本：即使主腳本有語法錯誤，也能直接在載入畫面顯示原因。
         (() => {
+            window.__zizebigDiagnosticDOMContentLoaded = false;
+            window.addEventListener('DOMContentLoaded', () => {
+                window.__zizebigDiagnosticDOMContentLoaded = true;
+            });
             let diagnosticShown = false;
             const showStartupError = message => {
                 console.error('[zizebig 啟動診斷]', message);
@@ -1839,12 +1843,20 @@ img { max-width:100%; }
             window.setTimeout(() => {
                 const percent = document.getElementById('loading-percent');
                 if (!diagnosticShown && percent && percent.textContent.trim() === '0%') {
-                    showStartupError('20 秒後載入進度仍是 0%。這通常代表主程式未開始執行；請截圖這個畫面回傳。');
+                    const mainStarted = window.__zizebigMainScriptStarted === true;
+                    const domReady = window.__zizebigDiagnosticDOMContentLoaded === true;
+                    showStartupError(
+                        '20 秒後進度仍是 0%。\n' +
+                        '主程式是否開始執行：' + (mainStarted ? '是' : '否') + '\n' +
+                        'DOMContentLoaded 是否觸發：' + (domReady ? '是' : '否') + '\n' +
+                        '請截圖回傳，這能區分主程式語法錯誤與啟動事件未觸發。'
+                    );
                 }
             }, 20000);
         })();
     </script>
 <script>
+        window.__zizebigMainScriptStarted = true;
         window.playerName = "星辰";
         let currentStep = 0;
 
