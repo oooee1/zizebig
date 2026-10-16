@@ -638,6 +638,31 @@
     display: block;
 }
 
+/* 無角色、無對話的純背景場景：動畫結束後顯示繼續提示 */
+#empty-scene-next-hint {
+    position: absolute;
+    right: 24px;
+    bottom: 260px;
+    z-index: 1101;
+    padding: 7px 12px;
+    border: 1px solid #ffb30f;
+    border-radius: 5px;
+    background: rgba(15, 15, 15, 0.92);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: nowrap;
+    box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.65);
+    animation: empty-scene-hint-in 0.25s ease-out both;
+    display: none;
+    pointer-events: none;
+}
+#page1.show-empty-scene-hint #empty-scene-next-hint { display: block; }
+@keyframes empty-scene-hint-in {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes dialogue-arrow-bob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(5px); }
@@ -1788,6 +1813,7 @@ img { max-width:100%; }
         <div id="dialogue-next-arrow" aria-hidden="true"></div>
     </div>
 </div>
+<div id="empty-scene-next-hint" aria-hidden="true">點一下繼續</div>
 
             <!-- 選項框 (100% 舊版結構) -->
             <div id="選項框" style="display: none;"></div>
@@ -6091,6 +6117,14 @@ function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
 
+    // 每次切換場景先取消上一幕的純背景提示。
+    if (window.emptySceneHintTimer) {
+        clearTimeout(window.emptySceneHintTimer);
+        window.emptySceneHintTimer = null;
+    }
+    const emptyHintPage = document.getElementById('page1');
+    if (emptyHintPage) emptyHintPage.classList.remove('show-empty-scene-hint');
+
     if (!readySceneIndexes.has(stepIndex)) {
         // 同一幕正在載入時，不重複建立等待流程。
         if (sceneTransitionLoading && sceneTransitionTarget === stepIndex) return;
@@ -6194,6 +6228,16 @@ if (!hasScoredOptions) {
             if (hasText) el.style.removeProperty('display');
             else el.style.setProperty('display', 'none', 'important');
         });
+    }
+
+    // 沒有對話、也沒有角色的純背景幕：等背景動畫（最長約 0.5 秒）結束後顯示提示。
+    const hasCharacters = Array.isArray(scene.characters) && scene.characters.length > 0;
+    const isBackgroundOnlyScene = !hasScoredOptions && !hasText && !hasCharacters && !!scene.background;
+    if (isBackgroundOnlyScene && pageEl) {
+        window.emptySceneHintTimer = setTimeout(() => {
+            if (currentStep === stepIndex) pageEl.classList.add('show-empty-scene-hint');
+            window.emptySceneHintTimer = null;
+        }, 550);
     }
 
     // 重置打字計時器
@@ -7056,6 +7100,9 @@ if (scene.bgm) {
             if (pageForHint && pageForHint.classList.contains('scene-assets-loading')) return;
             if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
                 pageForHint.classList.remove('show-dialogue-hint');
+            }
+            if (pageForHint && pageForHint.classList.contains('show-empty-scene-hint')) {
+                pageForHint.classList.remove('show-empty-scene-hint');
             }
 
             // 第二階段是確認畫面：背景任意位置都不能推進劇情。
