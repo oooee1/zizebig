@@ -6165,12 +6165,35 @@ function renderScene(stepIndex) {
     const rawDialogueText = typeof scene.text === "string" ? scene.text.replace(/\/\/n|\\n/g, String.fromCharCode(10)) : "";
     const speakerPrefixMatch = rawDialogueText.match(/^([^：:]{1,12})[：:]\s*/);
     const inferredSpeaker = speakerPrefixMatch ? speakerPrefixMatch[1].replace(/^[🤬😡😠😰😨😱\s]+/, "").trim() : "";
+    // 有角色立繪時，若本幕沒有明確指定說話人，就依立繪名稱判定說話人。
+    // 若同時有多個立繪，沿用 characters 陣列中的第一個角色；明確的 scene.speaker 仍優先。
+    const characterSpeakerName = Array.isArray(scene.characters) && scene.characters.length
+        ? String(scene.characters[0])
+        : "";
+    const inferredCharacterSpeaker = (() => {
+        const name = characterSpeakerName.replace(/開心|害怕|嚇死了?|驕傲|點頭|哭泣|慌張|生氣|憤怒|焦慮|緊張|難過|大哭|顫抖哭|爆哭|普通|立繪|選項用/g, "");
+        if (/星辰|玩家/.test(name)) return "星辰";
+        if (name.includes("好奇星")) return name.includes("路人") ? "路人好奇星" : name.includes("們") ? "好奇星們" : "好奇星";
+        if (name.includes("同情星")) return "同情星";
+        if (name.includes("爽快星")) return "爽快星";
+        if (name.includes("熱情星")) return "熱情星";
+        if (name.includes("母親") || name.includes("媽媽")) return "母親";
+        if (name.includes("父親") || name.includes("爸爸")) return "父親";
+        if (name.includes("煩躁的居民")) return "煩躁的居民";
+        if (name.includes("慌張的居民")) return "慌張的居民";
+        if (name.includes("害怕的居民")) return "害怕的居民";
+        if (name.includes("憤怒的居民")) return "憤怒的居民";
+        if (name.includes("居民甲")) return "居民甲";
+        if (name.includes("居民乙")) return "居民乙";
+        if (name.includes("居民")) return "居民";
+        return "";
+    })();
     const sceneSpeaker = scene.speaker || (
         [163, 185, 186].includes(Number(scene.id)) ? "居民們" :
         Number(scene.id) === 225 || Number(scene.id) === 225.1 || Number(scene.id) === 225.2 ? "煩躁的居民" :
         Number(scene.id) === 239 || Number(scene.id) === 241 ? "慌張的居民" :
         Number(scene.id) === 240 ? "害怕的居民" :
-        (inferredSpeaker.includes("居民") ? inferredSpeaker : "")
+        (inferredSpeaker.includes("居民") ? inferredSpeaker : inferredCharacterSpeaker)
     );
     const dialogueTextForDisplay = speakerPrefixMatch && sceneSpeaker
         ? rawDialogueText.slice(speakerPrefixMatch[0].length)
