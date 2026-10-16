@@ -477,6 +477,20 @@
   animation: passion-flame-energy 0.95s ease-in-out 1 !important;
   transform-origin: bottom center;
 }
+
+/* 熱情星一般立繪：比普通輕搖更有精神，帶一點彈跳和左右晃動。 */
+.anim-passion-normal img {
+  animation: passion-normal-energy 1.1s ease-in-out 1 both !important;
+  transform-origin: bottom center;
+}
+@keyframes passion-normal-energy {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
+  16% { transform: translateY(-7px) rotate(-2deg) scale(0.98, 1.03); }
+  34% { transform: translateY(1px) rotate(2deg) scale(1.04, 0.97); }
+  52% { transform: translateY(-5px) rotate(-1.5deg) scale(0.99, 1.02); }
+  72% { transform: translateY(1px) rotate(1.5deg) scale(1.03, 0.98); }
+  88% { transform: translateY(-2px) rotate(-0.5deg) scale(1.01, 1); }
+}
 @keyframes passion-flame-energy {
   0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
   20% { transform: translateY(3px) rotate(-2deg) scale(1.04, 0.96); }
@@ -6419,7 +6433,7 @@ if (scene.bgm) {
     if (!charElement) return;
 
     // 清除舊動畫 Class 並重置
-    charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-crowned-king');
+    charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-passion-normal', 'anim-crowned-king');
     void charElement.offsetWidth; // 強制重繪 (Reflow)
 
     // 依角色加入對應的單次動畫；已由 playCuriousAnim / playHappyJumpAnim 處理的角色不重複加入。
@@ -6443,10 +6457,14 @@ if (scene.bgm) {
         case '星辰思考':
         case '同情星':
         case '爽快星疑惑':
-        case '熱情星':
         case '爸爸':
         case '媽媽':
             charElement.classList.add('anim-sway');
+            break;
+
+        case '熱情星':
+        case '熱情星正常':
+            charElement.classList.add('anim-passion-normal');
             break;
 
         case '星辰苦惱':
@@ -7146,7 +7164,7 @@ if (scene.bgm) {
         // 清除角色動畫，避免下次登場時殘留上一幕的狀態。
         el.classList.remove(
             'anim-bounce', 'anim-sway', 'anim-depress',
-            'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-crowned-king',
+            'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-passion-normal', 'anim-crowned-king',
             'curious-pop', 'slide-in-right', 'scared-bounce',
             'curious-bounce', 'curious-wiggle', 'nod-head'
         );
