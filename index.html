@@ -485,12 +485,10 @@
 }
 @keyframes passion-normal-energy {
   0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
-  14% { transform: translateY(-5px) rotate(-0.5deg) scale(0.99, 1.025); }
-  28% { transform: translateY(0) rotate(0deg) scale(1.035, 0.965); }
-  43% { transform: translateY(-3px) rotate(0.4deg) scale(1.005, 1.015); }
-  58% { transform: translateY(0) rotate(0deg) scale(0.985, 1.02); }
-  72% { transform: translateY(-2px) rotate(-0.3deg) scale(1.015, 0.99); }
-  86% { transform: translateY(0) rotate(0deg) scale(1.005, 0.998); }
+  18% { transform: translateY(-7px) rotate(-0.5deg) scale(0.99, 1.025); }
+  42% { transform: translateY(0) rotate(0deg) scale(1.04, 0.96); }
+  62% { transform: translateY(1px) rotate(0deg) scale(0.99, 1.015); }
+  80% { transform: translateY(0) rotate(0deg) scale(1.005, 0.998); }
 }
 @keyframes passion-flame-energy {
   0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
@@ -6125,6 +6123,8 @@ function renderScene(stepIndex) {
     }
     const emptyHintPage = document.getElementById('page1');
     if (emptyHintPage) emptyHintPage.classList.remove('show-empty-scene-hint');
+    const emptyHintElement = document.getElementById('empty-scene-next-hint');
+    if (emptyHintElement) emptyHintElement.style.display = 'none';
 
     if (!readySceneIndexes.has(stepIndex)) {
         // 同一幕正在載入時，不重複建立等待流程。
@@ -6236,7 +6236,16 @@ if (!hasScoredOptions) {
     const isBackgroundOnlyScene = !hasScoredOptions && !hasText && !hasCharacters && !!scene.background;
     if (isBackgroundOnlyScene && pageEl) {
         window.emptySceneHintTimer = setTimeout(() => {
-            if (currentStep === stepIndex) pageEl.classList.add('show-empty-scene-hint');
+            if (currentStep === stepIndex) {
+                const hint = document.getElementById('empty-scene-next-hint');
+                if (hint) {
+                    hint.style.display = 'block';
+                    hint.style.animation = 'none';
+                    void hint.offsetWidth;
+                    hint.style.animation = 'empty-scene-hint-in 0.25s ease-out both';
+                }
+                pageEl.classList.add('show-empty-scene-hint');
+            }
             window.emptySceneHintTimer = null;
         }, 550);
     }
@@ -7105,6 +7114,8 @@ if (scene.bgm) {
             if (pageForHint && pageForHint.classList.contains('show-empty-scene-hint')) {
                 pageForHint.classList.remove('show-empty-scene-hint');
             }
+            const emptyHintElement = document.getElementById('empty-scene-next-hint');
+            if (emptyHintElement) emptyHintElement.style.display = 'none';
 
             // 第二階段是確認畫面：背景任意位置都不能推進劇情。
             // 「我再想想」與「是的」各自的 onclick 會自行處理，且會停止冒泡。
