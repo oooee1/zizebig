@@ -6188,13 +6188,9 @@ function renderScene(stepIndex) {
         if (name.includes("居民")) return "居民";
         return "";
     })();
-    const sceneSpeaker = scene.speaker || (
-        [163, 185, 186].includes(Number(scene.id)) ? "居民們" :
-        Number(scene.id) === 225 || Number(scene.id) === 225.1 || Number(scene.id) === 225.2 ? "煩躁的居民" :
-        Number(scene.id) === 239 || Number(scene.id) === 241 ? "慌張的居民" :
-        Number(scene.id) === 240 ? "害怕的居民" :
-        (inferredSpeaker.includes("居民") ? inferredSpeaker : inferredCharacterSpeaker)
-    );
+    // 只有劇情明確設定的 speaker，或本幕實際出現的角色立繪，才能決定說話人。
+    // 不再從對話文字或場景 ID 自動補上「居民」等泛稱；沒有人物說話就不顯示名字。
+    const sceneSpeaker = scene.speaker || inferredCharacterSpeaker;
     const dialogueTextForDisplay = speakerPrefixMatch && sceneSpeaker
         ? rawDialogueText.slice(speakerPrefixMatch[0].length)
         : rawDialogueText;
