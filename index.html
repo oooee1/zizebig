@@ -1572,6 +1572,12 @@ img { max-width:100%; }
                 0 0 4px rgba(0,0,0,.98),
                 0 0 6px rgba(0,0,0,.9),
                 0 0 9px rgba(0,0,0,.78),
+                0 0 12px rgba(0,0,0,.55),
+                0 0 1px rgba(0,0,0,1),
+                0 0 2px rgba(0,0,0,1),
+                0 0 4px rgba(0,0,0,.98),
+                0 0 6px rgba(0,0,0,.9),
+                0 0 9px rgba(0,0,0,.78),
                 0 0 12px rgba(0,0,0,.55) !important;
             filter: none !important;
             text-align: right !important;
@@ -1596,13 +1602,22 @@ img { max-width:100%; }
                 0 0 4px rgba(0,0,0,.98),
                 0 0 6px rgba(0,0,0,.9),
                 0 0 9px rgba(0,0,0,.78),
+                0 0 12px rgba(0,0,0,.55),
+                0 0 1px rgba(0,0,0,1),
+                0 0 2px rgba(0,0,0,1),
+                0 0 4px rgba(0,0,0,.98),
+                0 0 6px rgba(0,0,0,.9),
+                0 0 9px rgba(0,0,0,.78),
                 0 0 12px rgba(0,0,0,.55) !important;
         }
 
         /* 手機／窄螢幕：提高題目標題的最小字級，避免小比例裝置上看起來太小。 */
         @media (max-width: 500px), (max-aspect-ratio: 9/17) {
             #page1.question-choice-mode #question-title {
-                font-size: clamp(44px, calc(8.5vw + 10px), 54px) !important;
+                font-size: clamp(38px, calc(7.5vw + 7px), 49px) !important;
+            }
+            #page1.question-choice-mode #question-title .question-title-highlight {
+                font-size: calc(1.25em - 7px) !important;
             }
         }
 
