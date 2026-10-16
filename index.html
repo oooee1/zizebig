@@ -975,11 +975,24 @@
 -------------------------------------------------- */
 #comic-box {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* 永遠保持正中央 */
+  inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: 100;
   pointer-events: none;
+}
+
+/* 漫畫單張與透明角色／拼圖圖層共用同一個置中畫布。 */
+#comic-box .comic-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 
 /* --------------------------------------------------
@@ -988,11 +1001,11 @@
 @keyframes fadeInUp {
   0% {
     opacity: 0;
-    transform: translateY(40px); /* 相對下移 40px */
+    transform: translate(-50%, -50%) translateY(40px); /* 相對下移 40px */
   }
   100% {
     opacity: 1;
-    transform: translateY(0);    /* 回到原位 */
+    transform: translate(-50%, -50%);    /* 回到原位 */
   }
 }
 
@@ -1015,11 +1028,11 @@
 @keyframes fadeInUp {
   0% {
     opacity: 0;
-    transform: translateY(50px); /* 從目標位置下方 50px 開始 */
+    transform: translate(-50%, -50%) translateY(50px); /* 從目標位置下方 50px 開始 */
   }
   100% {
     opacity: 1;
-    transform: translateY(0);    /* 回到各圖片原本設定的位置 */
+    transform: translate(-50%, -50%);    /* 回到各圖片原本設定的位置 */
   }
 }
 
@@ -1920,11 +1933,11 @@ img { max-width:100%; }
                 "./pct/他爸微笑.webp",
                 "./pct/他爸難過.webp",
                 "./pct/信封 紅色圓形.webp",
-                "./pct/信封 綠色愛心.png",
                 "./pct/信封 綠色愛心.webp",
-                "./pct/信封 藍色三角形.png",
+                "./pct/信封 綠色愛心.webp",
                 "./pct/信封 藍色三角形.webp",
-                "./pct/信封 黃色正方形.png",
+                "./pct/信封 藍色三角形.webp",
+                "./pct/信封 黃色正方形.webp",
                 "./pct/信封 黃色正方形.webp",
                 "./pct/前導圖.webp",
                 "./pct/同情星 自信的北港五隻虎.webp",
@@ -2125,7 +2138,7 @@ img { max-width:100%; }
         id: 3,
         text: "什麼聲音？",
         background: "好奇星草叢",
-        comicImages: ["./1漫畫/1好奇星-1-第一張.jpg", "./1漫畫/1好奇星-1-第二張.jpg", "./1漫畫/1好奇星-1-第二張角色.png"],
+        comicImages: ["./1漫畫/1好奇星-1-第一張.webp"],
         speaker: "星辰",
         // bgm: "./audio/1.遇到好奇星前、看到火箭準備離開好奇星.MP3"
     },
@@ -2133,7 +2146,7 @@ img { max-width:100%; }
         id: 4,
         text: "哇哇哇啊啊！",
         background: "好奇星草叢",
-        comicImages: ["./1漫畫/1好奇星-1完整.png", "./1漫畫/1好奇星-2完整.png"],
+        comicImages: ["./1漫畫/1好奇星-1-第二張背景.webp", "./1漫畫/1好奇星-1-第二張角色.webp"],
         nextId: 5
     },
     {
@@ -2245,12 +2258,14 @@ img { max-width:100%; }
         text: "有好奇星被困住了咩。",
         characters: ["好奇星哭"],
         background: "好奇星草原",
+        comicImages: ["./1漫畫/1好奇星-2-第一張.webp", "./1漫畫/1好奇星-2-第一張好奇星.webp"],
     },
     {
         id: 20.11,
         text: "哎呀哎呀要怎麼辦咩！",
         characters: ["好奇星哭"],
         background: "好奇星草原",
+        comicImages: ["./1漫畫/1好奇星-2-第二張.webp"],
     },
     {
         id: 20.12,
@@ -2313,6 +2328,7 @@ img { max-width:100%; }
         text: "得救了咩！",
         characters: ["路人好奇星張嘴"],
         background: "好奇星草原",
+        comicImages: ["./1漫畫/1好奇星-2-第三張.webp"],
     },
     {
         id: 22,
@@ -2320,6 +2336,7 @@ img { max-width:100%; }
         characters: ["好奇星會跳"],
         bgm: "./audio/1.貫穿好奇星球.MP3",
         background: "好奇星草原",
+        comicImages: ["./1漫畫/1好奇星-2-第四張.webp", "./1漫畫/1好奇星-2-第四張好奇星.webp"],
     },
     {
         id: 23,
@@ -2389,6 +2406,7 @@ img { max-width:100%; }
         text: "",
         bgm: "./audio/1.貫穿好奇星球.MP3",
         background: "好奇星棉花重災區",
+        comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
     },
     {
         id: 31.2,
@@ -2399,6 +2417,7 @@ img { max-width:100%; }
         id: 31.3,
         text: "這裡這樣子多久了？（看見好奇星們在挖棉花下的草吃）",
         background: "好奇星棉花重災區",
+        comicImages: ["./1漫畫/1好奇星-4-第二張.webp"],
     },
     {
         id: 31.4,
@@ -2409,6 +2428,7 @@ img { max-width:100%; }
         id: 31.5,
         text: "啊，看那裡咩！就是那幾座發電機。",
         background: "好奇星棉花重災區",
+        comicImages: ["./1漫畫/1好奇星-4-第三張.webp"],
     },
     {
         id: 31.6,
@@ -2540,12 +2560,13 @@ img { max-width:100%; }
         nextId: 37,
         characters: ["星辰微笑"],
         background: "好奇星棉花重災區",
+        comicImages: ["./1漫畫/1好奇星-5-第一張.webp"],
     },
     {
         id: 37,
         text: "躂躂，做出來了！",
         nextId: 38,
-        comicImages: ["/尾巴"],
+        comicImages: ["./1漫畫/1好奇星-5-第二張.webp"],
         background: "好奇星棉花重災區",
     },
     {
@@ -2640,43 +2661,38 @@ img { max-width:100%; }
     {
         id: 51,
         text: "欸？這是什麼！",
-        comicImages: ["/火箭"],
+        comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         background: "好奇星黃色結局",
     },
     {
         id: 52,
         text: "拼圖嗎？",
-        comicImages: ["/火箭"],
+        comicImages: ["./1漫畫/1好奇星-3-第二張.webp", "./1漫畫/1好奇星-3-第二張拼圖.webp"],
         background: "好奇星黃色結局",
     },
     {
         id: 53,
         text: "好酷，我也是第一次看到咩。",
-        comicImages: ["/火箭"],
         background: "好奇星黃色結局",
     },
     {
         id: 54,
         text: "它好像進到火箭裡面了。",
-        comicImages: ["/火箭"],
         background: "好奇星黃色結局",
     },
     {
         id: 55,
         text: "哇，它被喚醒了！",
-        comicImages: ["/火箭"],
         background: "好奇星黃色結局",
     },
     {
         id: 56,
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
-        comicImages: ["/火箭"],
         background: "好奇星黃色結局",
     },
     {
         id: 57,
         text: "嘿咻！",
-        comicImages: ["/火箭"],
         background: "好奇星黃色結局",
     },
     {
@@ -3065,33 +3081,33 @@ img { max-width:100%; }
         id: 89,
         background: "同情星貝殼",
         text: "哇，這裡怎麼有這麼多貝殼？",
-        comicImages: ["/同情星家裡"],
+        comicImages: ["./1漫畫/2同情星-2-第一張.webp"],
         bgm: "./audio/2.Johann Sebastian Bach Cello Suite No.1 VI-Gigue - TheExarion.mp3",
     },
     {
         id: 90,
         background: "同情星貝殼",
         text: "因為...我太在意別人了，",
-        comicImages: ["/同情星家裡"],
+        comicImages: ["./1漫畫/2同情星-2-第二張.webp"],
         bgm: "./audio/2.Gabriel Fauré - Op.24, Élégie (Gaisford, Melgar) - TheExarion.mp3",
     },
     {
         id: 91,
         background: "同情星貝殼",
         text: "想不斷地幫助他人...",
-        comicImages: ["/同情星家裡"],
+        comicImages: ["./1漫畫/2同情星-2-第二張.webp"],
     },
     {
         id: 92,
         background: "同情星貝殼",
         text: "但也忽略了自己，很擔心自己是否有真正幫助到人。",
-        comicImages: ["/同情星家裡"],
+        comicImages: ["./1漫畫/2同情星-2-第三張.webp"],
     },
     {
         id: 93,
         background: "同情星貝殼",
         text: "嗚...時間久了，收集貝殼的數量也會隨著壓力變多。",
-        comicImages: ["/同情星家裡"],
+        comicImages: ["./1漫畫/2同情星-2-第四張.webp"],
     },
     {
         id: 94,
@@ -3209,7 +3225,6 @@ img { max-width:100%; }
         text: "去海邊衝浪！",
         nextId: 99, 
         characters: ["星辰驕傲"],
-        comicImages: ["/衝浪"]
     },
     {
         id: 98.2,
@@ -3217,7 +3232,6 @@ img { max-width:100%; }
         text: "聽說吃東西會讓心情變好！",
         nextId: 99, 
         characters: ["星辰驕傲"],
-        comicImages: ["/大吃"]
     },
     {
         id: 98.3,
@@ -3225,7 +3239,6 @@ img { max-width:100%; }
         text: "把不開心全都唱出來！",
         nextId: 99, 
         characters: ["星辰驕傲"],
-        comicImages: ["/唱歌"]
     },
     {
         id: 98.4,
@@ -3233,7 +3246,6 @@ img { max-width:100%; }
         text: "走！我們去爬山看風景吹吹風！",
         nextId: 99, 
         characters: ["星辰驕傲"],
-        comicImages: ["/爬山"]
     },
     {
         id: 99,
@@ -3252,55 +3264,46 @@ img { max-width:100%; }
         id: 101,
         background: "同情星晚霞",
         text: "打開了！",
-        comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 102,
         background: "同情星晚霞",
         text: "好漂亮的珍珠。",
-        comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 103,
         background: "同情星晚霞",
         text: "家裡的貝殼肯定都打開了呢。",
-        comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 104,
         background: "同情星晚霞",
         text: "這樣...我就能開設自己的珠寶店了！",
-        comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 105,
         background: "同情星晚霞",
         text: "珠寶店？",
-        comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 106,
         background: "同情星晚霞",
         text: "嗚...其實...我想開珠寶店很久了。",
-        comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 107,
         background: "同情星晚霞",
         text: "我也能趁這個機會實現夢想，還能幫助別人。",
-        comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 108,
         background: "同情星晚霞",
         text: "那麼，我來幫你一起開店吧！",
-        comicImages: ["/貝殼打開漫畫"]
     },
     {
         id: 109,
         background: "同情星貝殼",
         text: "嗚...能在自己的能力內幫助別人，真是太好了！",
-        comicImages: ["/賣珠寶"]
     },
     {
         id: 111,
@@ -3399,37 +3402,31 @@ img { max-width:100%; }
         id: 118,
         background: "同情星沒貝殼",
         text: "欸...這是什麼？",
-        comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 119,
         background: "同情星沒貝殼",
         text: "我也不太清楚，好像是火箭的燃料吧。",
-        comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 120,
         background: "同情星沒貝殼",
         text: "也真奇怪，每次解決完問題後都會出現...",
-        comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 121,
         background: "同情星沒貝殼",
         text: "所以...要告別了吧。",
-        comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 122,
         background: "同情星沒貝殼",
         text: "嗯！我得搭火箭走啦。",
-        comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 123,
         background: "同情星沒貝殼",
         text: "等等！離開之前我要帶你去一個地方。",
-        comicImages: ["/同情星拼圖降下"]
     },
     {
         id: 123.1,
@@ -3658,25 +3655,21 @@ img { max-width:100%; }
         id: 147,
         text: "嘿！嗚！咻！",
         background: "爽快星街景",
-        comicImages: ["/"],
     },
     {
         id: 148,
         text: "爽快星！也太趕了！好累...。",
         background: "爽快星街景",
-        comicImages: ["/"],
     },
     {
         id: 149,
         text: "咦...信又從信箱掉出來。",
         background: "爽快星街景",
-        comicImages: ["/"],
     },
     {
         id: 150,
         text: "哎呀怎麼每次都這樣，明明想要趕快處理好的啊！",
         background: "爽快星街景",
-        comicImages: ["/"],
     },
     {
         id: 151,
@@ -3761,7 +3754,6 @@ img { max-width:100%; }
         id: 162,
         text: "那是...",
         background: "爽快星郵局",
-        comicImages: ["/"],
     },
     {
         id: 163,
@@ -6238,7 +6230,7 @@ if (!hasScoredOptions) {
 
     // 沒有對話、也沒有角色的純背景幕：等背景動畫（最長約 0.5 秒）結束後顯示提示。
     const hasCharacters = Array.isArray(scene.characters) && scene.characters.length > 0;
-    const isBackgroundOnlyScene = !hasScoredOptions && !hasText && !hasCharacters && !!scene.background;
+    const isBackgroundOnlyScene = !hasScoredOptions && !hasText && !hasCharacters && !!scene.background && !(Array.isArray(scene.comicImages) && scene.comicImages.length > 0);
     if (isBackgroundOnlyScene && pageEl) {
         window.emptySceneHintTimer = setTimeout(() => {
             if (currentStep === stepIndex) {
@@ -6396,35 +6388,44 @@ if (scene.bgm) {
         });
     }
 
-    // 7. 處理漫畫 / 插圖顯示
+    // 7. 處理漫畫／插圖顯示：支援多張透明圖層疊合。
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
+    const comicPaths = Array.isArray(scene.comicImages)
+        ? scene.comicImages.filter(path => typeof path === "string" && path.startsWith("./1漫畫/"))
+        : [];
+    const comicKey = JSON.stringify(comicPaths);
 
-    if (scene.comicImages && Array.isArray(scene.comicImages) && scene.comicImages.length > 0) {
-        if (comicBox && comicImg) {
-            const newImgPath = scene.comicImages[0];
-            const currentImgPath = comicImg.getAttribute('src');
+    if (comicBox && comicImg && comicPaths.length > 0) {
+        if (comicBox.getAttribute("data-comic-key") !== comicKey || comicBox.style.display === "none") {
+            comicBox.querySelectorAll(".comic-layer-extra").forEach(layer => layer.remove());
+            comicImg.src = comicPaths[0];
+            comicImg.alt = "漫畫圖";
+            comicImg.className = "comic-layer anim-fade-in-up";
 
-            if (currentImgPath !== newImgPath || comicBox.style.display === 'none') {
-                comicImg.classList.remove('anim-fade-in-up');
-                void comicImg.offsetWidth; 
+            comicPaths.slice(1).forEach(path => {
+                const layer = document.createElement("img");
+                layer.src = path;
+                layer.alt = "";
+                layer.className = "comic-layer comic-layer-extra anim-fade-in-up";
+                comicBox.appendChild(layer);
+            });
 
-                comicImg.src = newImgPath;
-                comicBox.style.display = 'block';
-
-                const fileName = newImgPath.split('/').pop().replace(/\.[^/.]+$/, "");
-                comicBox.className = `comic-style-${fileName}`;
-                comicImg.classList.add('anim-fade-in-up');
-            }
+            comicBox.setAttribute("data-comic-key", comicKey);
+            const fileName = comicPaths[0].split('/').pop().replace(/\.[^/.]+$/, "");
+            comicBox.className = `comic-style-${fileName}`;
+            comicBox.style.display = "block";
         }
     } else {
         if (comicBox) {
-            comicBox.style.display = 'none';
-            comicBox.className = '';
+            comicBox.style.display = "none";
+            comicBox.className = "";
+            comicBox.removeAttribute("data-comic-key");
+            comicBox.querySelectorAll(".comic-layer-extra").forEach(layer => layer.remove());
         }
         if (comicImg) {
-            comicImg.className = '';
-            comicImg.removeAttribute('src');
+            comicImg.className = "";
+            comicImg.removeAttribute("src");
         }
     }
 
