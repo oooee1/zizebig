@@ -1666,6 +1666,18 @@ img { max-width:100%; }
             cursor: pointer;
         }
 
+    
+        /* 電腦版：強制移除遊戲外框圓角與裁切圓角，避免被其他 CSS 覆蓋 */
+        @media (min-width: 500px) and (min-height: 500px) {
+            html body #game-container {
+                border-radius: 0 !important;
+                border: none !important;
+                clip-path: none !important;
+                -webkit-clip-path: none !important;
+                mask: none !important;
+                -webkit-mask: none !important;
+            }
+        }
     </style>
 </head>
 
