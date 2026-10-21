@@ -982,7 +982,7 @@
   pointer-events: none;
 }
 
-/* 漫畫單張與透明角色／拼圖圖層共用同一個置中畫布。 */
+/* 漫畫各圖層共用同一個置中畫布，切換分鏡時不關閉整個漫畫容器。 */
 #comic-box .comic-layer {
   position: absolute;
   top: 50%;
@@ -993,6 +993,16 @@
   width: auto;
   height: auto;
   object-fit: contain;
+}
+
+/* 第二張分鏡的角色層：以背景圖的 Alpha 透明區域作為遮罩。 */
+#comic-box .comic-layer-mask-role {
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 /* --------------------------------------------------
@@ -6439,7 +6449,8 @@ if (scene.bgm) {
         });
     }
 
-    // 7. 處理漫畫／插圖顯示：支援多張透明圖層疊合。
+    // 7. 處理漫畫／插圖顯示。連續漫畫場景只更新分鏡，不隱藏漫畫容器；
+    // 直到進入沒有 comicImages 的場景，才結束漫畫模式並清除所有漫畫圖層。
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
     const comicPaths = sceneComicPaths;
@@ -6448,6 +6459,14 @@ if (scene.bgm) {
     if (comicBox && comicImg && comicPaths.length > 0) {
         if (comicBox.getAttribute("data-comic-key") !== comicKey || comicBox.style.display === "none") {
             comicBox.querySelectorAll(".comic-layer-extra").forEach(layer => layer.remove());
+
+            const isSplitBackgroundAndRole = comicPaths.length >= 2 &&
+                comicPaths.some(path => /背景\.(webp|png|jpe?g)$/i.test(path)) &&
+                comicPaths.some(path => /角色\.(webp|png|jpe?g)$/i.test(path));
+            const backgroundMaskPath = isSplitBackgroundAndRole
+                ? comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path))
+                : "";
+
             comicImg.src = comicPaths[0];
             comicImg.alt = "漫畫圖";
             comicImg.className = "comic-layer anim-fade-in-up";
@@ -6457,6 +6476,13 @@ if (scene.bgm) {
                 layer.src = path;
                 layer.alt = "";
                 layer.className = "comic-layer comic-layer-extra anim-fade-in-up";
+
+                // 角色層以「第二張背景」的透明度作 Alpha 遮罩，兩張圖維持同一尺寸與位置。
+                if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
+                    layer.classList.add("comic-layer-mask-role");
+                    layer.style.webkitMaskImage = `url("${backgroundMaskPath}")`;
+                    layer.style.maskImage = `url("${backgroundMaskPath}")`;
+                }
                 comicBox.appendChild(layer);
             });
 
@@ -6466,6 +6492,7 @@ if (scene.bgm) {
             comicBox.style.display = "block";
         }
     } else {
+        // 只有離開漫畫模式才清空；漫畫接續的場景不會走到這裡。
         if (comicBox) {
             comicBox.style.display = "none";
             comicBox.className = "";
