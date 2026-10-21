@@ -6449,54 +6449,64 @@ if (scene.bgm) {
         });
     }
 
-    // 7. 處理漫畫／插圖顯示。連續漫畫場景只更新分鏡，不隱藏漫畫容器；
-    // 直到進入沒有 comicImages 的場景，才結束漫畫模式並清除所有漫畫圖層。
+    // 7. 累積顯示漫畫圖層：後續分鏡疊加在畫面上，不取代前一張；
+    // 只有離開漫畫模式時才一次清除全部漫畫圖層。
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
     const comicPaths = sceneComicPaths;
-    const comicKey = JSON.stringify(comicPaths);
 
     if (comicBox && comicImg && comicPaths.length > 0) {
-        if (comicBox.getAttribute("data-comic-key") !== comicKey || comicBox.style.display === "none") {
-            comicBox.querySelectorAll(".comic-layer-extra").forEach(layer => layer.remove());
+        let shownPaths = [];
+        try {
+            shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]");
+            if (!Array.isArray(shownPaths)) shownPaths = [];
+        } catch (_) {
+            shownPaths = [];
+        }
 
-            const isSplitBackgroundAndRole = comicPaths.length >= 2 &&
-                comicPaths.some(path => /背景\.(webp|png|jpe?g)$/i.test(path)) &&
-                comicPaths.some(path => /角色\.(webp|png|jpe?g)$/i.test(path));
-            const backgroundMaskPath = isSplitBackgroundAndRole
-                ? comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path))
-                : "";
+        const isSplitBackgroundAndRole = comicPaths.length >= 2 &&
+            comicPaths.some(path => /背景\.(webp|png|jpe?g)$/i.test(path)) &&
+            comicPaths.some(path => /角色\.(webp|png|jpe?g)$/i.test(path));
+        const backgroundMaskPath = isSplitBackgroundAndRole
+            ? comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path))
+            : "";
 
-            comicImg.src = comicPaths[0];
-            comicImg.alt = "漫畫圖";
-            comicImg.className = "comic-layer anim-fade-in-up";
+        comicBox.style.display = "block";
 
-            comicPaths.slice(1).forEach(path => {
+        comicPaths.forEach(path => {
+            // 已經出現過的漫畫圖保留，不重複新增；新的圖層才接續疊上來。
+            if (shownPaths.includes(path)) return;
+
+            if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
+                comicImg.src = path;
+                comicImg.alt = "漫畫圖";
+                comicImg.className = "comic-layer anim-fade-in-up";
+            } else {
                 const layer = document.createElement("img");
                 layer.src = path;
                 layer.alt = "";
                 layer.className = "comic-layer comic-layer-extra anim-fade-in-up";
 
-                // 角色層以「第二張背景」的透明度作 Alpha 遮罩，兩張圖維持同一尺寸與位置。
+                // 分層漫畫的角色層使用同組背景圖的 Alpha 透明度作遮罩。
                 if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
                     layer.classList.add("comic-layer-mask-role");
                     layer.style.webkitMaskImage = `url("${backgroundMaskPath}")`;
                     layer.style.maskImage = `url("${backgroundMaskPath}")`;
                 }
                 comicBox.appendChild(layer);
-            });
+            }
+            shownPaths.push(path);
+        });
 
-            comicBox.setAttribute("data-comic-key", comicKey);
-            const fileName = comicPaths[0].split('/').pop().replace(/\.[^/.]+$/, "");
-            comicBox.className = `comic-style-${fileName}`;
-            comicBox.style.display = "block";
-        }
+        comicBox.setAttribute("data-comic-paths", JSON.stringify(shownPaths));
+        const firstFileName = shownPaths[0] ? shownPaths[0].split('/').pop().replace(/\.[^/.]+$/, "") : "comic";
+        comicBox.className = `comic-style-${firstFileName}`;
     } else {
-        // 只有離開漫畫模式才清空；漫畫接續的場景不會走到這裡。
+        // 下一幕沒有漫畫圖片，代表漫畫模式結束：清除本段累積的所有漫畫。
         if (comicBox) {
             comicBox.style.display = "none";
             comicBox.className = "";
-            comicBox.removeAttribute("data-comic-key");
+            comicBox.removeAttribute("data-comic-paths");
             comicBox.querySelectorAll(".comic-layer-extra").forEach(layer => layer.remove());
         }
         if (comicImg) {
