@@ -6177,6 +6177,12 @@ function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
 
+    // 漫畫模式：只顯示場景背景與漫畫圖，不顯示對話框、角色立繪或角色名字。
+    const sceneComicPaths = Array.isArray(scene.comicImages)
+        ? scene.comicImages.filter(path => typeof path === "string" && path.startsWith("./1漫畫/"))
+        : [];
+    const isComicMode = sceneComicPaths.length > 0;
+
     // 每次切換場景先取消上一幕的純背景提示。
     if (window.emptySceneHintTimer) {
         clearTimeout(window.emptySceneHintTimer);
@@ -6297,7 +6303,7 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle('同情星爆哭', currentSceneId === 86);
     }
 
-    // 只有一般劇情才依本幕文字切換對話框；問題介面出現時保留上一幕。
+    // 漫畫模式不顯示對話框與角色名字；離開漫畫模式後恢復一般劇情顯示規則。
     if (!hasScoredOptions) {
         const dialogElements = [
             document.getElementById('對話框'),
@@ -6306,8 +6312,8 @@ if (!hasScoredOptions) {
         ];
         dialogElements.forEach(el => {
             if (!el) return;
-            if (hasText) el.style.removeProperty('display');
-            else el.style.setProperty('display', 'none', 'important');
+            if (isComicMode || !hasText) el.style.setProperty('display', 'none', 'important');
+            else el.style.removeProperty('display');
         });
     }
 
@@ -6347,7 +6353,7 @@ if (!hasScoredOptions) {
 
     // 3. 只有明確知道本幕發言者時才顯示名字，不再根據畫面上的角色猜測。
     let displayName = "";
-    if (hasText && sceneSpeaker) {
+    if (!isComicMode && hasText && sceneSpeaker) {
         displayName = (sceneSpeaker === "玩家")
             ? (window.playerName ? `${window.playerName}・星辰` : "星辰")
             : sceneSpeaker;
@@ -6400,7 +6406,7 @@ if (scene.bgm) {
     // 不可保留上一幕的「星辰嚇死」等角色，否則會疊在題目最上方。
     hideAllCharacters();
 
-    if (!hasScoredOptions && scene.characters && Array.isArray(scene.characters)) {
+    if (!hasScoredOptions && !isComicMode && scene.characters && Array.isArray(scene.characters)) {
         scene.characters.forEach(charName => {
             const charEl = document.getElementById(charName);
             if (charEl) {
@@ -6431,9 +6437,7 @@ if (scene.bgm) {
     // 7. 處理漫畫／插圖顯示：支援多張透明圖層疊合。
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
-    const comicPaths = Array.isArray(scene.comicImages)
-        ? scene.comicImages.filter(path => typeof path === "string" && path.startsWith("./1漫畫/"))
-        : [];
+    const comicPaths = sceneComicPaths;
     const comicKey = JSON.stringify(comicPaths);
 
     if (comicBox && comicImg && comicPaths.length > 0) {
