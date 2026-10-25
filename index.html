@@ -7532,11 +7532,23 @@ if (scene.bgm) {
         overlay.querySelector("#skip-confirm-yes").addEventListener("click", (event) => {
             event.stopPropagation();
 
-            // 跳過時若名字詢問場景（ID 8）還在後面，先跳到該場景，不可略過名字詢問。
+            const currentScene = storyScript[currentStep];
+
+            // 先檢查目前題目是否已作答；不可因為名字場景在後面，就直接跳過這一題。
+            const currentIsScoredQuestion = currentScene &&
+                Array.isArray(currentScene.options) &&
+                currentScene.options.some(option => option.score && Object.keys(option.score).length > 0);
+            const currentChoiceMade = !!(currentScene && scoredSceneIds.has(currentScene.id));
+            if (currentIsScoredQuestion && !currentChoiceMade) {
+                close();
+                window.alert("尚未選擇當前的選項");
+                return;
+            }
+
+            // 目前場景已符合跳過條件後，若名字詢問場景（ID 8）還在後面，再前往名字詢問。
             const nameSceneIndex = storyScript.findIndex((scene, index) =>
                 index > currentStep && Number(scene.id) === 8
             );
-            const currentScene = storyScript[currentStep];
             if (nameSceneIndex !== -1) {
                 close();
                 if (window.myTypingTimer) {
@@ -7546,17 +7558,6 @@ if (scene.bgm) {
                 window.isTyping = false;
                 currentStep = nameSceneIndex;
                 renderScene(currentStep);
-                return;
-            }
-
-            // 必須先完成目前題目的選項確認，不能藉由跳過略過尚未作答的題目。
-            const currentIsScoredQuestion = currentScene &&
-                Array.isArray(currentScene.options) &&
-                currentScene.options.some(option => option.score && Object.keys(option.score).length > 0);
-            const currentChoiceMade = !!(currentScene && scoredSceneIds.has(currentScene.id));
-            if (currentIsScoredQuestion && !currentChoiceMade) {
-                close();
-                window.alert("尚未選擇當前的選項");
                 return;
             }
 
