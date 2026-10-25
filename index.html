@@ -7484,6 +7484,60 @@ if (scene.bgm) {
     }
 }
 
+    // 跳過按鈕：先詢問玩家，確認後才跳到下一個計分問題。
+    function skipToOption() {
+        const existing = document.getElementById("skip-confirm-overlay");
+        if (existing) {
+            existing.style.display = "flex";
+            return;
+        }
+
+        const overlay = document.createElement("div");
+        overlay.id = "skip-confirm-overlay";
+        overlay.style.cssText = "position:absolute;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.62);padding:24px;box-sizing:border-box;";
+        overlay.innerHTML = `
+          <div role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title" style="width:min(340px,100%);box-sizing:border-box;background:#f5efdc;border:4px solid #262626;padding:24px 20px;color:#262626;text-align:center;box-shadow:6px 6px 0 #262626;">
+            <div id="skip-confirm-title" style="font-size:22px;font-weight:900;line-height:1.5;margin-bottom:12px;">確定要跳過嗎？</div>
+            <div style="font-size:16px;line-height:1.7;margin-bottom:22px;">跳過後會直接前往下一個問題，確定嗎？</div>
+            <div style="display:flex;gap:12px;justify-content:center;">
+              <button type="button" id="skip-confirm-yes" style="flex:1;min-height:44px;border:3px solid #262626;background:#ffd561;color:#262626;font-size:16px;font-weight:800;cursor:pointer;">確定</button>
+              <button type="button" id="skip-confirm-no" style="flex:1;min-height:44px;border:3px solid #262626;background:#fff;color:#262626;font-size:16px;font-weight:800;cursor:pointer;">我再想想</button>
+            </div>
+          </div>`;
+        const game = document.getElementById("game-container") || document.body;
+        game.appendChild(overlay);
+
+        const close = () => overlay.remove();
+        overlay.querySelector("#skip-confirm-no").addEventListener("click", (event) => {
+            event.stopPropagation();
+            close();
+        });
+        overlay.querySelector("#skip-confirm-yes").addEventListener("click", (event) => {
+            event.stopPropagation();
+            const nextQuestionIndex = storyScript.findIndex((scene, index) =>
+                index > currentStep &&
+                Array.isArray(scene.options) &&
+                scene.options.some(option => option.score && Object.keys(option.score).length > 0)
+            );
+            if (nextQuestionIndex === -1) {
+                close();
+                window.alert("後面沒有可以跳轉的問題了。");
+                return;
+            }
+            close();
+            if (window.myTypingTimer) {
+                clearInterval(window.myTypingTimer);
+                window.myTypingTimer = null;
+            }
+            window.isTyping = false;
+            currentStep = nextQuestionIndex;
+            renderScene(currentStep);
+        });
+        overlay.addEventListener("click", (event) => {
+            if (event.target === overlay) close();
+        });
+    }
+
     function hideAllCharacters() {
     // 直接隱藏所有角色立繪，避免新增角色（例如爽快星慌張、媽媽）漏加進清單。
     document.querySelectorAll('.角色圖').forEach(el => {
