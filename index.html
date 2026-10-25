@@ -1062,7 +1062,7 @@
     will-change: transform, opacity;
 }
 
-.ask-title { color: #44365f; font-family: 'Dela Gothic One','CPTrans',sans-serif; font-size: clamp(18px,4.5vw,23px); line-height: 1.5; margin: 0 0 18px 0; }
+.ask-title { color: #44365f; font-family: 'Dela Gothic One','CPTrans',sans-serif; font-size: clamp(24px,6vw,30px); line-height: 1.45; margin: 0 0 18px 0; }
         .ask-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; }
         .ask-input { height: 44px; flex: 1; min-width: 0; padding: 0 10px; font-family: 'CPTrans',sans-serif; font-size: 16px; font-weight: normal; text-align: center; border-radius: 10px; border: 2px solid #3d355b; background: #ffffff; color: #3d355b; box-shadow: none; }
         .ask-input::placeholder { color: #8b829e; opacity: 1; }
@@ -2032,7 +2032,7 @@ img { max-width:100%; }
                     type="text" 
                     id="player-name-input" 
                     class="ask-input" 
-                    placeholder="1~3 個字" 
+                    placeholder="3個字以內" 
                     maxlength="3"
                     onclick="event.stopPropagation();"
                     onmousedown="event.stopPropagation(); this.focus();"
@@ -7532,8 +7532,16 @@ if (scene.bgm) {
         overlay.querySelector("#skip-confirm-yes").addEventListener("click", (event) => {
             event.stopPropagation();
 
-            // 必須先完成目前題目的選項確認，不能藉由跳過略過尚未作答的題目。
+            // 好奇星詢問名字的場景不可跳過，必須先完成名字輸入。
             const currentScene = storyScript[currentStep];
+            if (currentScene && Number(currentScene.id) === 8) {
+                close();
+                window.alert("請先輸入名字，再繼續劇情。");
+                showInputBox();
+                return;
+            }
+
+            // 必須先完成目前題目的選項確認，不能藉由跳過略過尚未作答的題目。
             const currentIsScoredQuestion = currentScene &&
                 Array.isArray(currentScene.options) &&
                 currentScene.options.some(option => option.score && Object.keys(option.score).length > 0);
