@@ -7560,20 +7560,6 @@ if (scene.bgm) {
                 return;
             }
 
-            // 若還沒到好奇星詢問名字（ID 8），跳過時先前往詢問名字，不可越過它直接跳到計分題。
-            const nameSceneIndex = storyScript.findIndex(scene => Number(scene.id) === 8);
-            if (nameSceneIndex > currentStep) {
-                close();
-                if (window.myTypingTimer) {
-                    clearInterval(window.myTypingTimer);
-                    window.myTypingTimer = null;
-                }
-                window.isTyping = false;
-                currentStep = nameSceneIndex;
-                renderScene(currentStep);
-                return;
-            }
-
             const nextQuestionIndex = storyScript.findIndex((scene, index) =>
                 index > currentStep &&
                 Array.isArray(scene.options) &&
