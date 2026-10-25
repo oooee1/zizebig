@@ -878,8 +878,8 @@
     position: relative;
     background: transparent !important;
     color: white;
-    width: 54px;
-    height: 54px;
+    width: 62px;
+    height: 62px;
     flex-shrink: 0;
     border-radius: 0 !important;
     display: flex;
@@ -888,39 +888,61 @@
     cursor: pointer;
     opacity: 1;
     transform: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: transform 0.16s ease, filter 0.16s ease;
     border: 0 !important;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .nav-item img {
-    width: 46px;
-    height: 46px;
+    width: 54px;
+    height: 54px;
     object-fit: contain;
     pointer-events: none;
+    transition: transform 0.16s ease;
 }
 
-/* 靜音時以斜線劃過音量圖示，不加底色 */
+/* 按下時稍微縮小，放開後回彈 */
+#burger-menu:active,
+.nav-item:active,
+#skip-btn:active {
+    transform: scale(0.86);
+    filter: brightness(1.25);
+}
+
+#burger-menu,
+#skip-btn {
+    transition: transform 0.16s ease, filter 0.16s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 靜音時以白色斜線劃過音量圖示，不加底色 */
 #volume-btn.muted::after {
     content: "";
     position: absolute;
-    width: 58px;
+    width: 62px;
     height: 4px;
     left: 50%;
     top: 50%;
-    background: #ff4545;
+    background: #ffffff;
     border-radius: 3px;
     transform: translate(-50%, -50%) rotate(-45deg);
     pointer-events: none;
+    animation: mute-slash-in 0.18s ease-out both;
 }
 
-/* 跳過鍵固定在最右上角，與左側選單分開 */
+@keyframes mute-slash-in {
+    from { opacity: 0; transform: translate(-50%, -50%) rotate(-45deg) scaleX(0.2); }
+    to { opacity: 1; transform: translate(-50%, -50%) rotate(-45deg) scaleX(1); }
+}
+
+/* 跳過鍵固定在最右上角，尺寸稍微縮小 */
 #skip-btn {
     position: absolute;
     top: 14px;
     right: 14px;
     z-index: 200000;
-    width: 62px;
-    height: 62px;
+    width: 52px;
+    height: 52px;
     background: transparent !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -931,8 +953,8 @@
 }
 
 #skip-btn img {
-    width: 54px;
-    height: 54px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
     pointer-events: none;
 }
