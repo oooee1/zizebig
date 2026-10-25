@@ -7497,9 +7497,7 @@ if (scene.bgm) {
         overlay.style.cssText = "position:absolute;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;background:rgba(25,22,43,.58);padding:22px;box-sizing:border-box;";
         overlay.innerHTML = `
           <style>
-            #skip-confirm-overlay .skip-card{position:relative;width:min(390px,100%);box-sizing:border-box;padding:30px 24px 23px;background:#fff9e9;border:2px solid #3d355b;border-radius:18px 22px 17px 21px;color:#3d355b;text-align:center;font-family:'CPTrans',sans-serif;box-shadow:0 7px 0 #d9c9f5,0 9px 0 #3d355b;overflow:hidden;}
-            #skip-confirm-overlay .skip-card:before{content:"";position:absolute;left:0;right:0;top:0;height:9px;background:linear-gradient(90deg,#a8dff0 0 25%,#cbb8f4 25% 50%,#ffd45d 50% 75%,#f5b7c7 75% 100%);}
-            #skip-confirm-overlay .skip-decoration{position:relative;z-index:1;font-size:20px;letter-spacing:8px;color:#8d77c6;margin:0 0 9px;}
+            #skip-confirm-overlay .skip-card{position:relative;width:min(390px,100%);box-sizing:border-box;padding:28px 24px 23px;background:#fff9e9;border:2px solid #3d355b;border-radius:18px 22px 17px 21px;color:#3d355b;text-align:center;font-family:'CPTrans',sans-serif;box-shadow:none;overflow:hidden;}
             #skip-confirm-overlay #skip-confirm-title{position:relative;z-index:1;font-family:'Dela Gothic One','CPTrans',sans-serif;font-size:clamp(20px,5vw,25px);line-height:1.5;margin:0 0 10px;color:#44365f;}
             #skip-confirm-overlay .skip-description{position:relative;z-index:1;font-size:clamp(15px,3.5vw,17px);line-height:1.8;margin:0 0 20px;}
             #skip-confirm-overlay .skip-actions{position:relative;z-index:1;display:flex;gap:12px;justify-content:center;}
@@ -7510,8 +7508,7 @@ if (scene.bgm) {
             @media(max-width:420px){#skip-confirm-overlay .skip-card{padding:27px 18px 20px;}}
           </style>
           <div class="skip-card" role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title">
-            <div class="skip-decoration" aria-hidden="true">✦　✧　✦</div>
-            <div id="skip-confirm-title">要跳過這一題？</div>
+            <div id="skip-confirm-title">要跳過目前劇情？</div>
             <p class="skip-description">跳過後會直接前往下一個問題。</p>
             <div class="skip-actions">
               <button type="button" id="skip-confirm-yes">確定</button>
