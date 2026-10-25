@@ -6597,8 +6597,11 @@ if (scene.bgm) {
                     layer.classList.add("comic-layer-mask-role");
                     const clip = document.createElement("div");
                     clip.className = "comic-role-clip";
+                    const backgroundFileName = backgroundMaskPath.split("/").pop();
                     const placeClipOnBackground = () => {
-                        const bg = comicBox.querySelector(".comic-layer:not(.comic-layer-mask-role)");
+                        // 必須對齊「第二張背景」本身，不能抓到前一格的第一張漫畫圖。
+                        const bg = Array.from(comicBox.querySelectorAll("img.comic-layer"))
+                            .find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
                         if (!bg) return;
                         const bgRect = bg.getBoundingClientRect();
                         const boxRect = comicBox.getBoundingClientRect();
@@ -6607,9 +6610,12 @@ if (scene.bgm) {
                         clip.style.width = bgRect.width + "px";
                         clip.style.height = bgRect.height + "px";
                     };
-                    placeClipOnBackground();
-                    const bgForClip = comicBox.querySelector(".comic-layer:not(.comic-layer-mask-role)");
-                    if (bgForClip && !bgForClip.complete) bgForClip.addEventListener("load", placeClipOnBackground, { once: true });
+                    const bgForClip = Array.from(comicBox.querySelectorAll("img.comic-layer"))
+                        .find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
+                    if (bgForClip) {
+                        if (bgForClip.complete && bgForClip.naturalWidth > 0) placeClipOnBackground();
+                        else bgForClip.addEventListener("load", placeClipOnBackground, { once: true });
+                    }
                     window.addEventListener("resize", placeClipOnBackground);
                     clip.appendChild(layer);
                     comicBox.appendChild(clip);
