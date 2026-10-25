@@ -687,6 +687,15 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* 沒有對話的場景切換：背景／漫畫以短暫淡入銜接，避免畫面突然跳切 */
+@keyframes quiet-scene-transition {
+    from { opacity: 0.35; }
+    to { opacity: 1; }
+}
+.scene-transition-fade {
+    animation: quiet-scene-transition 0.42s ease-out both !important;
+}
+
 @keyframes dialogue-arrow-bob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(5px); }
@@ -6391,6 +6400,8 @@ function renderScene(stepIndex) {
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
+    // 無對話場景使用淡入過渡，讓純背景與漫畫切換更自然。
+    const shouldFadeQuietScene = !hasText;
     // 對話若以「角色名稱：」開頭，發言者以文字標示為準，不沿用上一幕角色名稱。
     const rawDialogueText = typeof scene.text === "string" ? scene.text.replace(/\/\/n|\\n/g, String.fromCharCode(10)) : "";
     const speakerPrefixMatch = rawDialogueText.match(/^([^：:]{1,12})[：:]\s*/);
@@ -6434,7 +6445,7 @@ function renderScene(stepIndex) {
 if (!hasScoredOptions) {
     document.querySelectorAll('.背景圖, .背景').forEach(el => {
         el.style.display = 'none';
-        el.classList.remove('is-shaking', 'bg-impact-shake');
+        el.classList.remove('is-shaking', 'bg-impact-shake', 'scene-transition-fade');
     });
 
     // 一般劇情才切換背景
@@ -6445,7 +6456,10 @@ if (!hasScoredOptions) {
     if (bgContainer) {
         activateImages(bgContainer);
         bgContainer.style.display = 'block';
-        void bgContainer.offsetWidth;
+        if (shouldFadeQuietScene) {
+            void bgContainer.offsetWidth;
+            bgContainer.classList.add('scene-transition-fade');
+        }
 
         const sceneText = typeof scene.text === 'string' ? scene.text : '';
         const isImpact = [78, 136.1, 205.1].includes(currentSceneId);
@@ -6476,6 +6490,16 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle('同情星顫抖哭', currentSceneId === 85.3);
         pageEl.classList.toggle('同情星大哭', currentSceneId === 85.34);
         pageEl.classList.toggle('同情星爆哭', currentSceneId === 86);
+    }
+
+    // 無對話的漫畫場景也套用相同淡入過渡。
+    const comicBoxForTransition = document.getElementById('comic-box');
+    if (comicBoxForTransition) {
+        comicBoxForTransition.classList.remove('scene-transition-fade');
+        if (isComicMode && shouldFadeQuietScene) {
+            void comicBoxForTransition.offsetWidth;
+            comicBoxForTransition.classList.add('scene-transition-fade');
+        }
     }
 
     // 漫畫模式不顯示對話框與角色名字；離開漫畫模式後恢復一般劇情顯示規則。
