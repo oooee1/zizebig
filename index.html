@@ -1095,17 +1095,25 @@
   pointer-events: none;
 }
 
-/* 角色圖縮放到背景漫畫的同一畫布，再往下移；超出背景矩形的部分由外層裁掉。 */
+/* 角色圖以背景漫畫的矩形為固定視窗；角色圖片本身與動畫都限制在視窗內。 */
+#comic-box .comic-role-clip {
+  box-sizing: border-box;
+  overflow: hidden !important;
+  clip-path: inset(0) !important;
+  -webkit-clip-path: inset(0) !important;
+  contain: paint;
+}
 #comic-box .comic-role-clip .comic-layer-mask-role {
   position: absolute;
   top: calc(50% + 60px);
   left: 50%;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  max-height: none;
-  object-fit: contain;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: fill;
   transform: translate(-50%, -50%);
+  animation: none !important;
   -webkit-mask-image: none !important;
   mask-image: none !important;
 }
@@ -6605,10 +6613,15 @@ if (scene.bgm) {
                         if (!bg) return;
                         const bgRect = bg.getBoundingClientRect();
                         const boxRect = comicBox.getBoundingClientRect();
+                        clip.style.position = "absolute";
                         clip.style.left = (bgRect.left - boxRect.left) + "px";
                         clip.style.top = (bgRect.top - boxRect.top) + "px";
                         clip.style.width = bgRect.width + "px";
                         clip.style.height = bgRect.height + "px";
+                        clip.style.overflow = "hidden";
+                        // 角色圖與背景採用同一個矩形畫布尺寸；角色本身往下移，超出部分由 clip 裁切。
+                        layer.style.width = bgRect.width + "px";
+                        layer.style.height = bgRect.height + "px";
                     };
                     const bgForClip = Array.from(comicBox.querySelectorAll("img.comic-layer"))
                         .find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
