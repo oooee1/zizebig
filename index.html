@@ -822,92 +822,129 @@
            ------------------------------------------ */
 .menu-container {
     position: absolute !important;
-    top: 20px !important;
-    left: 20px !important;
+    top: 14px !important;
+    left: 14px !important;
     right: auto !important;
     width: auto !important;
     max-width: none !important;
     margin: 0 !important;
     transform: none !important;
     display: flex;
-    flex-direction: row; /* 💡 改為 row（從左到右排列），原本是 row-reverse */
+    flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     z-index: 200000;
 }
 
-/* 2. 漢堡按鈕本體 */
+/* 選單圖示：透明背景，保持在左上角 */
 #burger-menu {
-    width: 46px;
-    height: 46px;
+    width: 58px;
+    height: 58px;
     flex-shrink: 0;
     cursor: pointer;
     display: flex;
-    align-items: center;      
-    justify-content: center;  
-    background-color: rgba(0, 0, 0, 0.6); 
-    border-radius: 12px; 
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
 }
 
-#burger-menu img { 
-    width: 26px; 
-    height: auto; 
-    pointer-events: none; 
+#burger-menu img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    pointer-events: none;
 }
 
-/* 3. 展開項目包裹層（向左伸展） */
+/* 音量圖示緊貼在選單圖示旁；預設展開 */
 #menu-items-wrapper {
     display: flex;
-    gap: 8px;
-    overflow: hidden;
-    max-width: 0; 
-    opacity: 0;
-    transition: max-width 0.3s ease-in-out, opacity 0.2s ease;
+    gap: 10px;
+    overflow: visible;
+    max-width: 100px;
+    opacity: 1;
+    transition: opacity 0.2s ease, max-width 0.25s ease;
     white-space: nowrap;
     align-items: center;
 }
 
-/* 4. 開啟時展開選單 */
-#menu-items-wrapper.open { 
-    max-width: 200px;
+#menu-items-wrapper.open {
+    max-width: 100px;
     opacity: 1;
 }
 
 .nav-item {
-    background-color: rgba(0, 0, 0, 0.7); 
+    position: relative;
+    background: transparent !important;
     color: white;
-    width: 42px;
-    height: 42px;
+    width: 54px;
+    height: 54px;
     flex-shrink: 0;
-    border-radius: 10px;
+    border-radius: 0 !important;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border: 0 !important;
+}
+
+.nav-item img {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* 靜音時以斜線劃過音量圖示，不加底色 */
+#volume-btn.muted::after {
+    content: "";
+    position: absolute;
+    width: 58px;
+    height: 4px;
+    left: 50%;
+    top: 50%;
+    background: #ff4545;
+    border-radius: 3px;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    pointer-events: none;
+}
+
+/* 跳過鍵固定在最右上角，與左側選單分開 */
+#skip-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 200000;
+    width: 62px;
+    height: 62px;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+#skip-btn img {
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* 按選單圖示即可收回音量鍵與右上角跳過鍵 */
+#game-container.menu-collapsed #menu-items-wrapper,
+#game-container.menu-collapsed #skip-btn {
     opacity: 0;
-    transform: translateX(-10px); /* 💡 改為 -10px，讓圖示開展時從左邊向右微調滑入 */
-    transition: all 0.2s ease;
-    border: 1.5px solid #444;
+    pointer-events: none;
+    visibility: hidden;
 }
 
-#menu-items-wrapper.open .nav-item { 
-    opacity: 1; 
-    transform: translateX(0); 
-}
-
-/* 6. 子項目圖示 */
-.nav-item img { 
-    width: 20px; 
-    height: auto; 
-    pointer-events: none; 
-}
-
-/* 7. 點擊後的激活狀態（橘色） */
-.nav-item.active { 
-    background-color: #ffa033; 
-    border-color: #ffa033; 
-}
 
     #問名字 {
     display: none;
@@ -1701,18 +1738,17 @@ img { max-width:100%; }
     <div id="game-container">
         <!-- ⭕ 必須直接放在 body 第一層，不要包在任何 div 裡面 -->
     <div class="menu-container">
-        <div id="burger-menu" onclick="event.stopPropagation(); toggleMenu(event);">
+        <div id="burger-menu" role="button" aria-label="收合或展開選單" onclick="event.stopPropagation(); toggleMenu(event);">
             <img src="./pct/2選單.webp" alt="選單">
         </div>
-        <div id="menu-items-wrapper">
-            <!-- 找到這段並替換 -->
-                <div class="nav-item" onclick="event.stopPropagation(); skipToOption();">
-                    <img src="./pct/2跳過.webp" alt="跳過">
-                </div>
-                <div class="nav-item" id="volume-btn" onclick="event.stopPropagation(); toggleBGM(this);">
-                    <img src="./pct/2音量.webp" alt="音量">
-                </div>
+        <div id="menu-items-wrapper" class="open">
+            <div class="nav-item" id="volume-btn" aria-label="切換音樂" onclick="event.stopPropagation(); toggleBGM(this);">
+                <img src="./pct/2音量.webp" alt="音量">
+            </div>
         </div>
+    </div>
+    <div id="skip-btn" role="button" aria-label="跳過" onclick="event.stopPropagation(); skipToOption();">
+        <img src="./pct/2跳過.webp" alt="跳過">
     </div>
 
     <!-- 右上角開發者工具：快速進入各星球劇情 -->
@@ -6148,8 +6184,8 @@ function enterGameAnimation() {
 
         function toggleMenu(e) {
             if (e) e.stopPropagation();
-            const wrapper = document.getElementById("menu-items-wrapper");
-            if (wrapper) wrapper.classList.toggle("open");
+            const gameContainer = document.getElementById("game-container");
+            if (gameContainer) gameContainer.classList.toggle("menu-collapsed");
         }
 
         function startTypingEffect(text, callback) {
@@ -7685,13 +7721,9 @@ function toggleBGM(btnEl) {
         bgmPlayer.muted = window.isMuted;
     }
 
-    // 更新按鈕高亮樣式
+    // 靜音時在音量圖示上加斜線；取消靜音時移除斜線。
     if (btnEl) {
-        if (window.isMuted) {
-            btnEl.classList.add('active'); // 靜音時顯示橘色高亮
-        } else {
-            btnEl.classList.remove('active'); // 取消靜音恢復預設
-        }
+        btnEl.classList.toggle('muted', window.isMuted);
     }
 }
     </script>
