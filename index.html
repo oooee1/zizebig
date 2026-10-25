@@ -2032,7 +2032,7 @@ img { max-width:100%; }
                     type="text" 
                     id="player-name-input" 
                     class="ask-input" 
-                    placeholder="3個字以內" 
+                    placeholder="3個字" 
                     maxlength="3"
                     onclick="event.stopPropagation();"
                     onmousedown="event.stopPropagation(); this.focus();"
@@ -7532,12 +7532,20 @@ if (scene.bgm) {
         overlay.querySelector("#skip-confirm-yes").addEventListener("click", (event) => {
             event.stopPropagation();
 
-            // 好奇星詢問名字的場景不可跳過，必須先完成名字輸入。
+            // 跳過時若名字詢問場景（ID 8）還在後面，先跳到該場景，不可略過名字詢問。
+            const nameSceneIndex = storyScript.findIndex((scene, index) =>
+                index > currentStep && Number(scene.id) === 8
+            );
             const currentScene = storyScript[currentStep];
-            if (currentScene && Number(currentScene.id) === 8) {
+            if (nameSceneIndex !== -1) {
                 close();
-                window.alert("請先輸入名字，再繼續劇情。");
-                showInputBox();
+                if (window.myTypingTimer) {
+                    clearInterval(window.myTypingTimer);
+                    window.myTypingTimer = null;
+                }
+                window.isTyping = false;
+                currentStep = nameSceneIndex;
+                renderScene(currentStep);
                 return;
             }
 
