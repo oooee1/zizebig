@@ -1088,10 +1088,11 @@
   object-fit: contain;
 }
 
-/* 第二張分鏡的角色層：以背景圖的 Alpha 透明區域作為遮罩。 */
+/* 第二張分鏡的角色層：不套用背景 Alpha 遮罩，避免角色被遮掉；整張角色圖往下移。 */
 #comic-box .comic-layer-mask-role {
-  /* 第二張漫畫的角色往下移 30px，使用獨立 translate 避免干擾原本置中與動畫 transform。 */
-  translate: 0 30px;
+  translate: 0 60px;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
