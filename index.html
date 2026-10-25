@@ -1088,11 +1088,24 @@
   object-fit: contain;
 }
 
-/* 角色仍可往下移動，但以固定在背景上的矩形視窗裁切，不使用背景 Alpha 遮罩。 */
-#comic-box .comic-layer-mask-role {
-  translate: 0 60px;
-  clip-path: inset(0);
-  -webkit-clip-path: inset(0);
+/* 裁切視窗會與背景漫畫實際顯示的矩形完全重合。 */
+#comic-box .comic-role-clip {
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* 角色圖縮放到背景漫畫的同一畫布，再往下移；超出背景矩形的部分由外層裁掉。 */
+#comic-box .comic-role-clip .comic-layer-mask-role {
+  position: absolute;
+  top: calc(50% + 60px);
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
   -webkit-mask-image: none !important;
   mask-image: none !important;
 }
@@ -6579,13 +6592,30 @@ if (scene.bgm) {
                 layer.alt = "";
                 layer.className = "comic-layer comic-layer-extra anim-fade-in-up";
 
-                // 角色圖使用矩形裁切，不使用背景圖 Alpha 遮罩；角色往下移 60px。
+                // 角色放進與背景漫畫實際顯示範圍相同大小的裁切視窗。
                 if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
                     layer.classList.add("comic-layer-mask-role");
-                    layer.style.clipPath = "inset(0)";
-                    layer.style.webkitClipPath = "inset(0)";
+                    const clip = document.createElement("div");
+                    clip.className = "comic-role-clip";
+                    const placeClipOnBackground = () => {
+                        const bg = comicBox.querySelector(".comic-layer:not(.comic-layer-mask-role)");
+                        if (!bg) return;
+                        const bgRect = bg.getBoundingClientRect();
+                        const boxRect = comicBox.getBoundingClientRect();
+                        clip.style.left = (bgRect.left - boxRect.left) + "px";
+                        clip.style.top = (bgRect.top - boxRect.top) + "px";
+                        clip.style.width = bgRect.width + "px";
+                        clip.style.height = bgRect.height + "px";
+                    };
+                    placeClipOnBackground();
+                    const bgForClip = comicBox.querySelector(".comic-layer:not(.comic-layer-mask-role)");
+                    if (bgForClip && !bgForClip.complete) bgForClip.addEventListener("load", placeClipOnBackground, { once: true });
+                    window.addEventListener("resize", placeClipOnBackground);
+                    clip.appendChild(layer);
+                    comicBox.appendChild(clip);
+                } else {
+                    comicBox.appendChild(layer);
                 }
-                comicBox.appendChild(layer);
             }
             shownPaths.push(path);
         });
@@ -6599,7 +6629,7 @@ if (scene.bgm) {
             comicBox.style.display = "none";
             comicBox.className = "";
             comicBox.removeAttribute("data-comic-paths");
-            comicBox.querySelectorAll(".comic-layer-extra").forEach(layer => layer.remove());
+            comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
         }
         if (comicImg) {
             comicImg.className = "";
