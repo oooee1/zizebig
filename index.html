@@ -1088,17 +1088,13 @@
   object-fit: contain;
 }
 
-/* 第二張分鏡的角色層：不套用背景 Alpha 遮罩，避免角色被遮掉；整張角色圖往下移。 */
+/* 角色仍可往下移動，但以固定在背景上的矩形視窗裁切，不使用背景 Alpha 遮罩。 */
 #comic-box .comic-layer-mask-role {
   translate: 0 60px;
+  clip-path: inset(0);
+  -webkit-clip-path: inset(0);
   -webkit-mask-image: none !important;
   mask-image: none !important;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
 }
 
 /* --------------------------------------------------
@@ -6583,9 +6579,11 @@ if (scene.bgm) {
                 layer.alt = "";
                 layer.className = "comic-layer comic-layer-extra anim-fade-in-up";
 
-                // 第二張角色不套用背景遮罩，避免立繪被裁切；CSS 統一往下移。
+                // 角色圖使用矩形裁切，不使用背景圖 Alpha 遮罩；角色往下移 60px。
                 if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
                     layer.classList.add("comic-layer-mask-role");
+                    layer.style.clipPath = "inset(0)";
+                    layer.style.webkitClipPath = "inset(0)";
                 }
                 comicBox.appendChild(layer);
             }
