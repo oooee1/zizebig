@@ -7533,51 +7533,36 @@ if (scene.bgm) {
             event.stopPropagation();
 
             const currentScene = storyScript[currentStep];
+            const hasScore = scene => scene &&
+                Array.isArray(scene.options) &&
+                scene.options.some(option => option.score && Object.keys(option.score).length > 0);
 
-            // 先檢查目前題目是否已作答；不可因為名字場景在後面，就直接跳過這一題。
-            const currentIsScoredQuestion = currentScene &&
-                Array.isArray(currentScene.options) &&
-                currentScene.options.some(option => option.score && Object.keys(option.score).length > 0);
-            const currentChoiceMade = !!(currentScene && scoredSceneIds.has(currentScene.id));
-            if (currentIsScoredQuestion && !currentChoiceMade) {
+            // 如果目前正停在尚未作答的計分題，不可以用跳過直接越過它。
+            if (hasScore(currentScene) && !scoredSceneIds.has(currentScene.id)) {
                 close();
                 window.alert("尚未選擇當前的選項");
                 return;
             }
 
-            // 目前場景已符合跳過條件後，若名字詢問場景（ID 8）還在後面，再前往名字詢問。
-            const nameSceneIndex = storyScript.findIndex((scene, index) =>
-                index > currentStep && Number(scene.id) === 8
+            // 名字場景（ID 8）也視為一個問題目的地。
+            // 依劇情原本的順序尋找下一個「計分問題或問名字」，不能優先跳到名字場景。
+            const nextDestinationIndex = storyScript.findIndex((scene, index) =>
+                index > currentStep && (Number(scene.id) === 8 || hasScore(scene))
             );
-            if (nameSceneIndex !== -1) {
-                close();
-                if (window.myTypingTimer) {
-                    clearInterval(window.myTypingTimer);
-                    window.myTypingTimer = null;
-                }
-                window.isTyping = false;
-                currentStep = nameSceneIndex;
-                renderScene(currentStep);
-                return;
-            }
 
-            const nextQuestionIndex = storyScript.findIndex((scene, index) =>
-                index > currentStep &&
-                Array.isArray(scene.options) &&
-                scene.options.some(option => option.score && Object.keys(option.score).length > 0)
-            );
-            if (nextQuestionIndex === -1) {
+            if (nextDestinationIndex === -1) {
                 close();
                 window.alert("後面沒有可以前往的問題了。");
                 return;
             }
+
             close();
             if (window.myTypingTimer) {
                 clearInterval(window.myTypingTimer);
                 window.myTypingTimer = null;
             }
             window.isTyping = false;
-            currentStep = nextQuestionIndex;
+            currentStep = nextDestinationIndex;
             renderScene(currentStep);
         });
         overlay.addEventListener("click", (event) => {
