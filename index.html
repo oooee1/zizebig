@@ -960,6 +960,13 @@
 }
 
 /* 按選單圖示即可收回音量鍵與右上角跳過鍵 */
+#game-container #menu-items-wrapper,
+#game-container #skip-btn {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
 #game-container.menu-collapsed #menu-items-wrapper,
 #game-container.menu-collapsed #skip-btn {
     opacity: 0;
