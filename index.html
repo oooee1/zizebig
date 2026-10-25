@@ -964,7 +964,7 @@
 #game-container #skip-btn {
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+    transition: none !important;
 }
 
 #game-container.menu-collapsed #menu-items-wrapper,
@@ -972,6 +972,33 @@
     opacity: 0;
     pointer-events: none;
     visibility: hidden;
+    transition: none !important;
+}
+
+/* 手機觸控時避免瀏覽器預設的白色點擊高亮 */
+#burger-menu,
+.nav-item,
+#skip-btn {
+    -webkit-tap-highlight-color: transparent !important;
+    tap-highlight-color: transparent;
+    outline: none;
+}
+
+#burger-menu:focus,
+#burger-menu:focus-visible,
+.nav-item:focus,
+.nav-item:focus-visible,
+#skip-btn:focus,
+#skip-btn:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* 保留按壓動畫，但不改變圖示顏色或亮度 */
+#burger-menu:active,
+.nav-item:active,
+#skip-btn:active {
+    filter: none !important;
 }
 
 
