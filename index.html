@@ -472,6 +472,25 @@
   transform-origin: bottom center;
 }
 
+/* 爽快星慌張：更焦急的連續急抖，帶一點慌亂的上下晃動 */
+.anim-panicked img {
+  animation: panicked-rush 0.9s cubic-bezier(.36,.07,.19,.97) 1 both !important;
+  transform-origin: bottom center;
+}
+@keyframes panicked-rush {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  8% { transform: translate(-4px, -2px) rotate(-3deg) scale(1.015, 0.99); }
+  16% { transform: translate(5px, 1px) rotate(3.5deg) scale(0.99, 1.02); }
+  24% { transform: translate(-6px, -3px) rotate(-4deg) scale(1.02, 0.98); }
+  32% { transform: translate(6px, 2px) rotate(4deg) scale(0.99, 1.02); }
+  42% { transform: translate(-5px, -1px) rotate(-3deg) scale(1.015, 0.99); }
+  52% { transform: translate(5px, 2px) rotate(3deg) scale(0.99, 1.015); }
+  62% { transform: translate(-4px, -2px) rotate(-2.5deg); }
+  72% { transform: translate(4px, 1px) rotate(2.5deg); }
+  82% { transform: translate(-2px, 0) rotate(-1.5deg); }
+  92% { transform: translate(2px, 0) rotate(1deg); }
+}
+
 .anim-cry img {
   animation: cry-once 0.6s ease-in-out forwards !important;
   transform-origin: center center;
@@ -6763,7 +6782,7 @@ if (scene.bgm) {
     if (!charElement) return;
 
     // 清除舊動畫 Class 並重置
-    charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-passion-normal', 'anim-crowned-king');
+    charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-panicked', 'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-passion-normal', 'anim-crowned-king');
     void charElement.offsetWidth; // 強制重繪 (Reflow)
 
     // 依角色加入對應的單次動畫；已由 playCuriousAnim / playHappyJumpAnim 處理的角色不重複加入。
@@ -6797,10 +6816,13 @@ if (scene.bgm) {
             charElement.classList.add('anim-passion-normal');
             break;
 
+        case '爽快星慌張':
+            charElement.classList.add('anim-panicked');
+            break;
+
         case '星辰苦惱':
         case '同情星苦惱':
         case '爽快星害怕':
-        case '爽快星慌張':
             charElement.classList.add('anim-depress');
             break;
 
@@ -7578,7 +7600,7 @@ if (scene.bgm) {
 
         // 清除角色動畫，避免下次登場時殘留上一幕的狀態。
         el.classList.remove(
-            'anim-bounce', 'anim-sway', 'anim-depress',
+            'anim-bounce', 'anim-sway', 'anim-depress', 'anim-panicked',
             'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-passion-normal', 'anim-crowned-king',
             'curious-pop', 'slide-in-right', 'scared-bounce',
             'curious-bounce', 'curious-wiggle', 'nod-head'
