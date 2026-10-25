@@ -7536,11 +7536,9 @@ if (scene.bgm) {
             const currentIsScoredQuestion = currentScene &&
                 Array.isArray(currentScene.options) &&
                 currentScene.options.some(option => option.score && Object.keys(option.score).length > 0);
-            const currentChoiceMade = currentScene && (
-                currentScene.selectedOption !== undefined ||
-                currentScene.chosenOption !== undefined ||
-                currentScene.choiceSelected === true
-            );
+            // 選項確認流程使用 pendingPuzzleConfirmation；只有玩家已點選目前題目的拼圖後，才允許繼續。
+            const currentChoiceMade = !!pendingPuzzleConfirmation ||
+                (currentScene && scoredSceneIds.has(currentScene.id));
             if (currentIsScoredQuestion && !currentChoiceMade) {
                 close();
                 window.alert("尚未選擇當前的選項");
