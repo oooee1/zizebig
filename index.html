@@ -6583,11 +6583,9 @@ if (scene.bgm) {
                 layer.alt = "";
                 layer.className = "comic-layer comic-layer-extra anim-fade-in-up";
 
-                // 第二張角色需保留背景圖 Alpha 遮罩，並透過 CSS 往下移 30px。
+                // 第二張角色不套用背景遮罩，避免立繪被裁切；CSS 統一往下移。
                 if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
                     layer.classList.add("comic-layer-mask-role");
-                    layer.style.webkitMaskImage = `url("${backgroundMaskPath}")`;
-                    layer.style.maskImage = `url("${backgroundMaskPath}")`;
                 }
                 comicBox.appendChild(layer);
             }
