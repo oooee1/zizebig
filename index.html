@@ -6431,7 +6431,7 @@ if (!hasScoredOptions) {
         const sceneText = typeof scene.text === 'string' ? scene.text : '';
         const isImpact = [78, 136.1, 205.1].includes(currentSceneId);
         const isNormalShake = sceneText.includes("(背景搖晃)") ||
-                             [0, 76, 76.1, 77].includes(currentSceneId);
+                             [0, 76, 76.1, 77, 138].includes(currentSceneId);
 
         if (isImpact) bgContainer.classList.add('bg-impact-shake');
         else if (isNormalShake) bgContainer.classList.add('is-shaking');
