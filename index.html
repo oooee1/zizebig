@@ -2073,7 +2073,8 @@ img { max-width:100%; }
 <div id="熱情星崩潰" class="角色圖 全熱情星"><img data-src="./pct/熱情星崩潰.webp" alt="熱情星崩潰"></div>
 <div id="熱情星尷尬" class="角色圖 全熱情星"><img data-src="./pct/熱情星尷尬.webp" alt="熱情星尷尬"></div>
             
-            <!-- 居民立繪：居民們群體不需要立繪，其餘個別居民依劇情顯示 -->
+            <!-- 居民群體使用獨立「居民們」立繪；個別居民依劇情顯示 -->
+            <div id="居民們" class="角色圖 全居民"><img data-src="./pct/居民們.webp" alt="居民們"></div>
             <div id="憤怒的居民" class="角色圖 全居民"><img data-src="./pct/憤怒的居民很憤怒.webp" alt="憤怒的居民"></div>
             <div id="憤怒的居民不憤怒" class="角色圖 全居民"><img data-src="./pct/憤怒的居民不憤怒.webp" alt="憤怒的居民不憤怒"></div>
             <div id="憤怒的居民高潮" class="角色圖 全居民"><img data-src="./pct/憤怒的居民高潮（看到熱情星戴上王冠）.webp" alt="憤怒的居民高潮"></div>
@@ -6834,10 +6835,10 @@ if (scene.bgm) {
 
     if (!hasScoredOptions && !isComicMode && scene.characters && Array.isArray(scene.characters)) {
         scene.characters.forEach(charName => {
-            // 只把爽快星指定的居民群體／甲乙立繪統一使用「居民」。
-            // 熱情星居民與其他有情緒／表情差異的居民，全部保留原本各自的立繪。
+            // 「居民們」使用獨立群體立繪；居民A/B、居民甲/乙才沿用「居民」立繪。
+            // 熱情星居民及其他有情緒／表情差異的居民一律保留原本立繪。
             const isHotPassionVillagerScene = currentSceneId >= 221 && currentSceneId <= 236;
-            const sharedResidentAliases = ["居民們", "居民A", "居民B", "居民甲", "居民乙"];
+            const sharedResidentAliases = ["居民A", "居民B", "居民甲", "居民乙"];
             const displayCharName = !isHotPassionVillagerScene && sharedResidentAliases.includes(charName)
                 ? "居民"
                 : charName;
