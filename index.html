@@ -6424,8 +6424,17 @@ function enterGameAnimation() {
                 }
 
                 if (index < formattedText.length) {
+                    // 爽快星送信小遊戲介紹：兩輪的操作關鍵詞統一使用純黃色。
+                    const highlightTerm = currentSceneId === 177 ? "顏色"
+                        : currentSceneId === 178 ? "圖案" : "";
+                    if (highlightTerm && formattedText.startsWith(highlightTerm, index)) {
+                        textTag.innerHTML += '<span style="color:#FFFF00">';
+                    }
                     textTag.innerHTML += formattedText.charAt(index);
                     index++;
+                    if (highlightTerm && index > 0 && formattedText.slice(index - 1 - highlightTerm.length, index - 1) === highlightTerm) {
+                        textTag.innerHTML += '</span>';
+                    }
                 } else {
                     clearInterval(window.myTypingTimer);
                     window.myTypingTimer = null;
