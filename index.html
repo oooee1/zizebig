@@ -6432,7 +6432,7 @@ function enterGameAnimation() {
                     }
                     textTag.innerHTML += formattedText.charAt(index);
                     index++;
-                    if (highlightTerm && index > 0 && formattedText.slice(index - 1 - highlightTerm.length, index - 1) === highlightTerm) {
+                    if (highlightTerm && index > 0 && formattedText.slice(index - highlightTerm.length, index) === highlightTerm) {
                         textTag.innerHTML += '</span>';
                     }
                 } else {
