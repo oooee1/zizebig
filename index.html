@@ -757,11 +757,18 @@
 .name-sympathy { fill: #f2aeff; }
 .name-passionate { fill: #ff8b8b; }
 
-/* 尚未有專屬名字標籤的居民、父母與其他 NPC 共用動態文字；依角色設定各自顏色 */
+/* 居民與 NPC 的名字顏色，依各自立繪／說話人名稱區分 */
 .name-npc { fill: #ffffff; }
 #page1.speaker-residents .name-npc { fill: #ffcf70; }
-#page1.speaker-resident-anxious .name-npc { fill: #ff9a8f; }
-#page1.speaker-resident-panicked .name-npc { fill: #9de8ff; }
+#page1.speaker-resident-angry .name-npc { fill: #F06F91; } /* 憤怒的居民：偏紅粉 */
+#page1.speaker-minister .name-npc { fill: #A7DDD2; } /* 大臣：淺藍綠 */
+#page1.speaker-startled .name-npc,
+#page1.speaker-panicked-scared .name-npc { fill: #8A929B; } /* 嚇到／恐慌：灰色 */
+#page1.speaker-panicked-no-mouth .name-npc { fill: #A88BE8; } /* 恐慌的居民沒有嘴巴：紫色 */
+#page1.speaker-startled-prince .name-npc { fill: #A8C95A; } /* 嚇到的居民看到王子：黃綠色 */
+#page1.speaker-resident-panicked .name-npc { fill: #36AFC1; } /* 慌張的居民：海藍色 */
+#page1.speaker-resident-anxious .name-npc { fill: #55C8B2; } /* 煩躁的居民：偏綠水藍 */
+#page1.speaker-resident-afraid .name-npc { fill: #65B5E8; } /* 害怕的居民：比 #3994D7 淺 */
 #page1.speaker-resident-a .name-npc,
 #page1.speaker-resident-b .name-npc { fill: #ffcf70; }
 #page1.speaker-mom .name-npc { fill: #DDBBC8; } /* 母親：比 D8BCC4 稍微粉一點 */
@@ -6796,10 +6803,15 @@ if (!hasScoredOptions) {
             else {
                 const normalized = displayName.replace(/\s+/g, "");
                 if (normalized.includes("居民們")) pageEl.classList.add("speaker-residents", "speaker-npc");
+                else if (normalized.includes("嚇到的居民看到王子")) pageEl.classList.add("speaker-startled-prince", "speaker-npc");
+                else if (normalized.includes("嚇到的居民嚇到了")) pageEl.classList.add("speaker-startled", "speaker-npc");
+                else if (normalized.includes("恐慌的居民沒有嘴巴")) pageEl.classList.add("speaker-panicked-no-mouth", "speaker-npc");
+                else if (normalized.includes("恐慌的居民很恐慌")) pageEl.classList.add("speaker-panicked-scared", "speaker-npc");
+                else if (normalized.includes("憤怒的居民")) pageEl.classList.add("speaker-resident-angry", "speaker-npc");
+                else if (normalized.includes("大臣")) pageEl.classList.add("speaker-minister", "speaker-npc");
+                else if (normalized.includes("害怕的居民")) pageEl.classList.add("speaker-resident-afraid", "speaker-npc");
                 else if (normalized.includes("煩躁的居民")) pageEl.classList.add("speaker-resident-anxious", "speaker-npc");
                 else if (normalized.includes("慌張的居民")) pageEl.classList.add("speaker-resident-panicked", "speaker-npc");
-                else if (normalized.includes("憤怒的居民")) pageEl.classList.add("speaker-resident-a", "speaker-npc");
-                else if (normalized.includes("害怕的居民")) pageEl.classList.add("speaker-resident-b", "speaker-npc");
                 else if (normalized.includes("居民甲")) pageEl.classList.add("speaker-resident-a", "speaker-npc");
                 else if (normalized.includes("居民乙")) pageEl.classList.add("speaker-resident-b", "speaker-npc");
                 else if (normalized.includes("母親") || normalized.includes("媽媽")) pageEl.classList.add("speaker-mom", "speaker-npc");
