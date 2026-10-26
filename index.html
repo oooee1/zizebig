@@ -1778,13 +1778,13 @@ img { max-width:100%; }
         #developer-tools-panel button:active { background: #51401d; }
     
         /* HOTFIX：題目標題只在拼圖選擇首頁顯示；確認選項頁完全隱藏。
-           標題加大、整體靠右，並為字體頂部預留空間，避免切掉字頭。 */
+           加寬標題可用範圍，減少不必要的自動換行。 */
         #page1.question-choice-mode #question-title {
             display: block !important;
             z-index: 3000 !important;
-            left: auto !important;
-            right: 3% !important;
-            width: 94% !important;
+            left: 1% !important;
+            right: 1% !important;
+            width: 98% !important;
             max-height: none !important;
             height: auto !important;
             min-height: 0 !important;
