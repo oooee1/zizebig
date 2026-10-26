@@ -6633,7 +6633,7 @@ function renderScene(stepIndex) {
     // 不再從對話文字或場景 ID 自動補上「居民」等泛稱；沒有人物說話就不顯示名字。
     const rawSceneSpeaker = scene.speaker || inferredCharacterSpeaker;
     // 熱情星劇情中的「居民們」不顯示群體立繪，也不顯示說話者名稱。
-    const hideHotPassionResidentsGroup = Number(currentSceneId) >= 221 && Number(currentSceneId) <= 351 && rawSceneSpeaker === "居民們";
+    const hideHotPassionResidentsGroup = Number(currentSceneId) >= 221 && Number(currentSceneId) <= 351 && (rawSceneSpeaker === "居民們" || (Array.isArray(scene.characters) && scene.characters.includes("居民們")));
     const sceneSpeaker = hideHotPassionResidentsGroup ? "" : rawSceneSpeaker;
     const dialogueTextForDisplay = speakerPrefixMatch && sceneSpeaker
         ? rawDialogueText.slice(speakerPrefixMatch[0].length)
@@ -6786,6 +6786,7 @@ if (!hasScoredOptions) {
                 else if (normalized.includes("嚇到的居民嚇到了") || normalized === "嚇到的居民") pageEl.classList.add("speaker-startled", "speaker-npc");
                 else if (normalized.includes("恐慌的居民沒有嘴巴")) pageEl.classList.add("speaker-panicked-no-mouth", "speaker-npc");
                 else if (normalized.includes("恐慌的居民很恐慌")) pageEl.classList.add("speaker-panicked-scared", "speaker-npc");
+                else if (normalized.includes("恐慌的居民")) pageEl.classList.add("speaker-panicked-scared", "speaker-npc");
                 else if (normalized.includes("憤怒的居民")) pageEl.classList.add("speaker-resident-angry", "speaker-npc");
                 else if (normalized.includes("大臣")) pageEl.classList.add("speaker-minister", "speaker-npc");
                 else if (normalized.includes("害怕的居民")) pageEl.classList.add("speaker-resident-afraid", "speaker-npc");
