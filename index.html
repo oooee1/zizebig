@@ -346,11 +346,12 @@
             height: auto;
         }
 
-        /* 第 299 幕居民們群體立繪：放大 2.6 倍，向畫面中央右移 20px */
-        #page1 #居民們 {
+        /* 爽快星第 163 幕居民們群體立繪：放大 2.6 倍並向畫面中央移 20px */
+        #page1.scene-residents-163 #居民們 {
             transform: translateX(20px) scale(2.6) !important;
             transform-origin: bottom left;
         }
+
 
         #page1 .角色圖.全爸媽 {
             transform: translateY(30px) scale(0.9);
@@ -4075,6 +4076,7 @@ img { max-width:100%; }
     },
     {
         id: 163,
+        speaker: "居民們",
         text: "叫你們管事的出來！",
         background: "爽快星郵局",
         characters: ["居民們"],
@@ -5860,10 +5862,9 @@ img { max-width:100%; }
     },
     {
         "id": 299,
-        "speaker": "居民們",
         "text": "太好了～恭喜國王！",
         "characters": [
-            "居民們"
+            "星辰微笑"
         ],
         background: "皇宮"
     },
@@ -6763,6 +6764,7 @@ if (!hasScoredOptions) {
             : sceneSpeaker;
 
         if (pageEl) {
+            if (Number(currentSceneId) === 163 && displayName.includes("居民們")) pageEl.classList.add("scene-residents-163");
             if (displayName.includes("路人好奇星")) pageEl.classList.add("speaker-curious-random-person");
             else if (displayName.includes("好奇星們")) pageEl.classList.add("speaker-curious-group");
             else if (displayName.includes("星辰") || sceneSpeaker === "玩家") pageEl.classList.add("speaker-star");
