@@ -773,12 +773,13 @@
 #page1.speaker-resident-angry .name-npc { fill: #F06F91; } /* 憤怒的居民：偏紅粉 */
 #page1.speaker-minister .name-npc { fill: #A7DDD2; } /* 大臣：淺藍綠 */
 #page1.speaker-startled .name-npc,
-#page1.speaker-panicked-scared .name-npc { fill: #8A929B; } /* 嚇到／恐慌：灰色 */
+#page1.speaker-panicked-scared .name-npc { fill: #A88BE8; } /* 恐慌的居民：紫色 */
 #page1.speaker-panicked-no-mouth .name-npc { fill: #A88BE8; } /* 恐慌的居民沒有嘴巴：紫色 */
 #page1.speaker-startled-prince .name-npc { fill: #A8C95A; } /* 嚇到的居民看到王子：黃綠色 */
-#page1.speaker-resident-panicked .name-npc { fill: #36AFC1; } /* 慌張的居民：海藍色 */
+#page1.speaker-startled .name-npc { fill: #56B84A; } /* 嚇到的居民：綠色 */
+#page1.speaker-resident-panicked .name-npc { fill: #168DE0; } /* 慌張的居民：互換後提高飽和度 */
 #page1.speaker-resident-anxious .name-npc { fill: #55C8B2; } /* 煩躁的居民：偏綠水藍 */
-#page1.speaker-resident-afraid .name-npc { fill: #65B5E8; } /* 害怕的居民：比 #3994D7 淺 */
+#page1.speaker-resident-afraid .name-npc { fill: #248A9A; } /* 害怕的居民：互換後降低明度 */
 #page1.speaker-resident-a .name-npc,
 #page1.speaker-resident-b .name-npc { fill: #ffcf70; }
 #page1.speaker-mom .name-npc { fill: #DDBBC8; } /* 母親：比 D8BCC4 稍微粉一點 */
@@ -6630,7 +6631,10 @@ function renderScene(stepIndex) {
     })();
     // 只有劇情明確設定的 speaker，或本幕實際出現的角色立繪，才能決定說話人。
     // 不再從對話文字或場景 ID 自動補上「居民」等泛稱；沒有人物說話就不顯示名字。
-    const sceneSpeaker = scene.speaker || inferredCharacterSpeaker;
+    const rawSceneSpeaker = scene.speaker || inferredCharacterSpeaker;
+    // 熱情星劇情中的「居民們」不顯示群體立繪，也不顯示說話者名稱。
+    const hideHotPassionResidentsGroup = Number(currentSceneId) >= 221 && Number(currentSceneId) <= 351 && rawSceneSpeaker === "居民們";
+    const sceneSpeaker = hideHotPassionResidentsGroup ? "" : rawSceneSpeaker;
     const dialogueTextForDisplay = speakerPrefixMatch && sceneSpeaker
         ? rawDialogueText.slice(speakerPrefixMatch[0].length)
         : rawDialogueText;
@@ -6779,7 +6783,7 @@ if (!hasScoredOptions) {
                 const normalized = displayName.replace(/\s+/g, "");
                 if (normalized.includes("居民們")) pageEl.classList.add("speaker-residents", "speaker-npc");
                 else if (normalized.includes("嚇到的居民看到王子")) pageEl.classList.add("speaker-startled-prince", "speaker-npc");
-                else if (normalized.includes("嚇到的居民嚇到了")) pageEl.classList.add("speaker-startled", "speaker-npc");
+                else if (normalized.includes("嚇到的居民嚇到了") || normalized === "嚇到的居民") pageEl.classList.add("speaker-startled", "speaker-npc");
                 else if (normalized.includes("恐慌的居民沒有嘴巴")) pageEl.classList.add("speaker-panicked-no-mouth", "speaker-npc");
                 else if (normalized.includes("恐慌的居民很恐慌")) pageEl.classList.add("speaker-panicked-scared", "speaker-npc");
                 else if (normalized.includes("憤怒的居民")) pageEl.classList.add("speaker-resident-angry", "speaker-npc");
@@ -6822,6 +6826,8 @@ if (scene.bgm) {
 
     if (!hasScoredOptions && !isComicMode && scene.characters && Array.isArray(scene.characters)) {
         scene.characters.forEach(charName => {
+            // 熱情星劇情中的「居民們」不顯示任何群體立繪。
+            if (hideHotPassionResidentsGroup && charName === "居民們") return;
             // 「居民們」使用獨立群體立繪；居民A/B、居民甲/乙才沿用「居民」立繪。
             // 熱情星居民及其他有情緒／表情差異的居民一律保留原本立繪。
             const isHotPassionVillagerScene = currentSceneId >= 221 && currentSceneId <= 236;
