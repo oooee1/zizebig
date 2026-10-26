@@ -6472,8 +6472,8 @@ function renderScene(stepIndex) {
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
-    // 無對話場景使用淡入過渡，讓純背景與漫畫切換更自然。
-    const shouldFadeQuietScene = !hasText;
+    // 所有場景切換都使用淡入過渡，不再限定為沒有對話的場景。
+    const shouldFadeQuietScene = true;
     // 對話若以「角色名稱：」開頭，發言者以文字標示為準，不沿用上一幕角色名稱。
     const rawDialogueText = typeof scene.text === "string" ? scene.text.replace(/\/\/n|\\n/g, String.fromCharCode(10)) : "";
     const speakerPrefixMatch = rawDialogueText.match(/^([^：:]{1,12})[：:]\s*/);
