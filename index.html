@@ -484,6 +484,18 @@
   transform-origin: bottom center;
 }
 
+/* 「能不能幫我們解決星球上的棉花！」：一群好奇星從小到大彈出登場 */
+@keyframes cotton-group-pop-in {
+  0% { opacity: 0; transform: translateY(36px) scale(0.12); }
+  55% { opacity: 1; transform: translateY(-8px) scale(1.12); }
+  76% { transform: translateY(3px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+#一群好奇星.cotton-group-pop-in img {
+  animation: cotton-group-pop-in 0.58s cubic-bezier(0.2, 0.8, 0.25, 1) both !important;
+  transform-origin: bottom center;
+}
+
 .anim-sway img {
   animation: sway-once 1s ease-in-out forwards !important;
   transform-origin: bottom center;
@@ -6841,6 +6853,15 @@ if (scene.bgm) {
                 activateImages(charEl);
                 charEl.style.display = 'block';
                 updateCharacterAnimation(displayCharName);
+
+                // 只在「能不能幫我們解決星球上的棉花！」這句登場時，讓一群好奇星由小放大彈出。
+                if (Number(currentSceneId) === 25 && displayCharName === "一群好奇星") {
+                    charEl.classList.remove('cotton-group-pop-in');
+                    void charEl.offsetWidth;
+                    charEl.classList.add('cotton-group-pop-in');
+                } else {
+                    charEl.classList.remove('cotton-group-pop-in');
+                }
             }
         });
     }
