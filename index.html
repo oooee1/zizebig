@@ -1556,6 +1556,12 @@ img { max-width:100%; }
     z-index: 2005 !important;
 }
 
+/* 計分問題進場時不顯示上一幕的說話人姓名，避免名字穿到對話框後面。
+   對話框與原場景仍保留，題目介面直接從下往上疊上來。 */
+#page1.question-choice-mode .player-svg {
+    display: none !important;
+}
+
 /* 問題畫面分層進場：格紋紙先出現，背景接著進場，星辰／題目標題／藍色紙最後同步出現 */
 #page1.question-choice-mode:not(.question-animation-played) #格子條紋紙 {
     animation-delay: 0s !important;
