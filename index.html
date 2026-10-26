@@ -7520,7 +7520,7 @@ if (scene.bgm) {
 
             const overlay = document.createElement("div");
             overlay.id = "game-notice-overlay";
-            overlay.style.cssText = "position:absolute;inset:0;z-index:1000001;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;";
+            overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;animation:dialog-backdrop-fade-in .28s ease-out both;";
             overlay.innerHTML = `
                 <div role="dialog" aria-modal="true" aria-labelledby="game-notice-message" style="width:min(360px,100%);box-sizing:border-box;padding:26px 22px 20px;background:#ffb30f;border:2px solid #ffb30f;border-radius:16px 20px 15px 19px;color:#000;text-align:center;font-family:'CPTrans',sans-serif;">
                     <p id="game-notice-message" style="margin:0 0 22px;font-size:clamp(17px,4vw,20px);line-height:1.7;color:#000;"></p>
@@ -7533,7 +7533,9 @@ if (scene.bgm) {
             overlay.addEventListener("click", event => {
                 if (event.target === overlay) close();
             });
-            game.appendChild(overlay);
+            document.body.appendChild(overlay);
+            const noticeCard = overlay.querySelector("[role=\"dialog\"]");
+            if (noticeCard) noticeCard.style.animation = "dialog-card-pop-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) both";
             overlay.querySelector("#game-notice-close").focus();
         }
 
