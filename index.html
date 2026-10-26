@@ -6511,8 +6511,15 @@ function renderScene(stepIndex) {
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
-    // 所有場景切換都使用淡入過渡，不再限定為沒有對話的場景。
-    const shouldFadeQuietScene = true;
+    // 只有背景真的改變時才淡入；同一背景的連續對話不做場景過渡。
+    const requestedBackgroundId = scene.background || null;
+    const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景'))
+        .find(el => getComputedStyle(el).display !== 'none');
+    const currentlyVisibleBackgroundId = currentlyVisibleBackground ? currentlyVisibleBackground.id : null;
+    const shouldFadeQuietScene = Boolean(
+        requestedBackgroundId &&
+        requestedBackgroundId !== currentlyVisibleBackgroundId
+    );
     // 對話若以「角色名稱：」開頭，發言者以文字標示為準，不沿用上一幕角色名稱。
     const rawDialogueText = typeof scene.text === "string" ? scene.text.replace(/\/\/n|\\n/g, String.fromCharCode(10)) : "";
     const speakerPrefixMatch = rawDialogueText.match(/^([^：:]{1,12})[：:]\s*/);
@@ -6603,7 +6610,7 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle('同情星爆哭', currentSceneId === 86);
     }
 
-    // 無對話的漫畫場景也套用相同淡入過渡。
+    // 只有進入不同漫畫場景時才淡入；同一場景的對話不做過渡。
     const comicBoxForTransition = document.getElementById('comic-box');
     if (comicBoxForTransition) {
         comicBoxForTransition.classList.remove('scene-transition-fade');
