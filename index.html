@@ -7633,7 +7633,16 @@ if (scene.bgm) {
             // 如果目前正停在尚未作答的計分題，不可以用跳過直接越過它。
             if (hasScore(currentScene) && !scoredSceneIds.has(currentScene.id)) {
                 close();
-                showGameNotice("尚未選擇當前的選項！");
+
+                // 同一題第一次提醒正常提示，第二次再按跳過則顯示吐槽文字。
+                const blockedSceneKey = String(currentScene.id);
+                window.__skipBlockedAttempts = window.__skipBlockedAttempts || {};
+                window.__skipBlockedAttempts[blockedSceneKey] = (window.__skipBlockedAttempts[blockedSceneKey] || 0) + 1;
+
+                const noticeMessage = window.__skipBlockedAttempts[blockedSceneKey] >= 2
+                    ? "回答問題◡ ヽ(`Д´)ﾉ ┻━┻"
+                    : "尚未選擇當前的選項！";
+                showGameNotice(noticeMessage);
                 return;
             }
 
