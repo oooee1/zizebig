@@ -699,12 +699,15 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 沒有對話的場景切換：背景／漫畫以短暫淡入銜接，避免畫面突然跳切 */
+/* 場景切換淡入：背景、對話框與角色同時過渡；同一場景的連續對話不觸發 */
 @keyframes quiet-scene-transition {
     from { opacity: 0.35; }
     to { opacity: 1; }
 }
 .scene-transition-fade {
+    animation: quiet-scene-transition 0.42s ease-out both !important;
+}
+#page1.scene-content-transition {
     animation: quiet-scene-transition 0.42s ease-out both !important;
 }
 
@@ -6673,6 +6676,13 @@ if (!hasScoredOptions) {
                 questionTitle.style.setProperty('display', 'none', 'important');
                 questionTitle.style.removeProperty('visibility');
             }
+        }
+        // 只有背景確實切換時，才讓整個場景（包含有對話的畫面）一起過渡。
+        // 同一背景的連續台詞不重播，避免每句話都閃動。
+        pageEl.classList.remove('scene-content-transition');
+        if (shouldFadeQuietScene) {
+            void pageEl.offsetWidth;
+            pageEl.classList.add('scene-content-transition');
         }
         // 同情星哭泣分三階段：85.3 顫抖哭、85.34 大哭、86 爆哭；進入 87 後全部移除。
         pageEl.classList.toggle('同情星顫抖哭', currentSceneId === 85.3);
