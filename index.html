@@ -1544,6 +1544,27 @@ img { max-width:100%; }
     z-index: 2005 !important;
 }
 
+/* 問題畫面分層進場：格紋紙先出現，背景接著進場，星辰／題目標題／藍色紙最後同步出現 */
+#page1.question-choice-mode:not(.question-animation-played) #格子條紋紙 {
+    animation-delay: 0s !important;
+}
+#page1.question-choice-mode:not(.question-animation-played) #背景選擇 {
+    animation-delay: 0.12s !important;
+}
+#page1.question-choice-mode:not(.question-animation-played) #星辰苦惱-選項用,
+#page1.question-choice-mode:not(.question-animation-played) #question-title,
+#page1.question-choice-mode:not(.question-animation-played) #藍色紙 {
+    animation-delay: 0.26s !important;
+}
+/* 其餘問題介面元素接在背景後，避免整幕同時滑入 */
+#page1.question-choice-mode:not(.question-animation-played) #你會選擇？,
+#page1.question-choice-mode:not(.question-animation-played) #藍色拼圖,
+#page1.question-choice-mode:not(.question-animation-played) #紫色拼圖,
+#page1.question-choice-mode:not(.question-animation-played) #綠色拼圖,
+#page1.question-choice-mode:not(.question-animation-played) #粉色拼圖 {
+    animation-delay: 0.18s !important;
+}
+
 @keyframes question-ui-slide-up {
     from {
         transform: translateY(100vh);
