@@ -6823,11 +6823,23 @@ if (scene.bgm) {
 
     if (!hasScoredOptions && !isComicMode && scene.characters && Array.isArray(scene.characters)) {
         scene.characters.forEach(charName => {
-            const charEl = document.getElementById(charName);
+            // 居民群體、居民甲乙與爽快星居民對話統一使用「居民」立繪。
+            // 說話者名稱仍依 scene.speaker 顯示，不影響對話文字。
+            const residentAliases = [
+                "居民們", "居民A", "居民B", "居民甲", "居民乙",
+                "憤怒的居民", "憤怒的居民不憤怒", "憤怒的居民高潮", "憤怒的居民跨三小",
+                "煩躁的居民", "煩躁的居民不煩躁",
+                "慌張的居民", "慌張的居民看到我們", "慌張的居民有點觸動",
+                "害怕的居民", "害怕的居民有點觸動",
+                "嚇到的居民", "嚇到的居民看到王子",
+                "恐慌的居民", "恐慌的居民沒有嘴巴"
+            ];
+            const displayCharName = residentAliases.includes(charName) ? "居民" : charName;
+            const charEl = document.getElementById(displayCharName);
             if (charEl) {
                 activateImages(charEl);
                 charEl.style.display = 'block';
-                updateCharacterAnimation(charName);
+                updateCharacterAnimation(displayCharName);
             }
         });
     }
