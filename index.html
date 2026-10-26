@@ -6561,20 +6561,23 @@ function renderScene(stepIndex) {
 
     // 1. 一般劇情才切換背景；計分問題先保留上一幕畫面，讓題目介面疊上來。
 if (!hasScoredOptions) {
+    // 先記住原本正在顯示的背景，再隱藏其他背景。
+    const previousBgContainer = Array.from(document.querySelectorAll('.背景圖, .背景'))
+        .find(el => getComputedStyle(el).display !== 'none');
+
     document.querySelectorAll('.背景圖, .背景').forEach(el => {
         el.style.display = 'none';
         el.classList.remove('is-shaking', 'bg-impact-shake', 'scene-transition-fade');
     });
 
-    // 一般劇情才切換背景
-    // 只有明確指定背景時才切換；沒寫 background 就沿用上一幕的背景。
+    // 沒有指定新背景時沿用原背景；同一背景的連續對話不重播過渡。
     const currentBgId = scene.background;
-    const bgContainer = currentBgId ? document.getElementById(currentBgId) : null;
+    const bgContainer = currentBgId ? document.getElementById(currentBgId) : previousBgContainer;
 
     if (bgContainer) {
         activateImages(bgContainer);
         bgContainer.style.display = 'block';
-        if (shouldFadeQuietScene) {
+        if (shouldFadeQuietScene && previousBgContainer && previousBgContainer !== bgContainer) {
             void bgContainer.offsetWidth;
             bgContainer.classList.add('scene-transition-fade');
         }
