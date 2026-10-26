@@ -1936,6 +1936,17 @@ img { max-width:100%; }
                 -webkit-mask: none !important;
             }
         }
+        /* 問題介面：背景與四片拼圖使用完全相同的進場時間，避免一快一慢。 */
+        #page1.question-choice-mode:not(.question-animation-played) #背景選擇,
+        #page1.question-choice-mode:not(.question-animation-played) #藍色拼圖,
+        #page1.question-choice-mode:not(.question-animation-played) #紫色拼圖,
+        #page1.question-choice-mode:not(.question-animation-played) #綠色拼圖,
+        #page1.question-choice-mode:not(.question-animation-played) #粉色拼圖 {
+            animation-duration: 0.65s !important;
+            animation-delay: 0.12s !important;
+            animation-timing-function: cubic-bezier(0.2, 0.75, 0.25, 1) !important;
+        }
+
     </style>
 </head>
 
