@@ -1,0 +1,96 @@
+name: Compress listed WebP assets
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/optimize-assets.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install WebP tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y webp
+
+      - name: Compress requested assets without enlarging files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          import subprocess
+          import tempfile
+
+          roots = ["pct", "1漫畫"]
+          patterns = [
+              r"居民", r"管家", r"熱情星戴上王冠", r"熱情星尷尬",
+              r"熱情星崩潰", r"熱情星閃亮亮", r"思考", r"皇宮路上",
+              r"漫畫背景", r"郵筒", r"信"
+          ]
+          candidates = []
+          for root in roots:
+              if not os.path.isdir(root):
+                  continue
+              for base, _, names in os.walk(root):
+                  for name in names:
+                      path = os.path.join(base, name)
+                      if not name.lower().endswith(".webp"):
+                          continue
+                      if any(re.search(p, path) for p in patterns):
+                          candidates.append(path)
+
+          changed = []
+          saved = 0
+          for path in sorted(set(candidates)):
+              before = os.path.getsize(path)
+              fd, temp = tempfile.mkstemp(suffix=".webp", dir=os.path.dirname(path))
+              os.close(fd)
+              try:
+                  result = subprocess.run(
+                      ["cwebp", "-quiet", "-q", "82", "-alpha_q", "100",
+                       "-m", "6", "-mt", path, "-o", temp],
+                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+                  )
+                  if result.returncode != 0:
+                      print(f"SKIP (cwebp error): {path}: {result.stderr.strip()}")
+                      continue
+                  after = os.path.getsize(temp)
+                  if after < before:
+                      os.replace(temp, path)
+                      changed.append((path, before, after))
+                      saved += before - after
+                  else:
+                      print(f"UNCHANGED (already smaller): {path} ({before:,} bytes)")
+              finally:
+                  if os.path.exists(temp):
+                      os.remove(temp)
+
+          print("\n--- Compression summary ---")
+          print(f"Checked: {len(set(candidates))} files")
+          print(f"Optimized: {len(changed)} files")
+          print(f"Space saved: {saved:,} bytes ({saved / 1024:.1f} KiB)")
+          for path, before, after in changed:
+              print(f"{path}: {before:,} -> {after:,} bytes ({(1-after/before)*100:.1f}% smaller)")
+          PY
+
+      - name: Commit optimized assets
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No files were reduced; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pct "1漫畫"
+          git commit -m "Compress requested WebP assets [skip ci]"
+          git push
