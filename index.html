@@ -7931,6 +7931,24 @@ if (scene.bgm) {
                 window.myTypingTimer = null;
             }
             window.isTyping = false;
+
+            // 跳過時也要補上被略過劇情中的背景音樂切換，避免仍播放跳過前的舊音樂。
+            // 只處理這次跳過範圍內明確設定的 bgm；若範圍內沒有設定，就維持原本音樂。
+            let latestBGMScene = null;
+            for (let i = currentStep + 1; i <= nextDestinationIndex; i++) {
+                const candidate = storyScript[i];
+                if (candidate && Object.prototype.hasOwnProperty.call(candidate, "bgm")) {
+                    latestBGMScene = candidate;
+                }
+            }
+            if (latestBGMScene) {
+                if (typeof latestBGMScene.bgm === "string" && latestBGMScene.bgm) {
+                    playBGM(latestBGMScene.bgm);
+                } else if (latestBGMScene.bgm === null) {
+                    fadeOutBGM();
+                }
+            }
+
             currentStep = nextDestinationIndex;
             renderScene(currentStep);
         });
