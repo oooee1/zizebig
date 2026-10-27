@@ -1992,12 +1992,12 @@ img { max-width:100%; }
     .wire-line-yellow { stroke:#ffd83d; }
     .wire-line-red { stroke:#ff4e4e; }
     .wire-line-blue { stroke:#43a9ff; }
-    #wire-game-dialogue { position:absolute; left:4%; bottom:9%; width:70%; min-height:17%; padding:10px 14px 12px; z-index:3; color:#fff; background:#222; border:0; outline:0; box-shadow:5px 5px 0 #111; border-radius:0; font-family:'CPTrans', Arial, sans-serif; pointer-events:none; }
+    #wire-game-dialogue { position:absolute; left:4%; bottom:3%; width:70%; min-height:17%; padding:10px 14px 12px; z-index:3; color:#fff; background:#222; border:0; outline:0; box-shadow:5px 5px 0 #111; border-radius:0; font-family:'CPTrans', Arial, sans-serif; pointer-events:none; }
     #wire-game-speaker { display:none !important; }
     #wire-game-dialogue-text { padding-top:0; font-size:clamp(15px,4.1vw,20px); line-height:1.4; white-space:pre-line; }
     #wire-game-feedback { margin-top:5px; color:#ffe15b; font-size:clamp(11px,3vw,14px); }
     #wire-game-character { display:none !important; }
-    @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { bottom:9%; width:66%; min-height:18%; } }
+    @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { bottom:3%; width:66%; min-height:18%; } }
 
     </style>
 </head>
@@ -2211,12 +2211,12 @@ img { max-width:100%; }
             <svg id="wire-game-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="拖曳電線至相同顏色接點">
                 <g id="wire-game-lines"></g>
                 <g id="wire-game-points">
-                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="31" r="6" style="--wire-dot-color:#ffd83d"></circle>
-                    <circle class="wire-hit-point" data-side="left" data-color="red" cx="17" cy="50" r="6" style="--wire-dot-color:#ff4e4e"></circle>
-                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="69" r="6" style="--wire-dot-color:#43a9ff"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="83" cy="31" r="6" style="--wire-dot-color:#ff4e4e"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="83" cy="50" r="6" style="--wire-dot-color:#43a9ff"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="83" cy="69" r="6" style="--wire-dot-color:#ffd83d"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="23" r="6" style="--wire-dot-color:#ffd83d"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="red" cx="17" cy="42" r="6" style="--wire-dot-color:#ff4e4e"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="61" r="6" style="--wire-dot-color:#43a9ff"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="83" cy="23" r="6" style="--wire-dot-color:#ff4e4e"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="83" cy="42" r="6" style="--wire-dot-color:#43a9ff"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="83" cy="61" r="6" style="--wire-dot-color:#ffd83d"></circle>
                 </g>
             </svg>
             <div id="wire-game-dialogue">
@@ -7680,7 +7680,7 @@ if (scene.bgm) {
         (function setupWireGame() {
             const svg=document.getElementById("wire-game-svg"), linesGroup=document.getElementById("wire-game-lines"), feedback=document.getElementById("wire-game-feedback");
             if(!svg||!linesGroup||!feedback)return;
-            const sockets={yellow:{left:{x:17,y:31},right:{x:83,y:69}},red:{left:{x:17,y:50},right:{x:83,y:31}},blue:{left:{x:17,y:69},right:{x:83,y:50}}};
+            const sockets={yellow:{left:{x:17,y:23},right:{x:83,y:61}},red:{left:{x:17,y:42},right:{x:83,y:23}},blue:{left:{x:17,y:61},right:{x:83,y:42}}};
             let activeColor=null,pointerId=null,dragPoint=null; const connected=new Set();
             function svgPoint(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
             function path(color,start,end){const p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",`M ${start.x} ${start.y} C 38 ${start.y}, 62 ${end.y}, ${end.x} ${end.y}`);p.setAttribute("class","wire-line wire-line-"+color);return p;}
