@@ -361,6 +361,13 @@
             transform-origin: bottom center;
         }
 
+        /* 螢幕高度較短／比例較小的裝置：父母立繪往上移一點，避免位置太低 */
+        @media (max-height: 760px), (max-aspect-ratio: 9/16) {
+            #page1 .角色圖.全爸媽 {
+                transform: translateY(-8px) scale(0.9);
+            }
+        }
+
         /* 💡 輸入框容器專用動畫 Class */
 .modal-pop-in {
   /* 💡 縮短時間至 0.4s，並使用強烈回彈的貝茲曲線 */
