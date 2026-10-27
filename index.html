@@ -2211,12 +2211,12 @@ img { max-width:100%; }
             <svg id="wire-game-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="拖曳電線至相同顏色接點">
                 <g id="wire-game-lines"></g>
                 <g id="wire-game-points">
-                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="23" r="6" style="--wire-dot-color:#ffd83d"></circle>
-                    <circle class="wire-hit-point" data-side="left" data-color="red" cx="17" cy="42" r="6" style="--wire-dot-color:#ff4e4e"></circle>
-                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="61" r="6" style="--wire-dot-color:#43a9ff"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="83" cy="23" r="6" style="--wire-dot-color:#ff4e4e"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="83" cy="42" r="6" style="--wire-dot-color:#43a9ff"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="83" cy="61" r="6" style="--wire-dot-color:#ffd83d"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="16" r="6" style="--wire-dot-color:#ffd83d"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="red" cx="17" cy="35" r="6" style="--wire-dot-color:#ff4e4e"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="54" r="6" style="--wire-dot-color:#43a9ff"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="83" cy="21" r="6" style="--wire-dot-color:#ff4e4e"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="83" cy="34" r="6" style="--wire-dot-color:#43a9ff"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="83" cy="53" r="6" style="--wire-dot-color:#ffd83d"></circle>
                 </g>
             </svg>
             <div id="wire-game-dialogue">
@@ -6672,7 +6672,7 @@ function renderScene(stepIndex) {
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const wireGameDialogue = document.getElementById("wire-game-dialogue-text");
-    if (wireGameDialogue) wireGameDialogue.textContent = String(scene.text || "").replace(/\/\/n|\\n/g, "\n");
+    if (wireGameDialogue) { const instructionScenes = currentSceneId === 36 ? [36.100, 36.101].map(id => storyScript.find(item => Number(item.id) === id)).filter(Boolean).map(item => String(item.text || "").replace(/\/\/n|\\n/g, "\n")) : []; wireGameDialogue.textContent = instructionScenes.length ? instructionScenes.join("\n") : (currentSceneId === 36 ? "" : String(scene.text || "").replace(/\/\/n|\\n/g, "\n")); }
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     // 只有背景真的改變時才淡入；同一背景的連續對話不做場景過渡。
     const requestedBackgroundId = scene.background || null;
@@ -7680,17 +7680,17 @@ if (scene.bgm) {
         (function setupWireGame() {
             const svg=document.getElementById("wire-game-svg"), linesGroup=document.getElementById("wire-game-lines"), feedback=document.getElementById("wire-game-feedback");
             if(!svg||!linesGroup||!feedback)return;
-            const sockets={yellow:{left:{x:17,y:23},right:{x:83,y:61}},red:{left:{x:17,y:42},right:{x:83,y:23}},blue:{left:{x:17,y:61},right:{x:83,y:42}}};
-            let activeColor=null,pointerId=null,dragPoint=null; const connected=new Set();
+            const sockets={yellow:{left:{x:17,y:16},right:{x:83,y:53}},red:{left:{x:17,y:35},right:{x:83,y:21}},blue:{left:{x:17,y:54},right:{x:83,y:34}}};
+            let activeColor=null,activeSide=null,pointerId=null,dragPoint=null; const connected=new Set();
             function svgPoint(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
-            function path(color,start,end){const p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",`M ${start.x} ${start.y} C 38 ${start.y}, 62 ${end.y}, ${end.x} ${end.y}`);p.setAttribute("class","wire-line wire-line-"+color);return p;}
-            function draw(){linesGroup.replaceChildren();Object.keys(sockets).forEach(c=>{if(connected.has(c))linesGroup.appendChild(path(c,sockets[c].left,sockets[c].right));});if(activeColor&&dragPoint){const p=path(activeColor,sockets[activeColor].left,dragPoint);p.setAttribute("opacity","1");linesGroup.appendChild(p);}}
-            function reset(){connected.clear();activeColor=null;pointerId=null;dragPoint=null;draw();feedback.textContent="把電線拖到相同顏色的接點！";}
-            svg.addEventListener("pointerdown",e=>{const page=document.getElementById("page1");if(!page||!page.classList.contains("wire-game-mode"))return;const p=svgPoint(e);const hit=Object.entries(sockets).find(([c,s])=>!connected.has(c)&&Math.hypot(p.x-s.left.x,p.y-s.left.y)<=7);if(!hit)return;e.preventDefault();activeColor=hit[0];pointerId=e.pointerId;dragPoint=p;try{svg.setPointerCapture(pointerId);}catch(_){}draw();});
+            function path(color,start,end){const p=document.createElementNS("http://www.w3.org/2000/svg","path");const dx=end.x-start.x;p.setAttribute("d","M "+start.x+" "+start.y+" C "+(start.x+dx*.33)+" "+start.y+", "+(start.x+dx*.67)+" "+end.y+", "+end.x+" "+end.y);p.setAttribute("class","wire-line wire-line-"+color);return p;}
+            function draw(){linesGroup.replaceChildren();Object.keys(sockets).forEach(c=>{if(connected.has(c))linesGroup.appendChild(path(c,sockets[c].left,sockets[c].right));});if(activeColor&&activeSide&&dragPoint){const p=path(activeColor,sockets[activeColor][activeSide],dragPoint);p.setAttribute("opacity","1");linesGroup.appendChild(p);}}
+            function reset(){connected.clear();activeColor=null;activeSide=null;pointerId=null;dragPoint=null;draw();feedback.textContent="把電線拖到相同顏色的接點！";}
+            svg.addEventListener("pointerdown",e=>{const page=document.getElementById("page1");if(!page||!page.classList.contains("wire-game-mode"))return;const p=svgPoint(e);let hit=null;for(const [c,ends] of Object.entries(sockets)){if(connected.has(c))continue;for(const side of ["left","right"]){if(Math.hypot(p.x-ends[side].x,p.y-ends[side].y)<=7){hit={color:c,side};break;}}if(hit)break;}if(!hit)return;e.preventDefault();activeColor=hit.color;activeSide=hit.side;pointerId=e.pointerId;dragPoint=p;try{svg.setPointerCapture(pointerId);}catch(_){}draw();});
             svg.addEventListener("pointermove",e=>{if(activeColor===null||e.pointerId!==pointerId)return;dragPoint=svgPoint(e);draw();});
-            function finish(e){if(activeColor===null||e.pointerId!==pointerId)return;const p=svgPoint(e),c=activeColor;const target=Object.entries(sockets).find(([tc,s])=>Math.hypot(p.x-s.right.x,p.y-s.right.y)<=8);activeColor=null;pointerId=null;dragPoint=null;
-                if(target&&target[0]===c){connected.add(c);feedback.textContent=connected.size===3?"全部接好了！":"接對了！再接下一條。";draw();if(connected.size===3){feedback.textContent="成功通電！準備繼續劇情……";const scene=storyScript[currentStep];const ni=scene&&scene.nextId!==undefined?storyScript.findIndex(item=>Number(item.id)===Number(scene.nextId)):-1;window.setTimeout(()=>{const page=document.getElementById("page1");if(page)page.classList.remove("wire-game-mode");if(ni>=0){currentStep=ni;renderScene(currentStep);}},650);}}
-                else{feedback.textContent=target?"顏色不對，再試一次！":"拖到右側相同顏色的接點！";draw();}}
+            function finish(e){if(activeColor===null||e.pointerId!==pointerId)return;const p=svgPoint(e),c=activeColor,startSide=activeSide,targetSide=startSide==="left"?"right":"left";const target=Object.entries(sockets).find(([tc,ends])=>Math.hypot(p.x-ends[targetSide].x,p.y-ends[targetSide].y)<=8);activeColor=null;activeSide=null;pointerId=null;dragPoint=null;
+                if(target&&target[0]===c){connected.add(c);feedback.textContent=connected.size===3?"全部接好了！":"接對了！再接下一條。";draw();if(connected.size===3){feedback.textContent="成功通電！準備繼續劇情……";const ni=storyScript.findIndex(item=>Number(item.id)===36.167);window.setTimeout(()=>{const page=document.getElementById("page1");if(page)page.classList.remove("wire-game-mode");if(ni>=0){currentStep=ni;renderScene(currentStep);}},650);}}
+                else{feedback.textContent=target?"顏色不對，再試一次！":"拖到"+(targetSide==="right"?"右":"左")+"側相同顏色的接點！";draw();}}
             svg.addEventListener("pointerup",finish);svg.addEventListener("pointercancel",finish);window.resetWireGame=reset;reset();
         })();
 
