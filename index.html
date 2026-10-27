@@ -1973,6 +1973,32 @@ img { max-width:100%; }
                 -webkit-mask: none !important;
             }
         }
+    /* ID 36 拉電線小遊戲：接點座標暫放，之後可依電閘圖微調 */
+    #page1 .wire-game-background { z-index: 0 !important; }
+    #page1 .wire-game-background img { width:100%; height:100%; object-fit:cover; }
+    #wire-game-overlay { display:none; position:absolute; inset:0; z-index:5000; overflow:hidden; touch-action:none; pointer-events:none; }
+    #page1.wire-game-mode #wire-game-overlay { display:block; pointer-events:auto; }
+    #page1.wire-game-mode #對話框,
+    #page1.wire-game-mode #對話框那條線,
+    #page1.wire-game-mode .player-svg,
+    #page1.wire-game-mode #選項框,
+    #page1.wire-game-mode #comic-box,
+    #page1.wire-game-mode #empty-scene-next-hint,
+    #page1.wire-game-mode .角色圖,
+    #page1.wire-game-mode #question-title { display:none !important; visibility:hidden !important; }
+    #wire-game-svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; touch-action:none; }
+    .wire-hit-point { fill:transparent; stroke:transparent; stroke-width:1; pointer-events:all; cursor:grab; }
+    .wire-line { fill:none; stroke-width:1.35; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+    .wire-line-yellow { stroke:#ffd83d; }
+    .wire-line-red { stroke:#ff4e4e; }
+    .wire-line-blue { stroke:#43a9ff; }
+    #wire-game-dialogue { position:absolute; left:4%; bottom:3%; width:70%; min-height:17%; padding:12px 14px 16px; z-index:3; color:#fff; background:#222; border:3px solid #fff; outline:3px solid #111; box-shadow:5px 5px 0 #111; border-radius:3px; font-family:'CPTrans', Arial, sans-serif; pointer-events:none; }
+    #wire-game-speaker { position:absolute; top:-18px; left:12px; padding:2px 10px; color:#222; background:#ffe15b; border:2px solid #111; font-size:clamp(13px,3.6vw,17px); font-weight:bold; }
+    #wire-game-dialogue-text { padding-top:8px; font-size:clamp(15px,4.1vw,20px); line-height:1.4; white-space:pre-line; }
+    #wire-game-feedback { margin-top:5px; color:#ffe15b; font-size:clamp(11px,3vw,14px); }
+    #wire-game-character { position:absolute; z-index:2; right:-13%; bottom:0; width:55%; max-height:52%; height:auto; object-fit:contain; object-position:bottom right; pointer-events:none; }
+    @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { bottom:3%; width:66%; min-height:18%; } #wire-game-character { width:48%; right:-7%; } }
+
     </style>
 </head>
 
@@ -2036,6 +2062,7 @@ img { max-width:100%; }
             <div id="好奇星草原" class="背景圖"><img data-src="./pct/好奇星 草原 直.webp"></div>
             <div id="好奇星草叢" class="背景圖"><img data-src="./pct/好奇星 草叢 直.webp"></div>
             <div id="好奇星棉花重災區" class="背景圖"><img data-src="./pct/好奇星 棉花重災區(救好奇星) 直.webp"></div>
+            <div id="好奇星電閘" class="背景圖 wire-game-background"><img data-src="./pct/好奇星 電閘.webp" alt="好奇星電閘"></div>
             <div id="好奇星黃色結局" class="背景"><img data-src="./pct/好奇星 黃色結尾 直.webp"></div>
             <div id="火箭" class="背景圖"><img data-src="./pct/好奇星 太空  直.webp"></div>
             <div id="同情星晚霞" class="背景圖"><img data-src="./pct/同情星信義區（自己用）.webp"></div>
@@ -2184,6 +2211,27 @@ img { max-width:100%; }
 
             <!-- 選項框 (100% 舊版結構) -->
             <div id="選項框" style="display: none;"></div>
+        </div>
+
+        <!-- ID 36：拉電線小遊戲 -->
+        <div id="wire-game-overlay" aria-label="拉電線小遊戲">
+            <svg id="wire-game-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="拖曳電線至相同顏色接點">
+                <g id="wire-game-lines"></g>
+                <g id="wire-game-points">
+                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="31" r="6"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="red" cx="17" cy="50" r="6"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="69" r="6"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="83" cy="31" r="6"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="83" cy="50" r="6"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="83" cy="69" r="6"></circle>
+                </g>
+            </svg>
+            <div id="wire-game-dialogue">
+                <div id="wire-game-speaker">星辰</div>
+                <div id="wire-game-dialogue-text">（拉電線小遊戲）</div>
+                <div id="wire-game-feedback" aria-live="polite">把電線拖到相同顏色的接點！</div>
+            </div>
+            <img id="wire-game-character" src="./pct/星辰正常微笑.webp" alt="星辰">
         </div>
 
 
@@ -2886,7 +2934,7 @@ img { max-width:100%; }
         id: 36,
         text: "（拉電線小遊戲）",
         nextId: 36.1,
-        background: "好奇星棉花重災區",
+        background: "好奇星電閘",
     },
     {
         id: 36.1,
@@ -6611,6 +6659,8 @@ function renderScene(stepIndex) {
     }
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
+    const wireGameDialogue = document.getElementById("wire-game-dialogue-text");
+    if (wireGameDialogue) wireGameDialogue.textContent = String(scene.text || "").replace(/\/\/n|\\n/g, "\n");
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     // 只有背景真的改變時才淡入；同一背景的連續對話不做場景過渡。
     const requestedBackgroundId = scene.background || null;
@@ -6722,6 +6772,7 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle('同情星顫抖哭', currentSceneId === 85.3);
         pageEl.classList.toggle('同情星大哭', currentSceneId === 85.34);
         pageEl.classList.toggle('同情星爆哭', currentSceneId === 86);
+        pageEl.classList.toggle("wire-game-mode", currentSceneId === 36);
     }
 
     // 只有進入不同漫畫場景時才淡入；同一場景的對話不做過渡。
@@ -7612,7 +7663,28 @@ if (scene.bgm) {
             }
         }
         
+
+        // 拉電線小遊戲：左側黃紅藍，右側紅藍黃。接點座標集中在 sockets，方便後續微調。
+        (function setupWireGame() {
+            const svg=document.getElementById("wire-game-svg"), linesGroup=document.getElementById("wire-game-lines"), feedback=document.getElementById("wire-game-feedback");
+            if(!svg||!linesGroup||!feedback)return;
+            const sockets={yellow:{left:{x:17,y:31},right:{x:83,y:69}},red:{left:{x:17,y:50},right:{x:83,y:31}},blue:{left:{x:17,y:69},right:{x:83,y:50}}};
+            let activeColor=null,pointerId=null,dragPoint=null; const connected=new Set();
+            function svgPoint(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
+            function path(color,start,end){const p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",`M ${start.x} ${start.y} C 38 ${start.y}, 62 ${end.y}, ${end.x} ${end.y}`);p.setAttribute("class","wire-line wire-line-"+color);return p;}
+            function draw(){linesGroup.replaceChildren();Object.keys(sockets).forEach(c=>{if(connected.has(c))linesGroup.appendChild(path(c,sockets[c].left,sockets[c].right));});if(activeColor&&dragPoint){const p=path(activeColor,sockets[activeColor].left,dragPoint);p.setAttribute("opacity",".85");linesGroup.appendChild(p);}}
+            function reset(){connected.clear();activeColor=null;pointerId=null;dragPoint=null;draw();feedback.textContent="把電線拖到相同顏色的接點！";}
+            svg.addEventListener("pointerdown",e=>{const page=document.getElementById("page1");if(!page||!page.classList.contains("wire-game-mode"))return;const p=svgPoint(e);const hit=Object.entries(sockets).find(([c,s])=>!connected.has(c)&&Math.hypot(p.x-s.left.x,p.y-s.left.y)<=7);if(!hit)return;e.preventDefault();activeColor=hit[0];pointerId=e.pointerId;dragPoint=p;try{svg.setPointerCapture(pointerId);}catch(_){}draw();});
+            svg.addEventListener("pointermove",e=>{if(activeColor===null||e.pointerId!==pointerId)return;dragPoint=svgPoint(e);draw();});
+            function finish(e){if(activeColor===null||e.pointerId!==pointerId)return;const p=svgPoint(e),c=activeColor;const target=Object.entries(sockets).find(([tc,s])=>Math.hypot(p.x-s.right.x,p.y-s.right.y)<=8);activeColor=null;pointerId=null;dragPoint=null;
+                if(target&&target[0]===c){connected.add(c);feedback.textContent=connected.size===3?"全部接好了！":"接對了！再接下一條。";draw();if(connected.size===3){feedback.textContent="成功通電！準備繼續劇情……";const scene=storyScript[currentStep];const ni=scene&&scene.nextId!==undefined?storyScript.findIndex(item=>Number(item.id)===Number(scene.nextId)):-1;window.setTimeout(()=>{const page=document.getElementById("page1");if(page)page.classList.remove("wire-game-mode");if(ni>=0){currentStep=ni;renderScene(currentStep);}},650);}}
+                else{feedback.textContent=target?"顏色不對，再試一次！":"拖到右側相同顏色的接點！";draw();}}
+            svg.addEventListener("pointerup",finish);svg.addEventListener("pointercancel",finish);window.resetWireGame=reset;reset();
+        })();
+
         function nextStep() {
+            const wirePage = document.getElementById("page1");
+            if (wirePage && wirePage.classList.contains("wire-game-mode")) return;
             // 目前場景還在載素材時，任何點擊都不能推進或跳過對話。
             if (sceneTransitionLoading) return;
             const scene = storyScript[currentStep];
@@ -7716,6 +7788,7 @@ if (scene.bgm) {
             // 第一次點擊時收起「點擊推動劇情」提示；箭頭之後仍會留在一般對話畫面。
             const pageForHint = document.getElementById('page1');
             if (pageForHint && pageForHint.classList.contains('scene-assets-loading')) return;
+            if (pageForHint && pageForHint.classList.contains("wire-game-mode")) return;
             if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
                 pageForHint.classList.remove('show-dialogue-hint');
             }
