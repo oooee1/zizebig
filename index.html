@@ -1987,7 +1987,7 @@ img { max-width:100%; }
     #page1.wire-game-mode .角色圖,
     #page1.wire-game-mode #question-title { display:none !important; visibility:hidden !important; }
     #wire-game-svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; touch-action:none; }
-    .wire-hit-point { fill:transparent; stroke:transparent; stroke-width:1; pointer-events:all; cursor:grab; }
+    .wire-hit-point { fill:var(--wire-dot-color); stroke:#222; stroke-width:.65; pointer-events:all; cursor:grab; filter:drop-shadow(0 0 1px #fff); }
     .wire-line { fill:none; stroke-width:1.35; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
     .wire-line-yellow { stroke:#ffd83d; }
     .wire-line-red { stroke:#ff4e4e; }
@@ -2206,23 +2206,17 @@ img { max-width:100%; }
         <div id="dialogue-next-hint">點一下繼續</div>
         <div id="dialogue-next-arrow" aria-hidden="true"></div>
     </div>
-</div>
-<div id="empty-scene-next-hint" aria-hidden="true">點一下繼續</div>
-
-            <!-- 選項框 (100% 舊版結構) -->
-            <div id="選項框" style="display: none;"></div>
-
         <!-- ID 36：拉電線小遊戲 -->
         <div id="wire-game-overlay" aria-label="拉電線小遊戲">
             <svg id="wire-game-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="拖曳電線至相同顏色接點">
                 <g id="wire-game-lines"></g>
                 <g id="wire-game-points">
-                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="31" r="6"></circle>
-                    <circle class="wire-hit-point" data-side="left" data-color="red" cx="17" cy="50" r="6"></circle>
-                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="69" r="6"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="83" cy="31" r="6"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="83" cy="50" r="6"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="83" cy="69" r="6"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="31" r="6" style="--wire-dot-color:#ffd83d"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="red" cx="17" cy="50" r="6" style="--wire-dot-color:#ff4e4e"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="69" r="6" style="--wire-dot-color:#43a9ff"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="83" cy="31" r="6" style="--wire-dot-color:#ff4e4e"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="83" cy="50" r="6" style="--wire-dot-color:#43a9ff"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="83" cy="69" r="6" style="--wire-dot-color:#ffd83d"></circle>
                 </g>
             </svg>
             <div id="wire-game-dialogue">
@@ -2232,6 +2226,13 @@ img { max-width:100%; }
             </div>
             <img id="wire-game-character" src="./pct/星辰正常微笑.webp" alt="星辰">
         </div>
+</div>
+<div id="empty-scene-next-hint" aria-hidden="true">點一下繼續</div>
+
+            <!-- 選項框 (100% 舊版結構) -->
+            <div id="選項框" style="display: none;"></div>
+
+
         </div>
 
 
