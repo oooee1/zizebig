@@ -7743,6 +7743,19 @@ if (scene.bgm) {
                 });
             }
             const sockets={yellow:{left:{x:19,y:24.9},right:{x:80,y:61}},red:{left:{x:19,y:42.4},right:{x:80,y:30.5}},blue:{left:{x:19,y:60.8},right:{x:80,y:45}}};
+            // 窄長比例裝置（寬高比不大於 3:5）使用獨立接點位置。
+            if(window.matchMedia("(max-aspect-ratio: 3/5)").matches){
+                sockets.yellow.left={x:21,y:23.9};
+                sockets.red.left={x:21,y:41.9};
+                sockets.blue.left={x:21,y:60.8};
+                sockets.red.right={x:78,y:29.5};
+                sockets.blue.right={x:78,y:45};
+                sockets.yellow.right={x:78,y:62};
+                svg.querySelectorAll(".wire-hit-point").forEach(point=>{
+                    const side=point.dataset.side,color=point.dataset.color,position=sockets[color]&&sockets[color][side];
+                    if(position){point.setAttribute("cx",position.x);point.setAttribute("cy",position.y);}
+                });
+            }
             let activeColor=null,activeSide=null,pointerId=null,dragPoint=null; const connected=new Set();
             function svgPoint(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
             function path(color,start,end){const p=document.createElementNS("http://www.w3.org/2000/svg","path");const dx=end.x-start.x;p.setAttribute("d","M "+start.x+" "+start.y+" C "+(start.x+dx*.33)+" "+start.y+", "+(start.x+dx*.67)+" "+end.y+", "+end.x+" "+end.y);p.setAttribute("class","wire-line wire-line-"+color);return p;}
