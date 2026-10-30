@@ -333,19 +333,26 @@
             transform-origin: top left;
         }
 
-        /* 熱情星思考、尷尬恢復一般熱情星立繪位置，避免偏移 */
+        /* 熱情星思考、崩潰、尷尬統一恢復一般熱情星立繪位置與尺寸 */
         #page1 #熱情星思考,
+        #page1 #熱情星崩潰,
         #page1 #熱情星尷尬 {
             bottom: 174px !important;
             transform: translate(5px, 12px) !important;
         }
 
-        /* 思考與尷尬使用一般熱情星立繪尺寸 */
         #page1 #熱情星思考 img,
+        #page1 #熱情星崩潰 img,
         #page1 #熱情星尷尬 img {
             width: 135% !important;
             max-width: none !important;
             height: auto !important;
+        }
+
+        /* 大臣立繪稍微往左、往下 */
+        #page1 #大臣,
+        #page1 #大臣閉眼 {
+            transform: translate(-10px, 10px) !important;
         }
 
         /* 憤怒、煩躁的居民立繪稍微往下移 */
