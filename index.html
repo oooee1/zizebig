@@ -578,6 +578,32 @@
   animation: passion-flame-energy 0.95s ease-in-out 1 !important;
   transform-origin: bottom center;
 }
+ 
+/* 熱情星噴：置中放大，像力量瞬間爆發般登場 */
+#page1 #熱情星噴 {
+  left: 50% !important;
+  bottom: 50% !important;
+  width: 90% !important;
+  transform: translate(-50%, 50%) !important;
+  z-index: 20 !important;
+}
+#page1 #熱情星噴 img {
+  width: 165% !important;
+  max-width: none !important;
+  height: auto !important;
+}
+.anim-passion-spray img {
+  animation: passion-spray-burst 1.15s cubic-bezier(.12,.82,.18,1) 1 both !important;
+  transform-origin: center center;
+}
+@keyframes passion-spray-burst {
+  0% { opacity: 0; transform: scale(.18) rotate(-16deg); filter: brightness(2.8) saturate(1.8); }
+  28% { opacity: 1; transform: scale(1.28) rotate(7deg); filter: brightness(2.2) saturate(1.6); }
+  48% { transform: scale(.88) rotate(-5deg); filter: brightness(1.5); }
+  68% { transform: scale(1.16) rotate(3deg); }
+  84% { transform: scale(1.04) rotate(-1.5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1); }
+}
 
 /* 熱情星一般立繪：小幅度的活力彈跳與俏皮的擠壓回彈，不再只是左右搖晃。 */
 .anim-passion-normal img {
@@ -7207,6 +7233,9 @@ if (scene.bgm) {
     switch (characterId) {
         case '熱情星出場火焰':
             charElement.classList.add('anim-passion-fire');
+            break;
+        case '熱情星噴':
+            charElement.classList.add('anim-passion-spray');
             break;
         case '熱情星戴上王冠':
             charElement.classList.add('anim-crowned-king');
