@@ -2035,6 +2035,16 @@ img { max-width:100%; }
         border:0; border-radius:50% / 34%;
         outline:0; box-shadow:none;
         font-family:'CPTrans', Arial, sans-serif; pointer-events:auto; cursor:pointer;
+    }
+    /* 對話框右下角的小尾巴，指向說話者 */
+    #wire-game-dialogue::after {
+        content:""; position:absolute; right:13%; bottom:-12px;
+        width:0; height:0;
+        border-top:20px solid #000;
+        border-left:3px solid transparent;
+        border-right:15px solid transparent;
+        transform:rotate(-12deg);
+        pointer-events:none;
         display:flex; flex-direction:column; justify-content:center; align-items:stretch;
         text-align:left;
     }
