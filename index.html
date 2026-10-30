@@ -2029,10 +2029,10 @@ img { max-width:100%; }
     .wire-line-blue { stroke:#88DCFB; }
     /* 拉電線小遊戲對話框：漫畫式橢圓對話泡泡，尾端指向說話者所在的上方區域 */
     #wire-game-dialogue {
-        position:absolute; left:6%; bottom:9%; width:84%; min-height:17%;
+        position:absolute; left:4%; bottom:11%; width:84%; min-height:17%;
         box-sizing:border-box; padding:clamp(14px,2.8vw,24px) clamp(22px,4.5vw,38px);
         z-index:3; color:#fff; background:#000;
-        border:0; border-radius:50% / 50%;
+        border:0; border-radius:42% / 50%;
         outline:0; box-shadow:none;
         font-family:'CPTrans', Arial, sans-serif; pointer-events:auto; cursor:pointer;
         display:flex; flex-direction:column; justify-content:center; align-items:stretch;
@@ -2040,12 +2040,12 @@ img { max-width:100%; }
     }
     /* 對話框右下角的小尾巴，指向說話者 */
     #wire-game-dialogue::after {
-        content:""; position:absolute; right:13%; bottom:6px;
+        content:""; position:absolute; right:18%; bottom:6px;
         width:0; height:0;
         border-top:28px solid #000;
         border-left:5px solid transparent;
         border-right:20px solid transparent;
-        transform:rotate(-42deg);
+        transform:rotate(-62deg);
         transform-origin:top center;
         pointer-events:none;
     }
@@ -2053,7 +2053,7 @@ img { max-width:100%; }
     #wire-game-dialogue-text { position:relative; z-index:1; padding:8px 0 0; width:100%; max-width:78%; margin-left:auto; margin-right:auto; font-size:clamp(15px,4.1vw,20px); line-height:1.55; white-space:pre-line; text-align:left; }
     #wire-game-feedback { position:relative; z-index:1; margin-top:8px; color:#ffab0f; font-size:clamp(11px,3vw,14px); text-align:center; }
     #wire-game-character { display:none !important; }
-    @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { left:6%; bottom:8%; width:84%; min-height:20%; padding:20px 40px; border-radius:50% / 50%; } }
+    @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { left:4%; bottom:10%; width:84%; min-height:20%; padding:20px 40px; border-radius:42% / 50%; } }
 
     </style>
 </head>
