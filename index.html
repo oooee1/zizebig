@@ -333,20 +333,25 @@
             transform-origin: top left;
         }
 
-        /* 熱情星思考、崩潰、尷尬：立繪往上移並放大 */
+        /* 熱情星思考、尷尬恢復一般熱情星立繪位置，避免偏移 */
         #page1 #熱情星思考,
-        #page1 #熱情星崩潰,
         #page1 #熱情星尷尬 {
-            bottom: 200px !important;
-            transform: translate(5px, 0) !important;
+            bottom: 174px !important;
+            transform: translate(5px, 12px) !important;
         }
 
+        /* 思考與尷尬使用一般熱情星立繪尺寸 */
         #page1 #熱情星思考 img,
-        #page1 #熱情星崩潰 img,
         #page1 #熱情星尷尬 img {
-            width: 150% !important;
+            width: 135% !important;
             max-width: none !important;
             height: auto !important;
+        }
+
+        /* 憤怒、煩躁的居民立繪稍微往下移 */
+        #page1 #憤怒的居民,
+        #page1 #煩躁的居民 {
+            bottom: 170px !important;
         }
 
 /* 爸爸、媽媽所有表情立繪縮小一點，並維持原本下移 30px 的位置。 */
