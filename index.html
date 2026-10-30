@@ -2274,7 +2274,7 @@ img { max-width:100%; }
                     <circle class="wire-hit-point" data-side="left" data-color="red" cx="19" cy="42.5" r="6" style="--wire-dot-color:#EC6131"></circle>
                     <circle class="wire-hit-point" data-side="left" data-color="blue" cx="19" cy="61" r="6" style="--wire-dot-color:#88DCFB"></circle>
                     <circle class="wire-hit-point" data-side="right" data-color="red" cx="80" cy="30.5" r="6" style="--wire-dot-color:#EC6131"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="80" cy="46" r="6" style="--wire-dot-color:#88DCFB"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="80" cy="45" r="6" style="--wire-dot-color:#88DCFB"></circle>
                     <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="80" cy="61" r="6" style="--wire-dot-color:#FBE783"></circle>
                 </g>
             </svg>
@@ -7754,7 +7754,7 @@ if (scene.bgm) {
                     if(second){dialogueText.textContent=String(second.text||"").replace(/\/\/n|\\n/g,"\n");dialogueBox.dataset.instructionPage="1";}
                 });
             }
-            const sockets={yellow:{left:{x:19,y:25},right:{x:80,y:61}},red:{left:{x:19,y:42.5},right:{x:80,y:30.5}},blue:{left:{x:19,y:61},right:{x:80,y:46}}};
+            const sockets={yellow:{left:{x:19,y:25},right:{x:80,y:61}},red:{left:{x:19,y:42.5},right:{x:80,y:30.5}},blue:{left:{x:19,y:61},right:{x:80,y:45}}};
             let activeColor=null,activeSide=null,pointerId=null,dragPoint=null; const connected=new Set();
             function svgPoint(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
             function path(color,start,end){const p=document.createElementNS("http://www.w3.org/2000/svg","path");const dx=end.x-start.x;p.setAttribute("d","M "+start.x+" "+start.y+" C "+(start.x+dx*.33)+" "+start.y+", "+(start.x+dx*.67)+" "+end.y+", "+end.x+" "+end.y);p.setAttribute("class","wire-line wire-line-"+color);return p;}
