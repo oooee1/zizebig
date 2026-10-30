@@ -2095,7 +2095,7 @@ img { max-width:100%; }
 
             /* 電影式片尾名單：全螢幕黑底，文字由下往上滾動 */
         #end-credits {
-            position: absolute;
+            position: fixed;
             inset: 0;
             z-index: 1000000;
             display: none;
@@ -2394,71 +2394,73 @@ img { max-width:100%; }
         </div>
 
 
-        <!-- 電影式片尾名單 -->
-        <div id="end-credits" aria-label="片尾名單">
-            <div class="credits-roll">
-                <div class="credits-heading">繪製人員：</div>
-                <div>烏賊</div>
-                <div>木鵝</div>
-                <div>笑笑</div>
 
-                <div class="credits-gap"></div>
-                <div class="credits-heading">角色設計：</div>
-                <div>木鵝</div>
-                <div>烏賊</div>
-                <div>笑笑</div>
 
-                <div class="credits-gap"></div>
-                <div class="credits-note">（角色設計）</div>
-                <div class="credits-note">（長永劫沒做事）</div>
-                <div class="credits-note">（做不完都王志喊害的）</div>
-                <div class="credits-note">（烤魚一直臭我們）</div>
-                <div class="credits-note">（林子林不付錢）</div>
+    </div>
 
-                <div class="credits-gap"></div>
-                <div class="credits-heading">音樂：</div>
-                <div>GGEZ（粵語版）</div>
-                <div class="credits-gap"></div>
-                <div>Chopin - Nocturne Op. 55 No. 1</div>
-                <div class="credits-gap"></div>
-                <div>Schumann: Kinderszenen Op.15 No.7, Träumerei (Horowitz)</div>
-                <div class="credits-gap"></div>
-                <div>Mozart : Allegro in B flat Major,K3</div>
-                <div class="credits-gap"></div>
-                <div>Plink, Plank, Plunk!</div>
-                <div class="credits-gap"></div>
-                <div>Federico Mompou, Musica callada - XV. Lento-plaintif (1962)</div>
-                <div class="credits-gap"></div>
-                <div>Gabriel Fauré - Op.24, Élégie (Gaisford, Melgar)</div>
-                <div class="credits-gap"></div>
-                <div>Louis Armstrong and his Hot Five - Cornet Chop Suey</div>
-                <div class="credits-gap"></div>
-                <div>Johann Sebastian Bach: Cello Suite No.1 VI-Gigue</div>
-                <div class="credits-gap"></div>
-                <div>Saint-Saens: Romance for Cello and Piano | Nicholas Canellakis &amp; Michael Stephen Brown</div>
-                <div class="credits-gap"></div>
-                <div>Fireworks</div>
-                <div class="credits-gap"></div>
-                <div>Sugar Foot Stomp</div>
-                <div class="credits-gap"></div>
-                <div>Louis Armstrong - Potato Head Blues (1927)[Digitally Remastered]</div>
-                <div class="credits-gap"></div>
-                <div>Kevin MacLeod ~ Waunobe March</div>
-                <div class="credits-gap"></div>
-                <div>Mussorgsky (orch. Ravel) - Pictures at an Exhibition - La Cabane (Baba Yaga) (14/15)</div>
-                <div class="credits-gap"></div>
-                <div>Kevin MacLeod ~ Exciting Trailer</div>
-                <div class="credits-gap"></div>
-                <div>Rimsky Korsakov - Procession of the Nobles</div>
-                <div class="credits-gap"></div>
-                <div>Borodin - Polovtsian - Dance No 17 - Dance the Maidens</div>
-                <div class="credits-gap"></div>
-                <div>Handel March, trumpet and organ. (March from Rinaldo)</div>
-                <div class="credits-gap"></div>
-                <div>Bethena - Scottt Joplin | J Piano</div>
-            </div>
+    <!-- 電影式片尾名單 -->
+    <div id="end-credits" aria-label="片尾名單">
+        <div class="credits-roll">
+            <div class="credits-heading">繪製人員：</div>
+            <div>烏賊</div>
+            <div>木鵝</div>
+            <div>笑笑</div>
+
+            <div class="credits-gap"></div>
+            <div class="credits-heading">角色設計：</div>
+            <div>木鵝</div>
+            <div>烏賊</div>
+            <div>笑笑</div>
+
+            <div class="credits-gap"></div>
+            <div class="credits-note">（角色設計）</div>
+            <div class="credits-note">（長永劫沒做事）</div>
+            <div class="credits-note">（做不完都王志喊害的）</div>
+            <div class="credits-note">（烤魚一直臭我們）</div>
+            <div class="credits-note">（林子林不付錢）</div>
+
+            <div class="credits-gap"></div>
+            <div class="credits-heading">音樂：</div>
+            <div>GGEZ（粵語版）</div>
+            <div class="credits-gap"></div>
+            <div>Chopin - Nocturne Op. 55 No. 1</div>
+            <div class="credits-gap"></div>
+            <div>Schumann: Kinderszenen Op.15 No.7, Träumerei (Horowitz)</div>
+            <div class="credits-gap"></div>
+            <div>Mozart : Allegro in B flat Major,K3</div>
+            <div class="credits-gap"></div>
+            <div>Plink, Plank, Plunk!</div>
+            <div class="credits-gap"></div>
+            <div>Federico Mompou, Musica callada - XV. Lento-plaintif (1962)</div>
+            <div class="credits-gap"></div>
+            <div>Gabriel Fauré - Op.24, Élégie (Gaisford, Melgar)</div>
+            <div class="credits-gap"></div>
+            <div>Louis Armstrong and his Hot Five - Cornet Chop Suey</div>
+            <div class="credits-gap"></div>
+            <div>Johann Sebastian Bach: Cello Suite No.1 VI-Gigue</div>
+            <div class="credits-gap"></div>
+            <div>Saint-Saens: Romance for Cello and Piano | Nicholas Canellakis &amp; Michael Stephen Brown</div>
+            <div class="credits-gap"></div>
+            <div>Fireworks</div>
+            <div class="credits-gap"></div>
+            <div>Sugar Foot Stomp</div>
+            <div class="credits-gap"></div>
+            <div>Louis Armstrong - Potato Head Blues (1927)[Digitally Remastered]</div>
+            <div class="credits-gap"></div>
+            <div>Kevin MacLeod ~ Waunobe March</div>
+            <div class="credits-gap"></div>
+            <div>Mussorgsky (orch. Ravel) - Pictures at an Exhibition - La Cabane (Baba Yaga) (14/15)</div>
+            <div class="credits-gap"></div>
+            <div>Kevin MacLeod ~ Exciting Trailer</div>
+            <div class="credits-gap"></div>
+            <div>Rimsky Korsakov - Procession of the Nobles</div>
+            <div class="credits-gap"></div>
+            <div>Borodin - Polovtsian - Dance No 17 - Dance the Maidens</div>
+            <div class="credits-gap"></div>
+            <div>Handel March, trumpet and organ. (March from Rinaldo)</div>
+            <div class="credits-gap"></div>
+            <div>Bethena - Scottt Joplin | J Piano</div>
         </div>
-
     </div>
 
     <audio id="bgm-player" loop></audio>
