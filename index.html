@@ -2027,10 +2027,29 @@ img { max-width:100%; }
     .wire-line-yellow { stroke:#FBE783; }
     .wire-line-red { stroke:#EC6131; }
     .wire-line-blue { stroke:#88DCFB; }
-    #wire-game-dialogue { position:absolute; left:4%; bottom:3%; width:70%; min-height:17%; padding:10px 14px 12px; z-index:3; color:#fff; background:#222; border:0; outline:0; box-shadow:5px 5px 0 #111; border-radius:0; font-family:'CPTrans', Arial, sans-serif; pointer-events:none; }
+    /* 拉電線小遊戲對話框：漫畫式橢圓對話泡泡，尾端指向說話者所在的上方區域 */
+    #wire-game-dialogue {
+        position:absolute; left:5%; bottom:4%; width:68%; min-height:17%;
+        box-sizing:border-box; padding:clamp(16px,3.2vw,26px) clamp(24px,5vw,42px);
+        z-index:3; color:#222; background:#fff;
+        border:3px solid #222; border-radius:50% / 48%;
+        outline:0; box-shadow:3px 4px 0 rgba(0,0,0,.22);
+        font-family:'CPTrans', Arial, sans-serif; pointer-events:none;
+        display:flex; flex-direction:column; justify-content:center; align-items:center;
+        text-align:center;
+    }
+    #wire-game-dialogue::before {
+        content:""; position:absolute; left:16%; top:-20px; width:27px; height:30px;
+        background:#fff; border-left:3px solid #222; border-top:3px solid #222;
+        clip-path:polygon(0 0,100% 0,0 100%); transform:rotate(-8deg);
+    }
+    #wire-game-dialogue::after {
+        content:""; position:absolute; left:13%; top:-29px; width:17px; height:19px;
+        background:#fff; clip-path:polygon(0 0,100% 0,0 100%);
+    }
     #wire-game-speaker { display:none !important; }
-    #wire-game-dialogue-text { padding-top:0; font-size:clamp(15px,4.1vw,20px); line-height:1.4; white-space:pre-line; }
-    #wire-game-feedback { margin-top:5px; color:#ffe15b; font-size:clamp(11px,3vw,14px); }
+    #wire-game-dialogue-text { position:relative; z-index:1; padding-top:0; font-size:clamp(15px,4.1vw,20px); line-height:1.4; white-space:pre-line; }
+    #wire-game-feedback { position:relative; z-index:1; margin-top:5px; color:#EC6131; font-size:clamp(11px,3vw,14px); }
     #wire-game-character { display:none !important; }
     @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { bottom:3%; width:66%; min-height:18%; } }
 
