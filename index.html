@@ -2023,7 +2023,7 @@ img { max-width:100%; }
     #page1.wire-game-mode #question-title { display:none !important; visibility:hidden !important; }
     #wire-game-svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; touch-action:none; }
     .wire-hit-point { fill:transparent; stroke:transparent; stroke-width:0; pointer-events:all; cursor:grab; filter:none; }
-    .wire-line { fill:none; stroke-width:2.8; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+    .wire-line { fill:none; stroke-width:3.6; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
     .wire-line-yellow { stroke:#FBE783; }
     .wire-line-red { stroke:#EC6131; }
     .wire-line-blue { stroke:#88DCFB; }
@@ -2032,7 +2032,7 @@ img { max-width:100%; }
         position:absolute; left:5%; bottom:4%; width:82%; min-height:22%;
         box-sizing:border-box; padding:clamp(22px,4vw,34px) clamp(30px,6vw,52px);
         z-index:3; color:#fff; background:#000;
-        border:0; border-radius:50% / 48%;
+        border:0; border-radius:50% / 34%;
         outline:0; box-shadow:none;
         font-family:'CPTrans', Arial, sans-serif; pointer-events:auto; cursor:pointer;
         display:flex; flex-direction:column; justify-content:center; align-items:stretch;
@@ -2050,8 +2050,10 @@ img { max-width:100%; }
     #wire-game-speaker { display:none !important; }
     #wire-game-dialogue-text { position:relative; z-index:1; padding:0; width:100%; font-size:clamp(15px,4.1vw,20px); line-height:1.55; white-space:pre-line; text-align:left; }
     #wire-game-feedback { position:relative; z-index:1; margin-top:8px; color:#ffab0f; font-size:clamp(11px,3vw,14px); text-align:center; }
+    #wire-game-dialogue-arrow { position:absolute; right:13%; bottom:13%; color:#ffab0f; font-size:clamp(18px,4vw,24px); line-height:1; font-weight:bold; pointer-events:none; }
+    #wire-game-dialogue[data-instruction-page="1"] #wire-game-dialogue-arrow { display:none; }
     #wire-game-character { display:none !important; }
-    @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { bottom:3%; width:82%; min-height:25%; padding:30px 54px; } }
+    @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { bottom:3%; width:82%; min-height:25%; padding:30px 54px; border-radius:50% / 34%; } }
 
     </style>
 </head>
@@ -2268,18 +2270,19 @@ img { max-width:100%; }
             <svg id="wire-game-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="拖曳電線至相同顏色接點">
                 <g id="wire-game-lines"></g>
                 <g id="wire-game-points">
-                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="25" r="6" style="--wire-dot-color:#FBE783"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="yellow" cx="17" cy="22" r="6" style="--wire-dot-color:#FBE783"></circle>
                     <circle class="wire-hit-point" data-side="left" data-color="red" cx="17" cy="43" r="6" style="--wire-dot-color:#EC6131"></circle>
-                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="62" r="6" style="--wire-dot-color:#88DCFB"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="83" cy="31" r="6" style="--wire-dot-color:#EC6131"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="83" cy="44" r="6" style="--wire-dot-color:#88DCFB"></circle>
-                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="83" cy="63" r="6" style="--wire-dot-color:#FBE783"></circle>
+                    <circle class="wire-hit-point" data-side="left" data-color="blue" cx="17" cy="59" r="6" style="--wire-dot-color:#88DCFB"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="red" cx="80" cy="31" r="6" style="--wire-dot-color:#EC6131"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="blue" cx="80" cy="44" r="6" style="--wire-dot-color:#88DCFB"></circle>
+                    <circle class="wire-hit-point" data-side="right" data-color="yellow" cx="80" cy="59" r="6" style="--wire-dot-color:#FBE783"></circle>
                 </g>
             </svg>
             <div id="wire-game-dialogue" role="button" aria-label="點擊繼續閱讀提示">
                 <div id="wire-game-speaker" aria-hidden="true"></div>
                 <div id="wire-game-dialogue-text"></div>
                 <div id="wire-game-feedback" aria-live="polite">把電線拖到相同顏色的接點！</div>
+                <span id="wire-game-dialogue-arrow" aria-hidden="true">➜</span>
             </div>
         </div>
 </div>
@@ -7751,7 +7754,7 @@ if (scene.bgm) {
                     if(second){dialogueText.textContent=String(second.text||"").replace(/\/\/n|\\n/g,"\n");dialogueBox.dataset.instructionPage="1";}
                 });
             }
-            const sockets={yellow:{left:{x:17,y:25},right:{x:83,y:63}},red:{left:{x:17,y:43},right:{x:83,y:31}},blue:{left:{x:17,y:62},right:{x:83,y:44}}};
+            const sockets={yellow:{left:{x:17,y:22},right:{x:80,y:59}},red:{left:{x:17,y:43},right:{x:80,y:31}},blue:{left:{x:17,y:59},right:{x:80,y:44}}};
             let activeColor=null,activeSide=null,pointerId=null,dragPoint=null; const connected=new Set();
             function svgPoint(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
             function path(color,start,end){const p=document.createElementNS("http://www.w3.org/2000/svg","path");const dx=end.x-start.x;p.setAttribute("d","M "+start.x+" "+start.y+" C "+(start.x+dx*.33)+" "+start.y+", "+(start.x+dx*.67)+" "+end.y+", "+end.x+" "+end.y);p.setAttribute("class","wire-line wire-line-"+color);return p;}
