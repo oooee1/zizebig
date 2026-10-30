@@ -1244,6 +1244,15 @@
   pointer-events: none;
 }
 
+/* 進入漫畫時，整個漫畫畫布從目前對話框下方滑上來，覆蓋在對話之上。 */
+#comic-box.comic-slide-up {
+  animation: comicSlideUp 0.65s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+@keyframes comicSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 /* 漫畫各圖層共用同一個置中畫布，切換分鏡時不關閉整個漫畫容器。 */
 #comic-box .comic-layer {
   position: absolute;
@@ -2191,6 +2200,7 @@ img { max-width:100%; }
             <div id="星辰感動" class="全星辰 角色圖"><img data-src="./pct/星辰看到父母.webp" alt="星辰感動"></div>
             
             <!-- 背景圖 -->
+            <div id="漫畫背景" class="背景圖"><img data-src="./pct/漫畫背景.webp" alt="漫畫背景"></div>
             <div id="好奇星草原" class="背景圖"><img data-src="./pct/好奇星 草原 直.webp"></div>
             <div id="好奇星草叢" class="背景圖"><img data-src="./pct/好奇星 草叢 直.webp"></div>
             <div id="好奇星棉花重災區" class="背景圖"><img data-src="./pct/好奇星 棉花重災區(救好奇星) 直.webp"></div>
@@ -6879,7 +6889,7 @@ function renderScene(stepIndex) {
     if (wireGameDialogue) { const firstInstruction = currentSceneId === 36 ? storyScript.find(item => Number(item.id) === 36.100) : null; wireGameDialogue.dataset.instructionPage = "0"; wireGameDialogue.textContent = firstInstruction ? String(firstInstruction.text || "").replace(/\/\/n|\\n/g, "\n") : (currentSceneId === 36 ? "" : String(scene.text || "").replace(/\/\/n|\\n/g, "\n")); }
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     // 只有背景真的改變時才淡入；同一背景的連續對話不做場景過渡。
-    const requestedBackgroundId = scene.background || null;
+    const requestedBackgroundId = isComicMode ? "漫畫背景" : (scene.background || null);
     const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景'))
         .find(el => getComputedStyle(el).display !== 'none');
     const currentlyVisibleBackgroundId = currentlyVisibleBackground ? currentlyVisibleBackground.id : null;
@@ -7165,6 +7175,7 @@ if (scene.bgm) {
     const comicPaths = sceneComicPaths;
 
     if (comicBox && comicImg && comicPaths.length > 0) {
+        const enteringComicMode = comicBox.style.display !== "block";
         let shownPaths = [];
         try {
             shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]");
@@ -7181,6 +7192,11 @@ if (scene.bgm) {
             : "";
 
         comicBox.style.display = "block";
+        comicBox.classList.remove("comic-slide-up");
+        if (enteringComicMode) {
+            void comicBox.offsetWidth;
+            comicBox.classList.add("comic-slide-up");
+        }
 
         comicPaths.forEach(path => {
             // 已經出現過的漫畫圖保留，不重複新增；新的圖層才接續疊上來。
