@@ -367,7 +367,7 @@
             fill: #88fdf8 !important;
         }
         #page1.scene-residents-163 #居民們 {
-            transform: translate(-40px, 16px) scale(1.85) !important;
+            transform: translate(-40px, 16px) scale(1.3) !important;
             transform-origin: bottom left;
         }
 
@@ -6755,7 +6755,8 @@ function renderScene(stepIndex) {
     const rawSceneSpeaker = scene.speaker || inferredCharacterSpeaker;
     // 熱情星劇情中的「居民們」不顯示群體立繪，也不顯示說話者名稱。
     const hideHotPassionResidentsGroup = Number(currentSceneId) >= 221 && Number(currentSceneId) <= 351 && (rawSceneSpeaker === "居民們" || (Array.isArray(scene.characters) && scene.characters.includes("居民們")));
-    const sceneSpeaker = hideHotPassionResidentsGroup ? "" : rawSceneSpeaker;
+    // 熱情星的「居民們」仍顯示說話者名稱；只在下方角色顯示流程隱藏群體立繪。
+    const sceneSpeaker = rawSceneSpeaker;
     const dialogueTextForDisplay = speakerPrefixMatch && sceneSpeaker
         ? rawDialogueText.slice(speakerPrefixMatch[0].length)
         : rawDialogueText;
