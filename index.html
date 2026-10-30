@@ -7765,7 +7765,7 @@ if (scene.bgm) {
             svg.addEventListener("pointermove",e=>{if(activeColor===null||e.pointerId!==pointerId)return;dragPoint=svgPoint(e);draw();});
             function finish(e){if(activeColor===null||e.pointerId!==pointerId)return;const p=svgPoint(e),c=activeColor,startSide=activeSide,targetSide=startSide==="left"?"right":"left";const target=Object.entries(sockets).find(([tc,ends])=>Math.hypot(p.x-ends[targetSide].x,p.y-ends[targetSide].y)<=8);activeColor=null;activeSide=null;pointerId=null;dragPoint=null;
                 if(target&&target[0]===c){connected.add(c);feedback.textContent=connected.size===3?"全部接好了！":"接對了！再接下一條。";draw();if(connected.size===3){feedback.textContent="成功通電！準備繼續劇情……";const ni=storyScript.findIndex(item=>Number(item.id)===36.167);window.setTimeout(()=>{const page=document.getElementById("page1");if(page)page.classList.remove("wire-game-mode");if(ni>=0){currentStep=ni;renderScene(currentStep);}},650);}}
-                else{feedback.textContent=target?"顏色不對，再試一次！":"把電線連接到另一側相同顏色的接點！";draw();}}
+                else{feedback.textContent=target?"顏色不對，再試一次！":"把電線連接到對面相同顏色的接點！";draw();}}
             svg.addEventListener("pointerup",finish);svg.addEventListener("pointercancel",finish);window.resetWireGame=reset;reset();
         })();
 
