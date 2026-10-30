@@ -2093,7 +2093,44 @@ img { max-width:100%; }
     #wire-game-character { display:none !important; }
     @media (min-width:500px) and (min-height:500px) { #wire-game-dialogue { left:2%; bottom:13.5%; width:74%; min-height:17%; padding:14px 28px; border-radius:50% / 50%; } }
 
-    </style>
+            /* 電影式片尾名單：全螢幕黑底，文字由下往上滾動 */
+        #end-credits {
+            position: absolute;
+            inset: 0;
+            z-index: 1000000;
+            display: none;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            text-align: center;
+            font-family: 'CPTrans', sans-serif;
+        }
+        #end-credits.show { display: block; }
+        #end-credits .credits-roll {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            padding: 0 22px 100vh;
+            animation: end-credits-scroll 115s linear forwards;
+            font-size: clamp(17px, 4.3vw, 22px);
+            line-height: 1.9;
+            white-space: normal;
+        }
+        #end-credits .credits-heading {
+            margin: 0 0 12px;
+            font-size: 1.12em;
+        }
+        #end-credits .credits-gap { height: 58px; }
+        #end-credits .credits-note { line-height: 2.05; }
+        @keyframes end-credits-scroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #end-credits .credits-roll { animation-duration: 180s; }
+        }
+</style>
 </head>
 
 <body>
@@ -8169,43 +8206,6 @@ if (scene.bgm) {
             #skip-confirm-overlay #skip-confirm-no{background:#000;color:#fff;}
             @media(max-width:420px){#skip-confirm-overlay .skip-card{padding:27px 18px 20px;}}
           
-        /* 電影式片尾名單：全螢幕黑底，文字由下往上滾動 */
-        #end-credits {
-            position: absolute;
-            inset: 0;
-            z-index: 1000000;
-            display: none;
-            overflow: hidden;
-            background: #000;
-            color: #fff;
-            text-align: center;
-            font-family: 'CPTrans', sans-serif;
-        }
-        #end-credits.show { display: block; }
-        #end-credits .credits-roll {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            padding: 0 22px 100vh;
-            animation: end-credits-scroll 115s linear forwards;
-            font-size: clamp(17px, 4.3vw, 22px);
-            line-height: 1.9;
-            white-space: normal;
-        }
-        #end-credits .credits-heading {
-            margin: 0 0 12px;
-            font-size: 1.12em;
-        }
-        #end-credits .credits-gap { height: 58px; }
-        #end-credits .credits-note { line-height: 2.05; }
-        @keyframes end-credits-scroll {
-            from { transform: translateY(0); }
-            to { transform: translateY(-100%); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            #end-credits .credits-roll { animation-duration: 180s; }
-        }
 </style>
           <div class="skip-card" role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title">
             <div id="skip-confirm-title">要跳過目前劇情？</div>
