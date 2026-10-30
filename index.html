@@ -2357,6 +2357,71 @@ img { max-width:100%; }
         </div>
 
 
+        <!-- 電影式片尾名單 -->
+        <div id="end-credits" aria-label="片尾名單">
+            <div class="credits-roll">
+                <div class="credits-heading">繪製人員：</div>
+                <div>烏賊</div>
+                <div>木鵝</div>
+                <div>笑笑</div>
+
+                <div class="credits-gap"></div>
+                <div class="credits-heading">角色設計：</div>
+                <div>木鵝</div>
+                <div>烏賊</div>
+                <div>笑笑</div>
+
+                <div class="credits-gap"></div>
+                <div class="credits-note">（角色設計）</div>
+                <div class="credits-note">（長永劫沒做事）</div>
+                <div class="credits-note">（做不完都王志喊害的）</div>
+                <div class="credits-note">（烤魚一直臭我們）</div>
+                <div class="credits-note">（林子林不付錢）</div>
+
+                <div class="credits-gap"></div>
+                <div class="credits-heading">音樂：</div>
+                <div>GGEZ（粵語版）</div>
+                <div class="credits-gap"></div>
+                <div>Chopin - Nocturne Op. 55 No. 1</div>
+                <div class="credits-gap"></div>
+                <div>Schumann: Kinderszenen Op.15 No.7, Träumerei (Horowitz)</div>
+                <div class="credits-gap"></div>
+                <div>Mozart : Allegro in B flat Major,K3</div>
+                <div class="credits-gap"></div>
+                <div>Plink, Plank, Plunk!</div>
+                <div class="credits-gap"></div>
+                <div>Federico Mompou, Musica callada - XV. Lento-plaintif (1962)</div>
+                <div class="credits-gap"></div>
+                <div>Gabriel Fauré - Op.24, Élégie (Gaisford, Melgar)</div>
+                <div class="credits-gap"></div>
+                <div>Louis Armstrong and his Hot Five - Cornet Chop Suey</div>
+                <div class="credits-gap"></div>
+                <div>Johann Sebastian Bach: Cello Suite No.1 VI-Gigue</div>
+                <div class="credits-gap"></div>
+                <div>Saint-Saens: Romance for Cello and Piano | Nicholas Canellakis &amp; Michael Stephen Brown</div>
+                <div class="credits-gap"></div>
+                <div>Fireworks</div>
+                <div class="credits-gap"></div>
+                <div>Sugar Foot Stomp</div>
+                <div class="credits-gap"></div>
+                <div>Louis Armstrong - Potato Head Blues (1927)[Digitally Remastered]</div>
+                <div class="credits-gap"></div>
+                <div>Kevin MacLeod ~ Waunobe March</div>
+                <div class="credits-gap"></div>
+                <div>Mussorgsky (orch. Ravel) - Pictures at an Exhibition - La Cabane (Baba Yaga) (14/15)</div>
+                <div class="credits-gap"></div>
+                <div>Kevin MacLeod ~ Exciting Trailer</div>
+                <div class="credits-gap"></div>
+                <div>Rimsky Korsakov - Procession of the Nobles</div>
+                <div class="credits-gap"></div>
+                <div>Borodin - Polovtsian - Dance No 17 - Dance the Maidens</div>
+                <div class="credits-gap"></div>
+                <div>Handel March, trumpet and organ. (March from Rinaldo)</div>
+                <div class="credits-gap"></div>
+                <div>Bethena - Scottt Joplin | J Piano</div>
+            </div>
+        </div>
+
     </div>
 
     <audio id="bgm-player" loop></audio>
@@ -7821,6 +7886,23 @@ if (scene.bgm) {
             svg.addEventListener("pointerup",finish);svg.addEventListener("pointercancel",finish);window.resetWireGame=reset;reset();
         })();
 
+
+        function showEndCredits() {
+            const credits = document.getElementById("end-credits");
+            if (!credits || credits.classList.contains("show")) return;
+            const page = document.getElementById("page1");
+            if (page) page.style.display = "none";
+            const loading = document.getElementById("loading-screen");
+            if (loading) loading.style.display = "none";
+            if (window.myTypingTimer) {
+                clearInterval(window.myTypingTimer);
+                window.myTypingTimer = null;
+            }
+            window.isTyping = false;
+            fadeOutBGM();
+            credits.classList.add("show");
+        }
+
         function nextStep() {
             const wirePage = document.getElementById("page1");
             if (wirePage && wirePage.classList.contains("wire-game-mode")) return;
@@ -7851,6 +7933,8 @@ if (scene.bgm) {
 
             if (currentStep < storyScript.length && currentStep !== -1) {
                 renderScene(currentStep);
+            } else if (currentStep >= storyScript.length) {
+                showEndCredits();
             }
         }
 
@@ -8084,7 +8168,45 @@ if (scene.bgm) {
             #skip-confirm-overlay #skip-confirm-yes{background:#ffb30f;color:#000;}
             #skip-confirm-overlay #skip-confirm-no{background:#000;color:#fff;}
             @media(max-width:420px){#skip-confirm-overlay .skip-card{padding:27px 18px 20px;}}
-          </style>
+          
+        /* 電影式片尾名單：全螢幕黑底，文字由下往上滾動 */
+        #end-credits {
+            position: absolute;
+            inset: 0;
+            z-index: 1000000;
+            display: none;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            text-align: center;
+            font-family: 'CPTrans', sans-serif;
+        }
+        #end-credits.show { display: block; }
+        #end-credits .credits-roll {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            padding: 0 22px 100vh;
+            animation: end-credits-scroll 115s linear forwards;
+            font-size: clamp(17px, 4.3vw, 22px);
+            line-height: 1.9;
+            white-space: normal;
+        }
+        #end-credits .credits-heading {
+            margin: 0 0 12px;
+            font-size: 1.12em;
+        }
+        #end-credits .credits-gap { height: 58px; }
+        #end-credits .credits-note { line-height: 2.05; }
+        @keyframes end-credits-scroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #end-credits .credits-roll { animation-duration: 180s; }
+        }
+</style>
           <div class="skip-card" role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title">
             <div id="skip-confirm-title">要跳過目前劇情？</div>
             <p class="skip-description">跳過後會直接前往下一個問題。</p>
