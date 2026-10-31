@@ -2122,17 +2122,17 @@ img { max-width:100%; }
             left: 0;
             width: 100%;
             padding: 0 22px 100vh;
-            animation: end-credits-scroll 115s linear forwards;
+            animation: end-credits-scroll 240s linear forwards;
             font-size: clamp(17px, 4.3vw, 22px);
-            line-height: 1.9;
+            line-height: 1.45;
             white-space: normal;
         }
         #end-credits .credits-heading {
-            margin: 0 0 12px;
+            margin: 0 0 8px;
             font-size: 1.12em;
         }
-        #end-credits .credits-gap { height: 58px; }
-        #end-credits .credits-note { line-height: 2.05; }
+        #end-credits .credits-gap { height: 22px; }
+        #end-credits .credits-note { line-height: 1.5; }
         @keyframes end-credits-scroll {
             from { transform: translateY(0); }
             to { transform: translateY(-100%); }
@@ -2412,23 +2412,54 @@ img { max-width:100%; }
     <!-- 電影式片尾名單 -->
     <div id="end-credits" aria-label="片尾名單">
         <div class="credits-roll">
-            <div class="credits-heading">繪製人員：</div>
+            <div class="credits-heading">漫畫製作：</div>
+            <div>烏賊</div>
+            <div>木鵝</div>
+            <div class="credits-note">（外包商）</div>
+            <div class="credits-note">（掛者靈風）</div>
+            <div class="credits-note">（逼理）</div>
+            <div class="credits-note">（好奇星）</div>
+
+            <div class="credits-gap"></div>
+            <div class="credits-heading">背景繪製：</div>
+            <div>烏賊</div>
+
+            <div class="credits-gap"></div>
+            <div class="credits-heading">劇情編寫：</div>
             <div>烏賊</div>
             <div>木鵝</div>
             <div>笑笑</div>
 
             <div class="credits-gap"></div>
-            <div class="credits-heading">角色設計：</div>
-            <div>木鵝</div>
+            <div class="credits-heading">網頁製作：</div>
+            <div>木鵝的第二人格</div>
+
+            <div class="credits-gap"></div>
+            <div class="credits-heading">遊戲製作：</div>
             <div>烏賊</div>
+            <div>木鵝</div>
             <div>笑笑</div>
 
             <div class="credits-gap"></div>
-            <div class="credits-note">（角色設計）</div>
-            <div class="credits-note">（長永劫沒做事）</div>
-            <div class="credits-note">（做不完都王志喊害的）</div>
-            <div class="credits-note">（烤魚一直臭我們）</div>
-            <div class="credits-note">（林子林不付錢）</div>
+            <div class="credits-heading">工作人員：</div>
+            <div>烏賊</div>
+            <div>木鵝</div>
+            <div>笑笑</div>
+
+            <div class="credits-gap"></div>
+            <div class="credits-heading">工作人員哎居：</div>
+            <div>ouo3bbb</div>
+            <div>ooo.__ee</div>
+            <div>nana195207</div>
+
+            <div class="credits-gap"></div>
+            <div class="credits-heading">導師：</div>
+            <div>李佳音</div>
+            <div class="credits-note">（小貓咪）</div>
+            <div class="credits-note">（羅志祥）</div>
+            <div class="credits-note">（謝謝大家）</div>
+            <div class="credits-note">（亞倫小燒0）</div>
+            <div class="credits-note">（燦笑）</div>
 
             <div class="credits-gap"></div>
             <div class="credits-heading">音樂：</div>
@@ -2460,8 +2491,6 @@ img { max-width:100%; }
             <div class="credits-gap"></div>
             <div>Kevin MacLeod ~ Waunobe March</div>
             <div class="credits-gap"></div>
-            <div>Mussorgsky (orch. Ravel) - Pictures at an Exhibition - La Cabane (Baba Yaga) (14/15)</div>
-            <div class="credits-gap"></div>
             <div>Kevin MacLeod ~ Exciting Trailer</div>
             <div class="credits-gap"></div>
             <div>Rimsky Korsakov - Procession of the Nobles</div>
@@ -2469,6 +2498,10 @@ img { max-width:100%; }
             <div>Borodin - Polovtsian - Dance No 17 - Dance the Maidens</div>
             <div class="credits-gap"></div>
             <div>Handel March, trumpet and organ. (March from Rinaldo)</div>
+            <div class="credits-gap"></div>
+            <div>Scipio: March (feat. David Shead &amp; Paul Honey)</div>
+            <div class="credits-gap"></div>
+            <div>Scott Joplin - Palm Leaf Rag (1903)</div>
             <div class="credits-gap"></div>
             <div>Bethena - Scottt Joplin | J Piano</div>
         </div>
@@ -4279,6 +4312,7 @@ img { max-width:100%; }
         id: 147,
         text: "嘿！嗚！咻！",
         background: "爽快星街景",
+        bgm: "./audio/Scott Joplin - Palm Leaf Rag (1903) - Score Videos.mp3",
     },
     {
         id: 148,
