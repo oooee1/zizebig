@@ -8870,6 +8870,77 @@ if (scene.bgm) {
     .mail-game-mailbox{transform:scale(1.28);}
 }
 
+
+
+/* ===== 送信小遊戲美編微調：取消突兀招牌與直角黑框 ===== */
+#page1.mail-game-mode #mail-game-rule{
+    background:transparent!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    padding:0 12px 5px!important;
+    color:#fffaf0!important;
+    font-family:inherit!important;
+    font-size:clamp(25px,5.1vw,37px)!important;
+    font-weight:900!important;
+    letter-spacing:.015em!important;
+    line-height:1.3!important;
+    text-shadow:
+        -2px -2px 0 #24476b,
+         2px -2px 0 #24476b,
+        -2px  2px 0 #24476b,
+         2px  2px 0 #24476b,
+         0 4px 0 #173653,
+         0 6px 10px rgba(12,35,58,.28)!important;
+}
+#page1.mail-game-mode #mail-game-rule::after{
+    display:none!important;
+}
+#page1.mail-game-mode #mail-game-feedback{
+    top:17.5%!important;
+    width:max-content!important;
+    max-width:88%!important;
+    min-height:0!important;
+    padding:8px 18px 9px!important;
+    color:#31516b!important;
+    background:rgba(255,249,231,.94)!important;
+    border:2px solid rgba(255,255,255,.92)!important;
+    border-radius:24px 28px 23px 27px!important;
+    box-shadow:0 4px 0 rgba(33,67,91,.16),0 7px 14px rgba(12,35,58,.13)!important;
+    font-family:inherit!important;
+    font-size:clamp(14px,2.8vw,18px)!important;
+    font-weight:800!important;
+    letter-spacing:.01em!important;
+    line-height:1.35!important;
+    text-shadow:none!important;
+}
+#page1.mail-game-mode #mail-game-feedback::before,
+#page1.mail-game-mode #mail-game-feedback::after{
+    display:none!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #mail-game-rule{
+        top:7%!important;
+        max-width:94%!important;
+        padding:0 8px 4px!important;
+        font-size:clamp(23px,6.1vw,31px)!important;
+        text-shadow:
+            -1.5px -1.5px 0 #24476b,
+             1.5px -1.5px 0 #24476b,
+            -1.5px  1.5px 0 #24476b,
+             1.5px  1.5px 0 #24476b,
+             0 3px 0 #173653,
+             0 5px 8px rgba(12,35,58,.25)!important;
+    }
+    #page1.mail-game-mode #mail-game-feedback{
+        top:16.8%!important;
+        max-width:92%!important;
+        padding:7px 13px 8px!important;
+        border-radius:20px 23px 19px 22px!important;
+        font-size:clamp(12px,3.6vw,16px)!important;
+    }
+}
+
 </style>
           <div class="skip-card" role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title">
             <div id="skip-confirm-title">要跳過目前劇情？</div>
