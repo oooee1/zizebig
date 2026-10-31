@@ -4733,7 +4733,7 @@ img { max-width:100%; }
     },
     {
         "id": 175,
-        "text": "需要把對應的信封移動收入郵筒中。",
+        "text": "需要把對應的信封移動收入箱中。",
         "speaker": "爽快星",
         "characters": ["爽快星一般"],
         "background": "爽快星送信小遊戲背景",
@@ -8183,7 +8183,7 @@ if (scene.bgm) {
             function finishGame(success){
                 const page=document.getElementById("page1");if(page)page.classList.remove("mail-game-mode");
                 started=false;locked=false;
-                const id=success?179:179.5;
+                const id=success?180:179.5;
                 const index=storyScript.findIndex(item=>Number(item.id)===id);
                 if(index>=0){currentStep=index;renderScene(currentStep);}
             }
