@@ -2113,17 +2113,17 @@ img { max-width:100%; }
     }
     #mail-game-envelope-row{
         position:absolute;left:3%;bottom:8%;width:94%;height:34%;
-        display:flex;align-items:flex-end;justify-content:center;
-        gap:clamp(3px,2vw,22px);pointer-events:none;
+        pointer-events:none;
     }
     .mail-game-envelope-slot{
-        flex:0 1 16%;height:56%;min-width:0;display:flex;
-        align-items:center;justify-content:center;opacity:.58;
-        transform:scale(.82);transition:all .28s ease;
+        position:absolute;top:22%;width:13%;height:56%;
+        display:flex;align-items:center;justify-content:center;
+        opacity:.58;transform:scale(.82);
+        transition:left .28s ease,top .28s ease,width .28s ease,height .28s ease,opacity .28s ease,transform .28s ease;
     }
     .mail-game-envelope-slot.active{
-        flex-basis:42%;height:100%;opacity:1;transform:scale(1);
-        z-index:2;pointer-events:auto;
+        left:29%!important;top:0;width:42%;height:100%;
+        opacity:1;transform:scale(1);z-index:2;pointer-events:auto;
     }
     .mail-game-envelope{
         display:block;width:100%;height:100%;object-fit:contain;
@@ -2148,8 +2148,8 @@ img { max-width:100%; }
         #mail-game-rule{top:11%;font-size:clamp(16px,4.4vw,22px);}
         #mail-game-mailboxes{top:25%;height:31%;left:2%;width:96%;gap:0;}
         #mail-game-envelope-row{bottom:9%;height:30%;left:2%;width:96%;gap:2px;}
-        .mail-game-envelope-slot{flex-basis:17%;height:48%;}
-        .mail-game-envelope-slot.active{flex-basis:43%;height:100%;}
+        .mail-game-envelope-slot{width:13%;height:48%;top:26%;}
+        .mail-game-envelope-slot.active{left:28%!important;width:44%;height:100%;top:0;}
         .mail-game-envelope.dragging{width:48vw!important;height:26vh!important;}
         #mail-game-feedback{bottom:2%;font-size:12px;}
     }
@@ -8178,6 +8178,14 @@ if (scene.bgm) {
                     const slot=document.createElement("div");
                     slot.className="mail-game-envelope-slot"+(index===currentIndex?" active":"");
                     slot.dataset.index=String(index);
+                    if(index!==currentIndex){
+                        const distance=Math.abs(index-currentIndex);
+                        const placeLeft=index<currentIndex || distance>2;
+                        const offset=placeLeft
+                            ? 29-(Math.min(distance,2)*14)
+                            : 71+((distance-1)*14);
+                        slot.style.left=offset+"%";
+                    }
                     const img=document.createElement("img");
                     img.className="mail-game-envelope";img.src=item.src;
                     img.alt=names[item.color]+names[item.shape]+"信封";
