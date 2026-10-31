@@ -2540,7 +2540,6 @@ img { max-width:100%; }
                 <div id="mail-game-lives">錯誤機會：♥ ♥ ♥</div>
             </div>
             <div id="mail-game-rule">請依照信封顏色分類</div>
-            <div id="mail-game-speaker" aria-hidden="true"><img src="./pct/爽快星插圖.webp" alt=""></div>
             <div id="mail-game-mailboxes" aria-label="郵筒分類區"></div>
             <div id="mail-game-envelope-row" aria-label="目前信件與待分類信件"></div>
             <div id="mail-game-feedback" aria-live="polite">把信封放進正確的郵筒</div>
@@ -8280,7 +8279,7 @@ if (scene.bgm) {
                     slot.appendChild(img);envelopeRow.appendChild(slot);
                 });
                 updateStatus();
-                feedback.textContent="將中間的大信封拖曳到正確的郵筒";
+                feedback.textContent="把信封放進正確的郵筒裡！";
             }
             function startDrag(e){
                 if(locked||!started||!overlay.closest("#page1")?.classList.contains("mail-game-mode"))return;
@@ -8944,38 +8943,69 @@ if (scene.bgm) {
 
 
 
-/* ===== 送信小遊戲：爽快星提示角色＋對話框＋信封放大 ===== */
+/* ===== 送信分類遊戲：統一美術樣式（覆蓋舊版重複規則） ===== */
 #page1.mail-game-mode #爽快星開心{
     display:block!important;
     position:absolute!important;
-    left:-5%!important;
-    bottom:-2%!important;
-    width:39%!important;
-    z-index:5400!important;
+    left:-7%!important;
+    bottom:-1%!important;
+    top:auto!important;
+    width:38%!important;
+    height:58%!important;
+    z-index:5401!important;
     pointer-events:none!important;
 }
 #page1.mail-game-mode #爽快星開心 img{
     display:block!important;
-    width:145%!important;
-    height:auto!important;
+    width:150%!important;
+    height:100%!important;
     max-width:none!important;
-    filter:drop-shadow(0 5px 5px rgba(20,45,65,.18));
+    object-fit:contain!important;
+    object-position:left bottom!important;
 }
-#page1.mail-game-mode #mail-game-feedback{
-    top:19%!important;
-    left:59%!important;
+#page1.mail-game-mode #mail-game-rule{
+    position:absolute!important;
+    top:7%!important;
+    left:50%!important;
     transform:translateX(-50%)!important;
     width:max-content!important;
-    max-width:68%!important;
-    min-height:54px!important;
-    padding:12px 20px 13px!important;
-    border:3px solid #fff!important;
-    border-radius:27px 30px 28px 25px!important;
-    background:#fff9e9!important;
-    color:#31516b!important;
-    box-shadow:0 5px 0 rgba(37,72,94,.16),0 8px 16px rgba(13,38,61,.13)!important;
+    max-width:92%!important;
+    padding:0 12px 5px!important;
+    color:#fffaf0!important;
+    background:transparent!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
     font-family:inherit!important;
-    font-size:clamp(15px,2.8vw,19px)!important;
+    font-size:clamp(27px,5.2vw,40px)!important;
+    font-weight:900!important;
+    line-height:1.3!important;
+    letter-spacing:.02em!important;
+    text-align:center!important;
+    text-shadow:
+      -2px -2px 0 #24476b,2px -2px 0 #24476b,
+      -2px 2px 0 #24476b,2px 2px 0 #24476b,
+      0 4px 0 #173653,0 6px 10px rgba(12,35,58,.25)!important;
+    z-index:6!important;
+}
+#page1.mail-game-mode #mail-game-feedback{
+    position:absolute!important;
+    top:17%!important;
+    left:66%!important;
+    bottom:auto!important;
+    transform:translateX(-50%)!important;
+    width:max-content!important;
+    max-width:60%!important;
+    min-height:0!important;
+    box-sizing:border-box!important;
+    padding:12px 21px!important;
+    color:#31516b!important;
+    background:#fff9e9!important;
+    border:3px solid #fff!important;
+    border-radius:26px 30px 25px 29px!important;
+    box-shadow:0 5px 0 rgba(37,72,94,.14),0 8px 16px rgba(13,38,61,.12)!important;
+    font-family:inherit!important;
+    font-size:clamp(16px,2.8vw,21px)!important;
     font-weight:800!important;
     line-height:1.45!important;
     text-align:center!important;
@@ -8986,199 +9016,132 @@ if (scene.bgm) {
     display:block!important;
     content:""!important;
     position:absolute!important;
-    left:-18px!important;
+    left:-21px!important;
     top:58%!important;
-    width:20px!important;
-    height:20px!important;
-    background:#fff9e9!important;
-    border-left:3px solid #fff!important;
-    border-bottom:3px solid #fff!important;
-    border-radius:0 0 0 5px!important;
-    transform:translateY(-50%) rotate(45deg)!important;
-    clip-path:polygon(0 0,100% 0,0 100%)!important;
-}
-#page1.mail-game-mode #mail-game-rule{
-    top:7.5%!important;
-    font-size:clamp(23px,4.7vw,34px)!important;
-    letter-spacing:.01em!important;
-    text-shadow:
-      -2px -2px 0 #24476b,2px -2px 0 #24476b,
-      -2px 2px 0 #24476b,2px 2px 0 #24476b,
-      0 3px 0 #173653,0 5px 8px rgba(12,35,58,.22)!important;
-}
-#page1.mail-game-mode #mail-game-envelope-row{
-    bottom:-2%!important;
-    height:47%!important;
-}
-#page1.mail-game-mode .mail-game-envelope-slot.active{
-    left:5%!important;
-    top:-8%!important;
-    width:90%!important;
-    height:118%!important;
-    z-index:6!important;
-}
-#page1.mail-game-mode .mail-game-envelope-slot:not(.active){
-    width:28%!important;
-    height:58%!important;
-    opacity:.9!important;
-}
-#page1.mail-game-mode .mail-game-envelope{
-    filter:drop-shadow(0 10px 8px rgba(10,35,58,.27))!important;
-}
-#page1.mail-game-mode .mail-game-envelope.dragging{
-    width:min(88vw,650px)!important;
-    height:72vh!important;
-}
-@media(max-width:600px){
-    #page1.mail-game-mode #爽快星開心{
-        left:-9%!important;
-        bottom:-1%!important;
-        width:43%!important;
-    }
-    #page1.mail-game-mode #爽快星開心 img{width:150%!important;}
-    #page1.mail-game-mode #mail-game-feedback{
-        top:18%!important;
-        left:63%!important;
-        max-width:66%!important;
-        min-height:46px!important;
-        padding:9px 13px 10px!important;
-        border-radius:22px 25px 22px 20px!important;
-        font-size:clamp(12px,3.5vw,16px)!important;
-    }
-    #page1.mail-game-mode #mail-game-feedback::before{
-        left:-14px!important;
-        width:16px!important;height:16px!important;
-    }
-    #page1.mail-game-mode #mail-game-rule{
-        top:7%!important;
-        max-width:94%!important;
-        font-size:clamp(21px,5.8vw,29px)!important;
-    }
-    #page1.mail-game-mode #mail-game-envelope-row{
-        bottom:-1%!important;
-        height:43%!important;
-    }
-    #page1.mail-game-mode .mail-game-envelope-slot.active{
-        left:3%!important;
-        top:-6%!important;
-        width:94%!important;
-        height:116%!important;
-    }
-    #page1.mail-game-mode .mail-game-envelope-slot:not(.active){
-        width:28%!important;
-        height:55%!important;
-    }
-    #page1.mail-game-mode .mail-game-envelope.dragging{
-        width:90vw!important;
-        height:64vh!important;
-    }
-}
-
-
-/* ===== 送信分類：使用專用爽快星插圖作為提示說話者 ===== */
-#page1.mail-game-mode #爽快星開心{display:none!important;}
-#page1.mail-game-mode #mail-game-speaker{
-    display:block!important;
-    position:absolute!important;
-    left:1.5%!important;
-    top:15%!important;
-    bottom:auto!important;
-    width:30%!important;
-    height:35%!important;
-    z-index:7!important;
-    pointer-events:none!important;
-}
-#page1.mail-game-mode #mail-game-speaker img{
-    display:block!important;
-    width:100%!important;
-    height:100%!important;
-    object-fit:contain!important;
-    object-position:left bottom!important;
-}
-#page1.mail-game-mode #mail-game-feedback{
-    top:19%!important;
-    left:66%!important;
-    transform:translateX(-50%)!important;
-    max-width:62%!important;
-    min-height:0!important;
-    padding:13px 22px!important;
-    color:#fff!important;
-    background:#000!important;
-    border:0!important;
-    border-radius:24px 28px 25px 27px!important;
-    box-shadow:none!important;
-    font-size:clamp(17px,3vw,23px)!important;
-    font-weight:800!important;
-    line-height:1.4!important;
-    text-align:center!important;
-    z-index:9!important;
-}
-#page1.mail-game-mode #mail-game-feedback::before{
-    display:block!important;
-    content:""!important;
-    position:absolute!important;
-    left:-24px!important;
-    top:62%!important;
     width:0!important;height:0!important;
     background:transparent!important;
-    border:14px solid transparent!important;
-    border-right:25px solid #000!important;
+    border:13px solid transparent!important;
+    border-right:22px solid #fff!important;
     border-left:0!important;
     border-radius:0!important;
     transform:translateY(-50%)!important;
     clip-path:none!important;
 }
+#page1.mail-game-mode #mail-game-feedback::after{display:none!important;}
+#page1.mail-game-mode #mail-game-mailboxes{
+    top:26%!important;
+    left:1%!important;
+    width:98%!important;
+    height:50%!important;
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    align-items:center!important;
+    justify-items:center!important;
+    gap:0!important;
+}
+#page1.mail-game-mode .mail-game-mailbox{
+    width:100%!important;
+    height:100%!important;
+    max-width:none!important;
+    max-height:none!important;
+    object-fit:contain!important;
+    transform:scale(1.34)!important;
+    filter:drop-shadow(0 9px 6px rgba(9,35,61,.28))!important;
+    transition:filter .14s ease!important;
+}
+#page1.mail-game-mode .mail-game-mailbox.mailbox-target{
+    transform:scale(1.4)!important;
+    filter:drop-shadow(0 0 8px #ffe58a) drop-shadow(0 8px 5px rgba(9,35,61,.25))!important;
+}
 #page1.mail-game-mode #mail-game-envelope-row{
-    bottom:-4%!important;
-    height:54%!important;
+    left:0!important;
+    bottom:-3%!important;
+    width:100%!important;
+    height:52%!important;
+    pointer-events:none!important;
+}
+#page1.mail-game-mode .mail-game-envelope-slot{
+    top:12%!important;
+    width:40%!important;
+    height:72%!important;
+    opacity:.96!important;
+    transform:none!important;
+    transition:none!important;
 }
 #page1.mail-game-mode .mail-game-envelope-slot.active{
     left:-10%!important;
-    top:-18%!important;
+    top:-17%!important;
     width:120%!important;
     height:145%!important;
-}
-#page1.mail-game-mode .mail-game-envelope-slot:not(.active){
-    width:38%!important;
-    height:72%!important;
-    opacity:.96!important;
+    opacity:1!important;
+    z-index:6!important;
+    pointer-events:auto!important;
 }
 #page1.mail-game-mode .mail-game-envelope{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
     object-fit:contain!important;
+    filter:drop-shadow(0 12px 9px rgba(10,35,58,.3))!important;
 }
 #page1.mail-game-mode .mail-game-envelope.dragging{
+    position:fixed!important;
+    z-index:99999!important;
     width:min(100vw,780px)!important;
     height:82vh!important;
+    pointer-events:none!important;
+    transform:none!important;
 }
 @media(max-width:600px){
-    #page1.mail-game-mode #mail-game-speaker{
-        left:-2%!important;top:15%!important;
-        width:37%!important;height:31%!important;
+    #page1.mail-game-mode #爽快星開心{
+        left:-11%!important;
+        bottom:0!important;
+        width:45%!important;
+        height:48%!important;
+    }
+    #page1.mail-game-mode #爽快星開心 img{width:155%!important;}
+    #page1.mail-game-mode #mail-game-rule{
+        top:6%!important;
+        max-width:94%!important;
+        font-size:clamp(24px,6.4vw,33px)!important;
     }
     #page1.mail-game-mode #mail-game-feedback{
-        top:18%!important;left:69%!important;
-        max-width:60%!important;
-        padding:10px 13px!important;
-        font-size:clamp(14px,4vw,18px)!important;
+        top:16%!important;
+        left:68%!important;
+        max-width:59%!important;
+        padding:9px 13px!important;
+        border-radius:22px 25px 21px 24px!important;
+        font-size:clamp(14px,3.8vw,18px)!important;
     }
     #page1.mail-game-mode #mail-game-feedback::before{
-        left:-18px!important;
-        border-top-width:11px!important;
-        border-bottom-width:11px!important;
-        border-right-width:19px!important;
+        left:-17px!important;
+        border-top-width:10px!important;
+        border-bottom-width:10px!important;
+        border-right-width:18px!important;
     }
+    #page1.mail-game-mode #mail-game-mailboxes{
+        top:24%!important;
+        height:49%!important;
+    }
+    #page1.mail-game-mode .mail-game-mailbox{transform:scale(1.25)!important;}
+    #page1.mail-game-mode .mail-game-mailbox.mailbox-target{transform:scale(1.31)!important;}
     #page1.mail-game-mode #mail-game-envelope-row{
-        bottom:-5%!important;height:53%!important;
+        bottom:-4%!important;
+        height:51%!important;
+    }
+    #page1.mail-game-mode .mail-game-envelope-slot{
+        width:42%!important;
+        height:68%!important;
     }
     #page1.mail-game-mode .mail-game-envelope-slot.active{
-        left:-14%!important;top:-15%!important;
-        width:128%!important;height:142%!important;
-    }
-    #page1.mail-game-mode .mail-game-envelope-slot:not(.active){
-        width:40%!important;height:68%!important;
+        left:-14%!important;
+        top:-14%!important;
+        width:128%!important;
+        height:142%!important;
     }
     #page1.mail-game-mode .mail-game-envelope.dragging{
-        width:100vw!important;height:78vh!important;
+        width:100vw!important;
+        height:78vh!important;
     }
 }
 
