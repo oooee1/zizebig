@@ -3310,7 +3310,8 @@ img { max-width:100%; }
     {
         id: 13,
         text: "這裡以前是片大草原，不過因為發電機壞掉了...",
-        characters: ["好奇星"],
+        comicGroup: 2,
+        comicImages: ["./1漫畫/1好奇星-2-第一張.webp"],
         background: "好奇星草原",
     },
     {
@@ -3322,25 +3323,29 @@ img { max-width:100%; }
     {
         id: 14,
         text: "（所以羊怎麼會講話...）",
-        characters: ["星辰思考"],
+        comicGroup: 2,
+        comicImages: ["./1漫畫/1好奇星-2-第一張好奇星.webp"],
         background: "好奇星草原",
     },
     {
         id: 15,
         text: "{playerName}的星球是甚麼樣子的咩？",
-        characters: ["好奇星"],
+        comicGroup: 2,
+        comicImages: ["./1漫畫/1好奇星-2-第二張.webp"],
         background: "好奇星草原",
     },
     {
         id: 16,
         text: "叫做地球喔，但其實是什麼樣的我也沒有很清楚...",
-        characters: ["星辰苦惱"],
+        comicGroup: 2,
+        comicImages: ["./1漫畫/1好奇星-2-第三張.webp"],
         background: "好奇星草原",
     },
     {
         id: 17,
         text: "記得曾經聽到過這樣的星球咩。",
-        characters: ["好奇星開心"],
+        comicGroup: 2,
+        comicImages: ["./1漫畫/1好奇星-2-第四張.webp", "./1漫畫/1好奇星-2-第四張好奇星.webp"],
         background: "好奇星草原",
     },
     {
@@ -3770,40 +3775,47 @@ img { max-width:100%; }
     {
         id: 51,
         text: "欸？這是什麼！",
+        comicGroup: 3,
         comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         background: "好奇星黃色結局",
     },
     {
         id: 52,
         text: "拼圖嗎？",
+        comicGroup: 3,
         background: "好奇星黃色結局",
     },
     {
         id: 53,
         text: "好酷，我也是第一次看到咩。",
+        comicGroup: 3,
         comicImages: ["./1漫畫/1好奇星-3-第二張.webp"],
         background: "好奇星黃色結局",
     },
     {
         id: 54,
         text: "它好像進到火箭裡面了。",
+        comicGroup: 3,
         comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         background: "好奇星黃色結局",
     },
     {
         id: 55,
         text: "哇，它被喚醒了！",
+        comicGroup: 3,
         background: "好奇星黃色結局",
     },
     {
         id: 56,
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
+        comicGroup: 4,
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         background: "好奇星黃色結局",
     },
     {
         id: 57,
         text: "嘿咻！",
+        comicGroup: 4,
         comicImages: ["./1漫畫/1好奇星-4-第二張.webp", "./1漫畫/1好奇星-4-第三張.webp"],
         background: "好奇星黃色結局",
     },
@@ -4210,6 +4222,7 @@ img { max-width:100%; }
         id: 92,
         background: "同情星貝殼",
         text: "但也忽略了自己，很擔心自己是否有真正幫助到人。",
+        characters: ["同情星"],
     },
     {
         id: 93,
@@ -7397,13 +7410,17 @@ function renderScene(stepIndex) {
         : [];
     const comicBoxAtSceneStart = document.getElementById("comic-box");
     const nextScene = storyScript[stepIndex + 1];
+    const currentComicGroup = scene.comicGroup ?? null;
+    const previousComicGroup = comicBoxAtSceneStart?.getAttribute("data-comic-group") || null;
     const nextSceneHasComic = Boolean(nextScene && Array.isArray(nextScene.comicImages) &&
-        nextScene.comicImages.some(path => typeof path === "string" && path.startsWith("./1漫畫/")));
-    // 漫畫分鏡中間即使有一幕沒有新圖片，只要下一幕仍接著出現漫畫，就保留目前所有漫畫圖層。
+        nextScene.comicImages.some(path => typeof path === "string" && path.startsWith("./1漫畫/")) &&
+        (currentComicGroup === null || nextScene.comicGroup === currentComicGroup));
+    // 同組漫畫中間沒有新圖片的場景仍維持漫畫模式；跨組時不延續上一組圖層。
     const hasPreviousComicLayers = Boolean(comicBoxAtSceneStart &&
         comicBoxAtSceneStart.getAttribute("data-comic-paths"));
     const isContinuingComic = sceneComicPaths.length === 0 &&
-        hasPreviousComicLayers && nextSceneHasComic;
+        hasPreviousComicLayers && nextSceneHasComic &&
+        (currentComicGroup === null || previousComicGroup === String(currentComicGroup));
     const isComicMode = sceneComicPaths.length > 0 || isContinuingComic;
 
     // 每次切換場景先取消上一幕的純背景提示。
@@ -7729,6 +7746,13 @@ if (scene.bgm) {
 
     if (comicBox && comicImg && (comicPaths.length > 0 || isContinuingComic)) {
         const enteringComicMode = comicBox.style.display !== "block";
+        if (currentComicGroup !== null && previousComicGroup &&
+            previousComicGroup !== String(currentComicGroup)) {
+            comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
+            comicImg.removeAttribute("src");
+            comicImg.className = "";
+            comicBox.removeAttribute("data-comic-paths");
+        }
         let shownPaths = [];
         try {
             shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]");
@@ -7820,6 +7844,7 @@ if (scene.bgm) {
         });
 
         comicBox.setAttribute("data-comic-paths", JSON.stringify(shownPaths));
+        if (currentComicGroup !== null) comicBox.setAttribute("data-comic-group", String(currentComicGroup));
         const firstFileName = shownPaths[0] ? shownPaths[0].split('/').pop().replace(/\.[^/.]+$/, "") : "comic";
         comicBox.className = `comic-style-${firstFileName}`;
     } else {
@@ -7828,6 +7853,7 @@ if (scene.bgm) {
             comicBox.style.display = "none";
             comicBox.className = "";
             comicBox.removeAttribute("data-comic-paths");
+            comicBox.removeAttribute("data-comic-group");
             comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
         }
         if (comicImg) {
