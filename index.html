@@ -6964,7 +6964,7 @@ if (!hasScoredOptions) {
     });
 
     // 沒有指定新背景時沿用原背景；同一背景的連續對話不重播過渡。
-    const currentBgId = scene.background;
+    const currentBgId = requestedBackgroundId;
     const bgContainer = currentBgId ? document.getElementById(currentBgId) : previousBgContainer;
 
     if (bgContainer) {
