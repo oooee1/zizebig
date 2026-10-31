@@ -8706,6 +8706,170 @@ if (scene.bgm) {
             #skip-confirm-overlay #skip-confirm-no{background:#000;color:#fff;}
             @media(max-width:420px){#skip-confirm-overlay .skip-card{padding:27px 18px 20px;}}
           
+
+
+/* ===== 送信小遊戲：郵局視覺統一改版 ===== */
+#page1.mail-game-mode #mail-game-overlay{
+    padding:0;
+    background:linear-gradient(180deg,rgba(13,48,91,.10),rgba(13,48,91,.02) 42%,rgba(13,48,91,.16));
+}
+#mail-game-rule{
+    top:7.5%;
+    left:50%;
+    width:max-content;
+    max-width:90%;
+    padding:12px 30px 13px;
+    color:#fff8df;
+    background:#174b79;
+    border:0;
+    border-radius:18px 30px 17px 26px;
+    box-shadow:0 7px 0 #0d3156,0 11px 18px rgba(7,27,52,.22);
+    font-family:'Dela Gothic One',Arial,sans-serif;
+    font-size:clamp(23px,5.2vw,36px);
+    letter-spacing:.04em;
+    line-height:1.25;
+    text-shadow:2px 3px 0 rgba(5,31,58,.55);
+}
+#mail-game-rule::after{
+    content:"";
+    position:absolute;
+    left:18%;
+    right:18%;
+    bottom:-7px;
+    height:8px;
+    border-radius:99px;
+    background:#ffc84a;
+    transform:rotate(-1deg);
+}
+#mail-game-feedback{
+    top:17.5%;
+    left:50%;
+    width:max-content;
+    max-width:88%;
+    min-height:0;
+    padding:5px 14px;
+    color:#fff5d7;
+    background:rgba(13,48,82,.76);
+    border:0;
+    border-radius:999px;
+    box-shadow:0 4px 10px rgba(8,30,52,.16);
+    font-family:'Dela Gothic One',Arial,sans-serif;
+    font-size:clamp(13px,2.9vw,18px);
+    font-weight:400;
+    line-height:1.35;
+    letter-spacing:.025em;
+    text-shadow:0 1px 2px rgba(0,0,0,.18);
+}
+#mail-game-feedback::before,
+#mail-game-feedback::after{display:none!important;}
+#mail-game-mailboxes{
+    top:25%;
+    left:1%;
+    width:98%;
+    height:49%;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    align-items:center;
+    justify-items:center;
+    gap:0;
+}
+.mail-game-mailbox{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    transform:scale(1.42);
+    filter:drop-shadow(0 9px 5px rgba(9,35,61,.30));
+    transition:transform .16s ease,filter .16s ease;
+}
+.mail-game-mailbox.mailbox-target{
+    transform:translateY(-10px) scale(1.55);
+    filter:drop-shadow(0 0 7px #ffe58a) drop-shadow(0 8px 5px rgba(9,35,61,.28));
+}
+#mail-game-envelope-row{
+    left:0;
+    bottom:0;
+    width:100%;
+    height:39%;
+    pointer-events:none;
+}
+.mail-game-envelope-slot{
+    top:12%;
+    width:35%;
+    height:70%;
+    opacity:.82;
+    filter:saturate(.92);
+}
+.mail-game-envelope-slot.active{
+    left:15%!important;
+    top:-5%!important;
+    width:70%!important;
+    height:108%!important;
+    opacity:1;
+    z-index:5;
+    filter:none;
+}
+.mail-game-envelope{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    filter:drop-shadow(0 12px 8px rgba(10,35,58,.30));
+}
+.mail-game-envelope-slot:not(.active) .mail-game-envelope{
+    filter:drop-shadow(0 6px 5px rgba(10,35,58,.23));
+}
+.mail-game-envelope.dragging{
+    width:min(78vw,560px)!important;
+    height:66vh!important;
+    filter:drop-shadow(0 18px 14px rgba(5,25,45,.34))!important;
+    transform:scale(1.035);
+}
+@media(max-width:600px){
+    #mail-game-rule{
+        top:7%;
+        max-width:92%;
+        padding:10px 22px 11px;
+        font-size:clamp(22px,6.3vw,31px);
+        border-radius:15px 24px 14px 22px;
+    }
+    #mail-game-feedback{
+        top:16.8%;
+        max-width:91%;
+        padding:5px 12px;
+        font-size:clamp(12px,3.7vw,16px);
+    }
+    #mail-game-mailboxes{
+        top:24%;
+        left:0;
+        width:100%;
+        height:49%;
+    }
+    .mail-game-mailbox{transform:scale(1.38);}
+    .mail-game-mailbox.mailbox-target{transform:translateY(-8px) scale(1.5);}
+    #mail-game-envelope-row{
+        bottom:0;
+        height:40%;
+    }
+    .mail-game-envelope-slot{
+        top:13%;
+        width:36%;
+        height:68%;
+    }
+    .mail-game-envelope-slot.active{
+        left:14%!important;
+        top:-4%!important;
+        width:72%!important;
+        height:106%!important;
+    }
+    .mail-game-envelope.dragging{
+        width:82vw!important;
+        height:58vh!important;
+    }
+}
+@media(max-width:360px){
+    #mail-game-rule{padding:9px 16px 10px;font-size:21px;}
+    #mail-game-feedback{font-size:12px;padding:4px 9px;}
+    .mail-game-mailbox{transform:scale(1.28);}
+}
+
 </style>
           <div class="skip-card" role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title">
             <div id="skip-confirm-title">要跳過目前劇情？</div>
