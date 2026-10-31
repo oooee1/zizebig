@@ -6868,9 +6868,10 @@ function renderScene(stepIndex) {
     const nextSceneHasComic = Boolean(nextScene && Array.isArray(nextScene.comicImages) &&
         nextScene.comicImages.some(path => typeof path === "string" && path.startsWith("./1漫畫/")));
     // 漫畫分鏡中間即使有一幕沒有新圖片，只要下一幕仍接著出現漫畫，就保留目前所有漫畫圖層。
+    const hasPreviousComicLayers = Boolean(comicBoxAtSceneStart &&
+        comicBoxAtSceneStart.getAttribute("data-comic-paths"));
     const isContinuingComic = sceneComicPaths.length === 0 &&
-        comicBoxAtSceneStart && comicBoxAtSceneStart.style.display === "block" &&
-        nextSceneHasComic;
+        hasPreviousComicLayers && nextSceneHasComic;
     const isComicMode = sceneComicPaths.length > 0 || isContinuingComic;
 
     // 每次切換場景先取消上一幕的純背景提示。
