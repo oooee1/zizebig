@@ -2540,9 +2540,10 @@ img { max-width:100%; }
                 <div id="mail-game-lives">錯誤機會：♥ ♥ ♥</div>
             </div>
             <div id="mail-game-rule">請依照信封顏色分類</div>
+            <div id="mail-game-speaker" aria-hidden="true"><img src="./pct/爽快星插圖.webp" alt=""></div>
             <div id="mail-game-mailboxes" aria-label="郵筒分類區"></div>
             <div id="mail-game-envelope-row" aria-label="目前信件與待分類信件"></div>
-            <div id="mail-game-feedback" aria-live="polite">將目前的信封拖曳到正確郵筒</div>
+            <div id="mail-game-feedback" aria-live="polite">把信封放進正確的郵筒</div>
         </div>
         <!-- ID 36：拉電線小遊戲 -->
         <div id="wire-game-overlay" aria-label="拉電線小遊戲">
@@ -9070,6 +9071,114 @@ if (scene.bgm) {
     #page1.mail-game-mode .mail-game-envelope.dragging{
         width:90vw!important;
         height:64vh!important;
+    }
+}
+
+
+/* ===== 送信分類：使用專用爽快星插圖作為提示說話者 ===== */
+#page1.mail-game-mode #爽快星開心{display:none!important;}
+#page1.mail-game-mode #mail-game-speaker{
+    display:block!important;
+    position:absolute!important;
+    left:1.5%!important;
+    top:15%!important;
+    bottom:auto!important;
+    width:30%!important;
+    height:35%!important;
+    z-index:7!important;
+    pointer-events:none!important;
+}
+#page1.mail-game-mode #mail-game-speaker img{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    object-position:left bottom!important;
+}
+#page1.mail-game-mode #mail-game-feedback{
+    top:19%!important;
+    left:66%!important;
+    transform:translateX(-50%)!important;
+    max-width:62%!important;
+    min-height:0!important;
+    padding:13px 22px!important;
+    color:#fff!important;
+    background:#000!important;
+    border:0!important;
+    border-radius:24px 28px 25px 27px!important;
+    box-shadow:none!important;
+    font-size:clamp(17px,3vw,23px)!important;
+    font-weight:800!important;
+    line-height:1.4!important;
+    text-align:center!important;
+    z-index:9!important;
+}
+#page1.mail-game-mode #mail-game-feedback::before{
+    display:block!important;
+    content:""!important;
+    position:absolute!important;
+    left:-24px!important;
+    top:62%!important;
+    width:0!important;height:0!important;
+    background:transparent!important;
+    border:14px solid transparent!important;
+    border-right:25px solid #000!important;
+    border-left:0!important;
+    border-radius:0!important;
+    transform:translateY(-50%)!important;
+    clip-path:none!important;
+}
+#page1.mail-game-mode #mail-game-envelope-row{
+    bottom:-4%!important;
+    height:54%!important;
+}
+#page1.mail-game-mode .mail-game-envelope-slot.active{
+    left:-10%!important;
+    top:-18%!important;
+    width:120%!important;
+    height:145%!important;
+}
+#page1.mail-game-mode .mail-game-envelope-slot:not(.active){
+    width:38%!important;
+    height:72%!important;
+    opacity:.96!important;
+}
+#page1.mail-game-mode .mail-game-envelope{
+    object-fit:contain!important;
+}
+#page1.mail-game-mode .mail-game-envelope.dragging{
+    width:min(100vw,780px)!important;
+    height:82vh!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #mail-game-speaker{
+        left:-2%!important;top:15%!important;
+        width:37%!important;height:31%!important;
+    }
+    #page1.mail-game-mode #mail-game-feedback{
+        top:18%!important;left:69%!important;
+        max-width:60%!important;
+        padding:10px 13px!important;
+        font-size:clamp(14px,4vw,18px)!important;
+    }
+    #page1.mail-game-mode #mail-game-feedback::before{
+        left:-18px!important;
+        border-top-width:11px!important;
+        border-bottom-width:11px!important;
+        border-right-width:19px!important;
+    }
+    #page1.mail-game-mode #mail-game-envelope-row{
+        bottom:-5%!important;height:53%!important;
+    }
+    #page1.mail-game-mode .mail-game-envelope-slot.active{
+        left:-14%!important;top:-15%!important;
+        width:128%!important;height:142%!important;
+    }
+    #page1.mail-game-mode .mail-game-envelope-slot:not(.active){
+        width:40%!important;height:68%!important;
+    }
+    #page1.mail-game-mode .mail-game-envelope.dragging{
+        width:100vw!important;height:78vh!important;
     }
 }
 
