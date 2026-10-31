@@ -2146,28 +2146,45 @@ img { max-width:100%; }
     #page1.mail-game-mode #對話框,#page1.mail-game-mode .player-svg,
     #page1.mail-game-mode .角色圖,#page1.mail-game-mode #comic-box,
     #page1.mail-game-mode #empty-scene-next-hint{display:none!important;}
-    #mail-game-top{
-        width:100%;height:10%;min-height:54px;max-height:88px;
-        display:flex;align-items:center;justify-content:space-between;
-        gap:10px;color:#fff;font-size:clamp(13px,2.8vw,19px);
-        font-weight:800;text-shadow:0 2px 4px #000;
-    }
-    #mail-game-round{font-size:clamp(14px,3vw,20px);color:#fff;}
+    /* 遊戲不顯示輪次與錯誤次數，只保留當前分類要求 */
+    #mail-game-top,#mail-game-round,#mail-game-lives{display:none!important;}
     #mail-game-rule{
-        position:absolute;top:10%;left:50%;transform:translateX(-50%);
-        width:90%;text-align:center;color:#fff;
-        font-size:clamp(18px,4vw,26px);font-weight:900;
-        text-shadow:0 2px 5px #000;pointer-events:none;
+        position:absolute;top:10.5%;left:55%;transform:translateX(-50%);
+        width:max-content;max-width:86%;box-sizing:border-box;
+        padding:9px 24px;text-align:center;
+        color:#fff;background:#000;border:2px solid #fff;border-radius:18px;
+        font-size:clamp(23px,4.8vw,34px);font-weight:900;line-height:1.25;
+        text-shadow:none;pointer-events:none;z-index:4;
     }
-    #mail-game-lives{color:#fff;font-size:clamp(13px,2.8vw,18px);white-space:nowrap;text-shadow:0 2px 4px #000;}
+    #mail-game-feedback{
+        position:absolute;top:20%;bottom:auto;left:55%;transform:translateX(-50%);
+        width:max-content;max-width:82%;min-height:0;
+        box-sizing:border-box;padding:8px 20px 8px 25px;
+        text-align:center;color:#fff;background:#000;
+        border:2px solid #fff;border-radius:13px;
+        font-size:clamp(15px,2.8vw,20px);font-weight:800;
+        text-shadow:none;pointer-events:none;z-index:4;
+    }
+    /* 左側漫畫尾巴 */
+    #mail-game-feedback::before{
+        content:"";position:absolute;left:-23px;top:50%;transform:translateY(-50%);
+        width:0;height:0;border-top:13px solid transparent;
+        border-bottom:13px solid transparent;border-right:24px solid #fff;
+    }
+    #mail-game-feedback::after{
+        content:"";position:absolute;left:-18px;top:50%;transform:translateY(-50%);
+        width:0;height:0;border-top:10px solid transparent;
+        border-bottom:10px solid transparent;border-right:19px solid #000;
+    }
     #mail-game-mailboxes{
-        position:absolute;top:22%;left:3%;width:94%;height:36%;
+        position:absolute;top:30%;left:1%;width:98%;height:42%;
         display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-        align-items:center;justify-items:center;gap:1%;
+        align-items:center;justify-items:center;gap:0;
     }
     .mail-game-mailbox{
-        display:block;width:100%;height:100%;max-width:230px;max-height:100%;
+        display:block;width:100%;height:100%;max-width:300px;max-height:100%;
         object-fit:contain;pointer-events:auto;touch-action:none;
+        transform:scale(1.16);
         filter:drop-shadow(0 5px 4px rgba(0,0,0,.24));
         transition:transform .18s ease,filter .18s ease;
     }
@@ -2176,17 +2193,17 @@ img { max-width:100%; }
         filter:drop-shadow(0 0 9px rgba(255,230,120,.95));
     }
     #mail-game-envelope-row{
-        position:absolute;left:3%;bottom:8%;width:94%;height:34%;
+        position:absolute;left:2%;bottom:5%;width:96%;height:31%;
         pointer-events:none;
     }
     .mail-game-envelope-slot{
-        position:absolute;top:22%;width:13%;height:56%;
+        position:absolute;top:22%;width:16%;height:62%;
         display:flex;align-items:center;justify-content:center;
-        opacity:.58;transform:scale(.82);
+        opacity:.72;transform:scale(.9);
         transition:left .28s ease,top .28s ease,width .28s ease,height .28s ease,opacity .28s ease,transform .28s ease;
     }
     .mail-game-envelope-slot.active{
-        left:29%!important;top:0;width:42%;height:100%;
+        left:25%!important;top:0;width:50%;height:100%;
         opacity:1;transform:scale(1);z-index:2;pointer-events:auto;
     }
     .mail-game-envelope{
@@ -2197,7 +2214,7 @@ img { max-width:100%; }
     .mail-game-envelope-slot:not(.active) .mail-game-envelope{pointer-events:none;}
     .mail-game-envelope.dragging{
         position:fixed!important;z-index:99999!important;
-        width:min(42vw,210px)!important;height:30vh!important;
+        width:min(52vw,280px)!important;height:38vh!important;
         pointer-events:none!important;transform:scale(1.04);
     }
     #mail-game-feedback{
@@ -2207,15 +2224,24 @@ img { max-width:100%; }
         text-shadow:0 2px 4px #000;pointer-events:none;
     }
     @media(max-width:600px){
-        #page1.mail-tutorial-mode #對話框{border-radius:26px 26px 0 0!important;}
-        #mail-game-top{height:9%;min-height:42px;}
-        #mail-game-rule{top:11%;font-size:clamp(16px,4.4vw,22px);}
-        #mail-game-mailboxes{top:25%;height:31%;left:2%;width:96%;gap:0;}
-        #mail-game-envelope-row{bottom:9%;height:30%;left:2%;width:96%;gap:2px;}
-        .mail-game-envelope-slot{width:13%;height:48%;top:26%;}
-        .mail-game-envelope-slot.active{left:28%!important;width:44%;height:100%;top:0;}
-        .mail-game-envelope.dragging{width:48vw!important;height:26vh!important;}
-        #mail-game-feedback{bottom:2%;font-size:12px;}
+        #page1.mail-tutorial-mode #對話框{border-radius:26px!important;}
+        #mail-game-rule{
+            top:10%;left:55%;max-width:90%;padding:8px 17px;
+            font-size:clamp(22px,6vw,29px);border-radius:15px;
+        }
+        #mail-game-feedback{
+            top:19%;left:55%;max-width:84%;
+            padding:7px 14px 7px 19px;font-size:clamp(14px,3.8vw,18px);
+        }
+        #mail-game-feedback::before{left:-19px;border-top-width:11px;border-bottom-width:11px;border-right-width:20px;}
+        #mail-game-feedback::after{left:-15px;border-top-width:8px;border-bottom-width:8px;border-right-width:16px;}
+        #mail-game-mailboxes{top:30%;height:39%;left:0;width:100%;gap:0;}
+        .mail-game-mailbox{transform:scale(1.12);}
+        #mail-game-envelope-row{bottom:5%;height:30%;left:1%;width:98%;gap:0;}
+        .mail-game-envelope-slot{width:16%;height:55%;top:24%;}
+        .mail-game-envelope-slot.active{left:25%!important;width:50%;height:100%;top:0;}
+        .mail-game-envelope.dragging{width:58vw!important;height:34vh!important;}
+        #mail-game-feedback{bottom:auto;}
     }
     /* ID 36 拉電線小遊戲：接點座標暫放，之後可依電閘圖微調 */
     #page1 .wire-game-background { z-index: 0 !important; }
@@ -8266,7 +8292,9 @@ if (scene.bgm) {
                 if(el.dataset.envelope!==envelopeData[currentIndex]?.id)return;
                 e.preventDefault();
                 const rect=el.getBoundingClientRect();
-                drag={el,pointerId:e.pointerId,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top};
+                drag={el,parent:el.parentNode,nextSibling:el.nextSibling,pointerId:e.pointerId,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top};
+                /* 從有 transform 的信件排列容器抽離，避免 fixed 座標被父層偏移 */
+                document.body.appendChild(el);
                 el.classList.add("dragging");
                 el.style.left=(e.clientX-drag.offsetX)+"px";
                 el.style.top=(e.clientY-drag.offsetY)+"px";
@@ -8294,8 +8322,14 @@ if (scene.bgm) {
                 const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest("[data-mailbox]");
                 const envelope=envelopeData[currentIndex];
                 const target=hit&&mailboxData.find(box=>box.id===hit.dataset.mailbox);
+                /* 放開時先放回原本信件格，再清除 fixed 座標 */
+                if(current.parent){
+                    if(current.nextSibling&&current.nextSibling.parentNode===current.parent)current.parent.insertBefore(current.el,current.nextSibling);
+                    else current.parent.appendChild(current.el);
+                }
                 current.el.classList.remove("dragging");
                 current.el.style.position="";current.el.style.left="";current.el.style.top="";
+                current.el.style.width="";current.el.style.height="";
                 boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
                 if(target&&envelope&&target.id===targetFor(envelope)?.id){
                     locked=true;
