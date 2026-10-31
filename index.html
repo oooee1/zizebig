@@ -2064,14 +2064,78 @@ img { max-width:100%; }
     /* 爽快星送信分類：教學沿用原劇情對話框；遊戲採第一人稱單封輪替 */
     #mail-game-overlay{display:none;position:absolute;inset:0;z-index:5300;overflow:hidden;}
     #page1.mail-tutorial-mode .player-svg{display:none!important;}
+    /* 教學對話改成漫畫式對話泡泡：上方是框，下方是爽快星 */
     #page1.mail-tutorial-mode #對話框{
-        display:block!important;clip-path:none!important;
-        border-radius:34px 34px 0 0!important;
+        display:block!important;
+        position:absolute!important;
+        top:7%!important;bottom:auto!important;
+        left:10%!important;width:80%!important;
+        height:clamp(130px,23%,190px)!important;
+        min-height:0!important;
+        box-sizing:border-box!important;
+        overflow:visible!important;
+        clip-path:none!important;
+        border:3px solid #fff!important;
+        border-radius:30px!important;
         background:#000!important;
         color:#fff!important;
+        z-index:1000!important;
     }
-    #page1.mail-tutorial-mode #對話文本{color:#fff!important;}
-    #page1.mail-tutorial-mode #dialogue-next-arrow{display:block!important;}
+    #page1.mail-tutorial-mode #對話框那條線{display:none!important;}
+    #page1.mail-tutorial-mode #對話文本{
+        top:12%!important;left:7%!important;
+        width:86%!important;height:76%!important;
+        color:#fff!important;
+        display:flex!important;align-items:center!important;
+        box-sizing:border-box!important;
+        padding:0 2%!important;
+    }
+    /* 對話泡泡的尾巴朝下，指向下方的爽快星 */
+    #page1.mail-tutorial-mode #對話框::after{
+        content:"";position:absolute;
+        left:27%;bottom:-34px;
+        width:0;height:0;
+        border-top:36px solid #000;
+        border-left:0 solid transparent;
+        border-right:32px solid transparent;
+        filter:drop-shadow(2px 3px 0 #fff);
+        transform:skewX(-12deg);
+        pointer-events:none;
+    }
+    #page1.mail-tutorial-mode #爽快星開心{
+        display:block!important;
+        position:absolute!important;
+        left:-12%!important;
+        bottom:0!important;
+        width:90%!important;
+        z-index:20!important;
+    }
+    #page1.mail-tutorial-mode #爽快星開心 img{
+        width:145%!important;height:auto!important;
+    }
+    #page1.mail-tutorial-mode #dialogue-next-arrow{
+        display:block!important;
+        right:18px!important;bottom:14px!important;
+        z-index:1002!important;
+    }
+    @media(max-width:600px){
+        #page1.mail-tutorial-mode #對話框{
+            top:5%!important;left:6%!important;width:88%!important;
+            height:clamp(112px,20%,155px)!important;
+            border-radius:24px!important;
+        }
+        #page1.mail-tutorial-mode #對話框::after{
+            left:29%;bottom:-28px;
+            border-top-width:30px;border-right-width:27px;
+        }
+        #page1.mail-tutorial-mode #爽快星開心{
+            left:-16%!important;bottom:0!important;width:100%!important;
+        }
+        #page1.mail-tutorial-mode #爽快星開心 img{width:145%!important;}
+        #page1.mail-tutorial-mode #dialogue-next-arrow{
+            right:12px!important;bottom:10px!important;
+        }
+    }
     #page1.mail-game-mode #mail-game-overlay{
         display:flex;position:absolute;inset:0;flex-direction:column;
         align-items:center;justify-content:flex-start;
