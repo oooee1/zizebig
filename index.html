@@ -8180,10 +8180,10 @@ if (scene.bgm) {
                     slot.dataset.index=String(index);
                     if(index!==currentIndex){
                         const distance=Math.abs(index-currentIndex);
-                        const placeLeft=index<currentIndex || distance>2;
+                        const placeLeft=distance>2 ? index>currentIndex : index<currentIndex;
                         const offset=placeLeft
                             ? 29-(Math.min(distance,2)*14)
-                            : 71+((distance-1)*14);
+                            : 71+((Math.min(distance,2)-1)*14);
                         slot.style.left=offset+"%";
                     }
                     const img=document.createElement("img");
