@@ -2061,43 +2061,97 @@ img { max-width:100%; }
                 -webkit-mask: none !important;
             }
         }
-    /* 爽快星送信分類教學與遊戲：沿用遊戲既有的粗外框、圓角與黃色重點色 */
-    #mail-tutorial-overlay,#mail-game-overlay{display:none;position:absolute;inset:0;z-index:5100;overflow:hidden;}
-    #page1.mail-tutorial-mode #mail-tutorial-overlay{display:flex;align-items:flex-end;justify-content:space-between;padding:2.5% 5%;box-sizing:border-box;z-index:5200;pointer-events:none;}
-    #page1.mail-tutorial-mode #對話框,#page1.mail-tutorial-mode .player-svg,#page1.mail-tutorial-mode .角色圖{display:none!important;}
-    #mail-tutorial-character{height:42%;max-width:34%;object-fit:contain;align-self:flex-end;filter:drop-shadow(2px 3px 3px rgba(0,0,0,.25));}
-    #mail-tutorial-dialogue{position:relative;width:min(64%,720px);min-height:23%;box-sizing:border-box;padding:20px 28px 16px;background:#fff;border:4px solid #222;border-radius:25px;color:#222;display:flex;flex-direction:column;justify-content:center;box-shadow:5px 5px 0 rgba(0,0,0,.2);pointer-events:none;}
-    #mail-tutorial-dialogue:before{content:"";position:absolute;left:-22px;bottom:23%;border-width:15px 22px 15px 0;border-style:solid;border-color:transparent #222 transparent transparent;}
-    #mail-tutorial-speaker{font-weight:bold;color:#ff7777;font-size:clamp(14px,2.3vw,20px);margin-bottom:5px;}
-    #mail-tutorial-text{font-size:clamp(16px,2.7vw,25px);line-height:1.5;white-space:pre-line;}
-    #mail-tutorial-next{font-size:12px;text-align:right;color:#777;margin-top:7px;}
-
-    #page1.mail-game-mode #mail-game-overlay{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;box-sizing:border-box;padding:3.5% 4%;z-index:5300;touch-action:none;background:rgba(30,24,18,.08);gap:0;}
-    #page1.mail-game-mode #對話框,#page1.mail-game-mode .player-svg,#page1.mail-game-mode .角色圖,#page1.mail-game-mode #comic-box{display:none!important;}
-    #mail-game-top{width:100%;min-height:13%;display:grid;grid-template-columns:1fr auto;grid-template-areas:"round lives" "rule rule";align-content:center;align-items:center;gap:7px 10px;padding:11px 13px;background:rgba(255,250,235,.97);border:3px solid #292929;border-radius:20px;box-shadow:4px 4px 0 rgba(35,30,25,.7);color:#24211d;text-shadow:none;}
-    #mail-game-round{grid-area:round;justify-self:start;padding:5px 10px;background:#ffe27a;border:2px solid #292929;border-radius:999px;font-size:clamp(12px,2.6vw,16px);font-weight:900;}
-    #mail-game-rule{grid-area:rule;padding:0;border:0;background:transparent;border-radius:0;font-size:clamp(19px,4.2vw,27px);font-weight:900;line-height:1.2;text-align:center;color:#292929;}
-    #mail-game-lives{grid-area:lives;justify-self:end;padding:5px 9px;background:#fff;border:2px solid #292929;border-radius:999px;font-size:clamp(12px,2.5vw,16px);font-weight:800;white-space:nowrap;}
-    .mail-game-zone-label{margin:3.2% 0 1.4%;padding-left:5px;color:#fff;font-size:clamp(13px,2.8vw,17px);font-weight:900;letter-spacing:.04em;text-shadow:1px 2px 3px rgba(0,0,0,.75);}
-    #mail-game-mailboxes,#mail-game-envelopes{width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2.2%;justify-items:center;align-items:center;padding:10px 8px;background:rgba(255,250,235,.94);border:3px solid #292929;border-radius:20px;box-shadow:4px 4px 0 rgba(35,30,25,.65);}
-    #mail-game-mailboxes{height:34%;min-height:0;}
-    #mail-game-envelopes{height:24%;min-height:0;}
-    .mail-game-mailbox{width:100%;height:100%;max-width:190px;max-height:100%;object-fit:contain;padding:5px;background:#fff;border:2px solid #d9d0bd;border-radius:14px;pointer-events:auto;filter:drop-shadow(1px 2px 1px rgba(0,0,0,.12));}
-    .mail-game-envelope{width:100%;height:100%;max-width:112px;max-height:100%;object-fit:contain;padding:7px;background:#fff;border:2px solid #d9d0bd;border-radius:14px;touch-action:none;cursor:grab;user-select:none;-webkit-user-drag:none;filter:drop-shadow(1px 2px 1px rgba(0,0,0,.12));}
-    .mail-game-envelope.dragging{position:fixed;z-index:99999;width:min(24vw,112px);height:auto;padding:5px;pointer-events:none;transform:scale(1.08);background:#fff;border:2px solid #292929;border-radius:14px;}
-    .mail-game-envelope.sorted{opacity:.22;filter:grayscale(1);pointer-events:none;}
-    #mail-game-feedback{margin-top:auto;margin-bottom:1%;width:100%;min-height:7%;display:flex;align-items:center;justify-content:center;padding:8px 12px;background:#292929;border:2px solid #fff;border-radius:14px;box-shadow:0 2px 0 rgba(0,0,0,.3);text-align:center;font-size:clamp(13px,2.8vw,18px);font-weight:800;line-height:1.35;color:#ffe27a;text-shadow:none;}
+    /* 爽快星送信分類：教學沿用原劇情對話框；遊戲採第一人稱單封輪替 */
+    #mail-game-overlay{display:none;position:absolute;inset:0;z-index:5300;overflow:hidden;}
+    #page1.mail-tutorial-mode .player-svg{display:none!important;}
+    #page1.mail-tutorial-mode #對話框{
+        display:block!important;clip-path:none!important;
+        border-radius:34px 34px 0 0!important;
+        background:#000!important;
+        color:#fff!important;
+    }
+    #page1.mail-tutorial-mode #對話文本{color:#fff!important;}
+    #page1.mail-tutorial-mode #dialogue-next-arrow{display:block!important;}
+    #page1.mail-game-mode #mail-game-overlay{
+        display:flex;position:absolute;inset:0;flex-direction:column;
+        align-items:center;justify-content:flex-start;
+        box-sizing:border-box;padding:3.5% 3% 4%;
+        z-index:5300;touch-action:none;
+        background:transparent;gap:0;
+    }
+    #page1.mail-game-mode #對話框,#page1.mail-game-mode .player-svg,
+    #page1.mail-game-mode .角色圖,#page1.mail-game-mode #comic-box,
+    #page1.mail-game-mode #empty-scene-next-hint{display:none!important;}
+    #mail-game-top{
+        width:100%;height:10%;min-height:54px;max-height:88px;
+        display:flex;align-items:center;justify-content:space-between;
+        gap:10px;color:#fff;font-size:clamp(13px,2.8vw,19px);
+        font-weight:800;text-shadow:0 2px 4px #000;
+    }
+    #mail-game-round{font-size:clamp(14px,3vw,20px);color:#fff;}
+    #mail-game-rule{
+        position:absolute;top:10%;left:50%;transform:translateX(-50%);
+        width:90%;text-align:center;color:#fff;
+        font-size:clamp(18px,4vw,26px);font-weight:900;
+        text-shadow:0 2px 5px #000;pointer-events:none;
+    }
+    #mail-game-lives{color:#fff;font-size:clamp(13px,2.8vw,18px);white-space:nowrap;text-shadow:0 2px 4px #000;}
+    #mail-game-mailboxes{
+        position:absolute;top:22%;left:3%;width:94%;height:36%;
+        display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+        align-items:center;justify-items:center;gap:1%;
+    }
+    .mail-game-mailbox{
+        display:block;width:100%;height:100%;max-width:230px;max-height:100%;
+        object-fit:contain;pointer-events:auto;touch-action:none;
+        filter:drop-shadow(0 5px 4px rgba(0,0,0,.24));
+        transition:transform .18s ease,filter .18s ease;
+    }
+    .mail-game-mailbox.mailbox-target{
+        transform:translateY(-7px) scale(1.06);
+        filter:drop-shadow(0 0 9px rgba(255,230,120,.95));
+    }
+    #mail-game-envelope-row{
+        position:absolute;left:3%;bottom:8%;width:94%;height:34%;
+        display:flex;align-items:flex-end;justify-content:center;
+        gap:clamp(3px,2vw,22px);pointer-events:none;
+    }
+    .mail-game-envelope-slot{
+        flex:0 1 16%;height:56%;min-width:0;display:flex;
+        align-items:center;justify-content:center;opacity:.58;
+        transform:scale(.82);transition:all .28s ease;
+    }
+    .mail-game-envelope-slot.active{
+        flex-basis:42%;height:100%;opacity:1;transform:scale(1);
+        z-index:2;pointer-events:auto;
+    }
+    .mail-game-envelope{
+        display:block;width:100%;height:100%;object-fit:contain;
+        touch-action:none;cursor:grab;user-select:none;-webkit-user-drag:none;
+        filter:drop-shadow(0 7px 5px rgba(0,0,0,.28));
+    }
+    .mail-game-envelope-slot:not(.active) .mail-game-envelope{pointer-events:none;}
+    .mail-game-envelope.dragging{
+        position:fixed!important;z-index:99999!important;
+        width:min(42vw,210px)!important;height:30vh!important;
+        pointer-events:none!important;transform:scale(1.04);
+    }
+    #mail-game-feedback{
+        position:absolute;bottom:2%;left:5%;width:90%;
+        min-height:4%;text-align:center;color:#fff;
+        font-size:clamp(12px,2.5vw,16px);font-weight:700;
+        text-shadow:0 2px 4px #000;pointer-events:none;
+    }
     @media(max-width:600px){
-      #page1.mail-tutorial-mode #mail-tutorial-overlay{padding:3%;}
-      #mail-tutorial-character{height:30%;max-width:32%;}
-      #mail-tutorial-dialogue{width:67%;min-height:22%;padding:12px 15px;border-width:3px;border-radius:18px;}
-      #mail-game-top{min-height:14%;padding:9px 10px;gap:6px;}
-      #mail-game-mailboxes{height:33%;padding:7px 5px;gap:1.5%;}
-      #mail-game-envelopes{height:23%;padding:7px 5px;gap:1.5%;}
-      .mail-game-mailbox{padding:3px;border-radius:11px;}
-      .mail-game-envelope{padding:5px;border-radius:11px;}
-      .mail-game-zone-label{margin-top:3%;margin-bottom:1%;}
-      #mail-game-feedback{min-height:7%;font-size:clamp(12px,3vw,16px);}
+        #page1.mail-tutorial-mode #對話框{border-radius:26px 26px 0 0!important;}
+        #mail-game-top{height:9%;min-height:42px;}
+        #mail-game-rule{top:11%;font-size:clamp(16px,4.4vw,22px);}
+        #mail-game-mailboxes{top:25%;height:31%;left:2%;width:96%;gap:0;}
+        #mail-game-envelope-row{bottom:9%;height:30%;left:2%;width:96%;gap:2px;}
+        .mail-game-envelope-slot{flex-basis:17%;height:48%;}
+        .mail-game-envelope-slot.active{flex-basis:43%;height:100%;}
+        .mail-game-envelope.dragging{width:48vw!important;height:26vh!important;}
+        #mail-game-feedback{bottom:2%;font-size:12px;}
     }
     /* ID 36 拉電線小遊戲：接點座標暫放，之後可依電閘圖微調 */
     #page1 .wire-game-background { z-index: 0 !important; }
@@ -2395,26 +2449,16 @@ img { max-width:100%; }
         <div id="dialogue-next-hint">點一下繼續</div>
         <div id="dialogue-next-arrow" aria-hidden="true"></div>
     </div>
-        <!-- 爽快星送信分類教學與拖曳遊戲 -->
-        <div id="mail-tutorial-overlay" aria-label="送信分類遊戲教學">
-            <img id="mail-tutorial-character" src="./pct/爽快星一般.webp" alt="小小的爽快星">
-            <div id="mail-tutorial-dialogue">
-                <div id="mail-tutorial-speaker">爽快星</div>
-                <div id="mail-tutorial-text"></div>
-                <div id="mail-tutorial-next">點一下繼續</div>
-            </div>
-        </div>
+        <!-- 爽快星送信分類遊戲：郵筒固定一排，信件逐封輪替 -->
         <div id="mail-game-overlay" aria-label="郵筒信件分類遊戲">
             <div id="mail-game-top">
                 <div id="mail-game-round">第一輪／共兩輪</div>
                 <div id="mail-game-lives">錯誤機會：♥ ♥ ♥</div>
-                <div id="mail-game-rule">請依照信封顏色分類</div>
             </div>
-            <div class="mail-game-zone-label">郵筒分類區</div>
+            <div id="mail-game-rule">請依照信封顏色分類</div>
             <div id="mail-game-mailboxes" aria-label="郵筒分類區"></div>
-            <div class="mail-game-zone-label">待分類信件</div>
-            <div id="mail-game-envelopes" aria-label="可拖曳信封"></div>
-            <div id="mail-game-feedback" aria-live="polite">將信封拖曳到正確的郵筒裡！</div>
+            <div id="mail-game-envelope-row" aria-label="目前信件與待分類信件"></div>
+            <div id="mail-game-feedback" aria-live="polite">將目前的信封拖曳到正確郵筒</div>
         </div>
         <!-- ID 36：拉電線小遊戲 -->
         <div id="wire-game-overlay" aria-label="拉電線小遊戲">
@@ -4733,7 +4777,7 @@ img { max-width:100%; }
         "id": 175,
         "text": "需要把對應的信封移動收入箱中。",
         "speaker": "爽快星",
-        "characters": ["爽快星一般"],
+        "characters": ["爽快星開心"],
         "background": "爽快星送信小遊戲背景",
         "mailTutorial": true
     },
@@ -4741,7 +4785,7 @@ img { max-width:100%; }
         "id": 176,
         "text": "因為真的太多了，所以需要分類兩輪。",
         "speaker": "爽快星",
-        "characters": ["爽快星一般"],
+        "characters": ["爽快星開心"],
         "background": "爽快星送信小遊戲背景",
         "mailTutorial": true
     },
@@ -7075,10 +7119,6 @@ function renderScene(stepIndex) {
     }
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
-    const mailTutorialText = document.getElementById("mail-tutorial-text");
-    if (mailTutorialText && scene.mailTutorial) {
-        mailTutorialText.textContent = String(scene.text || "").replace(/\/\/n|\\n/g, "\n");
-    }
     const mailGameOverlay = document.getElementById("mail-game-overlay");
     if (scene.mailGame && typeof window.startMailSortingGame === "function") window.startMailSortingGame();
     const wireGameDialogue = document.getElementById("wire-game-dialogue-text");
@@ -8097,12 +8137,12 @@ if (scene.bgm) {
         (function setupMailSortingGame(){
             const overlay=document.getElementById("mail-game-overlay");
             const boxes=document.getElementById("mail-game-mailboxes");
-            const envelopes=document.getElementById("mail-game-envelopes");
+            const envelopeRow=document.getElementById("mail-game-envelope-row");
             const rule=document.getElementById("mail-game-rule");
             const roundLabel=document.getElementById("mail-game-round");
             const livesLabel=document.getElementById("mail-game-lives");
             const feedback=document.getElementById("mail-game-feedback");
-            if(!overlay||!boxes||!envelopes||!rule||!roundLabel||!livesLabel||!feedback)return;
+            if(!overlay||!boxes||!envelopeRow||!rule||!roundLabel||!livesLabel||!feedback)return;
             const mailboxData=[
                 {id:"red-triangle",src:"./pct/紅色三角形郵筒.webp",color:"red",shape:"triangle"},
                 {id:"green-circle",src:"./pct/綠色圓形郵筒.webp",color:"green",shape:"circle"},
@@ -8115,61 +8155,101 @@ if (scene.bgm) {
                 {id:"blue-triangle",src:"./pct/信封 藍色三角形.webp",color:"blue",shape:"triangle"},
                 {id:"yellow-square",src:"./pct/信封 黃色正方形.webp",color:"yellow",shape:"square"}
             ];
-            let round=1,errors=3,attempt=1,sorted=new Set(),started=false,locked=false,drag=null;
+            let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null;
             const names={red:"紅色",green:"綠色",blue:"藍色",yellow:"黃色",triangle:"三角形",circle:"圓形",heart:"愛心",square:"正方形"};
             function updateStatus(){
                 roundLabel.textContent=round===1?"第一輪／共兩輪":"第二輪／共兩輪";
-                rule.textContent=round===1?"請依照信封顏色分類":"請依照信封圖案分類";
+                rule.textContent=round===1?"依照顏色分類":"依照圖案分類";
                 livesLabel.textContent="錯誤機會："+ "♥ ".repeat(errors).trim() + "♡ ".repeat(3-errors).trim();
             }
             function targetFor(envelope){
                 return mailboxData.find(box=>box[round===1?"color":"shape"]===envelope[round===1?"color":"shape"]);
             }
             function render(){
-                boxes.replaceChildren();envelopes.replaceChildren();sorted.clear();
+                boxes.replaceChildren();
+                envelopeRow.replaceChildren();
                 mailboxData.forEach(box=>{
-                    const img=document.createElement("img");img.className="mail-game-mailbox";img.src=box.src;img.alt=names[box.color]+names[box.shape]+"郵筒";img.dataset.mailbox=box.id;boxes.appendChild(img);
+                    const img=document.createElement("img");
+                    img.className="mail-game-mailbox";img.src=box.src;
+                    img.alt=names[box.color]+names[box.shape]+"郵筒";
+                    img.dataset.mailbox=box.id;boxes.appendChild(img);
                 });
-                envelopeData.forEach(item=>{
-                    const img=document.createElement("img");img.className="mail-game-envelope";img.src=item.src;img.alt=names[item.color]+names[item.shape]+"信封";img.draggable=false;img.dataset.envelope=item.id;
-                    img.addEventListener("pointerdown",startDrag);envelopes.appendChild(img);
+                envelopeData.forEach((item,index)=>{
+                    const slot=document.createElement("div");
+                    slot.className="mail-game-envelope-slot"+(index===currentIndex?" active":"");
+                    slot.dataset.index=String(index);
+                    const img=document.createElement("img");
+                    img.className="mail-game-envelope";img.src=item.src;
+                    img.alt=names[item.color]+names[item.shape]+"信封";
+                    img.draggable=false;img.dataset.envelope=item.id;
+                    if(index===currentIndex)img.addEventListener("pointerdown",startDrag);
+                    slot.appendChild(img);envelopeRow.appendChild(slot);
                 });
                 updateStatus();
-                feedback.textContent=round===1?"把信封拖曳到相同顏色的郵筒！":"第二輪改看圖案，將信封放進相同圖案的郵筒！";
+                feedback.textContent="將中間的大信封拖曳到正確的郵筒";
             }
             function startDrag(e){
-                if(locked||!overlay.closest("#page1")?.classList.contains("mail-game-mode"))return;
-                const el=e.currentTarget;if(el.classList.contains("sorted"))return;
-                e.preventDefault();const rect=el.getBoundingClientRect();
-                drag={el,pointerId:e.pointerId,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top,originParent:el.parentElement,originNext:el.nextSibling};
-                el.classList.add("dragging");el.style.left=(e.clientX-drag.offsetX)+"px";el.style.top=(e.clientY-drag.offsetY)+"px";el.style.position="fixed";
-                document.addEventListener("pointermove",moveDrag);document.addEventListener("pointerup",endDrag,{once:true});document.addEventListener("pointercancel",endDrag,{once:true});
+                if(locked||!started||!overlay.closest("#page1")?.classList.contains("mail-game-mode"))return;
+                const el=e.currentTarget;
+                if(el.dataset.envelope!==envelopeData[currentIndex]?.id)return;
+                e.preventDefault();
+                const rect=el.getBoundingClientRect();
+                drag={el,pointerId:e.pointerId,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top};
+                el.classList.add("dragging");
+                el.style.left=(e.clientX-drag.offsetX)+"px";
+                el.style.top=(e.clientY-drag.offsetY)+"px";
+                el.style.position="fixed";
+                document.addEventListener("pointermove",moveDrag);
+                document.addEventListener("pointerup",endDrag,{once:true});
+                document.addEventListener("pointercancel",endDrag,{once:true});
             }
-            function moveDrag(e){if(!drag||e.pointerId!==drag.pointerId)return;drag.el.style.left=(e.clientX-drag.offsetX)+"px";drag.el.style.top=(e.clientY-drag.offsetY)+"px";}
-            function clearDragListeners(){document.removeEventListener("pointermove",moveDrag);document.removeEventListener("pointerup",endDrag);document.removeEventListener("pointercancel",endDrag);}
+            function moveDrag(e){
+                if(!drag||e.pointerId!==drag.pointerId)return;
+                drag.el.style.left=(e.clientX-drag.offsetX)+"px";
+                drag.el.style.top=(e.clientY-drag.offsetY)+"px";
+                const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest("[data-mailbox]");
+                boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
+                if(hit)hit.classList.add("mailbox-target");
+            }
+            function clearDragListeners(){
+                document.removeEventListener("pointermove",moveDrag);
+                document.removeEventListener("pointerup",endDrag);
+                document.removeEventListener("pointercancel",endDrag);
+            }
             function endDrag(e){
                 if(!drag||e.pointerId!==drag.pointerId)return;
                 const current=drag;drag=null;clearDragListeners();
-                const cx=e.clientX,cy=e.clientY;
-                current.el.classList.remove("dragging");current.el.style.position="";current.el.style.left="";current.el.style.top="";
-                const hit=document.elementFromPoint(cx,cy)?.closest("[data-mailbox]");
-                const envelope=envelopeData.find(x=>x.id===current.el.dataset.envelope);
-                const target=hit&&mailboxData.find(x=>x.id===hit.dataset.mailbox);
+                const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest("[data-mailbox]");
+                const envelope=envelopeData[currentIndex];
+                const target=hit&&mailboxData.find(box=>box.id===hit.dataset.mailbox);
+                current.el.classList.remove("dragging");
+                current.el.style.position="";current.el.style.left="";current.el.style.top="";
+                boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
                 if(target&&envelope&&target.id===targetFor(envelope)?.id){
-                    current.el.classList.add("sorted");sorted.add(envelope.id);
+                    locked=true;
                     feedback.textContent="分類正確！";
-                    if(sorted.size===envelopeData.length){
-                        if(round===1){locked=true;feedback.textContent="第一輪完成！接下來改看信封圖案。";setTimeout(()=>{round=2;locked=false;render();},850);}
-                        else{locked=true;feedback.textContent="兩輪分類都完成了！";setTimeout(()=>finishGame(true),700);}
-                    }
+                    currentIndex++;
+                    setTimeout(()=>{
+                        if(currentIndex>=envelopeData.length){
+                            if(round===1){
+                                round=2;currentIndex=0;locked=false;render();
+                                feedback.textContent="第一輪完成！現在改依圖案分類。";
+                            }else{
+                                feedback.textContent="兩輪分類都完成了！";
+                                setTimeout(()=>finishGame(true),650);
+                            }
+                        }else{
+                            locked=false;render();
+                        }
+                    },420);
                 }else{
                     errors--;updateStatus();
-                    feedback.textContent=target?"分類錯誤，再仔細看看題目！":"把信封放進正確的郵筒裡！";
+                    feedback.textContent=target?"這封信不符合郵筒條件，再試一次。":"把信封放進正確的郵筒裡！";
                     if(errors<=0){
                         locked=true;
                         if(attempt===1){
                             feedback.textContent="這次失敗了，再完整試一次！";
-                            setTimeout(()=>{attempt=2;round=1;errors=3;locked=false;render();},1200);
+                            setTimeout(()=>{attempt=2;round=1;errors=3;currentIndex=0;locked=false;render();},1200);
                         }else{
                             feedback.textContent="我來幫忙了！";
                             setTimeout(()=>finishGame(false),900);
@@ -8178,7 +8258,8 @@ if (scene.bgm) {
                 }
             }
             function finishGame(success){
-                const page=document.getElementById("page1");if(page)page.classList.remove("mail-game-mode");
+                const page=document.getElementById("page1");
+                if(page)page.classList.remove("mail-game-mode");
                 started=false;locked=false;
                 const id=success?180:179.5;
                 const index=storyScript.findIndex(item=>Number(item.id)===id);
@@ -8186,7 +8267,8 @@ if (scene.bgm) {
             }
             window.startMailSortingGame=function(){
                 if(started)return;
-                started=true;round=1;errors=3;attempt=1;locked=false;render();
+                started=true;round=1;errors=3;attempt=1;currentIndex=0;locked=false;
+                render();
             };
         })();
 
