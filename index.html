@@ -2136,6 +2136,12 @@ img { max-width:100%; }
             right:12px!important;bottom:10px!important;
         }
     }
+    #page1.mail-failure-mode::after{
+        content:"";position:absolute;inset:0;
+        background:rgba(0,0,0,.78);z-index:8;pointer-events:none;
+    }
+    #page1.mail-failure-mode .角色圖{z-index:20!important;}
+    #page1.mail-failure-mode #對話框{z-index:30!important;}
     #page1.mail-game-mode #mail-game-overlay{
         display:flex;position:absolute;inset:0;flex-direction:column;
         align-items:center;justify-content:flex-start;
@@ -2149,19 +2155,19 @@ img { max-width:100%; }
     /* 遊戲不顯示輪次與錯誤次數，只保留當前分類要求 */
     #mail-game-top,#mail-game-round,#mail-game-lives{display:none!important;}
     #mail-game-rule{
-        position:absolute;top:10.5%;left:55%;transform:translateX(-50%);
-        width:max-content;max-width:86%;box-sizing:border-box;
-        padding:9px 24px;text-align:center;
-        color:#fff;background:#000;border:2px solid #fff;border-radius:18px;
-        font-size:clamp(23px,4.8vw,34px);font-weight:900;line-height:1.25;
+        position:absolute;top:11%;left:50%;transform:translateX(-50%);
+        width:max-content;max-width:92%;box-sizing:border-box;
+        padding:10px 26px;text-align:center;
+        color:#fff;background:#000;border:0;border-radius:0;
+        font-size:clamp(28px,5.8vw,42px);font-weight:900;line-height:1.2;
         text-shadow:none;pointer-events:none;z-index:4;
     }
     #mail-game-feedback{
-        position:absolute;top:20%;bottom:auto;left:55%;transform:translateX(-50%);
-        width:max-content;max-width:82%;min-height:0;
+        position:absolute;top:20%;bottom:auto;left:50%;transform:translateX(-50%);
+        width:max-content;max-width:88%;min-height:0;
         box-sizing:border-box;padding:8px 20px 8px 25px;
         text-align:center;color:#fff;background:#000;
-        border:2px solid #fff;border-radius:13px;
+        border:0;border-radius:0;
         font-size:clamp(15px,2.8vw,20px);font-weight:800;
         text-shadow:none;pointer-events:none;z-index:4;
     }
@@ -2169,22 +2175,18 @@ img { max-width:100%; }
     #mail-game-feedback::before{
         content:"";position:absolute;left:-23px;top:50%;transform:translateY(-50%);
         width:0;height:0;border-top:13px solid transparent;
-        border-bottom:13px solid transparent;border-right:24px solid #fff;
+        border-bottom:13px solid transparent;border-right:24px solid #000;
     }
-    #mail-game-feedback::after{
-        content:"";position:absolute;left:-18px;top:50%;transform:translateY(-50%);
-        width:0;height:0;border-top:10px solid transparent;
-        border-bottom:10px solid transparent;border-right:19px solid #000;
-    }
+    #mail-game-feedback::after{display:none;}
     #mail-game-mailboxes{
-        position:absolute;top:30%;left:1%;width:98%;height:42%;
+        position:absolute;top:27%;left:0;width:100%;height:52%;
         display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
         align-items:center;justify-items:center;gap:0;
     }
     .mail-game-mailbox{
-        display:block;width:100%;height:100%;max-width:300px;max-height:100%;
+        display:block;width:100%;height:100%;max-width:none;max-height:none;
         object-fit:contain;pointer-events:auto;touch-action:none;
-        transform:scale(1.16);
+        transform:scale(1.34);
         filter:drop-shadow(0 5px 4px rgba(0,0,0,.24));
         transition:transform .18s ease,filter .18s ease;
     }
@@ -2193,18 +2195,17 @@ img { max-width:100%; }
         filter:drop-shadow(0 0 9px rgba(255,230,120,.95));
     }
     #mail-game-envelope-row{
-        position:absolute;left:2%;bottom:5%;width:96%;height:31%;
+        position:absolute;left:0;bottom:1%;width:100%;height:40%;
         pointer-events:none;
     }
     .mail-game-envelope-slot{
-        position:absolute;top:22%;width:16%;height:62%;
+        position:absolute;top:12%;width:34%;height:64%;
         display:flex;align-items:center;justify-content:center;
-        opacity:.72;transform:scale(.9);
-        transition:left .28s ease,top .28s ease,width .28s ease,height .28s ease,opacity .28s ease,transform .28s ease;
+        opacity:.94;transform:none;transition:none;
     }
     .mail-game-envelope-slot.active{
-        left:25%!important;top:0;width:50%;height:100%;
-        opacity:1;transform:scale(1);z-index:2;pointer-events:auto;
+        left:16%!important;top:0;width:68%;height:100%;
+        opacity:1;transform:none;z-index:2;pointer-events:auto;
     }
     .mail-game-envelope{
         display:block;width:100%;height:100%;object-fit:contain;
@@ -2214,27 +2215,26 @@ img { max-width:100%; }
     .mail-game-envelope-slot:not(.active) .mail-game-envelope{pointer-events:none;}
     .mail-game-envelope.dragging{
         position:fixed!important;z-index:99999!important;
-        width:min(52vw,280px)!important;height:38vh!important;
+        width:min(72vw,520px)!important;height:58vh!important;
         pointer-events:none!important;transform:scale(1.04);
     }
     @media(max-width:600px){
         #page1.mail-tutorial-mode #對話框{border-radius:26px!important;}
         #mail-game-rule{
-            top:10%;left:55%;max-width:90%;padding:8px 17px;
-            font-size:clamp(22px,6vw,29px);border-radius:15px;
+            top:10%;left:50%;max-width:94%;padding:9px 18px;
+            font-size:clamp(27px,7.2vw,36px);border-radius:0;
         }
         #mail-game-feedback{
-            top:19%;left:55%;max-width:84%;
-            padding:7px 14px 7px 19px;font-size:clamp(14px,3.8vw,18px);
+            top:19%;left:50%;max-width:90%;
+            padding:7px 14px 7px 19px;font-size:clamp(16px,4.4vw,20px);
         }
         #mail-game-feedback::before{left:-19px;border-top-width:11px;border-bottom-width:11px;border-right-width:20px;}
-        #mail-game-feedback::after{left:-15px;border-top-width:8px;border-bottom-width:8px;border-right-width:16px;}
-        #mail-game-mailboxes{top:30%;height:39%;left:0;width:100%;gap:0;}
-        .mail-game-mailbox{transform:scale(1.12);}
-        #mail-game-envelope-row{bottom:5%;height:30%;left:1%;width:98%;gap:0;}
-        .mail-game-envelope-slot{width:16%;height:55%;top:24%;}
-        .mail-game-envelope-slot.active{left:25%!important;width:50%;height:100%;top:0;}
-        .mail-game-envelope.dragging{width:58vw!important;height:34vh!important;}
+        #mail-game-mailboxes{top:27%;height:49%;left:0;width:100%;gap:0;}
+        .mail-game-mailbox{transform:scale(1.28);}
+        #mail-game-envelope-row{bottom:1%;height:39%;left:0;width:100%;gap:0;}
+        .mail-game-envelope-slot{width:34%;height:58%;top:20%;transition:none;}
+        .mail-game-envelope-slot.active{left:16%!important;width:68%;height:100%;top:0;}
+        .mail-game-envelope.dragging{width:78vw!important;height:52vh!important;}
         #mail-game-feedback{bottom:auto;}
     }
     /* ID 36 拉電線小遊戲：接點座標暫放，之後可依電閘圖微調 */
@@ -4896,7 +4896,7 @@ img { max-width:100%; }
         "id": 179.5,
         "text": "我來幫忙了！",
         "speaker": "爽快星",
-        "characters": ["爽快星開心"],
+        "characters": ["爽快星慌張"],
         "background": "爽快星郵局內部"
     },
     {
@@ -7322,6 +7322,7 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle("wire-game-mode", currentSceneId === 36);
         pageEl.classList.toggle("mail-tutorial-mode", Boolean(scene.mailTutorial));
         pageEl.classList.toggle("mail-game-mode", Boolean(scene.mailGame));
+        pageEl.classList.toggle("mail-failure-mode", Number(scene.id) === 179.5);
     }
 
     // 只有進入不同漫畫場景時才淡入；同一場景的對話不做過渡。
@@ -8233,12 +8234,13 @@ if (scene.bgm) {
                 {id:"blue-heart",src:"./pct/藍色愛心郵筒.webp",color:"blue",shape:"heart"},
                 {id:"yellow-square",src:"./pct/黃色正方形郵筒.webp",color:"yellow",shape:"square"}
             ];
-            const envelopeData=[
+            const envelopeMaster=[
                 {id:"red-circle",src:"./pct/信封 紅色圓形.webp",color:"red",shape:"circle"},
                 {id:"green-heart",src:"./pct/信封 綠色愛心.webp",color:"green",shape:"heart"},
                 {id:"blue-triangle",src:"./pct/信封 藍色三角形.webp",color:"blue",shape:"triangle"},
                 {id:"yellow-square",src:"./pct/信封 黃色正方形.webp",color:"yellow",shape:"square"}
             ];
+            let envelopeData=[...envelopeMaster];
             let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null;
             const names={red:"紅色",green:"綠色",blue:"藍色",yellow:"黃色",triangle:"三角形",circle:"圓形",heart:"愛心",square:"正方形"};
             function updateStatus(){
@@ -8258,23 +8260,22 @@ if (scene.bgm) {
                     img.alt=names[box.color]+names[box.shape]+"郵筒";
                     img.dataset.mailbox=box.id;boxes.appendChild(img);
                 });
-                envelopeData.forEach((item,index)=>{
+                const remaining=envelopeData.slice(currentIndex);
+                remaining.forEach((item,visibleIndex)=>{
                     const slot=document.createElement("div");
-                    slot.className="mail-game-envelope-slot"+(index===currentIndex?" active":"");
-                    slot.dataset.index=String(index);
-                    if(index!==currentIndex){
-                        const distance=Math.abs(index-currentIndex);
-                        const placeLeft=distance>2 ? index>currentIndex : index<currentIndex;
-                        const offset=placeLeft
-                            ? 29-(Math.min(distance,2)*14)
-                            : 71+((Math.min(distance,2)-1)*14);
-                        slot.style.left=offset+"%";
+                    slot.className="mail-game-envelope-slot"+(visibleIndex===0?" active":"");
+                    slot.dataset.index=String(currentIndex+visibleIndex);
+                    if(visibleIndex>0){
+                        const sidePositions=[{left:"0%",top:"20%"},{left:"66%",top:"20%"},{left:"2%",top:"53%"}];
+                        const pos=sidePositions[visibleIndex-1];
+                        slot.style.left=pos.left;slot.style.top=pos.top;
+                        slot.style.width="34%";slot.style.height="45%";
                     }
                     const img=document.createElement("img");
                     img.className="mail-game-envelope";img.src=item.src;
                     img.alt=names[item.color]+names[item.shape]+"信封";
                     img.draggable=false;img.dataset.envelope=item.id;
-                    if(index===currentIndex)img.addEventListener("pointerdown",startDrag);
+                    if(visibleIndex===0)img.addEventListener("pointerdown",startDrag);
                     slot.appendChild(img);envelopeRow.appendChild(slot);
                 });
                 updateStatus();
@@ -8341,7 +8342,7 @@ if (scene.bgm) {
                         }else{
                             locked=false;render();
                         }
-                    },420);
+                    },180);
                 }else{
                     errors--;updateStatus();
                     feedback.textContent=target?"這封信不符合郵筒條件，再試一次。":"把信封放進正確的郵筒裡！";
@@ -8349,7 +8350,7 @@ if (scene.bgm) {
                         locked=true;
                         if(attempt===1){
                             feedback.textContent="這次失敗了，再完整試一次！";
-                            setTimeout(()=>{attempt=2;round=1;errors=3;currentIndex=0;locked=false;render();},1200);
+                            setTimeout(()=>{attempt=2;round=1;errors=3;currentIndex=0;envelopeData=[...envelopeMaster];shuffleEnvelopes();locked=false;render();},850);
                         }else{
                             feedback.textContent="我來幫忙了！";
                             setTimeout(()=>finishGame(false),900);
@@ -8361,12 +8362,20 @@ if (scene.bgm) {
                 const page=document.getElementById("page1");
                 if(page)page.classList.remove("mail-game-mode");
                 started=false;locked=false;
+                if(page)page.classList.toggle("mail-failure-mode",!success);
                 const id=success?180:179.5;
                 const index=storyScript.findIndex(item=>Number(item.id)===id);
                 if(index>=0){currentStep=index;renderScene(currentStep);}
             }
+            function shuffleEnvelopes(){
+                for(let i=envelopeData.length-1;i>0;i--){
+                    const j=Math.floor(Math.random()*(i+1));
+                    [envelopeData[i],envelopeData[j]]=[envelopeData[j],envelopeData[i]];
+                }
+            }
             window.startMailSortingGame=function(){
                 if(started)return;
+                envelopeData=[...envelopeMaster];shuffleEnvelopes();
                 started=true;round=1;errors=3;attempt=1;currentIndex=0;locked=false;
                 render();
             };
