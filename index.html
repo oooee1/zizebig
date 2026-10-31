@@ -2061,6 +2061,39 @@ img { max-width:100%; }
                 -webkit-mask: none !important;
             }
         }
+    /* 爽快星送信分類教學與遊戲 */
+    #mail-chaos-comic,#mail-tutorial-overlay,#mail-game-overlay{display:none;position:absolute;inset:0;z-index:5100;overflow:hidden;}
+    #page1.mail-comic-mode #mail-chaos-comic{display:block;z-index:5200;background:rgba(0,0,0,.12);}
+    #page1.mail-comic-mode #mail-chaos-comic~#mail-tutorial-overlay{display:none;}
+    #page1.mail-comic-mode #對話框,#page1.mail-comic-mode .player-svg,#page1.mail-comic-mode .角色圖{display:none!important;}
+    .mail-comic-caption{position:absolute;top:7%;left:7%;width:86%;text-align:center;font-size:clamp(17px,3vw,28px);font-weight:bold;color:#fff;text-shadow:2px 3px 5px #333;}
+    .mail-comic-envelope{position:absolute;width:clamp(72px,13vw,150px);height:auto;filter:drop-shadow(3px 5px 3px #333); }
+    .mail-comic-envelope.env-a{left:12%;top:34%;transform:rotate(-22deg);}
+    .mail-comic-envelope.env-b{left:31%;top:57%;transform:rotate(17deg);}
+    .mail-comic-envelope.env-c{left:49%;top:29%;transform:rotate(31deg);}
+    .mail-comic-envelope.env-d{left:66%;top:54%;transform:rotate(-13deg);}
+    .mail-comic-character{position:absolute;right:-3%;bottom:-8%;height:82%;max-width:48%;object-fit:contain;filter:drop-shadow(3px 4px 4px #333);}
+    #page1.mail-tutorial-mode #mail-tutorial-overlay{display:flex;align-items:flex-end;justify-content:space-between;padding:2.5% 5%;box-sizing:border-box;z-index:5200;pointer-events:none;}
+    #page1.mail-tutorial-mode #對話框,#page1.mail-tutorial-mode .player-svg,#page1.mail-tutorial-mode .角色圖{display:none!important;}
+    #mail-tutorial-character{height:42%;max-width:34%;object-fit:contain;align-self:flex-end;filter:drop-shadow(2px 3px 3px rgba(0,0,0,.25));}
+    #mail-tutorial-dialogue{position:relative;width:min(64%,720px);min-height:23%;box-sizing:border-box;padding:20px 28px 16px;background:#fff;border:4px solid #222;border-radius:25px;color:#222;display:flex;flex-direction:column;justify-content:center;box-shadow:5px 5px 0 rgba(0,0,0,.2);pointer-events:none;}
+    #mail-tutorial-dialogue:before{content:"";position:absolute;left:-22px;bottom:23%;border-width:15px 22px 15px 0;border-style:solid;border-color:transparent #222 transparent transparent;}
+    #mail-tutorial-speaker{font-weight:bold;color:#ff7777;font-size:clamp(14px,2.3vw,20px);margin-bottom:5px;}
+    #mail-tutorial-text{font-size:clamp(16px,2.7vw,25px);line-height:1.5;white-space:pre-line;}
+    #mail-tutorial-next{font-size:12px;text-align:right;color:#777;margin-top:7px;}
+    #page1.mail-game-mode #mail-game-overlay{display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-sizing:border-box;padding:2.2% 4%;z-index:5300;touch-action:none;}
+    #page1.mail-game-mode #對話框,#page1.mail-game-mode .player-svg,#page1.mail-game-mode .角色圖,#page1.mail-game-mode #comic-box{display:none!important;}
+    #mail-game-top{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;color:#222;font-weight:bold;text-shadow:0 1px 0 #fff;font-size:clamp(13px,2vw,21px);}
+    #mail-game-round,#mail-game-rule,#mail-game-lives{background:rgba(255,255,255,.88);border:2px solid #333;border-radius:12px;padding:7px 12px;}
+    #mail-game-mailboxes,#mail-game-envelopes{width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2%;justify-items:center;align-items:center;}
+    #mail-game-mailboxes{height:43%;margin-top:2%;}
+    #mail-game-envelopes{height:30%;margin-bottom:5%;}
+    .mail-game-mailbox{width:100%;height:100%;max-width:190px;max-height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(2px 3px 2px rgba(0,0,0,.2));}
+    .mail-game-envelope{width:min(78%,130px);max-height:100%;object-fit:contain;touch-action:none;cursor:grab;user-select:none;-webkit-user-drag:none;filter:drop-shadow(2px 4px 3px rgba(0,0,0,.2));}
+    .mail-game-envelope.dragging{position:fixed;z-index:99999;width:min(18vw,130px);pointer-events:none;transform:scale(1.08);}
+    .mail-game-envelope.sorted{opacity:.2;pointer-events:none;}
+    #mail-game-feedback{position:absolute;bottom:1.2%;left:5%;width:90%;text-align:center;font-size:clamp(13px,2vw,20px);font-weight:bold;color:#222;text-shadow:0 1px 2px #fff;}
+    @media(max-width:600px){#page1.mail-tutorial-mode #mail-tutorial-overlay{padding:3%;}#mail-tutorial-character{height:30%;max-width:32%;}#mail-tutorial-dialogue{width:67%;min-height:22%;padding:12px 15px;border-width:3px;border-radius:18px;}#mail-game-top{justify-content:center;}#mail-game-mailboxes{height:39%;}#mail-game-envelopes{height:27%;margin-bottom:8%;}.mail-game-envelope{width:90%;}}
     /* ID 36 拉電線小遊戲：接點座標暫放，之後可依電閘圖微調 */
     #page1 .wire-game-background { z-index: 0 !important; }
     #page1 .wire-game-background img { width:100%; height:100%; object-fit:cover; }
@@ -2357,6 +2390,33 @@ img { max-width:100%; }
         <div id="dialogue-next-hint">點一下繼續</div>
         <div id="dialogue-next-arrow" aria-hidden="true"></div>
     </div>
+        <!-- 爽快星送信分類：漫畫分鏡、教學與拖曳遊戲 -->
+        <div id="mail-chaos-comic" aria-hidden="true">
+            <div class="mail-comic-caption">信件散落一地，爽快星慌張地看著眼前一團亂</div>
+            <img class="mail-comic-envelope env-a" src="./pct/信封 紅色圓形.webp" alt="">
+            <img class="mail-comic-envelope env-b" src="./pct/信封 綠色愛心.webp" alt="">
+            <img class="mail-comic-envelope env-c" src="./pct/信封 藍色三角形.webp" alt="">
+            <img class="mail-comic-envelope env-d" src="./pct/信封 黃色正方形.webp" alt="">
+            <img class="mail-comic-character" src="./pct/爽快星慌張.webp" alt="慌張的爽快星">
+        </div>
+        <div id="mail-tutorial-overlay" aria-label="送信分類遊戲教學">
+            <img id="mail-tutorial-character" src="./pct/爽快星一般.webp" alt="小小的爽快星">
+            <div id="mail-tutorial-dialogue">
+                <div id="mail-tutorial-speaker">爽快星</div>
+                <div id="mail-tutorial-text"></div>
+                <div id="mail-tutorial-next">點一下繼續</div>
+            </div>
+        </div>
+        <div id="mail-game-overlay" aria-label="郵筒信件分類遊戲">
+            <div id="mail-game-top">
+                <div id="mail-game-round">第一輪／共兩輪</div>
+                <div id="mail-game-rule">請依照信封顏色分類</div>
+                <div id="mail-game-lives">錯誤機會：♥ ♥ ♥</div>
+            </div>
+            <div id="mail-game-mailboxes" aria-label="郵筒分類區"></div>
+            <div id="mail-game-envelopes" aria-label="可拖曳信封"></div>
+            <div id="mail-game-feedback" aria-live="polite">將信封拖曳到正確的郵筒裡！</div>
+        </div>
         <!-- ID 36：拉電線小遊戲 -->
         <div id="wire-game-overlay" aria-label="拉電線小遊戲">
             <svg id="wire-game-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="拖曳電線至相同顏色接點">
@@ -2678,6 +2738,15 @@ img { max-width:100%; }
                 "./pct/爽快星生氣.webp",
                 "./pct/爽快星街景.webp",
                 "./pct/爽快星小遊戲背景.webp",
+                "./pct/爽快星一般.webp",
+                "./pct/信封 紅色圓形.webp",
+                "./pct/信封 綠色愛心.webp",
+                "./pct/信封 藍色三角形.webp",
+                "./pct/信封 黃色正方形.webp",
+                "./pct/紅色三角形郵筒.webp",
+                "./pct/綠色圓形郵筒.webp",
+                "./pct/藍色愛心郵筒.webp",
+                "./pct/黃色正方形郵筒.webp",
                 "./pct/爽快星郵局.webp",
                 "./pct/紅色三角形郵筒.webp",
                 "./pct/綠色圓形郵筒.webp",
@@ -4582,97 +4651,135 @@ img { max-width:100%; }
     {
         "id": 173,
         "text": "天啊！現在怎麼辦？",
-        "characters": [
-            "星辰苦惱"
-        ],
-        background: "爽快星郵局內部",
+        "speaker": "星辰",
+        "characters": ["星辰苦惱"],
+        "background": "爽快星郵局內部"
     },
     {
         "id": 173.1,
         "text": "你有辦法嗎？",
-        "characters": [
-            "星辰苦惱"
-        ],
-        background: "爽快星郵局內部",
+        "speaker": "星辰",
+        "characters": ["星辰苦惱"],
+        "background": "爽快星郵局內部"
     },
     {
         "id": 174,
-        "text": "沒有，但可以先做再說！",
-        "characters": [
-            "爽快星慌張"
-        ],
-        background: "爽快星郵局內部",
+        "text": "沒有，但可以先做再說",
+        "speaker": "爽快星",
+        "characters": ["爽快星慌張"],
+        "background": "爽快星郵局內部"
     },
     {
         "id": 174.1,
-        "text": "快快快，時間就是生命！",
-        "characters": [
-            "爽快星慌張"
-        ],
-        background: "爽快星郵局內部",
+        "text": "快快快！時間就是生命！",
+        "speaker": "爽快星",
+        "characters": ["爽快星慌張"],
+        "background": "爽快星郵局內部"
+    },
+    {
+        "id": 174.2,
+        "text": "請先冷靜一下！",
+        "speaker": "星辰",
+        "characters": ["星辰苦惱"],
+        "background": "爽快星郵局內部"
+    },
+    {
+        "id": 174.3,
+        "text": "",
+        "background": "爽快星郵局內部",
+        "mailComic": true
+    },
+    {
+        "id": 174.4,
+        "text": "完了完了，外面的顧客還在等。",
+        "speaker": "爽快星",
+        "characters": ["爽快星慌張"],
+        "background": "爽快星郵局內部"
+    },
+    {
+        "id": 174.5,
+        "text": "這樣會來不及的！",
+        "speaker": "爽快星",
+        "characters": ["爽快星慌張"],
+        "background": "爽快星郵局內部"
+    },
+    {
+        "id": 174.6,
+        "text": "先不要著急。",
+        "speaker": "星辰",
+        "characters": ["星辰苦惱"],
+        "background": "爽快星郵局內部"
+    },
+    {
+        "id": 174.7,
+        "text": "可是機器壞掉了，現在沒有時間……",
+        "speaker": "爽快星",
+        "characters": ["爽快星慌張"],
+        "background": "爽快星郵局內部"
+    },
+    {
+        "id": 174.8,
+        "text": "那我們就跟著機器的方法分類。",
+        "speaker": "星辰",
+        "characters": ["星辰思考"],
+        "background": "爽快星郵局內部"
+    },
+    {
+        "id": 174.9,
+        "text": "你還記得要怎麼分類嗎？",
+        "speaker": "星辰",
+        "characters": ["星辰思考"],
+        "background": "爽快星郵局內部"
     },
     {
         "id": 175,
-        "text": "（星辰和爽快星開始整理信件，準備分成兩輪分類。）",
-        background: "爽快星送信小遊戲背景",
-        bgm: "./audio/3.Louis Armstrong - Potato Head Blues (1927) [Digitally Remastered] - Classic Mood Experience.mp3",
+        "text": "需要把對應的信封移動收入郵筒中。",
+        "speaker": "爽快星",
+        "characters": ["爽快星一般"],
+        "background": "爽快星送信小遊戲背景",
+        "mailTutorial": true
     },
     {
         "id": 176,
-        "text": "需要把對應的信封移動收入箱中。",
-        background: "爽快星送信小遊戲背景",
-        "characters": [
-            "爽快星開心"
-        ],
-    },
-    {
-        "id": 176.1,
-        "text": "因為信件真的太多了，所以要分兩輪分類。",
-        background: "爽快星送信小遊戲背景",
-        "characters": [
-            "爽快星開心"
-        ],
+        "text": "因為真的太多了，所以需要分類兩輪。",
+        "speaker": "爽快星",
+        "characters": ["爽快星一般"],
+        "background": "爽快星送信小遊戲背景",
+        "mailTutorial": true
     },
     {
         "id": 177,
-        "text": "第一輪先依照信封的顏色分類，記得仔細看清楚！",
-        background: "爽快星送信小遊戲背景",
-        "characters": [
-            "爽快星開心"
-        ],
+        "text": "要注意題目的要求喔！就交給您了。",
+        "speaker": "爽快星",
+        "characters": ["爽快星一般"],
+        "background": "爽快星送信小遊戲背景",
+        "mailTutorial": true
     },
     {
         "id": 178,
-        "text": "接著第二輪改看信封上的圖案，別被上一輪的規則搞混了。",
-        background: "爽快星送信小遊戲背景",
-        "characters": [
-            "星辰思考"
-        ],
-    },
-    {
-        "id": 178.1,
         "text": "(送信小遊戲)",
-        background: "爽快星送信小遊戲背景",
-        "characters": [
-            "星辰思考"
-        ],
+        "background": "爽快星送信小遊戲背景",
+        "mailGame": true
     },
     {
         "id": 179,
-        "text": "（兩輪分類結束，信件終於全部整理好了。）",
-        background: "爽快星送信小遊戲背景",
-        "characters": [
-            "星辰驕傲"
-        ],
+        "text": "",
+        "background": "爽快星送信小遊戲背景"
+    },
+    {
+        "id": 179.5,
+        "text": "我來幫忙了！",
+        "speaker": "爽快星",
+        "characters": ["爽快星開心"],
+        "background": "爽快星郵局內部"
     },
     {
         "id": 180,
         "text": "太好了！",
-        "characters": [
-            "爽快星開心"
-        ],
-        background: "爽快星郵局內部",
-        bgm: "./audio/Scipio March (feat. David Shead & Paul Honey) - Peter Wastall (1).mp3",
+        "speaker": "爽快星",
+        "characters": ["爽快星開心"],
+        "background": "爽快星郵局內部",
+        "bgm": "./audio/Scipio March (feat. David Shead & Paul Honey) - Peter Wastall (1).mp3"
     },
     {
         "id": 181,
@@ -6936,7 +7043,7 @@ function renderScene(stepIndex) {
         comicBoxAtSceneStart.getAttribute("data-comic-paths"));
     const isContinuingComic = sceneComicPaths.length === 0 &&
         hasPreviousComicLayers && nextSceneHasComic;
-    const isComicMode = sceneComicPaths.length > 0 || isContinuingComic;
+    const isComicMode = Boolean(scene.mailComic) || sceneComicPaths.length > 0 || isContinuingComic;
 
     // 每次切換場景先取消上一幕的純背景提示。
     if (window.emptySceneHintTimer) {
@@ -6970,6 +7077,12 @@ function renderScene(stepIndex) {
     }
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
+    const mailTutorialText = document.getElementById("mail-tutorial-text");
+    if (mailTutorialText && scene.mailTutorial) {
+        mailTutorialText.textContent = String(scene.text || "").replace(/\\/\\/n|\\\\n/g, "\n");
+    }
+    const mailGameOverlay = document.getElementById("mail-game-overlay");
+    if (scene.mailGame && typeof window.startMailSortingGame === "function") window.startMailSortingGame();
     const wireGameDialogue = document.getElementById("wire-game-dialogue-text");
     if (wireGameDialogue) { const firstInstruction = currentSceneId === 36 ? storyScript.find(item => Number(item.id) === 36.100) : null; wireGameDialogue.dataset.instructionPage = "0"; wireGameDialogue.textContent = firstInstruction ? String(firstInstruction.text || "").replace(/\/\/n|\\n/g, "\n") : (currentSceneId === 36 ? "" : String(scene.text || "").replace(/\/\/n|\\n/g, "\n")); }
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
@@ -7085,6 +7198,9 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle('同情星大哭', currentSceneId === 85.34);
         pageEl.classList.toggle('同情星爆哭', currentSceneId === 86);
         pageEl.classList.toggle("wire-game-mode", currentSceneId === 36);
+        pageEl.classList.toggle("mail-tutorial-mode", Boolean(scene.mailTutorial));
+        pageEl.classList.toggle("mail-game-mode", Boolean(scene.mailGame));
+        pageEl.classList.toggle("mail-comic-mode", Boolean(scene.mailComic));
     }
 
     // 只有進入不同漫畫場景時才淡入；同一場景的對話不做過渡。
@@ -7980,6 +8096,103 @@ if (scene.bgm) {
         }
         
 
+        // 爽快星送信分類遊戲：兩輪共用同一批信封與郵筒，僅切換分類條件。
+        (function setupMailSortingGame(){
+            const overlay=document.getElementById("mail-game-overlay");
+            const boxes=document.getElementById("mail-game-mailboxes");
+            const envelopes=document.getElementById("mail-game-envelopes");
+            const rule=document.getElementById("mail-game-rule");
+            const roundLabel=document.getElementById("mail-game-round");
+            const livesLabel=document.getElementById("mail-game-lives");
+            const feedback=document.getElementById("mail-game-feedback");
+            if(!overlay||!boxes||!envelopes||!rule||!roundLabel||!livesLabel||!feedback)return;
+            const mailboxData=[
+                {id:"red-triangle",src:"./pct/紅色三角形郵筒.webp",color:"red",shape:"triangle"},
+                {id:"green-circle",src:"./pct/綠色圓形郵筒.webp",color:"green",shape:"circle"},
+                {id:"blue-heart",src:"./pct/藍色愛心郵筒.webp",color:"blue",shape:"heart"},
+                {id:"yellow-square",src:"./pct/黃色正方形郵筒.webp",color:"yellow",shape:"square"}
+            ];
+            const envelopeData=[
+                {id:"red-circle",src:"./pct/信封 紅色圓形.webp",color:"red",shape:"circle"},
+                {id:"green-heart",src:"./pct/信封 綠色愛心.webp",color:"green",shape:"heart"},
+                {id:"blue-triangle",src:"./pct/信封 藍色三角形.webp",color:"blue",shape:"triangle"},
+                {id:"yellow-square",src:"./pct/信封 黃色正方形.webp",color:"yellow",shape:"square"}
+            ];
+            let round=1,errors=3,attempt=1,sorted=new Set(),started=false,locked=false,drag=null;
+            const names={red:"紅色",green:"綠色",blue:"藍色",yellow:"黃色",triangle:"三角形",circle:"圓形",heart:"愛心",square:"正方形"};
+            function updateStatus(){
+                roundLabel.textContent=round===1?"第一輪／共兩輪":"第二輪／共兩輪";
+                rule.textContent=round===1?"請依照信封顏色分類":"請依照信封圖案分類";
+                livesLabel.textContent="錯誤機會："+ "♥ ".repeat(errors).trim() + "♡ ".repeat(3-errors).trim();
+            }
+            function targetFor(envelope){
+                return mailboxData.find(box=>box[round===1?"color":"shape"]===envelope[round===1?"color":"shape"]);
+            }
+            function render(){
+                boxes.replaceChildren();envelopes.replaceChildren();sorted.clear();
+                mailboxData.forEach(box=>{
+                    const img=document.createElement("img");img.className="mail-game-mailbox";img.src=box.src;img.alt=names[box.color]+names[box.shape]+"郵筒";img.dataset.mailbox=box.id;boxes.appendChild(img);
+                });
+                envelopeData.forEach(item=>{
+                    const img=document.createElement("img");img.className="mail-game-envelope";img.src=item.src;img.alt=names[item.color]+names[item.shape]+"信封";img.draggable=false;img.dataset.envelope=item.id;
+                    img.addEventListener("pointerdown",startDrag);envelopes.appendChild(img);
+                });
+                updateStatus();
+                feedback.textContent=round===1?"把信封拖曳到相同顏色的郵筒！":"第二輪改看圖案，將信封放進相同圖案的郵筒！";
+            }
+            function startDrag(e){
+                if(locked||!overlay.closest("#page1")?.classList.contains("mail-game-mode"))return;
+                const el=e.currentTarget;if(el.classList.contains("sorted"))return;
+                e.preventDefault();const rect=el.getBoundingClientRect();
+                drag={el,pointerId:e.pointerId,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top,originParent:el.parentElement,originNext:el.nextSibling};
+                el.classList.add("dragging");el.style.left=(e.clientX-drag.offsetX)+"px";el.style.top=(e.clientY-drag.offsetY)+"px";el.style.position="fixed";
+                document.addEventListener("pointermove",moveDrag);document.addEventListener("pointerup",endDrag,{once:true});document.addEventListener("pointercancel",endDrag,{once:true});
+            }
+            function moveDrag(e){if(!drag||e.pointerId!==drag.pointerId)return;drag.el.style.left=(e.clientX-drag.offsetX)+"px";drag.el.style.top=(e.clientY-drag.offsetY)+"px";}
+            function clearDragListeners(){document.removeEventListener("pointermove",moveDrag);document.removeEventListener("pointerup",endDrag);document.removeEventListener("pointercancel",endDrag);}
+            function endDrag(e){
+                if(!drag||e.pointerId!==drag.pointerId)return;
+                const current=drag;drag=null;clearDragListeners();
+                const cx=e.clientX,cy=e.clientY;
+                current.el.classList.remove("dragging");current.el.style.position="";current.el.style.left="";current.el.style.top="";
+                const hit=document.elementFromPoint(cx,cy)?.closest("[data-mailbox]");
+                const envelope=envelopeData.find(x=>x.id===current.el.dataset.envelope);
+                const target=hit&&mailboxData.find(x=>x.id===hit.dataset.mailbox);
+                if(target&&envelope&&target.id===targetFor(envelope)?.id){
+                    current.el.classList.add("sorted");sorted.add(envelope.id);
+                    feedback.textContent="分類正確！";
+                    if(sorted.size===envelopeData.length){
+                        if(round===1){locked=true;feedback.textContent="第一輪完成！接下來改看信封圖案。";setTimeout(()=>{round=2;locked=false;render();},850);}
+                        else{locked=true;feedback.textContent="兩輪分類都完成了！";setTimeout(()=>finishGame(true),700);}
+                    }
+                }else{
+                    errors--;updateStatus();
+                    feedback.textContent=target?"分類錯誤，再仔細看看題目！":"把信封放進正確的郵筒裡！";
+                    if(errors<=0){
+                        locked=true;
+                        if(attempt===1){
+                            feedback.textContent="這次失敗了，再完整試一次！";
+                            setTimeout(()=>{attempt=2;round=1;errors=3;locked=false;render();},1200);
+                        }else{
+                            feedback.textContent="我來幫忙了！";
+                            setTimeout(()=>finishGame(false),900);
+                        }
+                    }
+                }
+            }
+            function finishGame(success){
+                const page=document.getElementById("page1");if(page)page.classList.remove("mail-game-mode");
+                started=false;locked=false;
+                const id=success?179:179.5;
+                const index=storyScript.findIndex(item=>Number(item.id)===id);
+                if(index>=0){currentStep=index;renderScene(currentStep);}
+            }
+            window.startMailSortingGame=function(){
+                if(started)return;
+                started=true;round=1;errors=3;attempt=1;locked=false;render();
+            };
+        })();
+
         // 拉電線小遊戲：左側黃紅藍，右側紅藍黃。接點座標集中在 sockets，方便後續微調。
         (function setupWireGame() {
             const svg=document.getElementById("wire-game-svg"), linesGroup=document.getElementById("wire-game-lines"), feedback=document.getElementById("wire-game-feedback");
@@ -8041,7 +8254,7 @@ if (scene.bgm) {
 
         function nextStep() {
             const wirePage = document.getElementById("page1");
-            if (wirePage && wirePage.classList.contains("wire-game-mode")) return;
+            if (wirePage && (wirePage.classList.contains("wire-game-mode") || wirePage.classList.contains("mail-game-mode"))) return;
             // 目前場景還在載素材時，任何點擊都不能推進或跳過對話。
             if (sceneTransitionLoading) return;
             const scene = storyScript[currentStep];
@@ -8147,7 +8360,7 @@ if (scene.bgm) {
             // 第一次點擊時收起「點擊推動劇情」提示；箭頭之後仍會留在一般對話畫面。
             const pageForHint = document.getElementById('page1');
             if (pageForHint && pageForHint.classList.contains('scene-assets-loading')) return;
-            if (pageForHint && pageForHint.classList.contains("wire-game-mode")) return;
+            if (pageForHint && (pageForHint.classList.contains("wire-game-mode") || pageForHint.classList.contains("mail-game-mode"))) return;
             if (pageForHint && pageForHint.classList.contains('show-dialogue-hint')) {
                 pageForHint.classList.remove('show-dialogue-hint');
             }
