@@ -2061,18 +2061,8 @@ img { max-width:100%; }
                 -webkit-mask: none !important;
             }
         }
-    /* 爽快星送信分類教學與遊戲 */
-    #mail-chaos-comic,#mail-tutorial-overlay,#mail-game-overlay{display:none;position:absolute;inset:0;z-index:5100;overflow:hidden;}
-    #page1.mail-comic-mode #mail-chaos-comic{display:block;z-index:5200;background:rgba(0,0,0,.12);}
-    #page1.mail-comic-mode #mail-chaos-comic~#mail-tutorial-overlay{display:none;}
-    #page1.mail-comic-mode #對話框,#page1.mail-comic-mode .player-svg,#page1.mail-comic-mode .角色圖{display:none!important;}
-    .mail-comic-caption{position:absolute;top:7%;left:7%;width:86%;text-align:center;font-size:clamp(17px,3vw,28px);font-weight:bold;color:#fff;text-shadow:2px 3px 5px #333;}
-    .mail-comic-envelope{position:absolute;width:clamp(72px,13vw,150px);height:auto;filter:drop-shadow(3px 5px 3px #333); }
-    .mail-comic-envelope.env-a{left:12%;top:34%;transform:rotate(-22deg);}
-    .mail-comic-envelope.env-b{left:31%;top:57%;transform:rotate(17deg);}
-    .mail-comic-envelope.env-c{left:49%;top:29%;transform:rotate(31deg);}
-    .mail-comic-envelope.env-d{left:66%;top:54%;transform:rotate(-13deg);}
-    .mail-comic-character{position:absolute;right:-3%;bottom:-8%;height:82%;max-width:48%;object-fit:contain;filter:drop-shadow(3px 4px 4px #333);}
+    /* 爽快星送信分類教學與遊戲：沿用遊戲既有的粗外框、圓角與黃色重點色 */
+    #mail-tutorial-overlay,#mail-game-overlay{display:none;position:absolute;inset:0;z-index:5100;overflow:hidden;}
     #page1.mail-tutorial-mode #mail-tutorial-overlay{display:flex;align-items:flex-end;justify-content:space-between;padding:2.5% 5%;box-sizing:border-box;z-index:5200;pointer-events:none;}
     #page1.mail-tutorial-mode #對話框,#page1.mail-tutorial-mode .player-svg,#page1.mail-tutorial-mode .角色圖{display:none!important;}
     #mail-tutorial-character{height:42%;max-width:34%;object-fit:contain;align-self:flex-end;filter:drop-shadow(2px 3px 3px rgba(0,0,0,.25));}
@@ -2081,19 +2071,34 @@ img { max-width:100%; }
     #mail-tutorial-speaker{font-weight:bold;color:#ff7777;font-size:clamp(14px,2.3vw,20px);margin-bottom:5px;}
     #mail-tutorial-text{font-size:clamp(16px,2.7vw,25px);line-height:1.5;white-space:pre-line;}
     #mail-tutorial-next{font-size:12px;text-align:right;color:#777;margin-top:7px;}
-    #page1.mail-game-mode #mail-game-overlay{display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-sizing:border-box;padding:2.2% 4%;z-index:5300;touch-action:none;}
+
+    #page1.mail-game-mode #mail-game-overlay{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;box-sizing:border-box;padding:3.5% 4%;z-index:5300;touch-action:none;background:rgba(30,24,18,.08);gap:0;}
     #page1.mail-game-mode #對話框,#page1.mail-game-mode .player-svg,#page1.mail-game-mode .角色圖,#page1.mail-game-mode #comic-box{display:none!important;}
-    #mail-game-top{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;color:#222;font-weight:bold;text-shadow:0 1px 0 #fff;font-size:clamp(13px,2vw,21px);}
-    #mail-game-round,#mail-game-rule,#mail-game-lives{background:rgba(255,255,255,.88);border:2px solid #333;border-radius:12px;padding:7px 12px;}
-    #mail-game-mailboxes,#mail-game-envelopes{width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2%;justify-items:center;align-items:center;}
-    #mail-game-mailboxes{height:43%;margin-top:2%;}
-    #mail-game-envelopes{height:30%;margin-bottom:5%;}
-    .mail-game-mailbox{width:100%;height:100%;max-width:190px;max-height:100%;object-fit:contain;pointer-events:auto;filter:drop-shadow(2px 3px 2px rgba(0,0,0,.2));}
-    .mail-game-envelope{width:min(78%,130px);max-height:100%;object-fit:contain;touch-action:none;cursor:grab;user-select:none;-webkit-user-drag:none;filter:drop-shadow(2px 4px 3px rgba(0,0,0,.2));}
-    .mail-game-envelope.dragging{position:fixed;z-index:99999;width:min(18vw,130px);pointer-events:none;transform:scale(1.08);}
-    .mail-game-envelope.sorted{opacity:.2;pointer-events:none;}
-    #mail-game-feedback{position:absolute;bottom:1.2%;left:5%;width:90%;text-align:center;font-size:clamp(13px,2vw,20px);font-weight:bold;color:#222;text-shadow:0 1px 2px #fff;}
-    @media(max-width:600px){#page1.mail-tutorial-mode #mail-tutorial-overlay{padding:3%;}#mail-tutorial-character{height:30%;max-width:32%;}#mail-tutorial-dialogue{width:67%;min-height:22%;padding:12px 15px;border-width:3px;border-radius:18px;}#mail-game-top{justify-content:center;}#mail-game-mailboxes{height:39%;}#mail-game-envelopes{height:27%;margin-bottom:8%;}.mail-game-envelope{width:90%;}}
+    #mail-game-top{width:100%;min-height:13%;display:grid;grid-template-columns:1fr auto;grid-template-areas:"round lives" "rule rule";align-content:center;align-items:center;gap:7px 10px;padding:11px 13px;background:rgba(255,250,235,.97);border:3px solid #292929;border-radius:20px;box-shadow:4px 4px 0 rgba(35,30,25,.7);color:#24211d;text-shadow:none;}
+    #mail-game-round{grid-area:round;justify-self:start;padding:5px 10px;background:#ffe27a;border:2px solid #292929;border-radius:999px;font-size:clamp(12px,2.6vw,16px);font-weight:900;}
+    #mail-game-rule{grid-area:rule;padding:0;border:0;background:transparent;border-radius:0;font-size:clamp(19px,4.2vw,27px);font-weight:900;line-height:1.2;text-align:center;color:#292929;}
+    #mail-game-lives{grid-area:lives;justify-self:end;padding:5px 9px;background:#fff;border:2px solid #292929;border-radius:999px;font-size:clamp(12px,2.5vw,16px);font-weight:800;white-space:nowrap;}
+    .mail-game-zone-label{margin:3.2% 0 1.4%;padding-left:5px;color:#fff;font-size:clamp(13px,2.8vw,17px);font-weight:900;letter-spacing:.04em;text-shadow:1px 2px 3px rgba(0,0,0,.75);}
+    #mail-game-mailboxes,#mail-game-envelopes{width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2.2%;justify-items:center;align-items:center;padding:10px 8px;background:rgba(255,250,235,.94);border:3px solid #292929;border-radius:20px;box-shadow:4px 4px 0 rgba(35,30,25,.65);}
+    #mail-game-mailboxes{height:34%;min-height:0;}
+    #mail-game-envelopes{height:24%;min-height:0;}
+    .mail-game-mailbox{width:100%;height:100%;max-width:190px;max-height:100%;object-fit:contain;padding:5px;background:#fff;border:2px solid #d9d0bd;border-radius:14px;pointer-events:auto;filter:drop-shadow(1px 2px 1px rgba(0,0,0,.12));}
+    .mail-game-envelope{width:100%;height:100%;max-width:112px;max-height:100%;object-fit:contain;padding:7px;background:#fff;border:2px solid #d9d0bd;border-radius:14px;touch-action:none;cursor:grab;user-select:none;-webkit-user-drag:none;filter:drop-shadow(1px 2px 1px rgba(0,0,0,.12));}
+    .mail-game-envelope.dragging{position:fixed;z-index:99999;width:min(24vw,112px);height:auto;padding:5px;pointer-events:none;transform:scale(1.08);background:#fff;border:2px solid #292929;border-radius:14px;}
+    .mail-game-envelope.sorted{opacity:.22;filter:grayscale(1);pointer-events:none;}
+    #mail-game-feedback{margin-top:auto;margin-bottom:1%;width:100%;min-height:7%;display:flex;align-items:center;justify-content:center;padding:8px 12px;background:#292929;border:2px solid #fff;border-radius:14px;box-shadow:0 2px 0 rgba(0,0,0,.3);text-align:center;font-size:clamp(13px,2.8vw,18px);font-weight:800;line-height:1.35;color:#ffe27a;text-shadow:none;}
+    @media(max-width:600px){
+      #page1.mail-tutorial-mode #mail-tutorial-overlay{padding:3%;}
+      #mail-tutorial-character{height:30%;max-width:32%;}
+      #mail-tutorial-dialogue{width:67%;min-height:22%;padding:12px 15px;border-width:3px;border-radius:18px;}
+      #mail-game-top{min-height:14%;padding:9px 10px;gap:6px;}
+      #mail-game-mailboxes{height:33%;padding:7px 5px;gap:1.5%;}
+      #mail-game-envelopes{height:23%;padding:7px 5px;gap:1.5%;}
+      .mail-game-mailbox{padding:3px;border-radius:11px;}
+      .mail-game-envelope{padding:5px;border-radius:11px;}
+      .mail-game-zone-label{margin-top:3%;margin-bottom:1%;}
+      #mail-game-feedback{min-height:7%;font-size:clamp(12px,3vw,16px);}
+    }
     /* ID 36 拉電線小遊戲：接點座標暫放，之後可依電閘圖微調 */
     #page1 .wire-game-background { z-index: 0 !important; }
     #page1 .wire-game-background img { width:100%; height:100%; object-fit:cover; }
@@ -2390,15 +2395,7 @@ img { max-width:100%; }
         <div id="dialogue-next-hint">點一下繼續</div>
         <div id="dialogue-next-arrow" aria-hidden="true"></div>
     </div>
-        <!-- 爽快星送信分類：漫畫分鏡、教學與拖曳遊戲 -->
-        <div id="mail-chaos-comic" aria-hidden="true">
-            <div class="mail-comic-caption">信件散落一地，爽快星慌張地看著眼前一團亂</div>
-            <img class="mail-comic-envelope env-a" src="./pct/信封 紅色圓形.webp" alt="">
-            <img class="mail-comic-envelope env-b" src="./pct/信封 綠色愛心.webp" alt="">
-            <img class="mail-comic-envelope env-c" src="./pct/信封 藍色三角形.webp" alt="">
-            <img class="mail-comic-envelope env-d" src="./pct/信封 黃色正方形.webp" alt="">
-            <img class="mail-comic-character" src="./pct/爽快星慌張.webp" alt="慌張的爽快星">
-        </div>
+        <!-- 爽快星送信分類教學與拖曳遊戲 -->
         <div id="mail-tutorial-overlay" aria-label="送信分類遊戲教學">
             <img id="mail-tutorial-character" src="./pct/爽快星一般.webp" alt="小小的爽快星">
             <div id="mail-tutorial-dialogue">
@@ -2410,10 +2407,12 @@ img { max-width:100%; }
         <div id="mail-game-overlay" aria-label="郵筒信件分類遊戲">
             <div id="mail-game-top">
                 <div id="mail-game-round">第一輪／共兩輪</div>
-                <div id="mail-game-rule">請依照信封顏色分類</div>
                 <div id="mail-game-lives">錯誤機會：♥ ♥ ♥</div>
+                <div id="mail-game-rule">請依照信封顏色分類</div>
             </div>
+            <div class="mail-game-zone-label">郵筒分類區</div>
             <div id="mail-game-mailboxes" aria-label="郵筒分類區"></div>
+            <div class="mail-game-zone-label">待分類信件</div>
             <div id="mail-game-envelopes" aria-label="可拖曳信封"></div>
             <div id="mail-game-feedback" aria-live="polite">將信封拖曳到正確的郵筒裡！</div>
         </div>
@@ -4686,8 +4685,7 @@ img { max-width:100%; }
     {
         "id": 174.3,
         "text": "",
-        "background": "爽快星郵局內部",
-        "mailComic": true
+        "background": "爽快星郵局內部"
     },
     {
         "id": 174.4,
@@ -7043,7 +7041,7 @@ function renderScene(stepIndex) {
         comicBoxAtSceneStart.getAttribute("data-comic-paths"));
     const isContinuingComic = sceneComicPaths.length === 0 &&
         hasPreviousComicLayers && nextSceneHasComic;
-    const isComicMode = Boolean(scene.mailComic) || sceneComicPaths.length > 0 || isContinuingComic;
+    const isComicMode = sceneComicPaths.length > 0 || isContinuingComic;
 
     // 每次切換場景先取消上一幕的純背景提示。
     if (window.emptySceneHintTimer) {
@@ -7087,7 +7085,7 @@ function renderScene(stepIndex) {
     if (wireGameDialogue) { const firstInstruction = currentSceneId === 36 ? storyScript.find(item => Number(item.id) === 36.100) : null; wireGameDialogue.dataset.instructionPage = "0"; wireGameDialogue.textContent = firstInstruction ? String(firstInstruction.text || "").replace(/\/\/n|\\n/g, "\n") : (currentSceneId === 36 ? "" : String(scene.text || "").replace(/\/\/n|\\n/g, "\n")); }
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     // 只有背景真的改變時才淡入；同一背景的連續對話不做場景過渡。
-    const requestedBackgroundId = scene.mailComic ? (scene.background || null) : (isComicMode ? "漫畫背景" : (scene.background || null));
+    const requestedBackgroundId = isComicMode ? "漫畫背景" : (scene.background || null);
     const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景'))
         .find(el => getComputedStyle(el).display !== 'none');
     const currentlyVisibleBackgroundId = currentlyVisibleBackground ? currentlyVisibleBackground.id : null;
@@ -7200,7 +7198,6 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle("wire-game-mode", currentSceneId === 36);
         pageEl.classList.toggle("mail-tutorial-mode", Boolean(scene.mailTutorial));
         pageEl.classList.toggle("mail-game-mode", Boolean(scene.mailGame));
-        pageEl.classList.toggle("mail-comic-mode", Boolean(scene.mailComic));
     }
 
     // 只有進入不同漫畫場景時才淡入；同一場景的對話不做過渡。
