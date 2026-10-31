@@ -141,6 +141,11 @@
     height: 100%;
     object-fit: cover;
 }
+
+/* 漫畫模式專用背景加深，保留原圖構圖與細節。 */
+#漫畫背景 img {
+    filter: brightness(0.45);
+}
         /* 修改原本的 @keyframes shake */
 @keyframes shake {
   0% { transform: scale(1.05) translate(0, 0) rotate(0deg); }
