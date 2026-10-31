@@ -2088,7 +2088,7 @@ img { max-width:100%; }
     #mail-game-mailboxes,#mail-game-envelopes{width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2%;justify-items:center;align-items:center;}
     #mail-game-mailboxes{height:43%;margin-top:2%;}
     #mail-game-envelopes{height:30%;margin-bottom:5%;}
-    .mail-game-mailbox{width:100%;height:100%;max-width:190px;max-height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(2px 3px 2px rgba(0,0,0,.2));}
+    .mail-game-mailbox{width:100%;height:100%;max-width:190px;max-height:100%;object-fit:contain;pointer-events:auto;filter:drop-shadow(2px 3px 2px rgba(0,0,0,.2));}
     .mail-game-envelope{width:min(78%,130px);max-height:100%;object-fit:contain;touch-action:none;cursor:grab;user-select:none;-webkit-user-drag:none;filter:drop-shadow(2px 4px 3px rgba(0,0,0,.2));}
     .mail-game-envelope.dragging{position:fixed;z-index:99999;width:min(18vw,130px);pointer-events:none;transform:scale(1.08);}
     .mail-game-envelope.sorted{opacity:.2;pointer-events:none;}
@@ -7079,7 +7079,7 @@ function renderScene(stepIndex) {
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
     const mailTutorialText = document.getElementById("mail-tutorial-text");
     if (mailTutorialText && scene.mailTutorial) {
-        mailTutorialText.textContent = String(scene.text || "").replace(/\\/\\/n|\\\\n/g, "\n");
+        mailTutorialText.textContent = String(scene.text || "").replace(/\/\/n|\\n/g, "\n");
     }
     const mailGameOverlay = document.getElementById("mail-game-overlay");
     if (scene.mailGame && typeof window.startMailSortingGame === "function") window.startMailSortingGame();
@@ -7087,7 +7087,7 @@ function renderScene(stepIndex) {
     if (wireGameDialogue) { const firstInstruction = currentSceneId === 36 ? storyScript.find(item => Number(item.id) === 36.100) : null; wireGameDialogue.dataset.instructionPage = "0"; wireGameDialogue.textContent = firstInstruction ? String(firstInstruction.text || "").replace(/\/\/n|\\n/g, "\n") : (currentSceneId === 36 ? "" : String(scene.text || "").replace(/\/\/n|\\n/g, "\n")); }
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     // 只有背景真的改變時才淡入；同一背景的連續對話不做場景過渡。
-    const requestedBackgroundId = isComicMode ? "漫畫背景" : (scene.background || null);
+    const requestedBackgroundId = scene.mailComic ? (scene.background || null) : (isComicMode ? "漫畫背景" : (scene.background || null));
     const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景'))
         .find(el => getComputedStyle(el).display !== 'none');
     const currentlyVisibleBackgroundId = currentlyVisibleBackground ? currentlyVisibleBackground.id : null;
