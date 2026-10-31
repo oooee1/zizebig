@@ -2328,23 +2328,23 @@ img { max-width:100%; }
 
 /* ===== 送信分類遊戲：統一美術樣式（覆蓋舊版重複規則） ===== */
 #page1.mail-game-mode #mail-game-overlay{
-    background:linear-gradient(180deg,rgba(13,48,91,.10),rgba(13,48,91,.02) 42%,rgba(13,48,91,.16))!important;
+    background:transparent!important;
 }
 
 #page1.mail-game-mode #爽快星開心{
     display:block!important;
     position:absolute!important;
-    left:-7%!important;
-    bottom:-1%!important;
-    top:auto!important;
-    width:38%!important;
-    height:58%!important;
+    left:-4%!important;
+    top:12%!important;
+    bottom:auto!important;
+    width:34%!important;
+    height:38%!important;
     z-index:5401!important;
     pointer-events:none!important;
 }
 #page1.mail-game-mode #爽快星開心 img{
     display:block!important;
-    width:150%!important;
+    width:145%!important;
     height:100%!important;
     max-width:none!important;
     object-fit:contain!important;
@@ -2352,14 +2352,17 @@ img { max-width:100%; }
 }
 #page1.mail-game-mode #mail-game-rule{
     position:absolute!important;
-    top:7%!important;
+    top:5%!important;
     left:50%!important;
     transform:translateX(-50%)!important;
     width:max-content!important;
     max-width:92%!important;
     padding:0 12px 5px!important;
-    color:#fffaf0!important;
-    background:transparent!important;
+    color:#fff!important;
+    background:#000!important;
+    border:2px solid #fff!important;
+    border-radius:0!important;
+    padding:8px 18px!important;
     border:0!important;
     border-radius:0!important;
     box-shadow:none!important;
@@ -2369,28 +2372,25 @@ img { max-width:100%; }
     line-height:1.3!important;
     letter-spacing:.02em!important;
     text-align:center!important;
-    text-shadow:
-      -2px -2px 0 #24476b,2px -2px 0 #24476b,
-      -2px 2px 0 #24476b,2px 2px 0 #24476b,
-      0 4px 0 #173653,0 6px 10px rgba(12,35,58,.25)!important;
+    text-shadow:none!important;
     z-index:6!important;
 }
 #page1.mail-game-mode #mail-game-feedback{
     position:absolute!important;
-    top:17%!important;
+    top:15%!important;
     left:66%!important;
     bottom:auto!important;
     transform:translateX(-50%)!important;
     width:max-content!important;
-    max-width:60%!important;
+    max-width:57%!important;
     min-height:0!important;
     box-sizing:border-box!important;
     padding:12px 21px!important;
-    color:#31516b!important;
-    background:#fff9e9!important;
-    border:3px solid #fff!important;
-    border-radius:26px 30px 25px 29px!important;
-    box-shadow:0 5px 0 rgba(37,72,94,.14),0 8px 16px rgba(13,38,61,.12)!important;
+    color:#fff!important;
+    background:#000!important;
+    border:2px solid #fff!important;
+    border-radius:18px!important;
+    box-shadow:none!important;
     font-family:inherit!important;
     font-size:clamp(16px,2.8vw,21px)!important;
     font-weight:800!important;
@@ -2433,12 +2433,12 @@ img { max-width:100%; }
     max-height:none!important;
     object-fit:contain!important;
     transform:scale(1.34)!important;
-    filter:drop-shadow(0 9px 6px rgba(9,35,61,.28))!important;
+    filter:none!important;
     transition:filter .14s ease!important;
 }
 #page1.mail-game-mode .mail-game-mailbox.mailbox-target{
     transform:scale(1.4)!important;
-    filter:drop-shadow(0 0 8px #ffe58a) drop-shadow(0 8px 5px rgba(9,35,61,.25))!important;
+    filter:drop-shadow(0 0 0 #fff)!important;outline:2px solid #fff!important;
 }
 #page1.mail-game-mode #mail-game-envelope-row{
     left:0!important;
@@ -2469,7 +2469,7 @@ img { max-width:100%; }
     width:100%!important;
     height:100%!important;
     object-fit:contain!important;
-    filter:drop-shadow(0 12px 9px rgba(10,35,58,.3))!important;
+    filter:none!important;
 }
 #page1.mail-game-mode .mail-game-envelope.dragging{
     position:fixed!important;
@@ -2481,12 +2481,13 @@ img { max-width:100%; }
 }
 @media(max-width:600px){
     #page1.mail-game-mode #爽快星開心{
-        left:-11%!important;
-        bottom:0!important;
-        width:45%!important;
-        height:48%!important;
+        left:-8%!important;
+        top:13%!important;
+        bottom:auto!important;
+        width:39%!important;
+        height:32%!important;
     }
-    #page1.mail-game-mode #爽快星開心 img{width:155%!important;}
+    #page1.mail-game-mode #爽快星開心 img{width:145%!important;}
     #page1.mail-game-mode #mail-game-rule{
         top:6%!important;
         max-width:94%!important;
@@ -2494,10 +2495,10 @@ img { max-width:100%; }
     }
     #page1.mail-game-mode #mail-game-feedback{
         top:16%!important;
-        left:68%!important;
+        left:67%!important;
         max-width:59%!important;
         padding:9px 13px!important;
-        border-radius:22px 25px 21px 24px!important;
+        border-radius:16px!important;
         font-size:clamp(14px,3.8vw,18px)!important;
     }
     #page1.mail-game-mode #mail-game-feedback::before{
@@ -8506,13 +8507,36 @@ if (scene.bgm) {
                 el.style.position="fixed";
                 document.addEventListener("pointermove",moveDrag);
                 document.addEventListener("pointerup",endDrag,{once:true});
-                document.addEventListener("pointercancel",endDrag,{once:true});
+                document.addEventListener("pointercancel",cancelDrag,{once:true});
+            }
+            function getMailboxAtPoint(x,y){
+                for(const el of boxes.querySelectorAll("[data-mailbox]")){
+                    const rect=el.getBoundingClientRect();
+                    /* 只接受郵筒圖案中央的實際投放區，避免透明留白或放大外框誤觸 */
+                    const insetX=rect.width*0.22;
+                    const insetY=rect.height*0.22;
+                    if(x>=rect.left+insetX&&x<=rect.right-insetX&&
+                       y>=rect.top+insetY&&y<=rect.bottom-insetY)return el;
+                }
+                return null;
+            }
+            function cancelDrag(e){
+                if(!drag||e.pointerId!==drag.pointerId)return;
+                const current=drag;drag=null;clearDragListeners();
+                if(current.parent){
+                    if(current.nextSibling&&current.nextSibling.parentNode===current.parent)current.parent.insertBefore(current.el,current.nextSibling);
+                    else current.parent.appendChild(current.el);
+                }
+                current.el.classList.remove("dragging");
+                current.el.style.position="";current.el.style.left="";current.el.style.top="";
+                current.el.style.width="";current.el.style.height="";
+                boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
             }
             function moveDrag(e){
                 if(!drag||e.pointerId!==drag.pointerId)return;
                 drag.el.style.left=(e.clientX-drag.offsetX)+"px";
                 drag.el.style.top=(e.clientY-drag.offsetY)+"px";
-                const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest("[data-mailbox]");
+                const hit=getMailboxAtPoint(e.clientX,e.clientY);
                 boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
                 if(hit)hit.classList.add("mailbox-target");
             }
@@ -8524,7 +8548,7 @@ if (scene.bgm) {
             function endDrag(e){
                 if(!drag||e.pointerId!==drag.pointerId)return;
                 const current=drag;drag=null;clearDragListeners();
-                const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest("[data-mailbox]");
+                const hit=getMailboxAtPoint(e.clientX,e.clientY);
                 const envelope=envelopeData[currentIndex];
                 const target=hit&&mailboxData.find(box=>box.id===hit.dataset.mailbox);
                 /* 放開時先放回原本信件格，再清除 fixed 座標 */
