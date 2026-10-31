@@ -7315,7 +7315,7 @@ if (scene.bgm) {
                         layer.style.setProperty("height", bgRect.height + "px", "important");
                         layer.style.setProperty("max-width", "none", "important");
                         layer.style.setProperty("max-height", "none", "important");
-                        layer.style.setProperty("object-fit", "fill", "important");
+                        layer.style.setProperty("object-fit", "contain", "important");
                     };
                     const bgForClip = Array.from(comicBox.querySelectorAll("img.comic-layer"))
                         .find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
