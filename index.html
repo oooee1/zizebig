@@ -7124,13 +7124,8 @@ if (!hasScoredOptions) {
     }
     window.isTyping = false;
 
-    // 計分問題保留上一幕背景；一般劇情才切換背景。
-    if (!hasScoredOptions && scene.background) {
-        document.querySelectorAll('.背景圖, .背景').forEach(el => el.style.display = 'none');
-        const targetBg = document.getElementById(scene.background);
-        if (targetBg) targetBg.style.display = 'block';
-    }
-    // scene.background 未設定時不執行背景切換，保留目前顯示的背景。
+    // 背景已在上方依 requestedBackgroundId 統一切換。
+    // 這裡不可再用 scene.background 覆寫，否則漫畫模式會把「漫畫背景」切回原場景背景。
 
     // 3. 只有明確知道本幕發言者時才顯示名字，不再根據畫面上的角色猜測。
     let displayName = "";
