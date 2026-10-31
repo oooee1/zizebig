@@ -6863,7 +6863,15 @@ function renderScene(stepIndex) {
     const sceneComicPaths = Array.isArray(scene.comicImages)
         ? scene.comicImages.filter(path => typeof path === "string" && path.startsWith("./1漫畫/"))
         : [];
-    const isComicMode = sceneComicPaths.length > 0;
+    const comicBoxAtSceneStart = document.getElementById("comic-box");
+    const nextScene = storyScript[stepIndex + 1];
+    const nextSceneHasComic = Boolean(nextScene && Array.isArray(nextScene.comicImages) &&
+        nextScene.comicImages.some(path => typeof path === "string" && path.startsWith("./1漫畫/")));
+    // 漫畫分鏡中間即使有一幕沒有新圖片，只要下一幕仍接著出現漫畫，就保留目前所有漫畫圖層。
+    const isContinuingComic = sceneComicPaths.length === 0 &&
+        comicBoxAtSceneStart && comicBoxAtSceneStart.style.display === "block" &&
+        nextSceneHasComic;
+    const isComicMode = sceneComicPaths.length > 0 || isContinuingComic;
 
     // 每次切換場景先取消上一幕的純背景提示。
     if (window.emptySceneHintTimer) {
@@ -7186,7 +7194,7 @@ if (scene.bgm) {
     const comicImg = document.getElementById('comic-img');
     const comicPaths = sceneComicPaths;
 
-    if (comicBox && comicImg && comicPaths.length > 0) {
+    if (comicBox && comicImg && (comicPaths.length > 0 || isContinuingComic)) {
         const enteringComicMode = comicBox.style.display !== "block";
         let shownPaths = [];
         try {
