@@ -2599,9 +2599,15 @@ img { max-width:100%; }
  transform:scale(1.55)!important;transform-origin:center center!important;
  position:relative!important;z-index:2!important;
 }
-#page1.mail-game-mode .mail-game-mailbox.mailbox-target{transform:scale(1.65)!important;}
+/* 郵筒只保留拖放判定，不顯示白色感應框或發光效果 */
+#page1.mail-game-mode .mail-game-mailbox.mailbox-target{
+ transform:scale(1.55)!important;
+ filter:none!important;
+ outline:none!important;
+ box-shadow:none!important;
+}
 #page1.mail-game-mode #爽快星開心{
- position:absolute!important;left:-7%!important;top:-8%!important;right:auto!important;bottom:auto!important;
+ position:absolute!important;left:-7%!important;top:-5%!important;right:auto!important;bottom:auto!important;
  width:39%!important;height:48%!important;margin:0!important;padding:0!important;
  transform:none!important;z-index:5401!important;
 }
@@ -2625,7 +2631,7 @@ img { max-width:100%; }
  }
  #page1.mail-game-mode .mail-game-mailbox.mailbox-target{transform:scale(1.48)!important;}
  #page1.mail-game-mode #爽快星開心{
-  left:-9%!important;top:-10%!important;width:43%!important;height:43%!important;
+  left:-9%!important;top:-7%!important;width:43%!important;height:43%!important;
  }
  #page1.mail-game-mode #爽快星開心 img{width:135%!important;height:100%!important;}
  #page1.mail-game-mode #mail-game-rule{top:4%!important;border-radius:22px!important;}
