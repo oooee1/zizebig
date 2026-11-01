@@ -2694,6 +2694,42 @@ img { max-width:100%; }
  #page1.mail-game-mode .mailbox-hit-area.mailbox-target .mail-game-mailbox{transform:scale(1.68)!important;}
 }
 </style>
+
+<style id="mail-game-square-hitbox-final-20261101">
+/* 郵筒縮小並拉開視覺間距；桌面與手機分別微調 */
+#page1.mail-game-mode .mailbox-hit-area .mail-game-mailbox{
+ width:132%!important;height:132%!important;
+ transform:scale(1.52)!important;transform-origin:center center!important;
+}
+#page1.mail-game-mode .mailbox-hit-area.mailbox-target .mail-game-mailbox{
+ transform:scale(1.58)!important;
+}
+/* 每個郵筒使用獨立正方形判定區，紅框即實際 hitbox */
+#page1.mail-game-mode .mailbox-hit-square{
+ width:92%!important;height:auto!important;aspect-ratio:1/1!important;
+}
+#page1.mail-game-mode #爽快星開心{top:-2%!important;}
+/* 教學對話框及尾巴使用純黑邊框 */
+#page1.mail-tutorial-mode #對話框{
+ border:3px solid #000!important;box-shadow:none!important;
+}
+#page1.mail-tutorial-mode #對話框::after{
+ border-top-color:#000!important;border-left-color:transparent!important;
+ border-right-color:transparent!important;
+ filter:none!important;
+}
+@media(max-width:600px){
+ #page1.mail-game-mode .mailbox-hit-area .mail-game-mailbox{
+  width:126%!important;height:126%!important;transform:scale(1.4)!important;
+ }
+ #page1.mail-game-mode .mailbox-hit-area.mailbox-target .mail-game-mailbox{
+  transform:scale(1.46)!important;
+ }
+ #page1.mail-game-mode .mailbox-hit-square{width:92%!important;border-width:2px!important;}
+ #page1.mail-game-mode #爽快星開心{top:-4%!important;}
+}
+</style>
+
 </head>
 
 <body>
