@@ -4906,7 +4906,7 @@ img { max-width:100%; }
         id: 140.1,
         background: "爽快星街景",
         text: "這樣來不及送到其他人家...。",
-        characters: ["爽快星害怕"],
+        characters: ["爽快星生氣"],
     },
     {
         id: 141,
@@ -5080,7 +5080,7 @@ img { max-width:100%; }
         id: 157.1,
         text: "我平時總是容易送錯巷...",
         background: "爽快星街景",
-        characters: ["爽快星開心"],
+        characters: ["爽快星害怕"],
     },
     {
         id: 157.2,
@@ -5117,6 +5117,7 @@ img { max-width:100%; }
         speaker: "星辰",
         text: "那是...",
         background: "爽快星郵局",
+        characters: ["爽快星害怕"],
     },
     {
         id: 163,
@@ -5294,11 +5295,6 @@ img { max-width:100%; }
         "text": "請先冷靜一下！",
         "speaker": "星辰",
         "characters": ["星辰苦惱"],
-        "background": "爽快星郵局內部"
-    },
-    {
-        "id": 174.3,
-        "text": "",
         "background": "爽快星郵局內部"
     },
     {
@@ -10200,6 +10196,32 @@ function toggleBGM(btnEl) {
 /* 遊戲提示文字框改成更圓的圓角 */
 #page1.mail-game-mode #mail-game-feedback{
     border-radius:48px!important;
+}
+</style>
+
+
+<style id="mail-story-dialogue-and-mobile-title-adjust-20261101">
+/* 劇情立繪調整：規則教學時讓爽快星使用害怕立繪 */
+#page1.mail-tutorial-mode #爽快星開心{display:none!important;}
+#page1.mail-tutorial-mode #爽快星害怕{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    position:absolute!important;pointer-events:none!important;
+}
+/* 規則教學對話框再往下 */
+#page1.mail-tutorial-mode #對話框{top:20%!important;}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #對話框{top:18%!important;}
+}
+/* 手機標題放大；稍微收斂描邊，減少字角交界的突起 */
+@media(max-width:600px){
+    #page1.mail-game-mode #mail-game-rule{
+        font-size:clamp(34px,calc(7.25vw + 12px),64px)!important;
+    }
+    #page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+    #page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+        -webkit-text-stroke:11px #000!important;
+        paint-order:stroke fill!important;
+    }
 }
 </style>
 
