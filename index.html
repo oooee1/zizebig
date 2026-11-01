@@ -8804,11 +8804,37 @@ if (scene.bgm) {
                     slot.appendChild(img);envelopeRow.appendChild(slot);
                 });
                 updateStatus();
+                const page=document.getElementById("page1");
+                if(page){
+                    page.classList.remove("mail-success-feedback");
+                    page.classList.remove("mail-success-sprite");
+                }
                 feedback.textContent="把信封放進正確的郵筒裡！";
+                feedback.style.color="";
+            }
+            const envelopeAlphaCache=new WeakMap();
+            function isOpaqueEnvelopePoint(img,clientX,clientY){
+                if(!img.complete||!img.naturalWidth||!img.naturalHeight)return false;
+                const rect=img.getBoundingClientRect();
+                const x=Math.floor((clientX-rect.left)/rect.width*img.naturalWidth);
+                const y=Math.floor((clientY-rect.top)/rect.height*img.naturalHeight);
+                if(x<0||y<0||x>=img.naturalWidth||y>=img.naturalHeight)return false;
+                let canvas=envelopeAlphaCache.get(img);
+                if(!canvas){
+                    canvas=document.createElement("canvas");
+                    canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+                    const ctx=canvas.getContext("2d",{willReadFrequently:true});
+                    try{ctx.drawImage(img,0,0);envelopeAlphaCache.set(img,canvas);}
+                    catch(error){return false;}
+                }
+                try{return canvas.getContext("2d").getImageData(x,y,1,1).data[3]>24;}
+                catch(error){return false;}
             }
             function startDrag(e){
                 if(locked||!started||!overlay.closest("#page1")?.classList.contains("mail-game-mode"))return;
                 const el=e.currentTarget;
+                /* 只有信封圖片本身不透明的圖案區域可以拿取，透明留白不觸發拖曳 */
+                if(!isOpaqueEnvelopePoint(el,e.clientX,e.clientY))return;
                 if(el.dataset.envelope!==envelopeData[currentIndex]?.id)return;
                 e.preventDefault();
                 const rect=el.getBoundingClientRect();
@@ -8884,7 +8910,12 @@ if (scene.bgm) {
                 }
                 if(target&&envelope&&target.id===targetFor(envelope)?.id){
                     locked=true;
+                    const page=document.getElementById("page1");
+                    if(page){
+                        page.classList.add("mail-success-feedback","mail-success-sprite");
+                    }
                     feedback.textContent="分類正確！";
+                    feedback.style.color="#ff9b55";
                     currentIndex++;
                     setTimeout(()=>{
                         if(currentIndex>=envelopeData.length){
@@ -8898,9 +8929,12 @@ if (scene.bgm) {
                         }else{
                             locked=false;render();
                         }
-                    },180);
+                    },1250);
                 }else{
                     errors--;updateStatus();
+                    const page=document.getElementById("page1");
+                    if(page)page.classList.remove("mail-success-feedback","mail-success-sprite");
+                    feedback.style.color="";
                     feedback.textContent=target?"這封信不符合郵筒條件，再試一次。":"把信封放進正確的郵筒裡！";
                     if(errors<=0){
                         locked=true;
@@ -10390,6 +10424,34 @@ function toggleBGM(btnEl) {
         drop-shadow(0 0 0.5px #000)
         drop-shadow(0 0 0.5px #000)
         drop-shadow(0 0 0.5px #000)!important;
+}
+</style>
+
+
+<style id="mail-game-envelope-hit-feedback-update-20261101">
+/* 正式遊戲中的慌張立繪再往下 20px；開心立繪沿用完全相同的角色框位置 */
+#page1.mail-game-mode #爽快星慌張 img{top:68px!important;}
+#page1.mail-game-mode.mail-success-sprite #爽快星慌張{display:none!important;}
+#page1.mail-game-mode.mail-success-sprite #爽快星開心{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    position:absolute!important;left:-4%!important;right:auto!important;
+    top:calc(5% + 23px)!important;bottom:auto!important;
+    width:34%!important;height:40%!important;margin:0!important;
+    transform:none!important;translate:12px 18px!important;
+    z-index:5401!important;pointer-events:none!important;
+}
+#page1.mail-game-mode.mail-success-sprite #爽快星開心 img{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    width:125%!important;height:100%!important;object-fit:contain!important;
+    object-position:left top!important;position:relative!important;
+    left:12px!important;top:68px!important;transform:none!important;
+}
+#page1.mail-game-mode.mail-success-feedback #mail-game-feedback{
+    color:#ff9b55!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星慌張 img,
+    #page1.mail-game-mode.mail-success-sprite #爽快星開心 img{top:68px!important;}
 }
 </style>
 
