@@ -10761,5 +10761,24 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="mail-mobile-tutorial-round-tail-correction-20261101">
+/* 只修正手機教學說明框；桌面版完全不受影響 */
+@media(max-width:600px){
+  #page1.mail-tutorial-mode #對話框{
+    top:calc(18% + 32px)!important;
+    left:10%!important;
+    width:80%!important;
+    border-radius:50% / 48%!important;
+  }
+  /* 尾巴往上收，避免離框太遠或超出畫面 */
+  #page1.mail-tutorial-mode #對話框::after{
+    bottom:-20px!important;
+    border-top-width:26px!important;
+    border-right-width:27px!important;
+  }
+}
+</style>
+
 </body>
 </html>
