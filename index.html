@@ -8793,6 +8793,17 @@ if (scene.bgm) {
             ];
             let envelopeData=[...envelopeMaster];
             let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null,correctStreak=0;
+            // 小遊戲對話框每次換字，都讓當下顯示的爽快星重新播放一次動作。
+            function setMailFeedback(message){
+                feedback.textContent=message;
+                const page=document.getElementById("page1");
+                const isSuccess=Boolean(page&&page.classList.contains("mail-success-sprite"));
+                const sprite=document.getElementById(isSuccess?"爽快星開心":"爽快星慌張");
+                if(!sprite)return;
+                sprite.classList.remove("mail-sprite-motion","mail-motion-happy","mail-motion-scared","mail-motion-panicked");
+                void sprite.offsetWidth;
+                sprite.classList.add("mail-sprite-motion",isSuccess?"mail-motion-happy":"mail-motion-panicked");
+            }
             const names={red:"紅色",green:"綠色",blue:"藍色",yellow:"黃色",triangle:"三角形",circle:"圓形",heart:"愛心",square:"正方形"};
             function updateStatus(){
                 roundLabel.textContent=round===1?"第一輪／共兩輪":"第二輪／共兩輪";
@@ -8846,7 +8857,7 @@ if (scene.bgm) {
                     const sprite = document.getElementById(id);
                     if (sprite) sprite.classList.remove("mail-sprite-motion");
                 });
-                feedback.textContent="把信封放進正確的郵筒裡！";
+                setMailFeedback("把信封放進正確的郵筒裡！");
                 feedback.style.color="";
             }
             const envelopeAlphaCache=new WeakMap();
@@ -8941,7 +8952,7 @@ if (scene.bgm) {
                 boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
                 /* 沒有碰到任何郵筒：不扣錯誤次數，只提示玩家重新放置 */
                 if(!target){
-                    feedback.textContent="請把信封放到郵筒上再放開！";
+                    setMailFeedback("請把信封放到郵筒上再放開！");
                     locked=false;
                     return;
                 }
@@ -8960,15 +8971,15 @@ if (scene.bgm) {
                     /* 答對後立刻移除目前信封格，中央不保留已投遞的信；下一封仍照原本延遲切換 */
                     if(current.parent)current.parent.remove();
                     else current.el.remove();
-                    correctStreak++;feedback.textContent=correctStreak>=2?"好厲害！加油！":"分類正確！";
+                    correctStreak++;setMailFeedback(correctStreak>=2?"好厲害！加油！":"分類正確！");
                     currentIndex++;
                     setTimeout(()=>{
                         if(currentIndex>=envelopeData.length){
                             if(round===1){
                                 round=2;currentIndex=0;locked=false;render();
-                                feedback.textContent="第一輪完成！現在改依圖案分類。";
+                                setMailFeedback("第一輪完成！現在改依圖案分類。");
                             }else{
-                                feedback.textContent="兩輪分類都完成了！";
+                                setMailFeedback("兩輪分類都完成了！");
                                 setTimeout(()=>finishGame(true),650);
                             }
                         }else{
@@ -8980,14 +8991,14 @@ if (scene.bgm) {
                     const page=document.getElementById("page1");
                     if(page)page.classList.remove("mail-success-feedback","mail-success-sprite");
                     feedback.style.color="";
-                    correctStreak=0;feedback.textContent="好像不是這個郵筒？再看一次題目吧！";
+                    correctStreak=0;setMailFeedback("好像不是這個郵筒？再看一次題目吧！");
                     if(errors<=0){
                         locked=true;
                         if(attempt===1){
-                            feedback.textContent="哎呀失敗太多次了！得從頭開始。";
+                            setMailFeedback("哎呀失敗太多次了！得從頭開始。");
                             setTimeout(()=>{attempt=2;round=1;errors=3;currentIndex=0;envelopeData=[...envelopeMaster];shuffleEnvelopes();locked=false;render();},850);
                         }else{
-                            feedback.textContent="我來幫忙了！";
+                            setMailFeedback("我來幫忙了！");
                             setTimeout(()=>finishGame(false),900);
                         }
                     }
