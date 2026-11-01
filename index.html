@@ -8767,6 +8767,12 @@ if (scene.bgm) {
                 current.el.style.position="";current.el.style.left="";current.el.style.top="";
                 current.el.style.width="";current.el.style.height="";
                 boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
+                /* 沒有碰到任何郵筒：不扣錯誤次數，只提示玩家重新放置 */
+                if(!target){
+                    feedback.textContent="請把信封放到郵筒上再放開！";
+                    locked=false;
+                    return;
+                }
                 if(target&&envelope&&target.id===targetFor(envelope)?.id){
                     locked=true;
                     feedback.textContent="分類正確！";
