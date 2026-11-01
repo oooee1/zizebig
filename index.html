@@ -10734,5 +10734,32 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="mail-credits-and-tutorial-mobile-tail-reset-20261101">
+/* 教學說明框恢復原本設定：桌面版不套用先前加大的圓角與位移 */
+#page1.mail-tutorial-mode #對話框{
+    top:7%!important;
+    left:10%!important;
+    width:80%!important;
+    height:clamp(130px,23%,190px)!important;
+    border-radius:30px!important;
+}
+/* 手機版說明框恢復原本尺寸與形狀；只修正尾巴位置 */
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #對話框{
+        top:5%!important;
+        left:6%!important;
+        width:88%!important;
+        height:clamp(112px,20%,155px)!important;
+        border-radius:24px!important;
+    }
+    #page1.mail-tutorial-mode #對話框::after{
+        bottom:-20px!important;
+        border-top-width:26px!important;
+        border-right-width:27px!important;
+    }
+}
+</style>
+
 </body>
 </html>
