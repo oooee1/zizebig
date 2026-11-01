@@ -8797,7 +8797,7 @@ if (scene.bgm) {
                 {id:"yellow-square",src:"./pct/信封 黃色正方形.webp",color:"yellow",shape:"square"}
             ];
             let envelopeData=[...envelopeMaster];
-            let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null,correctStreak=0;
+            let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null,correctStreak=0,wrongFeedbackIndex=0;
             // 小遊戲對話框每次換字，都讓當下顯示的爽快星重新播放一次動作。
             function setMailFeedback(message){
                 feedback.textContent=message;
@@ -9018,7 +9018,7 @@ if (scene.bgm) {
                     const page=document.getElementById("page1");
                     if(page)page.classList.remove("mail-success-feedback","mail-success-sprite");
                     feedback.style.color="";
-                    correctStreak=0;setMailFeedback("好像不是這個郵筒？再看一次題目吧！哎呀好可惜，再看一次題目確認吧！");
+                    correctStreak=0;setMailFeedback(wrongFeedbackIndex++%2===0?"好像不是這個郵筒？再看一次題目吧！":"哎呀好可惜，再看一次題目確認吧！");
                     if(errors<=0){
                         locked=true;
                         if(attempt===1){
@@ -9049,7 +9049,7 @@ if (scene.bgm) {
             window.startMailSortingGame=function(){
                 if(started)return;
                 envelopeData=[...envelopeMaster];shuffleEnvelopes();
-                started=true;round=1;errors=3;attempt=1;currentIndex=0;locked=false;correctStreak=0;
+                started=true;round=1;errors=3;attempt=1;currentIndex=0;locked=false;correctStreak=0;wrongFeedbackIndex=0;
                 render();
             };
         })();
