@@ -2907,7 +2907,7 @@ img { max-width:100%; }
             <!-- 爽快星 -->
             
             <div id="爽快星生氣" class="角色圖 全爽快星"><img data-src="./pct/爽快星生氣.webp" alt="爽快星生氣"></div>
-            <div id="爽快星害怕" class="角色圖 全爽快星"><img data-src="./pct/爽快星害怕.webp" alt="爽快星害怕"></div>
+            <div id="爽快星害怕" class="角色圖 全爽快星"><img src="./pct/爽快星害怕.webp" alt="爽快星害怕"></div>
             <div id="爽快星開心" class="角色圖 全爽快星"><img data-src="./pct/爽快星吃信封.webp" alt="爽快星開心"></div>
             <div id="爽快星疑惑" class="角色圖 全爽快星"><img data-src="./pct/爽快星問號.webp" alt="爽快星疑惑"></div>
             <div id="爽快星慌張" class="角色圖 全爽快星"><img src="./pct/爽快星慌張.webp" alt="爽快星慌張"></div>
@@ -10149,6 +10149,57 @@ function toggleBGM(btnEl) {
     -webkit-text-stroke:5px #000!important;
     paint-order:stroke fill!important;
     text-shadow:none!important;
+}
+</style>
+
+
+<style id="mail-game-final-position-rounding-20261101">
+/* 正式遊戲的大爽快星改用害怕立繪，並往上 12px */
+#page1.mail-game-mode #爽快星慌張{display:none!important;}
+#page1.mail-game-mode #爽快星害怕{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    position:absolute!important;left:-4%!important;right:auto!important;
+    top:calc(5% + 23px)!important;bottom:auto!important;
+    width:34%!important;height:40%!important;margin:0!important;
+    transform:none!important;z-index:5401!important;pointer-events:none!important;
+}
+#page1.mail-game-mode #爽快星害怕 img{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    width:125%!important;height:100%!important;
+    object-fit:contain!important;object-position:left top!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星害怕{top:calc(3% + 23px)!important;}
+}
+/* 教學小爽快星：相較目前位置右移 4px、下移 10px */
+#page1.mail-tutorial-mode #爽快星開心{
+    transform:translate(4px,-45px)!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #爽快星開心{
+        transform:translate(4px,-35px)!important;
+    }
+}
+/* 教學對話框稍微下移並加大圓角 */
+#page1.mail-tutorial-mode #對話框{
+    top:18%!important;
+    border-radius:76px!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #對話框{
+        top:16%!important;
+        border-radius:62px!important;
+    }
+}
+/* 遊戲標題使用超粗黑色字邊線 */
+#page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+#page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+    -webkit-text-stroke:14px #000!important;
+    paint-order:stroke fill!important;
+}
+/* 遊戲提示文字框改成更圓的圓角 */
+#page1.mail-game-mode #mail-game-feedback{
+    border-radius:48px!important;
 }
 </style>
 
