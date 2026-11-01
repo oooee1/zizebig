@@ -8886,12 +8886,16 @@ if (scene.bgm) {
                 if(el.dataset.envelope!==envelopeData[currentIndex]?.id)return;
                 e.preventDefault();
                 const rect=el.getBoundingClientRect();
-                drag={el,parent:el.parentNode,nextSibling:el.nextSibling,pointerId:e.pointerId,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top};
+                drag={el,parent:el.parentNode,nextSibling:el.nextSibling,pointerId:e.pointerId,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top,width:rect.width,height:rect.height};
                 /* 從有 transform 的信件排列容器抽離，避免 fixed 座標被父層偏移 */
                 document.body.appendChild(el);
                 el.classList.add("dragging");
                 el.style.left=(e.clientX-drag.offsetX)+"px";
                 el.style.top=(e.clientY-drag.offsetY)+"px";
+                el.style.width=drag.width+"px";
+                el.style.height=drag.height+"px";
+                el.style.setProperty("--mail-drag-width",drag.width+"px");
+                el.style.setProperty("--mail-drag-height",drag.height+"px");
                 el.style.position="fixed";
                 document.addEventListener("pointermove",moveDrag);
                 document.addEventListener("pointerup",endDrag,{once:true});
@@ -10554,6 +10558,59 @@ function toggleBGM(btnEl) {
 #page1 .角色圖.mail-motion-panicked img {
     animation:mail-motion-panicked .9s cubic-bezier(.36,.07,.19,.97) 1 both!important;
     transform-origin:bottom center!important;
+}
+</style>
+
+
+<style id="mail-mobile-layout-and-drag-stability-20261101">
+/* 手機教學：爽快星與說明泡泡都下移至少 20px，並保留明顯間距 */
+@media(max-width:600px){
+  #page1.mail-tutorial-mode #爽快星害怕{
+    transform:translate(5px,83px)!important;
+  }
+  #page1.mail-tutorial-mode #對話框{
+    top:calc(18% + 20px)!important;
+    border-radius:50% / 42%!important;
+  }
+  #page1.mail-tutorial-mode #對話框::after{
+    bottom:-30px!important;
+  }
+  /* 正式遊戲中的提示對話框往下移 */
+  #page1.mail-game-mode #mail-game-feedback{
+    top:calc(20% + 20px)!important;
+  }
+  /* 標題固定水平置中，並讓橘色文字有清楚的黑色外框 */
+  #page1.mail-game-mode #mail-game-rule{
+    left:50%!important;
+    right:auto!important;
+    transform:translateX(-50%)!important;
+    text-align:center!important;
+    box-sizing:border-box!important;
+  }
+  #page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+  #page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+    display:inline-block!important;
+    text-align:center!important;
+    -webkit-text-stroke:3px #000!important;
+    paint-order:stroke fill!important;
+    text-shadow:
+      -2px -2px 0 #000, 0 -2px 0 #000, 2px -2px 0 #000,
+      -2px 0 0 #000, 2px 0 0 #000,
+      -2px 2px 0 #000, 0 2px 0 #000, 2px 2px 0 #000!important;
+  }
+  /* 拖曳中的信封維持拿起前的實際尺寸，不再突然放大造成視覺飄移 */
+  #page1.mail-game-mode .mail-game-envelope.dragging{
+    width:var(--mail-drag-width)!important;
+    height:var(--mail-drag-height)!important;
+    max-width:none!important;
+    max-height:none!important;
+    min-width:0!important;
+    min-height:0!important;
+    transform:none!important;
+    margin:0!important;
+    touch-action:none!important;
+    object-fit:contain!important;
+  }
 }
 </style>
 
