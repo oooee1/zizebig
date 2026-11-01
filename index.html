@@ -8800,9 +8800,13 @@ if (scene.bgm) {
                 const isSuccess=Boolean(page&&page.classList.contains("mail-success-sprite"));
                 const sprite=document.getElementById(isSuccess?"爽快星開心":"爽快星慌張");
                 if(!sprite)return;
+                const image=sprite.querySelector("img");
                 sprite.classList.remove("mail-sprite-motion","mail-motion-happy","mail-motion-scared","mail-motion-panicked");
+                if(image)image.classList.remove("mail-happy-motion","mail-panicked-motion");
                 void sprite.offsetWidth;
+                if(image)void image.offsetWidth;
                 sprite.classList.add("mail-sprite-motion",isSuccess?"mail-motion-happy":"mail-motion-panicked");
+                if(image)image.classList.add(isSuccess?"mail-happy-motion":"mail-panicked-motion");
             }
             const names={red:"紅色",green:"綠色",blue:"藍色",yellow:"黃色",triangle:"三角形",circle:"圓形",heart:"愛心",square:"正方形"};
             function updateStatus(){
@@ -8976,9 +8980,13 @@ if (scene.bgm) {
                     }
                     const happySprite=document.getElementById("爽快星開心");
                     if(happySprite){
+                        const happyImage=happySprite.querySelector("img");
                         happySprite.classList.remove("mail-sprite-motion", "mail-motion-happy");
+                        if(happyImage)happyImage.classList.remove("mail-happy-motion");
                         void happySprite.offsetWidth;
+                        if(happyImage)void happyImage.offsetWidth;
                         happySprite.classList.add("mail-sprite-motion", "mail-motion-happy");
+                        if(happyImage)happyImage.classList.add("mail-happy-motion");
                     }
                     /* 答對後立刻移除目前信封格，中央不保留已投遞的信；下一封仍照原本延遲切換 */
                     if(current.parent)current.parent.remove();
@@ -10697,5 +10705,32 @@ function toggleBGM(btnEl) {
   }
 }
 </style>
+
+<style id="mail-final-width-title-happy-animation-20261101">
+/* 送信小遊戲對話泡泡加寬、標題微幅放大；只調整手機版 */
+@media(max-width:600px){
+  #page1.mail-tutorial-mode #對話框{
+    left:3%!important;
+    width:94%!important;
+  }
+  #page1.mail-game-mode #mail-game-feedback{
+    max-width:68%!important;
+    width:max-content!important;
+  }
+  #page1.mail-game-mode #mail-game-rule{
+    font-size:clamp(34px,7.4vw,64px)!important;
+  }
+}
+/* 開心立繪直接在 img 本身觸發動畫，避免外層 class 變動後動畫沒有播放 */
+#page1.mail-game-mode.mail-success-sprite #爽快星開心 img.mail-happy-motion{
+  animation:mail-motion-happy .9s cubic-bezier(.2,.8,.3,1) 1 both!important;
+  transform-origin:bottom center!important;
+}
+#page1.mail-game-mode #爽快星慌張 img.mail-panicked-motion{
+  animation:mail-motion-panicked .9s cubic-bezier(.36,.07,.19,.97) 1 both!important;
+  transform-origin:bottom center!important;
+}
+</style>
+
 </body>
 </html>
