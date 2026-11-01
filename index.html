@@ -604,12 +604,10 @@
   transform-origin: center center;
 }
 @keyframes passion-spray-burst {
-  0% { opacity: 0; transform: scale(.18) rotate(-16deg); filter: brightness(2.8) saturate(1.8); }
-  28% { opacity: 1; transform: scale(1.28) rotate(7deg); filter: brightness(2.2) saturate(1.6); }
-  48% { transform: scale(.88) rotate(-5deg); filter: brightness(1.5); }
-  68% { transform: scale(1.16) rotate(3deg); }
-  84% { transform: scale(1.04) rotate(-1.5deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1); }
+  0% { opacity: 0; transform: scale(.82) translateY(14px); }
+  45% { opacity: 1; transform: scale(1.04) translateY(-3px); }
+  72% { opacity: 1; transform: scale(.98) translateY(1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 /* 熱情星一般立繪：小幅度的活力彈跳與俏皮的擠壓回彈，不再只是左右搖晃。 */
@@ -10823,11 +10821,10 @@ function toggleBGM(btnEl) {
     bottom: 180px !important;
   }
 
-  /* 熱情星思考、疑惑、崩潰、噴：電腦版往上移 5px */
+  /* 熱情星思考、疑惑、崩潰：電腦版往上移 5px；噴另行置中 */
   #page1 #熱情星思考,
   #page1 #熱情星尷尬,
-  #page1 #熱情星崩潰,
-  #page1 #熱情星噴 {
+  #page1 #熱情星崩潰 {
     transform: translate(8px, 51px) scale(0.78) !important;
   }
 
@@ -10836,6 +10833,34 @@ function toggleBGM(btnEl) {
   #page1 #熱情星出場火焰 {
     bottom: 190px !important;
   }
+}
+</style>
+
+<style id="passion-spray-and-crown-position-fix">
+/* 噴：整張立繪置中，噴射動畫改成乾淨、柔和的彈出，不再旋轉爆閃 */
+#page1 #熱情星噴 {
+  left: 50% !important;
+  bottom: 50% !important;
+  width: 90% !important;
+  transform: translate(-50%, 50%) scale(0.78) !important;
+  transform-origin: center center !important;
+  z-index: 20 !important;
+}
+#page1 #熱情星噴 img {
+  display: block !important;
+  width: 135% !important;
+  max-width: none !important;
+  height: auto !important;
+  margin-left: -17.5% !important;
+}
+
+/* 戴王冠的立繪往下 5px；疑惑立繪不在此設定內 */
+#page1 #熱情星戴上王冠 {
+  transform: translate(8px, 61px) scale(0.82) !important;
+  transform-origin: top left !important;
+}
+#page1 #熱情星戴王冠思考 {
+  transform: translate(5px, 17px) !important;
 }
 </style>
 
