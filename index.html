@@ -2910,7 +2910,7 @@ img { max-width:100%; }
             <div id="爽快星害怕" class="角色圖 全爽快星"><img data-src="./pct/爽快星害怕.webp" alt="爽快星害怕"></div>
             <div id="爽快星開心" class="角色圖 全爽快星"><img data-src="./pct/爽快星吃信封.webp" alt="爽快星開心"></div>
             <div id="爽快星疑惑" class="角色圖 全爽快星"><img data-src="./pct/爽快星問號.webp" alt="爽快星疑惑"></div>
-            <div id="爽快星慌張" class="角色圖 全爽快星"><img data-src="./pct/爽快星慌張.webp" alt="爽快星驚訝"></div>
+            <div id="爽快星慌張" class="角色圖 全爽快星"><img src="./pct/爽快星慌張.webp" alt="爽快星慌張"></div>
             <!-- 熱情星 -->
             <div id="熱情星" class="角色圖 全熱情星"><img data-src="./pct/熱情星正常.webp" alt="熱情星"></div>
             <div id="熱情星思考" class="角色圖 全熱情星"><img data-src="./pct/熱情星思考.webp" alt="熱情星思考"></div>
@@ -10089,6 +10089,66 @@ function toggleBGM(btnEl) {
         -4px  4px 0 #000,
          0px  4px 0 #000,
          4px  4px 0 #000!important;
+}
+</style>
+
+
+<style id="mail-game-layout-title-fix-20261101-v2">
+/* 教學畫面：明顯下移對話框並加大圓角 */
+#page1.mail-tutorial-mode #對話框{
+    top:16%!important;
+    border-radius:64px!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #對話框{
+        top:14%!important;
+        border-radius:52px!important;
+    }
+}
+/* 教學畫面：爽快星明顯上移 */
+#page1.mail-tutorial-mode #爽快星開心{
+    transform:translateY(-55px)!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #爽快星開心{
+        transform:translateY(-45px)!important;
+    }
+}
+/* 正式遊戲：慌張立繪直接使用 src，避免只顯示 alt */
+#page1.mail-game-mode #爽快星開心{display:none!important;}
+#page1.mail-game-mode #爽快星慌張{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    position:absolute!important;left:-4%!important;right:auto!important;
+    top:calc(5% + 35px)!important;bottom:auto!important;
+    width:34%!important;height:40%!important;margin:0!important;
+    transform:none!important;z-index:5401!important;pointer-events:none!important;
+}
+#page1.mail-game-mode #爽快星慌張 img{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    width:125%!important;height:100%!important;
+    object-fit:contain!important;object-position:left top!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星慌張{top:calc(3% + 35px)!important;}
+}
+/* 標題維持單行；放大 10px，但不受 max-width 導致自動換行 */
+#page1.mail-game-mode #mail-game-rule{
+    width:max-content!important;
+    max-width:96vw!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+    padding:8px 14px!important;
+    font-size:clamp(24px,calc(5.8vw + 10px),52px)!important;
+    -webkit-text-stroke:0!important;
+    text-shadow:none!important;
+}
+#page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+#page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+    white-space:nowrap!important;
+    -webkit-text-stroke:5px #000!important;
+    paint-order:stroke fill!important;
+    text-shadow:none!important;
 }
 </style>
 
