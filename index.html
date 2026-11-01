@@ -8993,7 +8993,7 @@ if (scene.bgm) {
                     else current.el.remove();
                     correctStreak++;
                     const isLastEnvelopeOfRound=currentIndex===envelopeData.length-1;
-                    setMailFeedback(correctStreak>=2&&!isLastEnvelopeOfRound?"好厲害！加油！":"分類正確！");
+                    setMailFeedback(correctStreak>=3&&correctStreak%3===0&&!isLastEnvelopeOfRound?"好厲害！加油！":"分類正確！");
                     currentIndex++;
                     setTimeout(()=>{
                         if(currentIndex>=envelopeData.length){
