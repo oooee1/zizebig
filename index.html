@@ -10632,7 +10632,7 @@ function toggleBGM(btnEl) {
   /* 教學泡泡改回較圓的圓角並往下移 */
   #page1.mail-tutorial-mode #對話框{
     top:calc(18% + 32px)!important;
-    border-radius:50% / 44%!important;
+    border-radius:50% / 48%!important;
   }
   /* 手機教學的爽快星再往下移，和對話框拉開距離 */
   #page1.mail-tutorial-mode #爽快星害怕{
@@ -10646,13 +10646,16 @@ function toggleBGM(btnEl) {
     max-width:98%!important;
     margin-left:auto!important;
     margin-right:auto!important;
+    padding-left:22px!important;
+    padding-right:22px!important;
     transform:none!important;
     text-align:center!important;
     white-space:nowrap!important;
+    font-size:clamp(32px,6.8vw,60px)!important;
   }
   /* 手機正式遊戲提示泡泡往下移 */
   #page1.mail-game-mode #mail-game-feedback{
-    top:calc(16% + 32px)!important;
+    top:calc(16% + 52px)!important;
   }
   /* 手機版明確確保爽快星動畫套用在實際顯示的圖片 */
   #page1.mail-tutorial-mode #爽快星害怕.mail-sprite-motion img{
@@ -10675,6 +10678,18 @@ function toggleBGM(btnEl) {
 /* 信封被移到 body 後仍須套用，不能綁在 #page1 底下 */
 @media(max-width:600px){
   body .mail-game-envelope.dragging{
+    /* 信封移到 body 後，舊的全域 !important 尺寸規則仍會生效；
+       必須在 body 層級明確覆蓋，否則會被放大成 82vh 而看起來飄移 */
+    width:var(--mail-drag-width)!important;
+    height:var(--mail-drag-height)!important;
+    max-width:none!important;
+    max-height:none!important;
+    min-width:0!important;
+    min-height:0!important;
+    position:fixed!important;
+    transform:none!important;
+    margin:0!important;
+    box-sizing:border-box!important;
     touch-action:none!important;
     -webkit-user-select:none!important;
     user-select:none!important;
