@@ -7968,6 +7968,20 @@ if (scene.bgm) {
         });
     }
 
+    // 角色已經顯示後才重播送信立繪動畫，避免動畫在 display:none 時先跑完。
+    if (scene.mailTutorial || scene.mailGame) {
+        const mailSpriteIds = scene.mailTutorial
+            ? ["爽快星開心", "爽快星害怕"]
+            : ["爽快星慌張"];
+        mailSpriteIds.forEach(id => {
+            const sprite = document.getElementById(id);
+            if (!sprite) return;
+            sprite.classList.remove("mail-sprite-motion");
+            void sprite.offsetWidth;
+            sprite.classList.add("mail-sprite-motion");
+        });
+    }
+
     // 角色登場動畫判斷
     if (scene.characters && Array.isArray(scene.characters)) {
         scene.characters.forEach(charName => {
