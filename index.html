@@ -7810,6 +7810,18 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle("mail-tutorial-mode", Boolean(scene.mailTutorial));
         pageEl.classList.toggle("mail-game-mode", Boolean(scene.mailGame));
         pageEl.classList.toggle("mail-failure-mode", Number(scene.id) === 179.5);
+
+        // 送信教學每次切換一句話都重新播放立繪動畫；三張表情都加上，
+        // 由 CSS 讓當下實際顯示的立繪呈現動畫，避免動畫加在隱藏角色上。
+        ["爽快星開心", "爽快星害怕", "爽快星慌張"].forEach(id => {
+            const sprite = document.getElementById(id);
+            if (!sprite) return;
+            sprite.classList.remove("mail-sprite-motion");
+            if (scene.mailTutorial || scene.mailGame) {
+                void sprite.offsetWidth;
+                sprite.classList.add("mail-sprite-motion");
+            }
+        });
     }
 
     // 只有進入不同漫畫場景時才淡入；同一場景的對話不做過渡。
@@ -8809,8 +8821,10 @@ if (scene.bgm) {
                     page.classList.remove("mail-success-feedback");
                     page.classList.remove("mail-success-sprite");
                 }
-                const happySprite=document.getElementById("爽快星開心");
-                if(happySprite)happySprite.classList.remove("anim-panicked");
+                ["爽快星開心", "爽快星害怕", "爽快星慌張"].forEach(id => {
+                    const sprite = document.getElementById(id);
+                    if (sprite) sprite.classList.remove("mail-sprite-motion");
+                });
                 feedback.textContent="把信封放進正確的郵筒裡！";
                 feedback.style.color="";
             }
@@ -8918,9 +8932,9 @@ if (scene.bgm) {
                     }
                     const happySprite=document.getElementById("爽快星開心");
                     if(happySprite){
-                        happySprite.classList.remove("anim-panicked");
+                        happySprite.classList.remove("mail-sprite-motion");
                         void happySprite.offsetWidth;
-                        happySprite.classList.add("anim-panicked");
+                        happySprite.classList.add("mail-sprite-motion");
                     }
                     /* 答對後立刻移除目前信封格，中央不保留已投遞的信；下一封仍照原本延遲切換 */
                     if(current.parent)current.parent.remove();
@@ -10464,6 +10478,25 @@ function toggleBGM(btnEl) {
     #page1.mail-game-mode.mail-success-sprite #爽快星開心{
         top:calc(3% + 23px)!important;
     }
+}
+</style>
+
+
+
+<style id="mail-sprite-motion-reliable-20261101">
+/* 送信遊戲立繪動畫：使用獨立 translate/rotate，不覆寫圖片定位用的 transform。
+   教學每次換句話重播；正式遊戲開始時慌張立繪播放，答對後改由開心立繪播放。 */
+@keyframes mail-sprite-motion-once {
+    0%,100% { translate:0 0; rotate:0deg; }
+    18% { translate:-5px -5px; rotate:-2.5deg; }
+    36% { translate:5px 1px; rotate:2.5deg; }
+    54% { translate:-4px -3px; rotate:-2deg; }
+    72% { translate:4px 1px; rotate:2deg; }
+    88% { translate:-2px 0; rotate:-1deg; }
+}
+#page1 .角色圖.mail-sprite-motion img {
+    animation:mail-sprite-motion-once .85s cubic-bezier(.36,.07,.19,.97) 1 both!important;
+    transform-origin:bottom center!important;
 }
 </style>
 
