@@ -10353,5 +10353,41 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="mail-game-sprite-image-and-rounded-outline-20261101">
+/* 正式送信遊戲：直接移動慌張立繪的圖片本身，避開外層角色定位與動畫規則 */
+#page1.mail-game-mode #爽快星慌張{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+}
+#page1.mail-game-mode #爽快星慌張 img{
+    position:relative!important;
+    left:12px!important;
+    top:18px!important;
+    transform:none!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星慌張 img{
+        left:12px!important;
+        top:18px!important;
+    }
+}
+/* 用多層圓角 drop-shadow 加粗字邊，避免 text-stroke 的尖角／接縫線 */
+#page1.mail-game-mode #mail-game-rule,
+#page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+#page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+    -webkit-text-stroke:0!important;
+    paint-order:normal!important;
+    text-shadow:none!important;
+    filter:
+        drop-shadow(0 0 1px #000)
+        drop-shadow(0 0 1px #000)
+        drop-shadow(0 0 1px #000)
+        drop-shadow(0 0 1px #000)
+        drop-shadow(0 0 1px #000)!important;
+}
+</style>
+
 </body>
 </html>
