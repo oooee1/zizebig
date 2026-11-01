@@ -2663,6 +2663,37 @@ img { max-width:100%; }
 }
 </style>
 
+<style id="mail-game-square-hitbox-debug">
+/* 郵筒縮小一點，紅色方框就是實際拖放判定範圍 */
+#page1.mail-game-mode .mailbox-hit-area{
+ position:relative!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;overflow:visible!important;
+}
+#page1.mail-game-mode .mailbox-hit-square{
+ position:absolute!important;left:50%!important;top:50%!important;
+ width:190%!important;aspect-ratio:1/1!important;height:auto!important;
+ transform:translate(-50%,-50%)!important;
+ border:3px solid #ff3030!important;box-sizing:border-box!important;
+ z-index:5!important;pointer-events:none!important;background:transparent!important;
+}
+#page1.mail-game-mode .mailbox-hit-area .mail-game-mailbox{
+ position:relative!important;z-index:2!important;
+ width:145%!important;height:145%!important;max-width:none!important;max-height:none!important;
+ object-fit:contain!important;transform:scale(1.75)!important;
+ transform-origin:center center!important;filter:none!important;outline:none!important;
+}
+#page1.mail-game-mode .mailbox-hit-area.mailbox-target .mail-game-mailbox{
+ transform:scale(1.82)!important;
+}
+@media(max-width:600px){
+ #page1.mail-game-mode .mailbox-hit-square{width:190%!important;border-width:2px!important;}
+ #page1.mail-game-mode .mailbox-hit-area .mail-game-mailbox{
+  width:138%!important;height:138%!important;transform:scale(1.62)!important;
+ }
+ #page1.mail-game-mode .mailbox-hit-area.mailbox-target .mail-game-mailbox{transform:scale(1.68)!important;}
+}
+</style>
 </head>
 
 <body>
@@ -8647,10 +8678,17 @@ if (scene.bgm) {
                 boxes.replaceChildren();
                 envelopeRow.replaceChildren();
                 mailboxData.forEach(box=>{
+                    const hitArea=document.createElement("div");
+                    hitArea.className="mailbox-hit-area";
+                    hitArea.dataset.mailbox=box.id;
+                    const hitSquare=document.createElement("div");
+                    hitSquare.className="mailbox-hit-square";
                     const img=document.createElement("img");
                     img.className="mail-game-mailbox";img.src=box.src;
                     img.alt=names[box.color]+names[box.shape]+"郵筒";
-                    img.dataset.mailbox=box.id;boxes.appendChild(img);
+                    hitArea.appendChild(hitSquare);
+                    hitArea.appendChild(img);
+                    boxes.appendChild(hitArea);
                 });
                 const remaining=envelopeData.slice(currentIndex);
                 remaining.forEach((item,visibleIndex)=>{
@@ -8690,36 +8728,12 @@ if (scene.bgm) {
                 document.addEventListener("pointerup",endDrag,{once:true});
                 document.addEventListener("pointercancel",cancelDrag,{once:true});
             }
-            /* 依郵筒圖片本身的透明像素判定，不再用整張圖片的矩形範圍當感應區 */
-            const mailboxPixelCache=new WeakMap();
+            /* 以紅色方框作為郵筒感應範圍：只有方框內才算碰到郵筒 */
             function isInsideVisibleMailbox(el,x,y){
-                if(!el.complete||!el.naturalWidth||!el.naturalHeight)return false;
-                let pixelData=mailboxPixelCache.get(el);
-                if(!pixelData){
-                    try{
-                        const canvas=document.createElement("canvas");
-                        canvas.width=el.naturalWidth;canvas.height=el.naturalHeight;
-                        const ctx=canvas.getContext("2d",{willReadFrequently:true});
-                        ctx.drawImage(el,0,0);
-                        pixelData={canvas,ctx};
-                        mailboxPixelCache.set(el,pixelData);
-                    }catch(error){return false;}
-                }
-                const rect=el.getBoundingClientRect();
-                if(x<rect.left||x>rect.right||y<rect.top||y>rect.bottom)return false;
-                /* object-fit:contain 時，先扣除圖片在元素框內的透明留白 */
-                const scale=Math.min(rect.width/el.naturalWidth,rect.height/el.naturalHeight);
-                const drawWidth=el.naturalWidth*scale;
-                const drawHeight=el.naturalHeight*scale;
-                const offsetX=(rect.width-drawWidth)/2;
-                const offsetY=(rect.height-drawHeight)/2;
-                const localX=x-rect.left-offsetX;
-                const localY=y-rect.top-offsetY;
-                if(localX<0||localY<0||localX>drawWidth||localY>drawHeight)return false;
-                const px=Math.min(el.naturalWidth-1,Math.floor(localX/scale));
-                const py=Math.min(el.naturalHeight-1,Math.floor(localY/scale));
-                try{return pixelData.ctx.getImageData(px,py,1,1).data[3]>24;}
-                catch(error){return false;}
+                const hitSquare=el.querySelector(".mailbox-hit-square");
+                if(!hitSquare)return false;
+                const rect=hitSquare.getBoundingClientRect();
+                return x>=rect.left&&x<=rect.right&&y>=rect.top&&y<=rect.bottom;
             }
             function getMailboxAtPoint(x,y){
                 for(const el of boxes.querySelectorAll("[data-mailbox]")){
