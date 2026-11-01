@@ -10017,5 +10017,80 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="mail-game-layout-title-fix-20261101">
+/* 教學：對話框往下，圓角加大 */
+#page1.mail-tutorial-mode #對話框{
+    top:10%!important;
+    border-radius:42px!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #對話框{
+        top:8%!important;
+        border-radius:36px!important;
+    }
+}
+/* 教學中的爽快星稍微往上 */
+#page1.mail-tutorial-mode #爽快星開心{
+    transform:translateY(-12px)!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #爽快星開心{
+        transform:translateY(-10px)!important;
+    }
+}
+/* 遊戲中的小爽快星改用慌張立繪，並比原位置再往下 12px */
+#page1.mail-game-mode #爽快星開心{
+    display:none!important;
+}
+#page1.mail-game-mode #爽快星慌張{
+    display:block!important;
+    position:absolute!important;
+    left:-4%!important;
+    right:auto!important;
+    top:calc(5% + 35px)!important;
+    bottom:auto!important;
+    width:34%!important;
+    height:40%!important;
+    margin:0!important;
+    transform:none!important;
+    z-index:5401!important;
+    pointer-events:none!important;
+}
+#page1.mail-game-mode #爽快星慌張 img{
+    display:block!important;
+    width:125%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    object-position:left top!important;
+    transform:none!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星慌張{
+        top:calc(3% + 35px)!important;
+    }
+}
+/* 標題放大 10px；改用文字陰影描邊，避免 10px text-stroke 在字與字交界形成凸塊 */
+#page1.mail-game-mode #mail-game-rule{
+    font-size:calc(clamp(28px,5.8vw,42px) + 10px)!important;
+    -webkit-text-stroke:0!important;
+    text-shadow:none!important;
+}
+#page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+#page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+    -webkit-text-stroke:0!important;
+    paint-order:normal!important;
+    text-shadow:
+        -4px -4px 0 #000,
+         0px -4px 0 #000,
+         4px -4px 0 #000,
+        -4px  0px 0 #000,
+         4px  0px 0 #000,
+        -4px  4px 0 #000,
+         0px  4px 0 #000,
+         4px  4px 0 #000!important;
+}
+</style>
+
 </body>
 </html>
