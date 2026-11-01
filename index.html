@@ -2645,16 +2645,19 @@ img { max-width:100%; }
 #page1.mail-game-mode #mail-game-mailboxes{top:20%!important;height:62%!important;padding:2.5% 4%!important;box-sizing:border-box!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;justify-items:center!important;align-items:center!important}
 #page1.mail-game-mode .mail-game-mailbox{width:155%!important;height:155%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;transform:scale(1.9)!important;transform-origin:center center!important;position:relative!important}
 #page1.mail-game-mode .mail-game-mailbox.mailbox-target{transform:scale(2)!important}
-#page1.mail-game-mode #爽快星開心{position:absolute!important;left:-7%!important;top:-13%!important;right:auto!important;bottom:auto!important;width:39%!important;height:48%!important;margin:0!important;padding:0!important;transform:none!important;z-index:5401!important}
+#page1.mail-game-mode #爽快星開心{position:absolute!important;left:-7%!important;top:-5%!important;right:auto!important;bottom:auto!important;width:39%!important;height:48%!important;margin:0!important;padding:0!important;transform:none!important;z-index:5401!important}
 #page1.mail-game-mode #爽快星開心 img{width:135%!important;height:100%!important;max-width:none!important;object-fit:contain!important;object-position:left top!important;transform:none!important}
 #page1.mail-game-mode #mail-game-rule{top:5%!important;left:50%!important;color:#000!important;background:#ff9b55!important;border:3px solid #000!important;border-radius:24px!important;padding:8px 24px!important;box-shadow:none!important;text-shadow:none!important}
-#page1.mail-tutorial-mode #對話框{border:3px solid #000!important;border-radius:26px!important}
-#page1.mail-tutorial-mode #對話框::after{border-top-color:#000!important;border-right-color:transparent!important;filter:drop-shadow(2px 3px 0 #000)!important}
+/* 教學「把信放進……」泡泡：外框與尾巴統一黑色 */
+#page1.mail-tutorial-mode #對話框{border:3px solid #000!important;border-color:#000!important;box-shadow:none!important}
+#page1.mail-tutorial-mode #對話框::after{border-top-color:#000!important;border-left-color:transparent!important;border-right-color:transparent!important;filter:drop-shadow(2px 3px 0 #000)!important}
+#page1.mail-tutorial-mode #對話框{border:3px solid #000!important;border-color:#000!important;border-radius:26px!important;box-shadow:none!important}
+#page1.mail-tutorial-mode #對話框::after{border-top:36px solid #000!important;border-left-color:transparent!important;border-right-color:transparent!important;filter:drop-shadow(2px 3px 0 #000)!important}
 @media(max-width:600px){
 #page1.mail-game-mode #mail-game-mailboxes{top:19%!important;height:63%!important;padding:3% 3%!important}
 #page1.mail-game-mode .mail-game-mailbox{width:145%!important;height:145%!important;transform:scale(1.75)!important}
 #page1.mail-game-mode .mail-game-mailbox.mailbox-target{transform:scale(1.85)!important}
-#page1.mail-game-mode #爽快星開心{left:-9%!important;top:-15%!important;width:43%!important;height:43%!important}
+#page1.mail-game-mode #爽快星開心{left:-9%!important;top:-7%!important;width:43%!important;height:43%!important}
 #page1.mail-game-mode #爽快星開心 img{width:135%!important;height:100%!important}
 #page1.mail-game-mode #mail-game-rule{top:4%!important;border-radius:22px!important}
 }
