@@ -9871,5 +9871,26 @@ function toggleBGM(btnEl) {
     }
 }
     </script>
+
+<style id="mail-tutorial-dialogue-lower-hide-mailbox-debug-line-20261101">
+/* 講解規則時，爽快星上方的對話框往下移一點 */
+#page1.mail-tutorial-mode #對話框{
+    top:11%!important;
+}
+/* 手機版同步往下移，保留原本左右尺寸 */
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #對話框{
+        top:9%!important;
+    }
+}
+/* 關閉郵筒紅色除錯框；保留透明感應區，拖放判定不受影響 */
+#page1.mail-game-mode .mailbox-hit-square{
+    border:0!important;
+    outline:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
+}
+</style>
+
 </body>
 </html>
