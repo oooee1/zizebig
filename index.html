@@ -8792,7 +8792,7 @@ if (scene.bgm) {
                 {id:"yellow-square",src:"./pct/信封 黃色正方形.webp",color:"yellow",shape:"square"}
             ];
             let envelopeData=[...envelopeMaster];
-            let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null;
+            let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null,correctStreak=0;
             const names={red:"紅色",green:"綠色",blue:"藍色",yellow:"黃色",triangle:"三角形",circle:"圓形",heart:"愛心",square:"正方形"};
             function updateStatus(){
                 roundLabel.textContent=round===1?"第一輪／共兩輪":"第二輪／共兩輪";
@@ -8960,7 +8960,7 @@ if (scene.bgm) {
                     /* 答對後立刻移除目前信封格，中央不保留已投遞的信；下一封仍照原本延遲切換 */
                     if(current.parent)current.parent.remove();
                     else current.el.remove();
-                    feedback.textContent="分類正確！";
+                    correctStreak++;feedback.textContent=correctStreak>=2?"好厲害！加油！":"分類正確！";
                     currentIndex++;
                     setTimeout(()=>{
                         if(currentIndex>=envelopeData.length){
@@ -8980,7 +8980,7 @@ if (scene.bgm) {
                     const page=document.getElementById("page1");
                     if(page)page.classList.remove("mail-success-feedback","mail-success-sprite");
                     feedback.style.color="";
-                    feedback.textContent=target?"這封信不符合郵筒條件，再試一次。":"把信封放進正確的郵筒裡！";
+                    correctStreak=0;feedback.textContent="好像不是這個郵筒？再看一次題目吧！";
                     if(errors<=0){
                         locked=true;
                         if(attempt===1){
@@ -9011,7 +9011,7 @@ if (scene.bgm) {
             window.startMailSortingGame=function(){
                 if(started)return;
                 envelopeData=[...envelopeMaster];shuffleEnvelopes();
-                started=true;round=1;errors=3;attempt=1;currentIndex=0;locked=false;
+                started=true;round=1;errors=3;attempt=1;currentIndex=0;locked=false;correctStreak=0;
                 render();
             };
         })();
