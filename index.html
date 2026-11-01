@@ -8975,7 +8975,9 @@ if (scene.bgm) {
                     /* 答對後立刻移除目前信封格，中央不保留已投遞的信；下一封仍照原本延遲切換 */
                     if(current.parent)current.parent.remove();
                     else current.el.remove();
-                    correctStreak++;setMailFeedback(correctStreak>=2?"好厲害！加油！":"分類正確！");
+                    correctStreak++;
+                    const isLastEnvelopeOfRound=currentIndex===envelopeData.length-1;
+                    setMailFeedback(correctStreak>=2&&!isLastEnvelopeOfRound?"好厲害！加油！":"分類正確！");
                     currentIndex++;
                     setTimeout(()=>{
                         if(currentIndex>=envelopeData.length){
