@@ -8995,6 +8995,93 @@ if (scene.bgm) {
           
 
 
+
+/* ===== 送信分類遊戲最終覆蓋：避免前面的舊規則蓋回去 ===== */
+#page1.mail-game-mode #爽快星開心{
+    display:block!important;
+    position:absolute!important;
+    left:-4%!important;
+    right:auto!important;
+    top:0!important;
+    bottom:auto!important;
+    width:34%!important;
+    height:42%!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+    z-index:5401!important;
+    pointer-events:none!important;
+}
+#page1.mail-game-mode #爽快星開心 img{
+    display:block!important;
+    width:125%!important;
+    height:100%!important;
+    max-width:none!important;
+    object-fit:contain!important;
+    object-position:left top!important;
+    margin:0!important;
+    transform:none!important;
+}
+#page1.mail-game-mode #mail-game-rule{
+    color:#000!important;
+    background:#ff9b55!important;
+    border:3px solid #000!important;
+    border-radius:22px!important;
+    padding:8px 22px!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+}
+#page1.mail-game-mode #mail-game-mailboxes{
+    top:24%!important;
+    left:1%!important;
+    width:98%!important;
+    height:55%!important;
+}
+#page1.mail-game-mode .mail-game-mailbox{
+    transform:scale(1.75)!important;
+    transform-origin:center center!important;
+}
+#page1.mail-game-mode .mail-game-mailbox.mailbox-target{
+    transform:scale(1.84)!important;
+}
+#page1.mail-tutorial-mode #對話框{
+    border:3px solid #000!important;
+}
+#page1.mail-tutorial-mode #對話框::after{
+    border-top-color:#000!important;
+    filter:drop-shadow(2px 3px 0 #000)!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星開心{
+        left:-6%!important;
+        top:-2%!important;
+        bottom:auto!important;
+        width:38%!important;
+        height:38%!important;
+    }
+    #page1.mail-game-mode #爽快星開心 img{
+        width:125%!important;
+        object-position:left top!important;
+    }
+    #page1.mail-game-mode #mail-game-mailboxes{
+        top:23%!important;
+        height:56%!important;
+    }
+    #page1.mail-game-mode .mail-game-mailbox{
+        transform:scale(1.58)!important;
+    }
+    #page1.mail-game-mode .mail-game-mailbox.mailbox-target{
+        transform:scale(1.68)!important;
+    }
+    #page1.mail-tutorial-mode #對話框{
+        border-color:#000!important;
+    }
+    #page1.mail-tutorial-mode #對話框::after{
+        border-top-color:#000!important;
+        filter:drop-shadow(2px 3px 0 #000)!important;
+    }
+}
+
 </style>
           <div class="skip-card" role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title">
             <div id="skip-confirm-title">要跳過目前劇情？</div>
