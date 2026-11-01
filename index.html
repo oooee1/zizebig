@@ -10300,11 +10300,11 @@ function toggleBGM(btnEl) {
 <style id="mail-tutorial-sprite-and-title-outline-fix-20261101">
 /* 教學用小爽快星：在目前位置基礎上往右 5px、往下 18px */
 #page1.mail-tutorial-mode #爽快星害怕{
-    transform:translate(5px,73px)!important;
+    transform:translate(5px,92px)!important;
 }
 @media(max-width:600px){
     #page1.mail-tutorial-mode #爽快星害怕{
-        transform:translate(5px,63px)!important;
+        transform:translate(5px,82px)!important;
     }
 }
 /* 分類標題統一使用較薄的黑色描邊，移除多層陰影造成的尖角／突起線 */
@@ -10322,7 +10322,8 @@ function toggleBGM(btnEl) {
 /* 規則說明對話框的動態箭頭：恢復一般劇情的橘色，並往左移 */
 #page1.mail-tutorial-mode #dialogue-next-arrow{
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M3 3 Q2 3 3 5 L9 14 Q10 16 11 14 L17 5 Q18 3 16 3 Z' fill='%23ffb30f'/%3E%3C/svg%3E")!important;
-    right:42px!important;
+    right:52px!important;
+    bottom:30px!important;
     filter:drop-shadow(1px 2px 0 #111)!important;
 }
 /* 正式遊戲中實際顯示的是「爽快星慌張」；用獨立 translate 位移，
@@ -10336,7 +10337,8 @@ function toggleBGM(btnEl) {
 }
 @media(max-width:600px){
     #page1.mail-tutorial-mode #dialogue-next-arrow{
-        right:30px!important;
+        right:40px!important;
+        bottom:30px!important;
     }
     #page1.mail-game-mode #爽快星慌張{
         top:calc(3% + 23px)!important;
@@ -10381,11 +10383,13 @@ function toggleBGM(btnEl) {
     paint-order:normal!important;
     text-shadow:none!important;
     filter:
-        drop-shadow(0 0 1px #000)
-        drop-shadow(0 0 1px #000)
-        drop-shadow(0 0 1px #000)
-        drop-shadow(0 0 1px #000)
-        drop-shadow(0 0 1px #000)!important;
+        drop-shadow(0 0 0.5px #000)
+        drop-shadow(0 0 0.5px #000)
+        drop-shadow(0 0 0.5px #000)
+        drop-shadow(0 0 0.5px #000)
+        drop-shadow(0 0 0.5px #000)
+        drop-shadow(0 0 0.5px #000)
+        drop-shadow(0 0 0.5px #000)!important;
 }
 </style>
 
