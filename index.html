@@ -2730,6 +2730,67 @@ img { max-width:100%; }
 }
 </style>
 
+
+<style id="mail-game-layout-polish-20261101">
+/* 小爽快星往下移一點 */
+#page1.mail-game-mode #爽快星開心{
+    top:3%!important;
+}
+/* 左側等待信件稍微往左移，右側等待信件維持原位 */
+#page1.mail-game-mode .mail-game-envelope-slot:not(.active)[style*="left: 0%"],
+#page1.mail-game-mode .mail-game-envelope-slot:not(.active)[style*="left:0%"],
+#page1.mail-game-mode .mail-game-envelope-slot:not(.active)[style*="left: 2%"],
+#page1.mail-game-mode .mail-game-envelope-slot:not(.active)[style*="left:2%"]{
+    transform:translateX(-8%)!important;
+}
+/* 分類標題改成星辰名字的黑底橘字 */
+#page1.mail-game-mode #mail-game-rule{
+    color:#ff9b55!important;
+    background:#000!important;
+    border:3px solid #000!important;
+    border-radius:22px!important;
+}
+/* 教學上方對話框：外框與尾巴統一純黑，不留白色陰影 */
+#page1.mail-tutorial-mode #對話框{
+    border:3px solid #000!important;
+    border-color:#000!important;
+    outline:0!important;
+    box-shadow:none!important;
+}
+#page1.mail-tutorial-mode #對話框::before{
+    border-color:transparent!important;
+    box-shadow:none!important;
+    filter:none!important;
+}
+#page1.mail-tutorial-mode #對話框::after{
+    border:0!important;
+    border-top:36px solid #000!important;
+    border-left:0 solid transparent!important;
+    border-right:32px solid transparent!important;
+    filter:none!important;
+    box-shadow:none!important;
+}
+/* 教學對話框右下角的推進箭頭改黑色 */
+#page1.mail-tutorial-mode #dialogue-next-arrow{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M3 3 Q2 3 3 5 L9 14 Q10 16 11 14 L17 5 Q18 3 16 3 Z' fill='%23000'/%3E%3C/svg%3E")!important;
+    filter:none!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星開心{top:1%!important;}
+    #page1.mail-tutorial-mode #對話框{
+        border:3px solid #000!important;
+        border-color:#000!important;
+        box-shadow:none!important;
+    }
+    #page1.mail-tutorial-mode #對話框::after{
+        border-top:30px solid #000!important;
+        border-left:0 solid transparent!important;
+        border-right:27px solid transparent!important;
+        filter:none!important;
+    }
+}
+</style>
+
 </head>
 
 <body>
