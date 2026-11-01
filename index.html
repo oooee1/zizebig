@@ -2075,7 +2075,7 @@ img { max-width:100%; }
         box-sizing:border-box!important;
         overflow:visible!important;
         clip-path:none!important;
-        border:3px solid #fff!important;
+        border:3px solid #000!important;
         border-radius:30px!important;
         background:#000!important;
         color:#fff!important;
@@ -2098,7 +2098,7 @@ img { max-width:100%; }
         border-top:36px solid #000;
         border-left:0 solid transparent;
         border-right:32px solid transparent;
-        filter:drop-shadow(2px 3px 0 #fff);
+        filter:none;
         transform:skewX(-12deg);
         pointer-events:none;
     }
@@ -2115,6 +2115,8 @@ img { max-width:100%; }
     }
     #page1.mail-tutorial-mode #dialogue-next-arrow{
         display:block!important;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M3 3 Q2 3 3 5 L9 14 Q10 16 11 14 L17 5 Q18 3 16 3 Z' fill='%23000'/%3E%3C/svg%3E")!important;
+        filter:none!important;
         right:18px!important;bottom:14px!important;
         z-index:1002!important;
     }
@@ -2156,7 +2158,7 @@ img { max-width:100%; }
     #page1.mail-game-mode #爽快星開心{
         display:block!important;visibility:visible!important;
         position:absolute!important;left:-4%!important;right:auto!important;
-        top:0!important;bottom:auto!important;
+        top:3%!important;bottom:auto!important;
         width:34%!important;height:40%!important;
         margin:0!important;transform:none!important;
         z-index:5401!important;pointer-events:none!important;
@@ -2172,7 +2174,7 @@ img { max-width:100%; }
         position:absolute;top:11%;left:50%;transform:translateX(-50%);
         width:max-content;max-width:92%;box-sizing:border-box;
         padding:10px 26px;text-align:center;
-        color:#000;background:#ff9b55;border:3px solid #000;border-radius:22px;
+        color:#ff9b55;background:#000;border:3px solid #000;border-radius:22px;
         font-size:clamp(28px,5.8vw,42px);font-weight:900;line-height:1.2;
         text-shadow:none;pointer-events:none;z-index:4;
     }
@@ -2240,7 +2242,7 @@ img { max-width:100%; }
     @media(max-width:600px){
         #page1.mail-tutorial-mode #對話框{border-radius:26px!important;}
         #page1.mail-game-mode #爽快星開心{
-            left:-6%!important;top:-2%!important;width:38%!important;height:34%!important;
+            left:-6%!important;top:2%!important;width:38%!important;height:34%!important;
         }
         #page1.mail-game-mode #爽快星開心 img{width:125%!important;}
         #mail-game-rule{
@@ -8793,7 +8795,7 @@ if (scene.bgm) {
                     slot.className="mail-game-envelope-slot"+(visibleIndex===0?" active":"");
                     slot.dataset.index=String(currentIndex+visibleIndex);
                     if(visibleIndex>0){
-                        const sidePositions=[{left:"0%",top:"20%"},{left:"66%",top:"20%"},{left:"2%",top:"53%"}];
+                        const sidePositions=[{left:"-8%",top:"20%"},{left:"66%",top:"20%"},{left:"-6%",top:"53%"}];
                         const pos=sidePositions[visibleIndex-1];
                         slot.style.left=pos.left;slot.style.top=pos.top;
                         slot.style.width="34%";slot.style.height="45%";
