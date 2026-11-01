@@ -10455,7 +10455,8 @@ function toggleBGM(btnEl) {
     display:block!important;visibility:visible!important;opacity:1!important;
     width:125%!important;height:100%!important;object-fit:contain!important;
     object-position:left top!important;position:relative!important;
-    left:12px!important;top:68px!important;transform:none!important;
+    left:12px!important;top:68px!important;
+    /* 不鎖死 transform，讓原本的 anim-panicked keyframes 能正常作用 */
 }
 @media(max-width:600px){
     #page1.mail-game-mode #爽快星慌張 img,
