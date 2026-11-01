@@ -8922,6 +8922,9 @@ if (scene.bgm) {
                         void happySprite.offsetWidth;
                         happySprite.classList.add("anim-panicked");
                     }
+                    /* 答對後立刻移除目前信封格，中央不保留已投遞的信；下一封仍照原本延遲切換 */
+                    if(current.parent)current.parent.remove();
+                    else current.el.remove();
                     feedback.textContent="分類正確！";
                     currentIndex++;
                     setTimeout(()=>{
