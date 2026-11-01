@@ -2557,6 +2557,13 @@ img { max-width:100%; }
     }
 }
 
+/* 貝殼信縮小為原本尺寸的一半，其他漫畫圖層不受影響 */
+#comic-box .comic-layer.comic-shell-letter {
+    width: 39% !important;
+    height: 39% !important;
+    max-width: 39% !important;
+    max-height: 39% !important;
+}
 </style>
 </head>
 
@@ -7785,12 +7792,12 @@ if (scene.bgm) {
             if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
                 comicImg.src = path;
                 comicImg.alt = "漫畫圖";
-                comicImg.className = "comic-layer anim-fade-in-up";
+                comicImg.className = "comic-layer anim-fade-in-up" + (path.includes("貝殼信") ? " comic-shell-letter" : "");
             } else {
                 const layer = document.createElement("img");
                 layer.src = path;
                 layer.alt = "";
-                layer.className = "comic-layer comic-layer-extra anim-fade-in-up";
+                layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + (path.includes("貝殼信") ? " comic-shell-letter" : "");
 
                 // 角色放進與背景漫畫實際顯示範圍相同大小的裁切視窗。
                 if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
