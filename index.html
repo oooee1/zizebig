@@ -9963,5 +9963,59 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="mail-game-tail-and-position-fix-20261101">
+/* 規則教學泡泡尾巴往上貼齊框線，並與框線重疊 3px，避免出現縫隙 */
+#page1.mail-tutorial-mode #對話框::after{
+    bottom:-33px!important;
+    border-top:36px solid #000!important;
+    border-left:0 solid transparent!important;
+    border-right:32px solid transparent!important;
+    filter:none!important;
+    box-shadow:none!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #對話框::after{
+        bottom:-27px!important;
+        border-top:30px solid #000!important;
+        border-left:0 solid transparent!important;
+        border-right:27px solid transparent!important;
+    }
+}
+/* 遊戲提示泡泡的尾巴改成黑色，並與提示框邊線接合 */
+#page1.mail-game-mode #mail-game-feedback::before{
+    display:block!important;
+    border:13px solid transparent!important;
+    border-right:22px solid #000!important;
+    border-left:0!important;
+    left:-21px!important;
+    filter:none!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #mail-game-feedback::before{
+        border-top-width:10px!important;
+        border-bottom-width:10px!important;
+        border-right-width:18px!important;
+        left:-17px!important;
+    }
+}
+/* 小爽快星在上一版位置上再往下 8px */
+#page1.mail-game-mode #爽快星開心{
+    top:calc(5% + 23px)!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星開心{
+        top:calc(3% + 23px)!important;
+    }
+}
+/* 分類標題的黑色描邊加粗至 10px */
+#page1.mail-game-mode #mail-game-rule,
+#page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+#page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+    -webkit-text-stroke:10px #000!important;
+    paint-order:stroke fill!important;
+}
+</style>
+
 </body>
 </html>
