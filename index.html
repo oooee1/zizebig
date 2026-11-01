@@ -10317,5 +10317,41 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="mail-game-arrow-sprite-title-final-20261101">
+/* 規則說明對話框的動態箭頭：恢復一般劇情的橘色，並往左移 */
+#page1.mail-tutorial-mode #dialogue-next-arrow{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M3 3 Q2 3 3 5 L9 14 Q10 16 11 14 L17 5 Q18 3 16 3 Z' fill='%23ffb30f'/%3E%3C/svg%3E")!important;
+    right:42px!important;
+    filter:drop-shadow(1px 2px 0 #111)!important;
+}
+/* 正式遊戲中實際顯示的是「爽快星慌張」；用獨立 translate 位移，
+   避免原本角色動畫或 transform 規則蓋掉位置調整 */
+#page1.mail-game-mode #爽快星慌張{
+    display:block!important;
+    left:-4%!important;
+    right:auto!important;
+    top:calc(5% + 23px)!important;
+    translate:12px 18px!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #dialogue-next-arrow{
+        right:30px!important;
+    }
+    #page1.mail-game-mode #爽快星慌張{
+        top:calc(3% + 23px)!important;
+        translate:12px 18px!important;
+    }
+}
+/* 標題描邊加粗：保留單層描邊，不再使用多層陰影 */
+#page1.mail-game-mode #mail-game-rule,
+#page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+#page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+    -webkit-text-stroke:7px #000!important;
+    paint-order:stroke fill!important;
+    text-shadow:none!important;
+}
+</style>
+
 </body>
 </html>
