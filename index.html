@@ -8888,6 +8888,10 @@ if (scene.bgm) {
                 const rect=el.getBoundingClientRect();
                 drag={el,parent:el.parentNode,nextSibling:el.nextSibling,pointerId:e.pointerId,offsetX:e.clientX-rect.left,offsetY:e.clientY-rect.top,width:rect.width,height:rect.height};
                 /* 從有 transform 的信件排列容器抽離，避免 fixed 座標被父層偏移 */
+                /* 先在移出原容器前鎖定觸控，避免手機拖曳時頁面跟著捲動 */
+                el.style.touchAction="none";
+                el.style.webkitUserSelect="none";
+                el.style.userSelect="none";
                 document.body.appendChild(el);
                 el.classList.add("dragging");
                 el.style.left=(e.clientX-drag.offsetX)+"px";
@@ -8924,10 +8928,13 @@ if (scene.bgm) {
                 current.el.classList.remove("dragging");
                 current.el.style.position="";current.el.style.left="";current.el.style.top="";
                 current.el.style.width="";current.el.style.height="";
+                current.el.style.touchAction="";current.el.style.webkitUserSelect="";current.el.style.userSelect="";
                 boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
             }
             function moveDrag(e){
                 if(!drag||e.pointerId!==drag.pointerId)return;
+                /* 阻止 iOS/Android 將拖曳手勢解讀成頁面捲動 */
+                if(e.cancelable)e.preventDefault();
                 drag.el.style.left=(e.clientX-drag.offsetX)+"px";
                 drag.el.style.top=(e.clientY-drag.offsetY)+"px";
                 const hit=getMailboxAtPoint(e.clientX,e.clientY);
@@ -8953,6 +8960,7 @@ if (scene.bgm) {
                 current.el.classList.remove("dragging");
                 current.el.style.position="";current.el.style.left="";current.el.style.top="";
                 current.el.style.width="";current.el.style.height="";
+                current.el.style.touchAction="";current.el.style.webkitUserSelect="";current.el.style.userSelect="";
                 boxes.querySelectorAll(".mailbox-target").forEach(el=>el.classList.remove("mailbox-target"));
                 /* 沒有碰到任何郵筒：不扣錯誤次數，只提示玩家重新放置 */
                 if(!target){
@@ -10624,11 +10632,11 @@ function toggleBGM(btnEl) {
   /* 教學泡泡改回較圓的圓角並往下移 */
   #page1.mail-tutorial-mode #對話框{
     top:calc(18% + 32px)!important;
-    border-radius:34px!important;
+    border-radius:50% / 44%!important;
   }
   /* 手機教學的爽快星再往下移，和對話框拉開距離 */
   #page1.mail-tutorial-mode #爽快星害怕{
-    transform:translate(5px,108px)!important;
+    transform:translate(5px,128px)!important;
   }
   /* 手機正式遊戲標題用左右定位與自動外距置中 */
   #page1.mail-game-mode #mail-game-rule{
@@ -10662,5 +10670,17 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="mail-drag-touch-fix-20261101">
+/* 信封被移到 body 後仍須套用，不能綁在 #page1 底下 */
+@media(max-width:600px){
+  body .mail-game-envelope.dragging{
+    touch-action:none!important;
+    -webkit-user-select:none!important;
+    user-select:none!important;
+    overscroll-behavior:contain!important;
+  }
+}
+</style>
 </body>
 </html>
