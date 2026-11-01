@@ -386,7 +386,7 @@
             fill: #88fdf8 !important;
         }
         #page1.scene-residents-163 #居民們 {
-            transform: translate(-40px, 16px) scale(1.3) !important;
+            transform: translate(-24px, 16px) scale(1.3) !important;
             transform-origin: bottom left;
         }
 
@@ -5117,7 +5117,7 @@ img { max-width:100%; }
         speaker: "星辰",
         text: "那是...",
         background: "爽快星郵局",
-        characters: ["爽快星害怕"],
+        characters: ["星辰害怕"],
     },
     {
         id: 163,
@@ -10221,6 +10221,62 @@ function toggleBGM(btnEl) {
     #page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
         -webkit-text-stroke:11px #000!important;
         paint-order:stroke fill!important;
+    }
+}
+</style>
+
+
+<style id="mail-game-final-correction-20261101-v2">
+/* 送信遊戲正式操作時，小爽快星必須使用慌張立繪 */
+#page1.mail-game-mode #爽快星害怕{display:none!important;}
+#page1.mail-game-mode #爽快星開心{display:none!important;}
+#page1.mail-game-mode #爽快星慌張{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    position:absolute!important;left:-4%!important;right:auto!important;
+    top:calc(5% + 23px)!important;bottom:auto!important;
+    width:34%!important;height:40%!important;margin:0!important;
+    transform:none!important;z-index:5401!important;pointer-events:none!important;
+}
+#page1.mail-game-mode #爽快星慌張 img{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    width:125%!important;height:100%!important;
+    object-fit:contain!important;object-position:left top!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星慌張{top:calc(3% + 23px)!important;}
+}
+/* 規則教學畫面：害怕立繪往下移一大段 */
+#page1.mail-tutorial-mode #爽快星害怕{
+    transform:translateY(55px)!important;
+}
+@media(max-width:600px){
+    #page1.mail-tutorial-mode #爽快星害怕{
+        transform:translateY(45px)!important;
+    }
+}
+/* 手機標題再大幅放大，改用多層圓潤陰影取代尖角文字描邊 */
+@media(max-width:600px){
+    #page1.mail-game-mode #mail-game-rule{
+        font-size:clamp(42px,calc(9.5vw + 18px),82px)!important;
+        max-width:98vw!important;
+    }
+    #page1.mail-game-mode #mail-game-rule .mail-rule-normal,
+    #page1.mail-game-mode #mail-game-rule .mail-rule-highlight{
+        -webkit-text-stroke:0!important;
+        paint-order:normal!important;
+        text-shadow:
+            -7px -7px 0 #000,
+             0 -7px 0 #000,
+             7px -7px 0 #000,
+            -7px  0 0 #000,
+             7px  0 0 #000,
+            -7px  7px 0 #000,
+             0  7px 0 #000,
+             7px  7px 0 #000,
+            -4px -7px 0 #000,
+             4px -7px 0 #000,
+            -4px  7px 0 #000,
+             4px  7px 0 #000!important;
     }
 }
 </style>
