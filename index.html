@@ -8667,14 +8667,40 @@ if (scene.bgm) {
                 document.addEventListener("pointerup",endDrag,{once:true});
                 document.addEventListener("pointercancel",cancelDrag,{once:true});
             }
+            /* 依郵筒圖片本身的透明像素判定，不再用整張圖片的矩形範圍當感應區 */
+            const mailboxPixelCache=new WeakMap();
+            function isInsideVisibleMailbox(el,x,y){
+                if(!el.complete||!el.naturalWidth||!el.naturalHeight)return false;
+                let pixelData=mailboxPixelCache.get(el);
+                if(!pixelData){
+                    try{
+                        const canvas=document.createElement("canvas");
+                        canvas.width=el.naturalWidth;canvas.height=el.naturalHeight;
+                        const ctx=canvas.getContext("2d",{willReadFrequently:true});
+                        ctx.drawImage(el,0,0);
+                        pixelData={canvas,ctx};
+                        mailboxPixelCache.set(el,pixelData);
+                    }catch(error){return false;}
+                }
+                const rect=el.getBoundingClientRect();
+                if(x<rect.left||x>rect.right||y<rect.top||y>rect.bottom)return false;
+                /* object-fit:contain 時，先扣除圖片在元素框內的透明留白 */
+                const scale=Math.min(rect.width/el.naturalWidth,rect.height/el.naturalHeight);
+                const drawWidth=el.naturalWidth*scale;
+                const drawHeight=el.naturalHeight*scale;
+                const offsetX=(rect.width-drawWidth)/2;
+                const offsetY=(rect.height-drawHeight)/2;
+                const localX=x-rect.left-offsetX;
+                const localY=y-rect.top-offsetY;
+                if(localX<0||localY<0||localX>drawWidth||localY>drawHeight)return false;
+                const px=Math.min(el.naturalWidth-1,Math.floor(localX/scale));
+                const py=Math.min(el.naturalHeight-1,Math.floor(localY/scale));
+                try{return pixelData.ctx.getImageData(px,py,1,1).data[3]>24;}
+                catch(error){return false;}
+            }
             function getMailboxAtPoint(x,y){
                 for(const el of boxes.querySelectorAll("[data-mailbox]")){
-                    const rect=el.getBoundingClientRect();
-                    /* 只接受郵筒圖案中央的實際投放區，避免透明留白或放大外框誤觸 */
-                    const insetX=rect.width*0.22;
-                    const insetY=rect.height*0.22;
-                    if(x>=rect.left+insetX&&x<=rect.right-insetX&&
-                       y>=rect.top+insetY&&y<=rect.bottom-insetY)return el;
+                    if(isInsideVisibleMailbox(el,x,y))return el;
                 }
                 return null;
             }
