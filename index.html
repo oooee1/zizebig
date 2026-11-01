@@ -10787,7 +10787,7 @@ function toggleBGM(btnEl) {
 
 
 <style id="passion-expressions-match-crown-scale">
-/* 熱情星思考、疑惑、崩潰、噴：統一套用戴上王冠的縮放與位置 */
+/* 熱情星思考、疑惑、崩潰、噴：稍微縮小並下移 */
 #page1 #熱情星思考,
 #page1 #熱情星尷尬,
 #page1 #熱情星崩潰,
@@ -10795,7 +10795,12 @@ function toggleBGM(btnEl) {
   left: -12% !important;
   bottom: 157px !important;
   width: 90% !important;
-  transform: translate(8px, 48px) scale(0.82) !important;
+  transform: translate(8px, 56px) scale(0.78) !important;
+  transform-origin: top left !important;
+}
+/* 戴上王冠：維持原縮放，只往下移一點 */
+#page1 #熱情星戴上王冠 {
+  transform: translate(8px, 56px) scale(0.82) !important;
   transform-origin: top left !important;
 }
 #page1 #熱情星思考 img,
