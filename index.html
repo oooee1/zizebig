@@ -10821,15 +10821,17 @@ function toggleBGM(btnEl) {
     bottom: 180px !important;
   }
 
-  /* 熱情星思考、疑惑、崩潰：電腦版往上移 5px；噴另行置中 */
+  /* 熱情星思考、疑惑、崩潰：在原位置基礎上往下 10px */
   #page1 #熱情星思考,
   #page1 #熱情星尷尬,
   #page1 #熱情星崩潰 {
-    transform: translate(8px, 51px) scale(0.78) !important;
+    transform: translate(8px, 61px) scale(0.78) !important;
   }
 
-  /* 熱情星正常立繪與出場火焰恢復原本位置 */
-  #page1 #熱情星正常,
+  /* 熱情星正常往上移 5px；出場火焰維持原位 */
+  #page1 #熱情星正常 {
+    bottom: 195px !important;
+  }
   #page1 #熱情星出場火焰 {
     bottom: 190px !important;
   }
@@ -10840,7 +10842,7 @@ function toggleBGM(btnEl) {
 /* 噴：整張立繪置中，噴射動畫改成乾淨、柔和的彈出，不再旋轉爆閃 */
 #page1 #熱情星噴 {
   left: 50% !important;
-  bottom: 50% !important;
+  bottom: calc(50% - 10px) !important;
   width: 90% !important;
   transform: translate(-50%, 50%) scale(0.78) !important;
   transform-origin: center center !important;
