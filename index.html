@@ -8984,7 +8984,7 @@ if (scene.bgm) {
                     if(errors<=0){
                         locked=true;
                         if(attempt===1){
-                            feedback.textContent="這次失敗了，再完整試一次！";
+                            feedback.textContent="哎呀失敗太多次了！得從頭開始。";
                             setTimeout(()=>{attempt=2;round=1;errors=3;currentIndex=0;envelopeData=[...envelopeMaster];shuffleEnvelopes();locked=false;render();},850);
                         }else{
                             feedback.textContent="我來幫忙了！";
