@@ -9293,6 +9293,56 @@ if (scene.bgm) {
 }
 
 </style>
+<style id="mail-game-character-dialogue-final-20261101">
+/* 遊戲中爽快星整體往下移，避免角色貼在畫面上緣 */
+#page1.mail-game-mode #爽快星開心{
+    top:5%!important;
+}
+/* 送信遊戲教學對話框：白邊全部改成黑色，取消任何白色陰影 */
+#page1.mail-tutorial-mode #對話框{
+    border:3px solid #000!important;
+    border-color:#000!important;
+    outline:0!important;
+    box-shadow:none!important;
+}
+#page1.mail-tutorial-mode #對話框::before{
+    border-color:transparent!important;
+    box-shadow:none!important;
+    filter:none!important;
+}
+#page1.mail-tutorial-mode #對話框::after{
+    border:0!important;
+    border-top:36px solid #000!important;
+    border-left:0 solid transparent!important;
+    border-right:32px solid transparent!important;
+    filter:none!important;
+    box-shadow:none!important;
+}
+@media(max-width:600px){
+    #page1.mail-game-mode #爽快星開心{
+        top:3%!important;
+    }
+    #page1.mail-tutorial-mode #對話框{
+        border:3px solid #000!important;
+        border-color:#000!important;
+        outline:0!important;
+        box-shadow:none!important;
+    }
+    #page1.mail-tutorial-mode #對話框::before{
+        border-color:transparent!important;
+        box-shadow:none!important;
+        filter:none!important;
+    }
+    #page1.mail-tutorial-mode #對話框::after{
+        border:0!important;
+        border-top:30px solid #000!important;
+        border-left:0 solid transparent!important;
+        border-right:27px solid transparent!important;
+        filter:none!important;
+        box-shadow:none!important;
+    }
+}
+</style>
           <div class="skip-card" role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title">
             <div id="skip-confirm-title">要跳過目前劇情？</div>
             <p class="skip-description">跳過後會直接前往下一個問題。</p>
