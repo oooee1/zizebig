@@ -8809,6 +8809,8 @@ if (scene.bgm) {
                     page.classList.remove("mail-success-feedback");
                     page.classList.remove("mail-success-sprite");
                 }
+                const happySprite=document.getElementById("爽快星開心");
+                if(happySprite)happySprite.classList.remove("anim-panicked");
                 feedback.textContent="把信封放進正確的郵筒裡！";
                 feedback.style.color="";
             }
@@ -8913,6 +8915,12 @@ if (scene.bgm) {
                     const page=document.getElementById("page1");
                     if(page){
                         page.classList.add("mail-success-sprite");
+                    }
+                    const happySprite=document.getElementById("爽快星開心");
+                    if(happySprite){
+                        happySprite.classList.remove("anim-panicked");
+                        void happySprite.offsetWidth;
+                        happySprite.classList.add("anim-panicked");
                     }
                     feedback.textContent="分類正確！";
                     currentIndex++;
