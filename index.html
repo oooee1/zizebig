@@ -7968,17 +7968,24 @@ if (scene.bgm) {
         });
     }
 
-    // 角色已經顯示後才重播送信立繪動畫，避免動畫在 display:none 時先跑完。
+    // 依照本句實際顯示的爽快星表情播放專屬動畫。
+    // 教學句子由 characters 決定表情；正式遊戲開始時使用慌張立繪。
     if (scene.mailTutorial || scene.mailGame) {
-        const mailSpriteIds = scene.mailTutorial
-            ? ["爽快星開心", "爽快星害怕"]
-            : ["爽快星慌張"];
-        mailSpriteIds.forEach(id => {
+        const visibleMailSprite = scene.mailGame
+            ? "爽快星慌張"
+            : (scene.characters || []).find(name =>
+                ["爽快星開心", "爽快星害怕", "爽快星慌張"].includes(name)
+              );
+        ["爽快星開心", "爽快星害怕", "爽快星慌張"].forEach(id => {
             const sprite = document.getElementById(id);
             if (!sprite) return;
-            sprite.classList.remove("mail-sprite-motion");
+            sprite.classList.remove("mail-sprite-motion", "mail-motion-happy", "mail-motion-scared", "mail-motion-panicked");
+            if (id !== visibleMailSprite) return;
             void sprite.offsetWidth;
             sprite.classList.add("mail-sprite-motion");
+            if (id === "爽快星開心") sprite.classList.add("mail-motion-happy");
+            else if (id === "爽快星害怕") sprite.classList.add("mail-motion-scared");
+            else sprite.classList.add("mail-motion-panicked");
         });
     }
 
@@ -8946,9 +8953,9 @@ if (scene.bgm) {
                     }
                     const happySprite=document.getElementById("爽快星開心");
                     if(happySprite){
-                        happySprite.classList.remove("mail-sprite-motion");
+                        happySprite.classList.remove("mail-sprite-motion", "mail-motion-happy");
                         void happySprite.offsetWidth;
-                        happySprite.classList.add("mail-sprite-motion");
+                        happySprite.classList.add("mail-sprite-motion", "mail-motion-happy");
                     }
                     /* 答對後立刻移除目前信封格，中央不保留已投遞的信；下一封仍照原本延遲切換 */
                     if(current.parent)current.parent.remove();
@@ -10498,18 +10505,43 @@ function toggleBGM(btnEl) {
 
 
 <style id="mail-sprite-motion-reliable-20261101">
-/* 送信遊戲立繪動畫：使用獨立 translate/rotate，不覆寫圖片定位用的 transform。
-   教學每次換句話重播；正式遊戲開始時慌張立繪播放，答對後改由開心立繪播放。 */
-@keyframes mail-sprite-motion-once {
+/* 各表情使用獨立動作，全部透過 translate/rotate，保留原本圖片 transform 定位。 */
+@keyframes mail-motion-happy {
     0%,100% { translate:0 0; rotate:0deg; }
-    18% { translate:-5px -5px; rotate:-2.5deg; }
-    36% { translate:5px 1px; rotate:2.5deg; }
-    54% { translate:-4px -3px; rotate:-2deg; }
-    72% { translate:4px 1px; rotate:2deg; }
-    88% { translate:-2px 0; rotate:-1deg; }
+    22% { translate:0 -13px; rotate:-3deg; }
+    44% { translate:0 0; rotate:3deg; }
+    66% { translate:0 -8px; rotate:-2deg; }
+    84% { translate:0 0; rotate:1deg; }
 }
-#page1 .角色圖.mail-sprite-motion img {
-    animation:mail-sprite-motion-once .85s cubic-bezier(.36,.07,.19,.97) 1 both!important;
+@keyframes mail-motion-scared {
+    0%,100% { translate:0 0; rotate:0deg; }
+    15% { translate:-2px 0; rotate:-1.2deg; }
+    30% { translate:2px 1px; rotate:1.2deg; }
+    45% { translate:-2px 0; rotate:-1deg; }
+    60% { translate:1px 0; rotate:.8deg; }
+    75% { translate:-1px 0; rotate:-.5deg; }
+}
+@keyframes mail-motion-panicked {
+    0%,100% { translate:0 0; rotate:0deg; }
+    10% { translate:-7px -3px; rotate:-4deg; }
+    20% { translate:7px 2px; rotate:4deg; }
+    30% { translate:-8px -4px; rotate:-5deg; }
+    40% { translate:8px 2px; rotate:5deg; }
+    50% { translate:-6px -2px; rotate:-4deg; }
+    60% { translate:6px 2px; rotate:4deg; }
+    72% { translate:-4px -1px; rotate:-2.5deg; }
+    86% { translate:3px 0; rotate:1.5deg; }
+}
+#page1 .角色圖.mail-motion-happy img {
+    animation:mail-motion-happy .9s cubic-bezier(.2,.8,.3,1) 1 both!important;
+    transform-origin:bottom center!important;
+}
+#page1 .角色圖.mail-motion-scared img {
+    animation:mail-motion-scared 1.05s ease-in-out 1 both!important;
+    transform-origin:bottom center!important;
+}
+#page1 .角色圖.mail-motion-panicked img {
+    animation:mail-motion-panicked .9s cubic-bezier(.36,.07,.19,.97) 1 both!important;
     transform-origin:bottom center!important;
 }
 </style>
