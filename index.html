@@ -10823,10 +10823,18 @@ function toggleBGM(btnEl) {
     bottom: 180px !important;
   }
 
-  /* 熱情星正常立繪與出場火焰稍微往下調 */
+  /* 熱情星思考、疑惑、崩潰、噴：電腦版往上移 5px */
+  #page1 #熱情星思考,
+  #page1 #熱情星尷尬,
+  #page1 #熱情星崩潰,
+  #page1 #熱情星噴 {
+    transform: translate(8px, 51px) scale(0.78) !important;
+  }
+
+  /* 熱情星正常立繪與出場火焰恢復原本位置 */
   #page1 #熱情星正常,
   #page1 #熱情星出場火焰 {
-    bottom: 185px !important;
+    bottom: 190px !important;
   }
 }
 </style>
