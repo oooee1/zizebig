@@ -10616,5 +10616,54 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+
+<style id="mail-layout-motion-final-20261101">
+/* 教學泡泡：改回較圓的圓角，整體下移；爽快星再往下移，拉開兩者距離 */
+@media(max-width:600px){
+  #page1.mail-tutorial-mode #對話框{
+    top:calc(18% + 32px)!important;
+    border-radius:34px!important;
+  }
+  #page1.mail-tutorial-mode #爽快星害怕{
+    transform:translate(5px,108px)!important;
+  }
+}
+/* 教學與正式遊戲的爽快星都明確套用動畫，避免只有外層 class 卻沒有實際動作 */
+#page1.mail-tutorial-mode #爽快星害怕.mail-sprite-motion img{
+  animation:mail-motion-scared 1.05s ease-in-out 1 both!important;
+  transform-origin:bottom center!important;
+}
+#page1.mail-game-mode #爽快星慌張.mail-sprite-motion img{
+  animation:mail-motion-panicked .9s cubic-bezier(.36,.07,.19,.97) 1 both!important;
+  transform-origin:bottom center!important;
+}
+#page1.mail-game-mode.mail-success-sprite #爽快星開心.mail-sprite-motion img{
+  animation:mail-motion-happy .9s cubic-bezier(.2,.8,.3,1) 1 both!important;
+  transform-origin:bottom center!important;
+}
+/* 分類標題以左右定位＋自動外距置中，不再依賴文字寬度的 translate */
+#page1.mail-game-mode #mail-game-rule{
+  left:0!important;
+  right:0!important;
+  width:max-content!important;
+  max-width:98%!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  transform:none!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+/* 正式遊戲的提示泡泡往下移 */
+#page1.mail-game-mode #mail-game-feedback{
+  top:calc(15% + 32px)!important;
+}
+@media(max-width:600px){
+  #page1.mail-game-mode #mail-game-feedback{
+    top:calc(16% + 32px)!important;
+  }
+}
+</style>
+
 </body>
 </html>
