@@ -129,14 +129,14 @@
             z-index: 100;
         }
 
-        .背景圖, .背景 {
+        .背景圖, .背景, .CG圖 {
     position: absolute;
     width: 100%;
     height: 100%;
     overflow: hidden; /* 防止搖晃時出現滾動條 */
 }
 
-.背景圖 img, .背景 img {
+.背景圖 img, .背景 img, .CG圖 img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -7822,7 +7822,7 @@ function renderScene(stepIndex) {
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
     // 只有背景真的改變時才淡入；同一背景的連續對話不做場景過渡。
     const requestedBackgroundId = isComicMode ? "漫畫背景" : (scene.background || null);
-    const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景'))
+    const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景, .CG圖'))
         .find(el => getComputedStyle(el).display !== 'none');
     const requestedBackgroundContainer = requestedBackgroundId
         ? document.getElementById(requestedBackgroundId)
@@ -7892,10 +7892,10 @@ function renderScene(stepIndex) {
     // 1. 一般劇情才切換背景；計分問題先保留上一幕畫面，讓題目介面疊上來。
 if (!hasScoredOptions) {
     // 先記住原本正在顯示的背景，再隱藏其他背景。
-    const previousBgContainer = Array.from(document.querySelectorAll('.背景圖, .背景'))
+    const previousBgContainer = Array.from(document.querySelectorAll('.背景圖, .背景, .CG圖'))
         .find(el => getComputedStyle(el).display !== 'none');
 
-    document.querySelectorAll('.背景圖, .背景').forEach(el => {
+    document.querySelectorAll('.背景圖, .背景, .CG圖').forEach(el => {
         el.style.display = 'none';
         el.classList.remove('is-shaking', 'bg-impact-shake', 'scene-transition-fade');
     });
