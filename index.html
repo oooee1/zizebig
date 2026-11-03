@@ -11133,8 +11133,15 @@ function toggleBGM(btnEl) {
   }
 }
 
-        /* 暫時隱藏右上角開發者劇情跳轉工具 */
-        #page1 #developer-tools { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+        /* 暫時隱藏右上角開發者劇情跳轉工具：此元素位於 #page1 外，因此直接使用 ID 選取。 */
+#developer-tools,
+#developer-tools-toggle,
+#developer-tools-panel {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
 </style>
 
 </body>
