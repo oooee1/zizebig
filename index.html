@@ -11050,6 +11050,39 @@ function toggleBGM(btnEl) {
     transform: translate(8px, 66px) scale(0.82) !important;
   }
 }
+
+
+<style id="final-result-cg-fill-and-desktop-character-adjustments">
+/* 最終結果 CG：強制圖片元素完整覆蓋舞台，避免容器背景從圖片邊緣露出。 */
+#page1 #最終結果-星辰 {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+#page1 #最終結果-星辰 img {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* 電腦版：爽快星、好奇星各往上 5px；使用獨立 translate，不覆蓋角色動畫。 */
+@media (min-width: 769px) {
+  #page1 .角色圖.全爽快星,
+  #page1 .角色圖.全好奇星 {
+    translate: 0 -5px !important;
+  }
+}
+</style>
 </style>
 
 </body>
