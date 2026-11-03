@@ -9483,6 +9483,17 @@ if (window.currentSceneBGM !== scene.bgm) {
                 sprite.classList.add("mail-sprite-motion",isSuccess?"mail-motion-happy":"mail-motion-panicked");
                 if(image)image.classList.add(isSuccess?"mail-happy-motion":"mail-panicked-motion");
             }
+            // 答對時隨機說出一種台詞，並播放對應的專屬動作。
+            function playMailSuccessAction(){
+                const sprite=document.getElementById("爽快星開心");
+                const image=sprite&&sprite.querySelector("img");
+                const use6767=Math.random()<0.5;
+                setMailFeedback(use6767?"6767":"閃身步！");
+                if(!image)return;
+                image.classList.remove("mail-action-6767","mail-action-dodge","mail-happy-motion");
+                void image.offsetWidth;
+                image.classList.add(use6767?"mail-action-6767":"mail-action-dodge");
+            }
             const names={red:"紅色",green:"綠色",blue:"藍色",yellow:"黃色",triangle:"三角形",circle:"圓形",heart:"愛心",square:"正方形"};
             function updateStatus(){
                 roundLabel.textContent=round===1?"第一輪／共兩輪":"第二輪／共兩輪";
@@ -9668,7 +9679,7 @@ if (window.currentSceneBGM !== scene.bgm) {
                     else current.el.remove();
                     correctStreak++;
                     const isLastEnvelopeOfRound=currentIndex===envelopeData.length-1;
-                    setMailFeedback(correctStreak>=3&&correctStreak%3===0&&!isLastEnvelopeOfRound?"好厲害！加油！":"分類正確！");
+                    playMailSuccessAction();
                     currentIndex++;
                     setTimeout(()=>{
                         if(currentIndex>=envelopeData.length){
@@ -11643,6 +11654,35 @@ function toggleBGM(btnEl) {
     #page1.mail-tutorial-mode #對話框 {
         top: calc(22% + 32px) !important;
     }
+}
+</style>
+
+<style id="mail-correct-random-actions-20261104">
+/* 6767：以立繪底部中央為固定支點，左右搖擺並同步跳動兩次。 */
+@keyframes mail-action-6767-motion {
+    0%,100% { translate:0 0; rotate:0deg; }
+    12% { translate:0 -15px; rotate:-13deg; }
+    25% { translate:0 0; rotate:11deg; }
+    37% { translate:0 -13px; rotate:-12deg; }
+    50% { translate:0 0; rotate:10deg; }
+    62% { translate:0 -14px; rotate:-12deg; }
+    75% { translate:0 0; rotate:10deg; }
+    87% { translate:0 -7px; rotate:-5deg; }
+}
+#page1.mail-game-mode #爽快星開心 img.mail-action-6767 {
+    transform-origin:50% 100%!important;
+    animation:mail-action-6767-motion 1.15s ease-in-out 2 both!important;
+}
+/* 閃身步：快速向右滑出，再向左滑回原位。 */
+@keyframes mail-action-dodge-motion {
+    0%,100% { translate:0 0; }
+    30% { translate:34px 0; }
+    48% { translate:-5px 0; }
+    68% { translate:2px 0; }
+}
+#page1.mail-game-mode #爽快星開心 img.mail-action-dodge {
+    transform-origin:50% 100%!important;
+    animation:mail-action-dodge-motion .52s cubic-bezier(.2,.8,.25,1) 1 both!important;
 }
 </style>
 </body>
