@@ -7819,10 +7819,27 @@ function renderScene(stepIndex) {
     const requestedBackgroundId = isComicMode ? "漫畫背景" : (scene.background || null);
     const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景'))
         .find(el => getComputedStyle(el).display !== 'none');
-    const currentlyVisibleBackgroundId = currentlyVisibleBackground ? currentlyVisibleBackground.id : null;
+    const requestedBackgroundContainer = requestedBackgroundId
+        ? document.getElementById(requestedBackgroundId)
+        : null;
+    // 用實際圖片路徑判斷是否換背景，而不是只比較容器 ID。
+    // 有些不同場景 ID（例如同一張背景的別名）其實使用完全相同的圖片，不應播放換場動畫。
+    const getBackgroundImageSource = (container) => {
+        const image = container ? container.querySelector('img') : null;
+        return image ? (image.getAttribute('src') || image.getAttribute('data-src') || '') : '';
+    };
+    const currentlyVisibleBackgroundSource = getBackgroundImageSource(currentlyVisibleBackground);
+    const requestedBackgroundSource = getBackgroundImageSource(requestedBackgroundContainer);
     const shouldFadeQuietScene = Boolean(
         requestedBackgroundId &&
-        requestedBackgroundId !== currentlyVisibleBackgroundId
+        requestedBackgroundContainer &&
+        (
+            currentlyVisibleBackground
+                ? (currentlyVisibleBackgroundSource && requestedBackgroundSource
+                    ? currentlyVisibleBackgroundSource !== requestedBackgroundSource
+                    : requestedBackgroundContainer !== currentlyVisibleBackground)
+                : true
+        )
     );
     // 對話若以「角色名稱：」開頭，發言者以文字標示為準，不沿用上一幕角色名稱。
     const rawDialogueText = typeof scene.text === "string" ? scene.text.replace(/\/\/n|\\n/g, String.fromCharCode(10)) : "";
