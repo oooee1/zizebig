@@ -8547,6 +8547,14 @@ if (!hasScoredOptions) {
             ? (window.playerName ? `${window.playerName}・星辰` : "星辰")
             : sceneSpeaker;
 
+        // 爽快星居民名字加註，避免立繪被誤認為尚未完成。
+        if (currentSceneId >= 137 && currentSceneId <= 204 &&
+            ["居民", "居民們", "居民甲", "居民乙"].includes(displayName)) {
+            displayName += displayName === "居民"
+                ? "（不是沒有畫完）"
+                : "（不是沒畫完）";
+        }
+
         if (pageEl) {
             if (Number(currentSceneId) === 163 && displayName.includes("居民們")) pageEl.classList.add("scene-residents-163");
             if (displayName === "星辰父母") pageEl.classList.add("speaker-parents", "speaker-npc");
