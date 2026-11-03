@@ -11048,19 +11048,9 @@ function toggleBGM(btnEl) {
 
 <style id="desktop-planet-character-position-adjustments">
 @media (min-width: 769px) {
-  /* 電腦版：好奇星往上 5px */
-  #page1 .角色圖.全好奇星 {
-    transform: translateY(-5px) !important;
-  }
-
-  /* 電腦版：同情星在原本水平位移基礎上往上 10px */
+  /* 電腦版：同情星原本水平位置不變，後續微調由 correction 區塊統一處理。 */
   #page1 .角色圖.全同情星 {
     transform: translate(28px, -34px) !important;
-  }
-
-  /* 電腦版：爽快星往上 2px */
-  #page1 .角色圖.全爽快星 {
-    transform: translateY(-2px) !important;
   }
 
   /* 電腦版：熱情星戴上王冠往下 5px */
@@ -11068,7 +11058,7 @@ function toggleBGM(btnEl) {
     transform: translate(8px, 66px) scale(0.82) !important;
   }
 }
-
+</style>
 
 <style id="final-result-cg-fill-and-desktop-character-adjustments">
 /* 最終結果 CG：強制圖片元素完整覆蓋舞台，避免容器背景從圖片邊緣露出。 */
@@ -11093,7 +11083,7 @@ function toggleBGM(btnEl) {
   object-position: center center !important;
 }
 
-/* 電腦版：爽快星、好奇星各往上 5px；使用獨立 translate，不覆蓋角色動畫。 */
+/* 電腦版：爽快星、好奇星各上移 5px；用獨立 translate，不干擾角色動畫。 */
 @media (min-width: 769px) {
   #page1 .角色圖.全爽快星,
   #page1 .角色圖.全好奇星 {
@@ -11101,11 +11091,6 @@ function toggleBGM(btnEl) {
   }
 }
 </style>
-</style>
-
-</body>
-</html>
-
 
 <style id="desktop-character-position-correction-20261103">
 /* 電腦版角色位置微調：父母上移 6px；同情星上移 5px、右移 3px。 */
@@ -11116,9 +11101,8 @@ function toggleBGM(btnEl) {
   #page1 .角色圖.全同情星 {
     transform: translate(31px, -39px) !important;
   }
-  /* 使用獨立 translate 位移，避免角色動畫與 transform 定位互相覆蓋。 */
-  #page1 .角色圖.全好奇星 {
-    translate: 0 -5px !important;
-  }
 }
 </style>
+
+</body>
+</html>
