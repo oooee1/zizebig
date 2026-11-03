@@ -11004,5 +11004,30 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="desktop-planet-character-position-adjustments">
+@media (min-width: 769px) {
+  /* 電腦版：好奇星往上 5px */
+  #page1 .角色圖.全好奇星 {
+    transform: translateY(-5px) !important;
+  }
+
+  /* 電腦版：同情星在原本水平位移基礎上往上 10px */
+  #page1 .角色圖.全同情星 {
+    transform: translate(28px, -34px) !important;
+  }
+
+  /* 電腦版：爽快星往上 2px */
+  #page1 .角色圖.全爽快星 {
+    transform: translateY(-2px) !important;
+  }
+
+  /* 電腦版：熱情星戴上王冠往下 5px */
+  #page1 #熱情星戴上王冠 {
+    transform: translate(8px, 66px) scale(0.82) !important;
+  }
+}
+</style>
+
 </body>
 </html>
