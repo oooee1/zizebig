@@ -8754,7 +8754,13 @@ if (!hasScoredOptions) {
 
         if (pageEl) {
             if (Number(currentSceneId) === 163 && displayName.includes("居民們")) pageEl.classList.add("scene-residents-163");
-            if (displayName === "星辰父母") pageEl.classList.add("speaker-parents", "speaker-npc");
+            if (displayName === "星辰父母") {
+                pageEl.classList.add("speaker-parents", "speaker-npc");
+                // 父母是共同說話者，需在這個分支直接更新 NPC 名稱；
+                // 原本名稱更新只放在 else 內，會沿用上一幕「母親」的文字。
+                const parentsName = pageEl.querySelector(".name-npc");
+                if (parentsName) parentsName.textContent = "星辰父母";
+            }
             else if (displayName.includes("路人好奇星")) pageEl.classList.add("speaker-curious-random-person");
             else if (displayName.includes("好奇星們")) pageEl.classList.add("speaker-curious-group");
             else if (displayName.includes("星辰") || sceneSpeaker === "玩家") pageEl.classList.add("speaker-star");
