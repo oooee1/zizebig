@@ -608,14 +608,22 @@
   height: auto !important;
 }
 .anim-passion-spray img {
-  animation: passion-spray-burst 1.15s cubic-bezier(.12,.82,.18,1) 1 both !important;
+  animation: passion-spray-burst 1.75s cubic-bezier(.16,.82,.2,1) 1 both !important;
   transform-origin: center center;
 }
 @keyframes passion-spray-burst {
-  0% { opacity: 0; transform: scale(.82) translateY(14px); }
-  45% { opacity: 1; transform: scale(1.04) translateY(-3px); }
-  72% { opacity: 1; transform: scale(.98) translateY(1px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  /* 先蓄力，再向上彈出 */
+  0% { opacity: 0; transform: translateY(22px) scale(.72); }
+  12% { opacity: 1; transform: translateY(-13px) scale(1.12, .94); }
+  24% { opacity: 1; transform: translateY(4px) scale(.94, 1.08); }
+  /* 連續三次噴射：每次向前爆發、再快速收回 */
+  38% { opacity: 1; transform: translateY(-11px) scale(1.09, .96); }
+  49% { opacity: 1; transform: translateY(3px) scale(.96, 1.06); }
+  62% { opacity: 1; transform: translateY(-8px) scale(1.07, .97); }
+  73% { opacity: 1; transform: translateY(2px) scale(.98, 1.04); }
+  /* 最後柔和回彈，停回原位 */
+  86% { opacity: 1; transform: translateY(-3px) scale(1.025, .99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* 熱情星一般立繪：小幅度的活力彈跳與俏皮的擠壓回彈，不再只是左右搖晃。 */
