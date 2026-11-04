@@ -2854,6 +2854,11 @@ img { max-width:100%; }
 
         <!-- 主舞台 -->
         <div id="page1">
+            <!-- 337.1：揭曉性格前的「我的選擇」入口；最終結果頁完成後再接上跳轉目標。 -->
+            <button id="my-choice-result-button" type="button" aria-label="我的選擇"
+                onclick="event.preventDefault(); event.stopPropagation();">
+                <span class="my-choice-prefix">我的</span><span class="my-choice-highlight">選擇</span>
+            </button>
             <!-- 角色立繪 -->
             <div id="星辰" class="全星辰 角色圖"><img data-src="./pct/星辰沒邊.webp" alt="星辰"></div>
             <div id="星辰害怕" class="全星辰 角色圖"><img data-src="./pct/星辰害怕_哭泣.webp" alt="星辰害怕"></div>
@@ -8340,6 +8345,8 @@ function renderScene(stepIndex) {
     }
 
     const currentSceneId = scene.id !== undefined ? Number(scene.id) : null;
+    const myChoiceButton = document.getElementById("my-choice-result-button");
+    if (myChoiceButton) myChoiceButton.style.display = currentSceneId === 337.1 ? "block" : "none";
     const mailFailurePage = document.getElementById("page1");
     if (mailFailurePage && currentSceneId !== 179.5) {
         mailFailurePage.classList.remove("mail-failure-mode");
@@ -11647,15 +11654,7 @@ function toggleBGM(btnEl) {
   }
 }
 
-        /* 暫時隱藏右上角開發者劇情跳轉工具：此元素位於 #page1 外，因此直接使用 ID 選取。 */
-#developer-tools,
-#developer-tools-toggle,
-#developer-tools-panel {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
+        /* 開發者劇情跳轉工具恢復顯示。 */
 </style>
 
 
@@ -11701,5 +11700,42 @@ function toggleBGM(btnEl) {
     animation:mail-action-dodge-motion .52s cubic-bezier(.2,.8,.25,1) 1 both!important;
 }
 </style>
+<style id="my-choice-result-button-20261104">
+/* 337.1：性格揭曉前的入口按鈕，只在指定場景顯示。 */
+#my-choice-result-button {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: 6.5%;
+    transform: translateX(-50%);
+    z-index: 1200;
+    padding: 12px 30px 15px;
+    border: 0;
+    border-radius: 4px;
+    background: #000;
+    color: #fff;
+    font-family: 'Dela Gothic One', sans-serif;
+    font-size: clamp(38px, 6.2vw, 76px);
+    line-height: 1.25;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+#my-choice-result-button .my-choice-prefix { color: #fff; }
+#my-choice-result-button .my-choice-highlight { color: #F6A23A; }
+#my-choice-result-button:focus-visible {
+    outline: 3px solid #F6A23A;
+    outline-offset: 5px;
+}
+@media (max-width: 600px) {
+    #my-choice-result-button {
+        bottom: 7%;
+        padding: 10px 22px 12px;
+        font-size: clamp(34px, 9vw, 56px);
+    }
+}
+</style>
+
 </body>
 </html>
