@@ -3115,14 +3115,14 @@ img { max-width:100%; }
 
             <div class="credits-gap"></div>
             <div class="credits-heading">導演：</div>
-            <div>陳美鳳（星辰媽）</div>
-            <div>桂樹•星辰（星辰爸）</div>
+            <div>陳美鳳（母親）</div>
+            <div>（玩家名稱）．星辰（父親）</div>
 
             <div class="credits-gap"></div>
             <div class="credits-heading">出鏡</div>
             <div class="credits-gap"></div>
             <div class="credits-subheading">主演：</div>
-            <div>()•星辰－飾？？？</div>
+            <div>（玩家名稱）．星辰－飾？？？</div>
             <div>好奇星－飾好奇星</div>
             <div>同情星－飾同情星</div>
             <div>爽快星－飾爽快星</div>
@@ -3150,7 +3150,7 @@ img { max-width:100%; }
 
             <div class="credits-gap"></div>
             <div class="credits-heading">感謝出演：</div>
-            <div>()•星辰</div>
+            <div>（玩家名稱）．星辰</div>
 
             <div class="credits-gap"></div>
             <div class="credits-heading">友情客串：</div>
@@ -9862,6 +9862,8 @@ if (window.currentSceneBGM !== scene.bgm) {
                 window.myTypingTimer = null;
             }
             window.isTyping = false;
+            // 片尾所有「（玩家名稱）」都使用玩家在遊戲中輸入的名字。
+            credits.innerHTML = credits.innerHTML.replace(/（玩家名稱）/g, window.playerName || "");
             playBGM("./audio/GG EZ(粤语版） (Cantonesem Version) - 森voice.mp3");
             credits.classList.add("show");
         }
