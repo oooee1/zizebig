@@ -8585,7 +8585,21 @@ if (!hasScoredOptions) {
                 else if (normalized.includes("？？？")) pageEl.classList.add("speaker-unknown", "speaker-npc");
                 else pageEl.classList.add("speaker-npc");
                 const npcName = pageEl.querySelector(".name-npc");
-                if (npcName) npcName.textContent = displayName || "居民";
+                if (npcName) {
+                    const nameText = displayName || "居民";
+                    const noteMatch = nameText.match(/^(.*?)(（不是(?:沒|沒有)畫完）)$/);
+                    if (noteMatch) {
+                        npcName.textContent = "";
+                        npcName.appendChild(document.createTextNode(noteMatch[1]));
+                        const note = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                        note.setAttribute("font-size", "60%");
+                        note.setAttribute("font-weight", "normal");
+                        note.textContent = noteMatch[2];
+                        npcName.appendChild(note);
+                    } else {
+                        npcName.textContent = nameText;
+                    }
+                }
             }
         }
     }
