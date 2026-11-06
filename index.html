@@ -9888,7 +9888,8 @@ function openPersonalityResult(first,second){
   "同情星":{"同情星":"同同.png","好奇星":"同好.png","爽快星":"同爽.png","熱情星":"同熱.png"},
   "熱情星":{"同情星":"熱同.png","好奇星":"熱好.png","爽快星":"熱爽.png","熱情星":"熱熱熱熱熱.png"}
  };
- const pairFile=(pairFiles[first]&&pairFiles[first][second])||"好 好.png";\n const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8],[pairFile,9]];
+ const pairFile=(pairFiles[first]&&pairFiles[first][second])||"好 好.png";
+  const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8],[pairFile,9]];
  layers.innerHTML=imgs.map(x=>'<img class="personality-result-layer" style="z-index:'+x[1]+'" src="'+RESULT_ROOT+x[0]+'" alt="">').join("");
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replaceAll("()",player);
