@@ -3081,8 +3081,11 @@ img { max-width:100%; }
 
 
 <div id="personality-result-screen" aria-label="最終測驗結果" aria-hidden="true">
-  <div id="personality-result-toolbar"><button type="button" onclick="savePersonalityResult()">保存結果</button><button type="button" onclick="closePersonalityResult()">返回</button></div>
-  <article id="personality-result-poster"><div id="personality-result-layers" aria-hidden="true"></div><div id="personality-result-copy"></div></article>
+  <article id="personality-result-poster">
+    <div id="personality-result-toolbar"><button type="button" onclick="closePersonalityResult()">返回</button></div>
+    <div id="personality-result-layers" aria-hidden="true"></div>
+    <div id="personality-result-copy"></div>
+  </article>
 </div>
         <!-- 漫畫/插圖顯示容器 -->
 <div id="comic-box" style="display: none;">
@@ -9923,12 +9926,6 @@ function openPersonalityResult(first,second){
  const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.cssText="z-index:10;inset:auto 0 8% auto;width:38%;height:auto;object-fit:contain";layers.appendChild(role);
  screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
 }
-async function savePersonalityResult(){
- const poster=document.getElementById("personality-result-poster");
- if(typeof window.html2canvas!=="function"){alert("圖片保存功能尚未載入，請稍後再試。");return;}
- try{const canvas=await window.html2canvas(poster,{scale:2,useCORS:true,backgroundColor:"#fff",width:poster.scrollWidth,height:poster.scrollHeight});const a=document.createElement("a");a.download="星辰之路-最終結果.png";a.href=canvas.toDataURL("image/png");a.click();}
- catch(e){console.error(e);alert("保存失敗，請重新嘗試。");}
-}
 
         function showEndCredits() {
             const credits = document.getElementById("end-credits");
@@ -11922,14 +11919,13 @@ function toggleBGM(btnEl) {
 
 <style id="personality-result-page-style">
 @font-face{font-family:"Sigmar One";src:url("./font/SigmarOne-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;}
-#personality-result-screen{display:none;position:fixed;inset:0;z-index:2147483000;overflow:auto;background:#f5f0e8}
-#personality-result-screen.show{display:block}
-#personality-result-toolbar{position:sticky;top:0;z-index:30;display:flex;justify-content:center;gap:10px;padding:10px;background:rgba(20,20,20,.9)}
-#personality-result-toolbar button{border:2px solid #111;border-radius:10px;padding:9px 20px;background:#ffb30f;color:#111;font:16px 'CPTrans',sans-serif}
-#personality-result-toolbar button+button{background:#fff}
-#personality-result-poster{position:relative;width:min(100%,760px);min-height:1900px;margin:0 auto;overflow:hidden;background:#fff;isolation:isolate}
+#personality-result-screen{display:none;position:fixed;inset:0;z-index:2147483000;overflow:hidden;background:#f5f0e8;align-items:center;justify-content:center}
+#personality-result-screen.show{display:flex}
+#personality-result-toolbar{position:absolute;top:8px;right:8px;z-index:30;display:flex;justify-content:flex-end;pointer-events:none}
+#personality-result-toolbar button{pointer-events:auto;border:2px solid #111;border-radius:10px;padding:7px 16px;background:#fff;color:#111;font:16px 'CPTrans',sans-serif}
+#personality-result-poster{position:relative;flex:none;width:min(100vw,56.25dvh,760px);height:auto;aspect-ratio:9 / 16;min-height:0;margin:0;overflow:hidden;background:#fff;isolation:isolate}
 #personality-result-layers{position:absolute;inset:0;z-index:0;pointer-events:none}
-.personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
 #personality-result-copy{position:relative;z-index:12;box-sizing:border-box;padding:clamp(230px,60vw,460px) 7% 90px;color:#17132b;font-family:'CPTrans',sans-serif;line-height:1.65}
 #personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:clamp(16px,4vw,25px);letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157}
 #personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(36px,9vw,64px);line-height:1.2;text-align:center;color:#2369bd;margin:0 0 10px}
@@ -11943,7 +11939,6 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-continue{text-align:center;margin:32px 0 0;font-family:'Dela Gothic One',sans-serif;font-size:22px}
 @media(max-width:600px){#personality-result-poster{min-height:1800px}#personality-result-copy{padding-top:58vw}}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
 
