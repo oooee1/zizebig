@@ -8525,6 +8525,8 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle("mail-tutorial-mode", Boolean(scene.mailTutorial));
         pageEl.classList.toggle("mail-game-mode", Boolean(scene.mailGame));
         pageEl.classList.toggle("mail-failure-mode", Number(scene.id) === 179.5);
+        // 337.1「我的選擇」停留畫面：開啟飄雪與微光粒子效果。
+        pageEl.classList.toggle("my-choice-atmosphere", currentSceneId === 337.1);
 
         // 送信教學每次切換一句話都重新播放立繪動畫；三張表情都加上，
         // 由 CSS 讓當下實際顯示的立繪呈現動畫，避免動畫加在隱藏角色上。
@@ -11791,6 +11793,52 @@ function toggleBGM(btnEl) {
 /* 讀父母信件時，說話者名稱固定顯示「星辰父母」，使用單一柔和的粉藍中間色，不使用雙色漸層。 */
 #page1.speaker-parents .name-npc {
     fill: #D0B5D8 !important;
+}
+</style>
+
+
+<style id="my-choice-falling-snow-20261106">
+/* 「我的選擇」停留畫面：柔和的雪花與微光由上往下飄落。 */
+#page1.my-choice-atmosphere {
+    isolation: isolate;
+}
+#page1.my-choice-atmosphere::before,
+#page1.my-choice-atmosphere::after {
+    content: "";
+    position: absolute;
+    inset: -18% 0 0;
+    z-index: 1100;
+    pointer-events: none;
+    background-repeat: repeat;
+    will-change: transform;
+}
+#page1.my-choice-atmosphere::before {
+    opacity: .72;
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,.95) 0 1.4px, transparent 2px),
+        radial-gradient(circle, rgba(224,244,255,.9) 0 2px, transparent 2.8px),
+        radial-gradient(circle, rgba(255,255,255,.75) 0 1px, transparent 1.8px);
+    background-size: 137px 151px, 211px 193px, 83px 107px;
+    background-position: 12px 0, 73px 41px, 39px 18px;
+    animation: my-choice-snow-fall 12s linear infinite;
+}
+#page1.my-choice-atmosphere::after {
+    opacity: .48;
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,.9) 0 1px, transparent 2px),
+        radial-gradient(circle, rgba(255,225,174,.9) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle, rgba(220,238,255,.9) 0 1.2px, transparent 2px);
+    background-size: 97px 119px, 173px 181px, 251px 223px;
+    background-position: 51px 30px, 9px 72px, 120px 12px;
+    animation: my-choice-snow-fall 18s linear infinite reverse;
+}
+@keyframes my-choice-snow-fall {
+    from { transform: translate3d(0, -3%, 0); }
+    to { transform: translate3d(2.5%, 18%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    #page1.my-choice-atmosphere::before,
+    #page1.my-choice-atmosphere::after { animation: none; }
 }
 </style>
 
