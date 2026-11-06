@@ -9884,6 +9884,11 @@ function closePersonalityResult(){const s=document.getElementById("personality-r
 function openPersonalityResult(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
+ // 結果頁開啟時攔截點擊與觸控，避免事件穿透到下方劇情頁而推進對話。
+ if(screen&&!screen.dataset.inputGuard){
+  ["click","pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>event.stopPropagation(),{capture:true,passive:type==="touchstart"}));
+  screen.dataset.inputGuard="1";
+ }
  const pairFiles={
   "好奇星":{"好奇星":"好 好.png","同情星":"好 同.png","爽快星":"好 爽.png","熱情星":"好 熱.png"},
   "爽快星":{"爽快星":"T T.png","同情星":"T同.png","好奇星":"T好.png","熱情星":"T熱.png"},
@@ -11919,14 +11924,15 @@ function toggleBGM(btnEl) {
 <style id="personality-result-page-style">
 @font-face{font-family:"Sigmar One";src:url("./font/SigmarOne-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;}
 /* 結果頁捲動範圍由底圖的實際尺寸決定，不由文字高度決定 */
-#personality-result-screen{display:none;position:absolute;inset:0;z-index:2147483000;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:transparent}
+#personality-result-screen{display:none;position:absolute;inset:0;z-index:2147483000;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:transparent;pointer-events:auto}
 #personality-result-screen.show{display:block}
 #personality-result-toolbar{position:absolute;top:8px;right:8px;z-index:30;display:flex;justify-content:flex-end;pointer-events:none}
 #personality-result-toolbar button{pointer-events:auto;border:2px solid #111;border-radius:10px;padding:7px 16px;background:#fff;color:#111;font:16px 'CPTrans',sans-serif}
 /* 第一張全畫布圖片保留原比例並決定整張頁面的高度；其餘透明圖層沿用同一畫布座標 */
 #personality-result-poster{position:relative;display:block;width:100%;min-width:0;height:auto;min-height:0;max-width:none;max-height:none;margin:0;overflow:visible;background:#fff;isolation:isolate}
-#personality-result-layers{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:visible}
-.personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;object-position:top left;pointer-events:none;}
+/* 圖層容器本身參與排版；第一張完整畫布圖片負責撐開海報高度 */
+#personality-result-layers{position:relative;inset:auto;display:block;width:100%;height:auto;min-height:0;z-index:0;pointer-events:none;overflow:visible}
+.personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:top left;pointer-events:none;}
 #personality-result-layers .personality-result-layer:first-child{position:relative;display:block;inset:auto;width:100%;height:auto;object-fit:contain;object-position:top left}
 #personality-result-copy{position:absolute;inset:0;z-index:12;box-sizing:border-box;padding:clamp(150px,28%,260px) 7% 24px;color:#17132b;font-family:'CPTrans',sans-serif;line-height:1.65;overflow:visible;}
 #personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:clamp(13px,3.6cqw,25px);letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157}
