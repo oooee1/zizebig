@@ -11945,8 +11945,21 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-section{padding:8px 0 16px;border-bottom:1px solid rgba(25,25,35,.2)}
 #personality-result-copy .result-disclaimer{text-align:center;font-size:13px;margin-top:26px}
 #personality-result-copy .result-continue{text-align:center;margin:32px 0 0;font-family:'Dela Gothic One',sans-serif;font-size:20px}
-/* 目前不提供保存／下載測驗結果的按鈕或圖片 */
-#personality-result-toolbar [data-save-result],#personality-result-toolbar .save-result,#personality-result-save,.personality-result-download{display:none!important}
+/* 測驗結果頁完全不顯示任何保存／下載圖片或控制項 */
+#personality-result-toolbar,
+#personality-result-screen #personality-result-toolbar,
+#personality-result-screen [data-save-result],
+#personality-result-screen [class*="save-result"],
+#personality-result-screen [id*="save-result"],
+#personality-result-screen [class*="download"],
+#personality-result-screen [id*="download"],
+#personality-result-screen a[download],
+#personality-result-screen img[alt*="下載"],
+#personality-result-screen img[alt*="保存"],
+#personality-result-screen img[title*="下載"],
+#personality-result-screen img[title*="保存"],
+#personality-result-save,
+.personality-result-download{display:none!important;visibility:hidden!important;pointer-events:none!important}
 </style>
 </body>
 </html>
