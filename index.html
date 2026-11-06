@@ -9922,7 +9922,7 @@ function openPersonalityResult(first,second){
  }
  html+='<p class="result-continue">點擊繼續觀看劇情</p>';
  copy.innerHTML=html;
- const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.cssText="z-index:10;inset:auto 0 8% auto;width:38%;height:auto;object-fit:contain";layers.appendChild(role);
+ const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.zIndex="10";layers.appendChild(role);
  screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
 }
 
@@ -11918,16 +11918,17 @@ function toggleBGM(btnEl) {
 
 <style id="personality-result-page-style">
 @font-face{font-family:"Sigmar One";src:url("./font/SigmarOne-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;}
-/* 結果頁整張內容共用同一個捲動區；手機與桌面沿用各自遊戲舞台尺寸 */
+/* 結果頁捲動範圍由底圖的實際尺寸決定，不由文字高度決定 */
 #personality-result-screen{display:none;position:absolute;inset:0;z-index:2147483000;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:transparent}
 #personality-result-screen.show{display:block}
 #personality-result-toolbar{position:absolute;top:8px;right:8px;z-index:30;display:flex;justify-content:flex-end;pointer-events:none}
 #personality-result-toolbar button{pointer-events:auto;border:2px solid #111;border-radius:10px;padding:7px 16px;background:#fff;color:#111;font:16px 'CPTrans',sans-serif}
-/* 海報高度由完整文字內容撐開；圖片圖層與文字同屬海報，會一起隨頁面捲動 */
-#personality-result-poster{position:relative;display:block;width:100%;min-width:0;min-height:100%;height:auto;max-width:none;max-height:none;margin:0;overflow:visible;background:#fff;isolation:isolate}
-#personality-result-layers{position:absolute;inset:0;width:100%;height:100%;min-height:100%;z-index:0;pointer-events:none;overflow:hidden}
-.personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none;}
-#personality-result-copy{position:relative;inset:auto;z-index:12;box-sizing:border-box;min-height:100%;padding:clamp(150px,28%,260px) 7% 24px;color:#17132b;font-family:'CPTrans',sans-serif;line-height:1.65;overflow:visible;}
+/* 第一張全畫布圖片保留原比例並決定整張頁面的高度；其餘透明圖層沿用同一畫布座標 */
+#personality-result-poster{position:relative;display:block;width:100%;min-width:0;height:auto;min-height:0;max-width:none;max-height:none;margin:0;overflow:visible;background:#fff;isolation:isolate}
+#personality-result-layers{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:visible}
+.personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;object-position:top left;pointer-events:none;}
+#personality-result-layers .personality-result-layer:first-child{position:relative;display:block;inset:auto;width:100%;height:auto;object-fit:contain;object-position:top left}
+#personality-result-copy{position:absolute;inset:0;z-index:12;box-sizing:border-box;padding:clamp(150px,28%,260px) 7% 24px;color:#17132b;font-family:'CPTrans',sans-serif;line-height:1.65;overflow:visible;}
 #personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:clamp(13px,3.6cqw,25px);letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157}
 #personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(30px,8cqw,64px);line-height:1.2;text-align:center;color:#2369bd;margin:0 0 10px}
 #personality-result-copy .result-tagline{text-align:center;font-size:clamp(13px,3.4cqw,18px);font-weight:bold;margin:10px auto 18px}
