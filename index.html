@@ -2839,6 +2839,11 @@ img { max-width:100%; }
             <button type="button" onclick="jumpToCharacterStory(78, event)">同情星劇情</button>
             <button type="button" onclick="jumpToCharacterStory(137, event)">爽快星劇情</button>
             <button type="button" onclick="jumpToCharacterStory(205.1, event)">熱情星劇情</button>
+            <p class="developer-tools-title">跳轉至測驗結果</p>
+            <button type="button" onclick="jumpToPersonalityResult('好奇星', event)">好奇星測驗結果</button>
+            <button type="button" onclick="jumpToPersonalityResult('同情星', event)">同情星測驗結果</button>
+            <button type="button" onclick="jumpToPersonalityResult('爽快星', event)">爽快星測驗結果</button>
+            <button type="button" onclick="jumpToPersonalityResult('熱情星', event)">熱情星測驗結果</button>
             <button type="button" onclick="jumpToCharacterStory(308, event)">遇見父母</button>
             <button type="button" onclick="jumpToCharacterStory(350, event)">片尾</button>
         </div>
@@ -2858,7 +2863,7 @@ img { max-width:100%; }
         <div id="page1">
             <!-- 337.1：揭曉性格前的「我的選擇」入口；最終結果頁完成後再接上跳轉目標。 -->
             <button id="my-choice-result-button" type="button" aria-label="我的選擇"
-                onclick="event.preventDefault(); event.stopPropagation();">
+                onclick="event.preventDefault(); event.stopPropagation(); openPersonalityResultFromScores();">
                 <span class="my-choice-prefix">我的</span><span class="my-choice-highlight">選擇</span>
             </button>
             <!-- 角色立繪 -->
@@ -3075,6 +3080,10 @@ img { max-width:100%; }
         </div>
 
 
+<div id="personality-result-screen" aria-label="最終測驗結果" aria-hidden="true">
+  <div id="personality-result-toolbar"><button type="button" onclick="savePersonalityResult()">保存結果</button><button type="button" onclick="closePersonalityResult()">返回</button></div>
+  <article id="personality-result-poster"><div id="personality-result-layers" aria-hidden="true"></div><div id="personality-result-copy"></div></article>
+</div>
         <!-- 漫畫/插圖顯示容器 -->
 <div id="comic-box" style="display: none;">
     <img id="comic-img" src="" alt="漫畫圖">
@@ -9852,6 +9861,63 @@ if (window.currentSceneBGM !== scene.bgm) {
         })();
 
 
+<script id="personality-result-page-logic">
+const RESULT_STARS={
+"好奇星":{code:"好",english:"OPENNESS TO EXPERIENCE",tagline:"具有無窮的想像力，喜歡冒險與嘗試新事物。",keys:["創意、思考、探索","對新事物抱持開放態度"],traits:"對新奇的事物抱持熱忱，喜歡嘗試不同的可能性。樂於追求新鮮體驗，對未知的領域充滿好奇，跳脫既有的框架，挑戰傳統的思考方式。喜歡靈活多變的環境，讓自己能夠探索更多還沒被發現的可能性。()的創意與創造力，正是理解世界、表達自我，為生活帶來不同色彩的力量！",work:"在職場上擁有豐富的想像力、敏銳的觀察力與良好的審美能力，擅長從不同角度思考問題，為團隊帶來更多創意與可能性。但是太追求新鮮感，很難長時間專注在重複性的工作上，或是想法太多，而不知道該怎麼選擇。如果學會適時做出選擇、安排計畫，就能更好發揮自己的優勢，將創意真正化為成果(ง'̀-'́)ง！"},
+"同情星":{code:"同",english:"AGREEABLENESS",tagline:"善良且熱於助人，與他人相處融洽。",keys:["照顧、友善、和平","有著極強的共情力"]},
+"爽快星":{code:"T",english:"CONSCIENTIOUSNESS",tagline:"十分自律、謹慎，並有條理的計畫事物。",keys:["整潔、秩序、盡責","擅長規劃與統整所有事物"]},
+"熱情星":{code:"熱",english:"EXTRAVERSION",tagline:"熱情高漲、善於行動，具有很高的團體知名度。",keys:["自信、主動、活力","擅長與他人互動"]}
+};
+const RESULT_ROOT="./最終結果/";
+function openPersonalityResultFromScores(){
+ const order=["好奇星","同情星","爽快星","熱情星"];
+ const ranked=order.map(name=>({name,score:Number(scores[name]||0)})).sort((a,b)=>b.score-a.score||order.indexOf(a.name)-order.indexOf(b.name));
+ let first=ranked[0].name,second=ranked[1].name;
+ if(ranked.every(x=>x.score===ranked[0].score)){first="好奇星";second="好奇星";}
+ else if(ranked.slice(1).every(x=>x.score<50)) second=first;
+ openPersonalityResult(first,second);
+}
+function jumpToPersonalityResult(star,event){if(event){event.preventDefault();event.stopPropagation();}const p=document.getElementById("developer-tools-panel");if(p)p.classList.remove("open");openPersonalityResult(star,star);}
+function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");}}
+function openPersonalityResult(first,second){
+ const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
+ const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
+ const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8],[code+code2+".png",9]];
+ layers.innerHTML=imgs.map(x=>'<img class="personality-result-layer" style="z-index:'+x[1]+'" src="'+RESULT_ROOT+x[0]+'" alt="">').join("");
+ const player=(window.playerName||"星辰").replace(/[<>]/g,"");
+ const replace=s=>String(s||"").replaceAll("()",player);
+ let html='<div class="result-english">'+d.english+'</div><h1 class="result-name">'+first+'</h1><p class="result-tagline">'+replace(d.tagline)+'</p><div class="result-keywords">'+d.keys.map(k=>'<span>'+k+'</span>').join("")+'</div>';
+ if(first==="好奇星"){
+  html+='<section class="result-section"><h2>星格特質</h2><p>'+replace(d.traits)+'</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>'+replace(d.work)+'</p></section>';
+  const jobs={
+   "好奇星":"調查與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員。",
+   "同情星":"資訊媒體傳播：記者、新聞編輯、節目企劃、採訪編輯、紀錄片導演。\n設計群：平面設計師、室內設計師、廣告設計師、UI設計師、插畫師。",
+   "爽快星":"活動企劃與展演服務：創意行銷企劃、活動企劃師、展覽策劃人、舞台監督、婚禮企劃師。\n商業與銷售：業務員、門市銷售人員、廣告文案、市場分析師、數位行銷專員。",
+   "熱情星":"觀光和事業：博物館導覽員、導遊、旅遊行銷人員、節慶活動企劃、活動企劃人員。\n行政與管理：營運企劃、資料分析師、專案助理、活動執行人員、總務人員。"
+  };
+  const traits={
+   "好奇星":"好奇星對新鮮事物總是充滿興趣，遇到不懂的事情時，會想主動找出答案，弄清楚背後的原因。喜歡親自探索、嘗試不同的方法，從過程中學習新知識，也因為常常思考問題，發現更多意想不到的可能性！",
+   "同情星":"想知道別人經歷了什麼，也理解他們的處境。透過提問和傾聽，幫助他人理解自己的想法，發現人們遇到的問題，並設法用創意讓生活變得更好。",
+   "爽快星":"喜歡探索不同的可能性，且願意親自嘗試。遇到問題時，能快速採取行動，靈活地應對各種情況，並透過不斷嘗試與調整，找到有效的解決方法，將想法實踐出來！",
+   "熱情星":"有著好奇與行動力，不害怕挑戰未知。面對不同的想法時，能主動尋找機會並付諸實踐，運用自身的熱情激勵身邊的人，讓團隊更有動力，共同朝著目標前進。"
+  };
+  html+='<section class="result-section"><h2>適合職業</h2><p>結合'+second+'第二高分的星球是'+second+'，可能適合的職業類別是...</p><p>'+jobs[second]+'</p><p>屬於'+second+'的特質：</p><p>'+traits[second]+'</p><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p></section>';
+ }else{
+  html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2>適合職業</h2><p>第二高分星球：'+second+'</p></section>';
+ }
+ html+='<p class="result-continue">點擊繼續觀看劇情</p>';
+ copy.innerHTML=html;
+ const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.cssText="z-index:10;inset:auto 0 8% auto;width:38%;height:auto;object-fit:contain";layers.appendChild(role);
+ screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
+}
+async function savePersonalityResult(){
+ const poster=document.getElementById("personality-result-poster");
+ if(typeof window.html2canvas!=="function"){alert("圖片保存功能尚未載入，請稍後再試。");return;}
+ try{const canvas=await window.html2canvas(poster,{scale:2,useCORS:true,backgroundColor:"#fff",width:poster.scrollWidth,height:poster.scrollHeight});const a=document.createElement("a");a.download="星辰之路-最終結果.png";a.href=canvas.toDataURL("image/png");a.click();}
+ catch(e){console.error(e);alert("保存失敗，請重新嘗試。");}
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
         function showEndCredits() {
             const credits = document.getElementById("end-credits");
             if (!credits || credits.classList.contains("show")) return;
@@ -11842,6 +11908,28 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+<style id="personality-result-page-style">
+#personality-result-screen{display:none;position:fixed;inset:0;z-index:2147483000;overflow:auto;background:#f5f0e8}
+#personality-result-screen.show{display:block}
+#personality-result-toolbar{position:sticky;top:0;z-index:30;display:flex;justify-content:center;gap:10px;padding:10px;background:rgba(20,20,20,.9)}
+#personality-result-toolbar button{border:2px solid #111;border-radius:10px;padding:9px 20px;background:#ffb30f;color:#111;font:16px 'CPTrans',sans-serif}
+#personality-result-toolbar button+button{background:#fff}
+#personality-result-poster{position:relative;width:min(100%,760px);min-height:1900px;margin:0 auto;overflow:hidden;background:#fff;isolation:isolate}
+#personality-result-layers{position:absolute;inset:0;z-index:0;pointer-events:none}
+.personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+#personality-result-copy{position:relative;z-index:12;box-sizing:border-box;padding:clamp(230px,60vw,460px) 7% 90px;color:#17132b;font-family:'CPTrans',sans-serif;line-height:1.65}
+#personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:clamp(16px,4vw,25px);letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157}
+#personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(36px,9vw,64px);line-height:1.2;text-align:center;color:#2369bd;margin:0 0 10px}
+#personality-result-copy .result-tagline{text-align:center;font-size:clamp(14px,3.8vw,18px);font-weight:bold;margin:10px auto 18px}
+#personality-result-copy .result-keywords{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0 22px}
+#personality-result-copy .result-keywords span{padding:5px 12px;background:#27243a;color:#fff;border-radius:4px;font-size:14px}
+#personality-result-copy h2{font-family:'Dela Gothic One',sans-serif;font-size:clamp(22px,5.5vw,32px);margin:30px 0 10px;color:#27243a}
+#personality-result-copy p{font-size:clamp(14px,3.6vw,17px);margin:8px 0 14px;white-space:pre-line}
+#personality-result-copy .result-section{padding:8px 0 16px;border-bottom:1px solid rgba(25,25,35,.2)}
+#personality-result-copy .result-disclaimer{text-align:center;font-size:13px;margin-top:26px}
+#personality-result-copy .result-continue{text-align:center;margin:32px 0 0;font-family:'Dela Gothic One',sans-serif;font-size:22px}
+@media(max-width:600px){#personality-result-poster{min-height:1800px}#personality-result-copy{padding-top:58vw}}
+</style>
 </body>
 </html>
 
