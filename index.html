@@ -9946,7 +9946,7 @@ function alignResultRoleToTextArtwork(role,layers){
    const scale=Math.min(target.width/subject.width,target.height/subject.height)*1.1;
    const left=target.x+target.width/2-(subject.x+subject.width/2)*scale;
    const displayScale=layers.clientWidth/textArtwork.naturalWidth;
-   const top=target.y+target.height/2-(subject.y+subject.height/2)*scale+18+(8/displayScale);
+   const top=target.y+target.height/2-(subject.y+subject.height/2)*scale+18+(18/displayScale);
    role.style.left=(left/textArtwork.naturalWidth*100)+"%";
    role.style.top=(top/textArtwork.naturalHeight*100)+"%";
    role.style.width=(role.naturalWidth*scale/textArtwork.naturalWidth*100)+"%";
@@ -9970,25 +9970,31 @@ function positionResultTextElements(layers,copy){
  const longStrip=findImage("背景 長條紙.webp");
  const apply=()=>{
   if(!textPaper||!textPaper.naturalWidth||!copy.clientWidth)return;
-  const scale=copy.clientWidth/textPaper.naturalWidth;
   const textBounds=getResultImageAlphaBounds(textPaper);
   if(textBounds){
    const career=copy.querySelector(".result-secondary");
    if(career){
+    // 直接使用圖片實際顯示矩形與透明內容邊界換算，避免以容器寬度猜測縮放比例。
+    const imageRect=textPaper.getBoundingClientRect();
+    const copyRect=copy.getBoundingClientRect();
+    const scaleX=imageRect.width/textPaper.naturalWidth;
+    const scaleY=imageRect.height/textPaper.naturalHeight;
     career.style.position="absolute";
-    career.style.setProperty("left",(textBounds.x*scale)+"px","important");
-    career.style.setProperty("width",(textBounds.width*scale)+"px","important");
-    career.style.top=((textBounds.y+textBounds.height)*scale)+"px";
+    career.style.setProperty("left",(imageRect.left-copyRect.left+textBounds.x*scaleX)+"px","important");
+    career.style.setProperty("width",(textBounds.width*scaleX)+"px","important");
+    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY)+"px";
    }
   }
   if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
    const b=getResultImageAlphaBounds(lowerNolan);
    const button=copy.querySelector(".result-continue");
    if(b&&button){
+    const imageRect=lowerNolan.getBoundingClientRect();
+    const scale= imageRect.height/lowerNolan.naturalHeight;
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=((b.y+b.height*.52)*scale-71)+"px";
+    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale-71)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -9997,10 +10003,12 @@ function positionResultTextElements(layers,copy){
    const b=getResultImageAlphaBounds(longStrip);
    const note=copy.querySelector(".result-disclaimer");
    if(b&&note){
+    const imageRect=longStrip.getBoundingClientRect();
+    const scale=imageRect.height/longStrip.naturalHeight;
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((b.y+b.height)*scale-80)+"px";
+    note.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-80)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -12341,4 +12349,56 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-keywords span{font-weight:700!important}
 #personality-result-copy .result-job-category-description{margin:0 auto 12px;text-align:center;font-weight:700}
 #personality-result-copy .result-heading-mark{margin-left:-.36em!important}
+</style>
+
+<style id="result-actual-bounds-fix-20261108d">
+/* 職業區直接貼齊「背景 文字」圖片透明內容的實際左右邊界 */
+#personality-result-copy .result-secondary{
+ box-sizing:border-box!important;
+ padding:0!important;
+}
+#personality-result-copy .result-secondary .result-career-heading{
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ margin:10px 0 10px 0!important;
+ padding:4px 8px!important;
+}
+/* 職業區內文保留留白，介紹文字再向右8px */
+#personality-result-copy .result-secondary > p:not(.result-career-heading){
+ margin-left:18px!important;
+ margin-right:18px!important;
+}
+#personality-result-copy .result-secondary .result-career-intro{
+ position:relative!important;
+ left:8px!important;
+}
+/* 分類背景依文字本身寬度加上左右留白，不再沿用舊的共用寬度計算 */
+#personality-result-copy .result-job-category{
+ width:calc(100% - 36px)!important;
+ margin-left:18px!important;
+ margin-right:18px!important;
+}
+#personality-result-copy .result-job-category-title{
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ box-sizing:border-box!important;
+ width:max-content!important;
+ max-width:100%!important;
+ padding:22px 24px!important;
+ white-space:nowrap!important;
+}
+/* 英文主色跟隨「好／星」，只有 TO 使用「奇」的重點色 */
+#personality-result-copy .result-english.result-english-curiosity{color:#2369bd!important}
+#personality-result-copy .result-english.result-english-curiosity .result-focus-mark{color:#F6B800!important}
+/* 創意／態度標籤背景固定使用說明文字的同一個顏色 */
+#personality-result-copy .result-keywords.result-keywords-curiosity span,
+#personality-result-copy .result-keywords:not(.result-keywords-curiosity) span{
+ background:var(--result-explanation-color)!important;
+}
+/* 適合職業以前的文字整體上移1px */
+#personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+ top:439px!important;
+}
 </style>
