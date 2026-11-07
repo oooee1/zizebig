@@ -9965,7 +9965,7 @@ function alignResultRoleToTextArtwork(role,layers){
 function positionResultTextElements(layers,copy){
  const findImage=name=>Array.from(layers.querySelectorAll("img")).find(img=>decodeURIComponent(img.src).includes(name));
  const textPaper=findImage("背景 文字.webp");
- const lowerNolan=findImage("背景 "+(copy.dataset.resultStar||"好奇星")+" 下面那張諾蘭紙.webp")||layers.querySelector("img");
+ const lowerNolan=findImage("下面那張諾蘭紙.webp")||layers.querySelector("img");
  const longStrip=findImage("背景 長條紙.webp");
  const apply=()=>{
   if(!textPaper||!textPaper.naturalWidth||!copy.clientWidth)return;
@@ -10008,7 +10008,7 @@ function positionResultTextElements(layers,copy){
  const images=[textPaper,lowerNolan,longStrip].filter(Boolean);
  images.forEach(img=>{if(!img.complete)img.addEventListener("load",apply,{once:true});});
  if(images.every(img=>img.complete))apply();
- window.addEventListener("resize",apply,{passive:true});
+ if(window._resultPositionResize)window.removeEventListener("resize",window._resultPositionResize);\n window._resultPositionResize=apply;window.addEventListener("resize",apply,{passive:true});
 }
 function openPersonalityResult(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
@@ -12226,7 +12226,7 @@ function toggleBGM(btnEl) {
 <style id="result-layout-corrections-20261107b">
 /* 結果頁一般文字自英文標題起再整體下移 200px（累計 500px）；特殊紙張定位由透明畫布座標控制 */
 #personality-result-copy{padding-top:clamp(150px,28%,260px)!important}
-#personality-result-copy > :not(.result-belongs-heading){position:relative!important;top:500px!important}
+#personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){position:relative!important;top:500px!important}
 #personality-result-copy .result-secondary{position:absolute!important;top:auto;left:0;width:100%;box-sizing:border-box}
 #personality-result-copy .result-continue{position:absolute!important;top:auto;left:0;width:100%;font-size:82px!important;margin:0!important}
 #personality-result-copy .result-disclaimer{position:absolute!important;top:auto;left:0;width:100%;margin:0!important}
