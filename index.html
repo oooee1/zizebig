@@ -10008,7 +10008,8 @@ function positionResultTextElements(layers,copy){
  const images=[textPaper,lowerNolan,longStrip].filter(Boolean);
  images.forEach(img=>{if(!img.complete)img.addEventListener("load",apply,{once:true});});
  if(images.every(img=>img.complete))apply();
- if(window._resultPositionResize)window.removeEventListener("resize",window._resultPositionResize);\n window._resultPositionResize=apply;window.addEventListener("resize",apply,{passive:true});
+ if(window._resultPositionResize)window.removeEventListener("resize",window._resultPositionResize);
+ window._resultPositionResize=apply;window.addEventListener("resize",apply,{passive:true});
 }
 function openPersonalityResult(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
