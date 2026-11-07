@@ -9987,7 +9987,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=((b.y+b.height*.52)*scale-90)+"px";
+    button.style.top=((b.y+b.height*.52)*scale-80)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -9999,7 +9999,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((b.y+b.height)*scale-120)+"px";
+    note.style.top=((b.y+b.height)*scale-110)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -10064,12 +10064,17 @@ function openPersonalityResult(first,second){
  }
  html+='<p class="result-continue"><span class="result-continue-game">繼續<span class="result-player-name">遊</span>戲</span></p>';
  copy.innerHTML=html;
- // 以兩個職業分類標題中較長者的實際寬度統一設定，避免固定寬度讓較長標題被擠成多行
+ // 兩個職業分類標籤共用較長標題的實際寬度；字型載入完成後再量一次，避免量到替代字型
  const jobTitleEls=Array.from(copy.querySelectorAll(".result-job-category-title"));
  if(jobTitleEls.length){
-  jobTitleEls.forEach(el=>{el.style.width="max-content";el.style.maxWidth="100%";});
-  const sharedWidth=Math.min(Math.max(...jobTitleEls.map(el=>el.scrollWidth)),copy.clientWidth);
-  copy.style.setProperty("--result-job-title-width",sharedWidth+"px");
+  const syncJobTitleWidths=()=>{
+   jobTitleEls.forEach(el=>{el.style.width="max-content";el.style.maxWidth="100%";});
+   const longestWidth=Math.max(...jobTitleEls.map(el=>el.scrollWidth));
+   const sharedWidth=Math.min(longestWidth,copy.clientWidth);
+   copy.style.setProperty("--result-job-title-width",sharedWidth+"px");
+  };
+  syncJobTitleWidths();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncJobTitleWidths);
  }
  positionResultTextElements(layers,copy);
  const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.zIndex="10";layers.appendChild(role);alignResultRoleToTextArtwork(role,layers);
@@ -12184,6 +12189,14 @@ function toggleBGM(btnEl) {
 #mail-game-restart-button:active,#wire-game-restart-button:active{
  transform:translateX(-50%)!important;box-shadow:none!important;
 }
+</style>
+
+<style id="result-layout-corrections-20261107d">
+/* 紙張上的兩段文字各自下移10px；職業區標題與一般大標分開設定 */
+#personality-result-copy .result-continue-game{font-size:92px!important;color:#fff!important}
+#personality-result-copy .result-career-heading{font-size:82px!important;color:#fff!important;background:var(--result-explanation-color)!important;padding:4px 8px!important;line-height:1.35!important}
+/* 兩個職業分類背景共用較長標題寬度，並明顯增加上下高度；白字維持不變 */
+#personality-result-copy .result-job-category-title{width:var(--result-job-title-width,max-content)!important;max-width:100%;box-sizing:border-box;padding:22px 8px!important;line-height:1.15!important;color:#fff!important;white-space:nowrap}
 </style>
 </body>
 </html>
