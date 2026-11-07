@@ -9998,7 +9998,7 @@ function openPersonalityResult(first,second){
  }else{
   html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2>適合職業</h2><p>第二高分星球：'+second+'</p></section>';
  }
- html+='<p class="result-continue">點擊繼續觀看劇情</p>';
+ html+='<p class="result-continue"><span class="result-continue-game">繼續<span class="result-player-name">遊</span>戲</span></p>';
  copy.innerHTML=html;
  const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.zIndex="10";layers.appendChild(role);alignResultRoleToTextArtwork(role,layers);
  screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
@@ -12027,8 +12027,8 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-highlight{color:var(--highlight-color);font-weight:800}
 #personality-result-copy p{font-family:'Noto Sans TC',sans-serif;font-size:clamp(15px,calc(4.2cqw + 2px),19px);font-weight:700;line-height:1.7;-webkit-text-stroke:.25px currentColor;margin:8px 0 14px;white-space:pre-line;color:var(--result-explanation-color)}
 #personality-result-copy .result-section{padding:8px 0 16px;border-bottom:1px solid rgba(25,25,35,.2)}
-#personality-result-copy .result-disclaimer{font-family:'Noto Sans TC',sans-serif;font-weight:400;text-align:center;font-size:14px;line-height:1.7;margin-top:26px;color:var(--result-explanation-color)}
-#personality-result-copy .result-continue{text-align:center;margin:32px 0 0;font-family:'Dela Gothic One',sans-serif;font-size:20px}
+#personality-result-copy .result-disclaimer{font-family:'Noto Sans TC',sans-serif;font-size:clamp(15px,calc(4.2cqw + 2px),19px);font-weight:700;line-height:1.7;-webkit-text-stroke:.25px currentColor;text-align:center;margin-top:26px;color:#77747D}
+#personality-result-copy .result-continue{text-align:center;margin:32px 0 0;font-family:'Dela Gothic One',sans-serif;font-size:90px;line-height:1.35}\n#personality-result-copy .result-continue-game{display:inline-block;padding:8px 24px;background:#000;color:#fff}\n#personality-result-copy .result-continue-game .result-player-name{color:#F07824}
 /* 測驗結果頁完全不顯示任何保存／下載圖片或控制項 */
 #personality-result-toolbar,
 #personality-result-screen #personality-result-toolbar,
