@@ -3050,6 +3050,7 @@ img { max-width:100%; }
             <div id="mail-game-mailboxes" aria-label="郵筒分類區"></div>
             <div id="mail-game-envelope-row" aria-label="目前信件與待分類信件"></div>
             <div id="mail-game-feedback" aria-live="polite">把信封放進正確的郵筒</div>
+            <button type="button" id="mail-game-restart-button" class="minigame-restart-button" onclick="event.stopPropagation();window.showMiniGameRestartConfirm(window.restartMailSortingGame)"><span class="minigame-restart-icon" aria-hidden="true">↻</span><span>重整小遊戲</span></button>
         </div>
         <!-- ID 36：拉電線小遊戲 -->
         <div id="wire-game-overlay" aria-label="拉電線小遊戲">
@@ -3069,6 +3070,7 @@ img { max-width:100%; }
                 <div id="wire-game-dialogue-text"></div>
                 <div id="wire-game-feedback" aria-live="polite">把電線連接到相同顏色的接點！</div>
             </div>
+            <button type="button" id="wire-game-restart-button" class="minigame-restart-button" onclick="event.stopPropagation();window.showMiniGameRestartConfirm(window.restartWireGame)"><span class="minigame-restart-icon" aria-hidden="true">↻</span><span>重整小遊戲</span></button>
         </div>
 </div>
 <div id="empty-scene-next-hint" aria-hidden="true">點一下繼續</div>
@@ -9575,6 +9577,9 @@ if (window.currentSceneBGM !== scene.bgm) {
             ];
             let envelopeData=[...envelopeMaster];
             let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null,correctStreak=0,wrongFeedbackIndex=0;
+            const mailGameTimers=new Set();
+            function scheduleMailTimer(callback,delay){const timer=window.scheduleMailTimer(()=>{mailGameTimers.delete(timer);callback();},delay);mailGameTimers.add(timer);return timer;}
+            function clearMailGameTimers(){mailGameTimers.forEach(timer=>window.clearTimeout(timer));mailGameTimers.clear();}
             // 小遊戲對話框每次換字，都讓當下顯示的爽快星重新播放一次動作。
             function setMailFeedback(message){
                 feedback.textContent=message;
@@ -9788,14 +9793,14 @@ if (window.currentSceneBGM !== scene.bgm) {
                     const isLastEnvelopeOfRound=currentIndex===envelopeData.length-1;
                     playMailSuccessAction();
                     currentIndex++;
-                    setTimeout(()=>{
+                    scheduleMailTimer(()=>{
                         if(currentIndex>=envelopeData.length){
                             if(round===1){
                                 round=2;currentIndex=0;locked=false;render();
                                 setMailFeedback("第一輪完成！現在改依圖案分類。");
                             }else{
                                 setMailFeedback("兩輪分類都完成了！");
-                                setTimeout(()=>finishGame(true),650);
+                                scheduleMailTimer(()=>finishGame(true),650);
                             }
                         }else{
                             locked=false;render();
@@ -9811,10 +9816,10 @@ if (window.currentSceneBGM !== scene.bgm) {
                         locked=true;
                         if(attempt===1){
                             setMailFeedback("哎呀失敗太多次了！得從頭開始。");
-                            setTimeout(()=>{attempt=2;round=1;errors=3;currentIndex=0;envelopeData=[...envelopeMaster];shuffleEnvelopes();locked=false;render();},850);
+                            scheduleMailTimer(()=>{attempt=2;round=1;errors=3;currentIndex=0;envelopeData=[...envelopeMaster];shuffleEnvelopes();locked=false;render();},850);
                         }else{
                             setMailFeedback("我來幫忙了！");
-                            setTimeout(()=>finishGame(false),900);
+                            scheduleMailTimer(()=>finishGame(false),900);
                         }
                     }
                 }
@@ -9834,8 +9839,15 @@ if (window.currentSceneBGM !== scene.bgm) {
                     [envelopeData[i],envelopeData[j]]=[envelopeData[j],envelopeData[i]];
                 }
             }
+            window.restartMailSortingGame=function(){
+                clearMailGameTimers();
+                if(drag)cancelDrag({pointerId:drag.pointerId});
+                started=true;round=1;errors=3;attempt=1;currentIndex=0;locked=false;correctStreak=0;wrongFeedbackIndex=0;
+                envelopeData=[...envelopeMaster];shuffleEnvelopes();render();
+            };
             window.startMailSortingGame=function(){
                 if(started)return;
+                clearMailGameTimers();
                 envelopeData=[...envelopeMaster];shuffleEnvelopes();
                 started=true;round=1;errors=3;attempt=1;currentIndex=0;locked=false;correctStreak=0;wrongFeedbackIndex=0;
                 render();
@@ -9875,13 +9887,14 @@ if (window.currentSceneBGM !== scene.bgm) {
             function svgPoint(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100};}
             function path(color,start,end){const p=document.createElementNS("http://www.w3.org/2000/svg","path");const dx=end.x-start.x;p.setAttribute("d","M "+start.x+" "+start.y+" C "+(start.x+dx*.33)+" "+start.y+", "+(start.x+dx*.67)+" "+end.y+", "+end.x+" "+end.y);p.setAttribute("class","wire-line wire-line-"+color);return p;}
             function draw(){linesGroup.replaceChildren();Object.keys(sockets).forEach(c=>{if(connected.has(c))linesGroup.appendChild(path(c,sockets[c].left,sockets[c].right));});if(activeColor&&activeSide&&dragPoint){const p=path(activeColor,sockets[activeColor][activeSide],dragPoint);p.setAttribute("opacity","1");linesGroup.appendChild(p);}}
-            function reset(){connected.clear();activeColor=null;activeSide=null;pointerId=null;dragPoint=null;draw();feedback.textContent="把電線連接到相同顏色的接點！";}
+            let wireFinishTimer=null;
+            function reset(){if(wireFinishTimer!==null){window.clearTimeout(wireFinishTimer);wireFinishTimer=null;}connected.clear();activeColor=null;activeSide=null;pointerId=null;dragPoint=null;draw();feedback.textContent="把電線連接到相同顏色的接點！";}
             svg.addEventListener("pointerdown",e=>{const page=document.getElementById("page1");if(!page||!page.classList.contains("wire-game-mode"))return;const p=svgPoint(e);let hit=null;for(const [c,ends] of Object.entries(sockets)){if(connected.has(c))continue;for(const side of ["left","right"]){if(Math.hypot(p.x-ends[side].x,p.y-ends[side].y)<=7){hit={color:c,side};break;}}if(hit)break;}if(!hit)return;e.preventDefault();activeColor=hit.color;activeSide=hit.side;pointerId=e.pointerId;dragPoint=p;try{svg.setPointerCapture(pointerId);}catch(_){}draw();});
             svg.addEventListener("pointermove",e=>{if(activeColor===null||e.pointerId!==pointerId)return;dragPoint=svgPoint(e);draw();});
             function finish(e){if(activeColor===null||e.pointerId!==pointerId)return;const p=svgPoint(e),c=activeColor,startSide=activeSide,targetSide=startSide==="left"?"right":"left";const target=Object.entries(sockets).find(([tc,ends])=>Math.hypot(p.x-ends[targetSide].x,p.y-ends[targetSide].y)<=8);activeColor=null;activeSide=null;pointerId=null;dragPoint=null;
-                if(target&&target[0]===c){connected.add(c);feedback.textContent=connected.size===3?"全部接好了！":"接對了！再接下一條。";draw();if(connected.size===3){feedback.textContent="成功通電！準備繼續劇情……";const ni=storyScript.findIndex(item=>Number(item.id)===36.167);window.setTimeout(()=>{const page=document.getElementById("page1");if(page)page.classList.remove("wire-game-mode");if(ni>=0){currentStep=ni;renderScene(currentStep);}},650);}}
+                if(target&&target[0]===c){connected.add(c);feedback.textContent=connected.size===3?"全部接好了！":"接對了！再接下一條。";draw();if(connected.size===3){feedback.textContent="成功通電！準備繼續劇情……";const ni=storyScript.findIndex(item=>Number(item.id)===36.167);wireFinishTimer=window.setTimeout(()=>{wireFinishTimer=null;const page=document.getElementById("page1");if(page)page.classList.remove("wire-game-mode");if(ni>=0){currentStep=ni;renderScene(currentStep);}},650);}}
                 else{feedback.textContent=target?"顏色不對，再試一次！":"把電線連接到對面相同顏色的接點！";draw();}}
-            svg.addEventListener("pointerup",finish);svg.addEventListener("pointercancel",finish);window.resetWireGame=reset;reset();
+            svg.addEventListener("pointerup",finish);svg.addEventListener("pointercancel",finish);window.resetWireGame=reset;window.restartWireGame=reset;reset();
         })();
 
 
@@ -10269,6 +10282,41 @@ function openPersonalityResult(first,second){
         renderScene(currentStep);
     }
 }
+
+    // 小遊戲重整確認：沿用跳過劇情的黑底橘框確認卡片。
+    window.showMiniGameRestartConfirm=function(restartAction){
+        const existing=document.getElementById("minigame-restart-confirm-overlay");
+        if(existing){existing.remove();}
+        const overlay=document.createElement("div");
+        overlay.id="minigame-restart-confirm-overlay";
+        overlay.style.cssText="position:absolute;inset:0;z-index:1000001;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;";
+        overlay.innerHTML=`
+          <style>
+            #minigame-restart-confirm-overlay .skip-card{position:relative;width:min(390px,100%);box-sizing:border-box;padding:28px 24px 23px;background:#000;border:2px solid #ffb30f;border-radius:18px 22px 17px 21px;color:#fff;text-align:center;font-family:Arial,sans-serif;font-weight:bold;overflow:hidden;}
+            #minigame-restart-confirm-overlay #skip-confirm-title{position:relative;z-index:1;font-family:Arial,sans-serif;font-size:clamp(20px,5vw,25px);font-weight:bold;line-height:1.5;margin:0 0 10px;color:#fff;}
+            #minigame-restart-confirm-overlay .skip-description{position:relative;z-index:1;font-size:clamp(15px,3.5vw,17px);font-weight:bold;line-height:1.8;margin:0 0 20px;}
+            #minigame-restart-confirm-overlay .skip-actions{position:relative;z-index:1;display:flex;gap:12px;justify-content:center;}
+            #minigame-restart-confirm-overlay .skip-actions button{flex:1;min-width:0;min-height:46px;padding:9px 10px;border:2px solid #ffb30f;border-radius:13px;font-family:Arial,sans-serif;font-size:17px;font-weight:bold;cursor:pointer;transition:transform .12s;}
+            #minigame-restart-confirm-overlay .skip-actions button:active{transform:translateY(2px);}
+            #minigame-restart-confirm-overlay #restart-confirm-yes{background:#ffb30f;color:#000;}
+            #minigame-restart-confirm-overlay #restart-confirm-no{background:#000;color:#fff;}
+            @media(max-width:420px){#minigame-restart-confirm-overlay .skip-card{padding:27px 18px 20px;}}
+          </style>
+          <div class="skip-card" role="dialog" aria-modal="true" aria-labelledby="skip-confirm-title">
+            <div id="skip-confirm-title">要重整小遊戲？</div>
+            <p class="skip-description">遇到Bug時使用，會將小遊戲重來。</p>
+            <div class="skip-actions">
+              <button type="button" id="restart-confirm-no">我再想想</button>
+              <button type="button" id="restart-confirm-yes">重整</button>
+            </div>
+          </div>`;
+        const game=document.getElementById("game-container")||document.body;
+        game.appendChild(overlay);
+        const close=()=>overlay.remove();
+        overlay.querySelector("#restart-confirm-no").addEventListener("click",event=>{event.stopPropagation();close();});
+        overlay.querySelector("#restart-confirm-yes").addEventListener("click",event=>{event.stopPropagation();close();if(typeof restartAction==="function")restartAction();});
+        overlay.addEventListener("click",event=>{if(event.target===overlay)close();});
+    };
 
     // 跳過按鈕：先詢問玩家，確認後才跳到下一個計分問題。
     function skipToOption() {
@@ -12047,6 +12095,26 @@ function toggleBGM(btnEl) {
 #personality-result-screen img[title*="保存"],
 #personality-result-save,
 .personality-result-download{display:none!important;visibility:hidden!important;pointer-events:none!important}
+</style>
+<style id="minigame-restart-button-style">
+/* 小遊戲底部置中重整按鈕 */
+#mail-game-restart-button,#wire-game-restart-button{
+    position:absolute!important;left:50%!important;bottom:max(12px,env(safe-area-inset-bottom))!important;
+    transform:translateX(-50%)!important;z-index:5600!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;
+    min-width:148px!important;min-height:42px!important;padding:8px 16px!important;
+    border:2px solid #000!important;border-radius:12px!important;
+    background:#fff!important;color:#000!important;
+    font-family:Arial,sans-serif!important;font-size:16px!important;font-weight:700!important;
+    line-height:1!important;box-shadow:0 3px 0 rgba(0,0,0,.28)!important;
+    cursor:pointer!important;touch-action:manipulation!important;
+}
+#mail-game-restart-button:active,#wire-game-restart-button:active{transform:translate(-50%,2px)!important;box-shadow:0 1px 0 rgba(0,0,0,.28)!important;}
+.minigame-restart-icon{font-size:23px!important;font-weight:700!important;line-height:.8!important;}
+#page1:not(.mail-game-mode) #mail-game-restart-button,
+#page1:not(.wire-game-mode) #wire-game-restart-button{display:none!important;}
+#page1.mail-game-mode #mail-game-restart-button{display:flex!important;}
+#page1.wire-game-mode #wire-game-restart-button{display:flex!important;}
 </style>
 </body>
 </html>
