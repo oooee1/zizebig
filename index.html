@@ -9987,7 +9987,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=((b.y+b.height*.52)*scale-50)+"px";
+    button.style.top=((b.y+b.height*.52)*scale-90)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -9999,7 +9999,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((b.y+b.height)*scale-80)+"px";
+    note.style.top=((b.y+b.height)*scale-120)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -12240,10 +12240,10 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-continue-game{font-weight:400!important;-webkit-text-stroke:0!important}
 #personality-result-copy .result-disclaimer{position:absolute!important;top:auto;left:0;width:100%;margin:0!important}
 /* 英文縮短垂直拉伸，與好奇星名稱維持緊密間距 */
-#personality-result-copy .result-english{transform:scaleY(1.08);transform-origin:center center;color:var(--result-explanation-color)!important}
-#personality-result-copy .result-name{margin-top:-28px!important;margin-bottom:4px!important;color:var(--result-explanation-color)!important}
+#personality-result-copy .result-english{transform:scaleY(1.08);transform-origin:center center}
+#personality-result-copy .result-name{margin-top:-28px!important;margin-bottom:4px!important}
 #personality-result-copy h2{color:var(--result-explanation-color)!important}
-#personality-result-copy .result-keywords{margin-top:0!important}
+#personality-result-copy .result-keywords{margin-top:0!important;transform:translateY(-10px)}
 /* 適合職業標題縮小左右留白、縮短背景高度，文字放大8px並上移20px */
 #personality-result-copy .result-career-heading{font-size:90px!important;padding:2px 3px!important;line-height:1.1!important;box-sizing:border-box;transform:translateY(-20px)}
 #personality-result-copy p{letter-spacing:.4px}
