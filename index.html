@@ -9578,7 +9578,7 @@ if (window.currentSceneBGM !== scene.bgm) {
             let envelopeData=[...envelopeMaster];
             let round=1,errors=3,attempt=1,currentIndex=0,started=false,locked=false,drag=null,correctStreak=0,wrongFeedbackIndex=0;
             const mailGameTimers=new Set();
-            function scheduleMailTimer(callback,delay){const timer=window.scheduleMailTimer(()=>{mailGameTimers.delete(timer);callback();},delay);mailGameTimers.add(timer);return timer;}
+            function scheduleMailTimer(callback,delay){const timer=window.setTimeout(()=>{mailGameTimers.delete(timer);callback();},delay);mailGameTimers.add(timer);return timer;}
             function clearMailGameTimers(){mailGameTimers.forEach(timer=>window.clearTimeout(timer));mailGameTimers.clear();}
             // 小遊戲對話框每次換字，都讓當下顯示的爽快星重新播放一次動作。
             function setMailFeedback(message){
