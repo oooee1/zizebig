@@ -9962,6 +9962,54 @@ function alignResultRoleToTextArtwork(role,layers){
   if(textArtwork.complete)ready();
  }
 }
+function positionResultTextElements(layers,copy){
+ const findImage=name=>Array.from(layers.querySelectorAll("img")).find(img=>decodeURIComponent(img.src).includes(name));
+ const textPaper=findImage("背景 文字.webp");
+ const lowerNolan=findImage("背景 "+(copy.dataset.resultStar||"好奇星")+" 下面那張諾蘭紙.webp")||layers.querySelector("img");
+ const longStrip=findImage("背景 長條紙.webp");
+ const apply=()=>{
+  if(!textPaper||!textPaper.naturalWidth||!copy.clientWidth)return;
+  const scale=copy.clientWidth/textPaper.naturalWidth;
+  const textBounds=getResultImageAlphaBounds(textPaper);
+  if(textBounds){
+   const career=copy.querySelector(".result-secondary");
+   if(career){
+    career.style.position="absolute";
+    career.style.left="0";
+    career.style.width="100%";
+    career.style.top=((textBounds.y+textBounds.height)*scale+8)+"px";
+   }
+  }
+  if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
+   const b=getResultImageAlphaBounds(lowerNolan);
+   const button=copy.querySelector(".result-continue");
+   if(b&&button){
+    button.style.position="absolute";
+    button.style.left="0";
+    button.style.width="100%";
+    button.style.top=((b.y+b.height*.52)*scale)+"px";
+    button.style.transform="translateY(-50%)";
+    button.style.margin="0";
+   }
+  }
+  if(longStrip&&longStrip.complete&&longStrip.naturalWidth){
+   const b=getResultImageAlphaBounds(longStrip);
+   const note=copy.querySelector(".result-disclaimer");
+   if(b&&note){
+    note.style.position="absolute";
+    note.style.left="0";
+    note.style.width="100%";
+    note.style.top=((b.y+b.height)*scale)+"px";
+    note.style.transform="translateY(-100%)";
+    note.style.margin="0";
+   }
+  }
+ };
+ const images=[textPaper,lowerNolan,longStrip].filter(Boolean);
+ images.forEach(img=>{if(!img.complete)img.addEventListener("load",apply,{once:true});});
+ if(images.every(img=>img.complete))apply();
+ window.addEventListener("resize",apply,{passive:true});
+}
 function openPersonalityResult(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
@@ -10009,12 +10057,13 @@ function openPersonalityResult(first,second){
   };
   const careerIntro=second==="好奇星"?"結合()第二高分的星球還是好奇星（？！）":"結合()第二高分的星球是"+second;
   const jobCategories=String(jobs[second]||"").split("\n").map(line=>{const parts=line.split("：");const heading=parts.shift()||"";const description=parts.join("：");return '<div class="result-job-category"><div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
-  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<br>可能適合的職業類別是...</p>'+jobCategories+'<p>'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+replace(details[second])+'</p><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p></section>';
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<br>可能適合的職業類別是...</p>'+jobCategories+'<p>'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+replace(details[second])+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
  }else{
   html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2 class="result-career-heading">適合職業</h2><p>第二高分星球：'+second+'</p></section>';
  }
  html+='<p class="result-continue"><span class="result-continue-game">繼續<span class="result-player-name">遊</span>戲</span></p>';
  copy.innerHTML=html;
+ positionResultTextElements(layers,copy);
  const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.zIndex="10";layers.appendChild(role);alignResultRoleToTextArtwork(role,layers);
  screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
 }
@@ -12175,18 +12224,20 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-layout-corrections-20261107b">
-/* 從英文標題開始，所有結果內容整體下移 300px；左上歸屬標籤不動 */
+/* 結果頁一般文字自英文標題起再整體下移 200px（累計 500px）；特殊紙張定位由透明畫布座標控制 */
 #personality-result-copy{padding-top:clamp(150px,28%,260px)!important}
-#personality-result-copy > :not(.result-belongs-heading){position:relative!important;top:300px!important}
-/* 關鍵詞粗細與說明文字一致 */
-#personality-result-copy .result-keywords span{font-weight:700!important}
-/* 維持職業標題與繼續遊戲的大尺寸，並縮短標題底色上下留白 */
+#personality-result-copy > :not(.result-belongs-heading){position:relative!important;top:500px!important}
+#personality-result-copy .result-secondary{position:absolute!important;top:auto;left:0;width:100%;box-sizing:border-box}
+#personality-result-copy .result-continue{position:absolute!important;top:auto;left:0;width:100%;font-size:82px!important;margin:0!important}
+#personality-result-copy .result-disclaimer{position:absolute!important;top:auto;left:0;width:100%;margin:0!important}
+/* 英文標題與好奇星名稱靠近 */
+#personality-result-copy .result-name{margin-top:-8px!important;margin-bottom:4px!important}
+/* 職業標題背景上下收窄 */
 #personality-result-copy .result-career-heading{font-size:82px!important;padding-top:0!important;padding-bottom:0!important;line-height:1.2!important}
-#personality-result-copy .result-continue{font-size:82px!important}
 #personality-result-copy .result-continue-game{font-size:inherit!important}
-/* 職業分類改為置中的 Dela 圓角重點色標籤 */
+/* 職業分類：固定等寬方框、Dela 字體 35px、較小圓角 */
 #personality-result-copy .result-job-category{width:100%;margin:14px 0 20px;text-align:center}
-#personality-result-copy .result-job-category-title{display:table;margin:0 auto 8px;padding:5px 20px;border-radius:999px;background:var(--job-category-color);color:#fff;font-family:'Dela Gothic One',sans-serif;font-size:30px;font-weight:400;line-height:1.35;text-align:center}
+#personality-result-copy .result-job-category-title{display:block;box-sizing:border-box;width:min(9em,100%);margin:0 auto 8px;padding:12px 14px;border-radius:8px;background:var(--job-category-color);color:#fff;font-family:'Dela Gothic One',sans-serif;font-size:35px;font-weight:400;line-height:1.35;text-align:center}
 #personality-result-copy .result-job-category-description{margin:0 auto 12px;text-align:center}
 /* 驚嘆號再往「質」靠近 */
 #personality-result-copy .result-heading-mark{margin-left:-.5em!important}
