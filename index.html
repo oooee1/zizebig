@@ -9973,9 +9973,9 @@ function openPersonalityResult(first,second){
   });
   return out;
  };
- let html='<div class="result-english">'+d.english+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+first+'</h1><p class="result-tagline">'+replace(d.tagline)+'</p><div class="result-keywords">'+d.keys.map(k=>'<span>'+k+'</span>').join("")+'</div>';
+ let html='<div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'" style="--star-color:'+primaryColor+'">'+d.english+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'" style="--star-color:'+primaryColor+'">'+first+'</h1><p class="result-tagline">'+replace(d.tagline)+'</p><div class="result-keywords">'+d.keys.map(k=>'<span>'+k+'</span>').join("")+'</div>';
  if(first==="好奇星"){
-  html+='<section class="result-section result-primary"><h2>星格特質！</h2><p>'+emphasize(replace(d.traits),first,primaryColor)+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+emphasize(replace(d.work),first,primaryColor)+'</p></section>';
+  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+replace(d.traits)+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+replace(d.work)+'</p></section>';
   const jobs={
    "好奇星":"調查與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員。",
    "同情星":"資訊媒體傳播：記者、新聞編輯、節目企劃、採訪編輯、紀錄片導演。\n設計群：平面設計師、室內設計師、廣告設計師、UI設計師、插畫師。",
@@ -9994,7 +9994,7 @@ function openPersonalityResult(first,second){
    "爽快星":"喜歡四處探索，找出問題的答案。面對未知事物時，不會只停留在想像，而是主動採取行動。遇到突發狀況時，能靈活調整方向，不斷從嘗試中累積經驗，找到更合適的做法( ･｀ω･´)工作裡可選擇適合探索、應變與實際執行的領域，能將好奇轉化為新的想法，透過爽快果斷的行動，逐步實現自己的目標！好奇星讓他們不斷發現新的可能，爽快星則付諸行動。",
    "熱情星":"面對挑戰時勇於嘗試，能積極找到解決方法，不輕易受限於現況，帶領大家開拓新的方向。職業選擇上，經營管理、專案執行或規劃等領域，來發揮組織能力與領導潛力。好奇星的特質帶來創新的想法，熱情星則提供積極行動的動力，推動計畫，帶領團隊朝目標前進。團隊合作中，能運用熱情星的感染力帶動氣氛，透過實際行動逐步實現，朝共同的目標邁進(^^ゞ！"
   };
-  html+='<section class="result-section result-secondary"><h2>適合職業</h2><p>結合<span class="result-highlight" style="--highlight-color:'+secondaryColor+'">'+second+'</span>第二高分的星球是<span class="result-highlight" style="--highlight-color:'+secondaryColor+'">'+second+'</span>，可能適合的職業類別是...</p><p>'+emphasize(jobs[second],second,secondaryColor)+'</p><p>屬於<span class="result-highlight" style="--highlight-color:'+secondaryColor+'">'+second+'</span>的特質：</p><p>'+emphasize(traits[second],second,secondaryColor)+'</p><p>'+emphasize(replace(details[second]),second,secondaryColor)+'</p><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p></section>';
+  html+='<section class="result-section result-secondary"><h2>適合職業</h2><p>結合'+second+'第二高分的星球是'+second+'，可能適合的職業類別是...</p><p>'+jobs[second]+'</p><p>屬於'+second+'的特質：</p><p>'+traits[second]+'</p><p>'+replace(details[second])+'</p><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p></section>';
  }else{
   html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2>適合職業</h2><p>第二高分星球：'+second+'</p></section>';
  }
@@ -12013,12 +12013,14 @@ function toggleBGM(btnEl) {
 #personality-result-layers .personality-result-layer:first-child{position:relative;display:block;inset:auto;width:100%;height:auto;object-fit:contain;object-position:top left}
 #personality-result-copy{position:absolute;inset:0;z-index:12;box-sizing:border-box;padding:clamp(150px,28%,260px) 5px 24px;color:#17132b;font-family:'CPTrans',sans-serif;line-height:1.65;overflow:visible;}
 #personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:clamp(13px,3.6cqw,25px);letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157}
-#personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(30px,8cqw,64px);font-weight:400;line-height:1.2;text-align:center;color:#2369bd;margin:0 0 10px}
-#personality-result-copy .result-name.result-name-curiosity{font-size:90px}
+#personality-result-copy .result-english.result-english-curiosity{font-size:40px;color:var(--star-color)}
+#personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(30px,8cqw,64px);font-weight:400;line-height:1.2;text-align:center;color:var(--star-color);margin:0 0 10px}
+#personality-result-copy .result-name.result-name-curiosity{font-size:120px}
 #personality-result-copy .result-tagline{font-family:Arial,sans-serif;font-size:clamp(13px,3.4cqw,18px);font-weight:700;margin:10px auto 18px;text-align:center}
-#personality-result-copy .result-keywords{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px;margin:12px 0 22px;width:100%;text-align:left}
-#personality-result-copy .result-keywords span{font-family:Arial,sans-serif;font-weight:700;padding:5px 20px;background:#27243a;color:#fff;border-radius:4px;font-size:14px}
-#personality-result-copy h2{font-family:'Dela Gothic One',sans-serif;font-size:70px;font-weight:400;margin:30px 0 10px;color:#27243a}
+#personality-result-copy .result-keywords{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;margin:12px 0 22px;width:100%;text-align:left}
+#personality-result-copy .result-keywords span{display:block;width:fit-content;max-width:100%;box-sizing:border-box;white-space:normal;font-family:Arial,sans-serif;font-weight:700;padding:5px 24px;background:#27243a;color:#fff;border-radius:4px;font-size:14px}
+#personality-result-copy h2{font-family:'Dela Gothic One',sans-serif;font-size:50px;font-weight:400;margin:30px 0 10px;color:#27243a}
+#personality-result-copy .result-heading-mark{margin-left:-.22em}
 #personality-result-copy .result-player-name{color:#D7763D}
 #personality-result-copy .result-highlight{color:var(--highlight-color);font-weight:800}
 #personality-result-copy p{font-family:Arial,sans-serif;font-size:clamp(13px,3.2cqw,17px);font-weight:700;line-height:1.4;-webkit-text-stroke:.25px currentColor;margin:8px 0 14px;white-space:pre-line}
