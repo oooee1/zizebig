@@ -9903,6 +9903,52 @@ function openPersonalityResultFromScores(){
 }
 function jumpToPersonalityResult(star,event){if(event){event.preventDefault();event.stopPropagation();}const p=document.getElementById("developer-tools-panel");if(p)p.classList.remove("open");openPersonalityResult(star,star);}
 function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");}}
+function getResultImageAlphaBounds(img){
+ const canvas=document.createElement("canvas");
+ canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+ const ctx=canvas.getContext("2d",{willReadFrequently:true});
+ ctx.drawImage(img,0,0);
+ const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+ let minX=canvas.width,minY=canvas.height,maxX=-1,maxY=-1;
+ for(let y=0;y<canvas.height;y++){
+  for(let x=0;x<canvas.width;x++){
+   if(pixels[(y*canvas.width+x)*4+3]>8){
+    if(x<minX)minX=x;if(y<minY)minY=y;
+    if(x>maxX)maxX=x;if(y>maxY)maxY=y;
+   }
+  }
+ }
+ return maxX<0?null:{x:minX,y:minY,width:maxX-minX+1,height:maxY-minY+1};
+}
+function alignResultRoleToTextArtwork(role,layers){
+ const textArtwork=Array.from(layers.querySelectorAll("img")).find(img=>decodeURIComponent(img.src).includes("背景 文字.webp"));
+ if(!textArtwork)return;
+ const align=()=>{
+  if(!role.naturalWidth||!textArtwork.naturalWidth)return;
+  try{
+   const target=getResultImageAlphaBounds(textArtwork);
+   const subject=getResultImageAlphaBounds(role);
+   if(!target||!subject)return;
+   // 讓職業插圖的非透明部分置中對齊「背景 文字」的非透明區域，完整保留原圖比例。
+   const scale=Math.min(target.width/subject.width,target.height/subject.height);
+   const left=target.x+target.width/2-(subject.x+subject.width/2)*scale;
+   const top=target.y+target.height/2-(subject.y+subject.height/2)*scale;
+   role.style.left=(left/textArtwork.naturalWidth*100)+"%";
+   role.style.top=(top/textArtwork.naturalHeight*100)+"%";
+   role.style.width=(role.naturalWidth*scale/textArtwork.naturalWidth*100)+"%";
+   role.style.height=(role.naturalHeight*scale/textArtwork.naturalHeight*100)+"%";
+  }catch(error){console.warn("結果職業插圖定位失敗：",error);}
+ };
+ if(role.complete&&textArtwork.complete)align();
+ else{
+  let remaining=2;
+  const ready=()=>{if(--remaining===0)align();};
+  role.addEventListener("load",ready,{once:true});
+  textArtwork.addEventListener("load",ready,{once:true});
+  if(role.complete)ready();
+  if(textArtwork.complete)ready();
+ }
+}
 function openPersonalityResult(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
@@ -9942,7 +9988,7 @@ function openPersonalityResult(first,second){
  }
  html+='<p class="result-continue">點擊繼續觀看劇情</p>';
  copy.innerHTML=html;
- const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.zIndex="10";layers.appendChild(role);
+ const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.zIndex="10";layers.appendChild(role);alignResultRoleToTextArtwork(role,layers);
  screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
 }
 
