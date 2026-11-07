@@ -9976,8 +9976,8 @@ function positionResultTextElements(layers,copy){
    const career=copy.querySelector(".result-secondary");
    if(career){
     career.style.position="absolute";
-    career.style.left=(textBounds.x*scale)+"px";
-    career.style.width=(textBounds.width*scale)+"px";
+    career.style.setProperty("left",(textBounds.x*scale)+"px","important");
+    career.style.setProperty("width",(textBounds.width*scale)+"px","important");
     career.style.top=((textBounds.y+textBounds.height)*scale)+"px";
    }
   }
@@ -12262,8 +12262,8 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-secondary{box-sizing:border-box!important;padding-left:11px!important;padding-right:11px!important}
 #personality-result-copy .result-career-heading{
  box-sizing:border-box!important;
- width:100%!important;
- margin:10px 0 10px!important;
+ width:calc(100% + 22px)!important;
+ margin:10px 0 10px -11px!important;
  padding:4px 8px!important;
 }
 /* 結合介紹兩行往右移，與星格特質標題的左側距離一致 */
