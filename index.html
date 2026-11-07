@@ -9973,7 +9973,7 @@ function openPersonalityResult(first,second){
   });
   return out;
  };
- let html='<div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+d.english+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+first+'</h1><div class="result-keywords">'+d.keys.map(k=>'<span style="--highlight-color:'+primaryColor+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
+ let html='<div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+d.english+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+first+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(first==="好奇星"?'#7895FF':primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
   html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+replace(d.traits)+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+replace(d.work)+'</p></section>';
   const jobs={
@@ -12015,10 +12015,11 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:15px;letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157;line-height:1.5}
 #personality-result-copy .result-english.result-english-curiosity{font-size:15px;color:#1d3157}
 #personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(30px,8cqw,64px);font-weight:400;line-height:1.25;text-align:center;color:#344D78;margin:0 0 10px}
-#personality-result-copy .result-name.result-name-curiosity{font-size:120px;color:#1d3157}
+#personality-result-copy .result-name.result-name-curiosity{font-size:120px;color:#2369bd}
 #personality-result-copy .result-tagline{font-family:Arial,sans-serif;font-size:clamp(23px,4.2cqw,28px);font-weight:700;line-height:1.7;margin:10px auto 18px;text-align:left;color:#17132b}
 #personality-result-copy .result-keywords{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:12px;margin:12px 0 8px;width:100%;text-align:left}
 #personality-result-copy .result-keywords span{display:block;width:fit-content;max-width:100%;box-sizing:border-box;white-space:normal;font-family:Arial,sans-serif;font-weight:700;padding:7px 24px;background:var(--highlight-color);color:#17132b;border-radius:4px;font-size:clamp(23px,4.2cqw,28px);line-height:1.55}
+#personality-result-copy .result-keywords.result-keywords-curiosity span{background:#17132b;color:var(--highlight-color)}
 #personality-result-copy h2{font-family:'Dela Gothic One',sans-serif;font-size:50px;font-weight:400;line-height:1.5;margin:30px 0 10px;color:#27243a}
 #personality-result-copy .result-heading-mark{margin-left:-.42em}
 #personality-result-copy .result-player-name{color:#F07824}
