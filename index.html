@@ -9987,7 +9987,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=((b.y+b.height*.52)*scale)+"px";
+    button.style.top=((b.y+b.height*.52)*scale-10)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -9999,7 +9999,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((b.y+b.height)*scale)+"px";
+    note.style.top=((b.y+b.height)*scale-40)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -12225,21 +12225,25 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-layout-corrections-20261107b">
-/* 結果頁一般文字自英文標題起再整體下移 200px（累計 500px）；特殊紙張定位由透明畫布座標控制 */
-#personality-result-copy{padding-top:clamp(150px,28%,260px)!important}
-#personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){position:relative!important;top:500px!important}
+/* 結果頁主要文字整體上移100px；特殊紙張上的文字仍依透明畫布座標定位 */
+#personality-result-copy{--result-explanation-color:#5366B8;padding-top:clamp(150px,28%,260px)!important}
+#personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){position:relative!important;top:400px!important}
 #personality-result-copy .result-secondary{position:absolute!important;top:auto;left:0;width:100%;box-sizing:border-box}
 #personality-result-copy .result-continue{position:absolute!important;top:auto;left:0;width:100%;font-size:82px!important;margin:0!important}
 #personality-result-copy .result-disclaimer{position:absolute!important;top:auto;left:0;width:100%;margin:0!important}
-/* 英文標題與好奇星名稱靠近 */
-#personality-result-copy .result-name{margin-top:-8px!important;margin-bottom:4px!important}
-/* 職業標題背景上下收窄 */
-#personality-result-copy .result-career-heading{font-size:82px!important;padding-top:0!important;padding-bottom:0!important;line-height:1.2!important}
+/* 英文與好奇星名稱視覺間距縮至約5px，英文增加垂直高度 */
+#personality-result-copy .result-english{transform:scaleY(1.3);transform-origin:center center}
+#personality-result-copy .result-name{margin-top:-22px!important;margin-bottom:4px!important}
+/* 適合職業標題背景上下留白一致 */
+#personality-result-copy .result-career-heading{font-size:82px!important;padding:10px 8px!important;line-height:1.2!important;box-sizing:border-box}
+/* 說明文字字距增加0.4px */
+#personality-result-copy p{letter-spacing:.4px}
 #personality-result-copy .result-continue-game{font-size:inherit!important}
-/* 職業分類：固定等寬方框、Dela 字體 35px、較小圓角 */
+/* 職業分類標題放大5px，維持兩個分類框等寬 */
 #personality-result-copy .result-job-category{width:100%;margin:14px 0 20px;text-align:center}
-#personality-result-copy .result-job-category-title{display:block;box-sizing:border-box;width:min(9em,100%);margin:0 auto 8px;padding:12px 14px;border-radius:8px;background:var(--job-category-color);color:#fff;font-family:'Dela Gothic One',sans-serif;font-size:35px;font-weight:400;line-height:1.35;text-align:center}
-#personality-result-copy .result-job-category-description{margin:0 auto 12px;text-align:center}
-/* 驚嘆號再往「質」靠近 */
-#personality-result-copy .result-heading-mark{margin-left:-.5em!important}
+#personality-result-copy .result-job-category-title{display:block;box-sizing:border-box;width:min(9em,100%);margin:0 auto 8px;padding:12px 14px;border-radius:8px;background:var(--job-category-color);color:#fff;font-family:'Dela Gothic One',sans-serif;font-size:40px;font-weight:400;line-height:1.35;text-align:center}
+/* 關鍵字粗細比照說明文字 */
+#personality-result-copy .result-keywords span{font-weight:700!important}
+#personality-result-copy .result-job-category-description{margin:0 auto 12px;text-align:center;font-weight:700}
+#personality-result-copy .result-heading-mark{margin-left:-.4em!important}
 </style>
