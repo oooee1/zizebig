@@ -9968,10 +9968,8 @@ function openPersonalityResult(first,second){
   let out=String(value||"");
   const terms=[star,...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[])].filter(Boolean).sort((a,b)=>b.length-a.length);
   terms.forEach(term=>{
-   const safe=term.replace(/[.*+?^${}()|[\]\\]/g,"\\ const player=(window.playerName||"星辰").replace(/[<>]/g,"");
- const replace=s=>String(s||"").replaceAll("()",player);");
-   out=out.replace(new RegExp(safe,"g"),'<span class="result-highlight" style="--highlight-color:'+color+'"> const player=(window.playerName||"星辰").replace(/[<>]/g,"");
- const replace=s=>String(s||"").replaceAll("()",player);</span>');
+   const mark='<span class="result-highlight" style="--highlight-color:'+color+'">'+term+'</span>';
+   out=out.split(term).join(mark);
   });
   return out;
  };
