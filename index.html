@@ -9945,7 +9945,7 @@ function alignResultRoleToTextArtwork(role,layers){
    // 讓職業插圖的非透明部分置中對齊「背景 文字」的非透明區域，完整保留原圖比例。
    const scale=Math.min(target.width/subject.width,target.height/subject.height)*1.1;
    const left=target.x+target.width/2-(subject.x+subject.width/2)*scale;
-   const top=target.y+target.height/2-(subject.y+subject.height/2)*scale+10;
+   const top=target.y+target.height/2-(subject.y+subject.height/2)*scale+18;
    role.style.left=(left/textArtwork.naturalWidth*100)+"%";
    role.style.top=(top/textArtwork.naturalHeight*100)+"%";
    role.style.width=(role.naturalWidth*scale/textArtwork.naturalWidth*100)+"%";
@@ -9999,7 +9999,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((b.y+b.height)*scale-95)+"px";
+    note.style.top=((b.y+b.height)*scale-90)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -10035,11 +10035,11 @@ function openPersonalityResult(first,second){
   });
   return out;
  };
- let html='<p class="result-belongs-heading">'+replace("屬於()的性格")+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("TO",'<span class="result-focus-mark">TO</span>'):d.english)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+(first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first)+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(first==="好奇星"?'#7895FF':primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
+ let html='<p class="result-belongs-heading">'+replace("屬於()的星球是：")+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("TO",'<span class="result-focus-mark">TO</span>'):d.english)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+(first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first)+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
   html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+replace(d.traits)+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+replace(d.work)+'</p></section>';
   const jobs={
-   "好奇星":"調查與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員。",
+   "好奇星":"探索與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員。",
    "同情星":"資訊媒體傳播：記者、新聞編輯、節目企劃、採訪編輯、紀錄片導演。\n設計群：平面設計師、室內設計師、廣告設計師、UI設計師、插畫師。",
    "爽快星":"活動企劃與展演服務：創意行銷企劃、活動企劃師、展覽策劃人、舞台監督、婚禮企劃師。\n商業與銷售：業務員、門市銷售人員、廣告文案、市場分析師、數位行銷專員。",
    "熱情星":"觀光和事業：博物館導覽員、導遊、旅遊行銷人員、節慶活動企劃、活動企劃人員。\n行政與管理：營運企劃、資料分析師、專案助理、活動執行人員、總務人員。"
@@ -10056,9 +10056,9 @@ function openPersonalityResult(first,second){
    "爽快星":"喜歡四處探索，找出問題的答案。面對未知事物時，不會只停留在想像，而是主動採取行動。遇到突發狀況時，能靈活調整方向，不斷從嘗試中累積經驗，找到更合適的做法( ･｀ω･´)工作裡可選擇適合探索、應變與實際執行的領域，能將好奇轉化為新的想法，透過爽快果斷的行動，逐步實現自己的目標！好奇星讓他們不斷發現新的可能，爽快星則付諸行動。",
    "熱情星":"面對挑戰時勇於嘗試，能積極找到解決方法，不輕易受限於現況，帶領大家開拓新的方向。職業選擇上，經營管理、專案執行或規劃等領域，來發揮組織能力與領導潛力。好奇星的特質帶來創新的想法，熱情星則提供積極行動的動力，推動計畫，帶領團隊朝目標前進。團隊合作中，能運用熱情星的感染力帶動氣氛，透過實際行動逐步實現，朝共同的目標邁進(^^ゞ！"
   };
-  const careerIntro=second==="好奇星"?"結合()第二高分的星球還是好奇星（？！）":"結合()第二高分的星球是"+second;
+  const careerIntro=second==="好奇星"?"結合()第二高分的星球還是好奇星(?!)":"結合()第二高分的星球是"+second;
   const jobCategories=String(jobs[second]||"").split("\n").map(line=>{const parts=line.split("：");const heading=parts.shift()||"";const description=parts.join("：");return '<div class="result-job-category"><div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
-  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<br>可能適合的職業類別是...</p>'+jobCategories+'<p>'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+replace(details[second])+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<br>可能適合的職業類別是...</p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的性格")+'</p><p>'+replace(traits[second])+'</p><p>'+replace(details[second])+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
  }else{
   html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2 class="result-career-heading">適合職業</h2><p>第二高分星球：'+second+'</p></section>';
  }
@@ -12226,6 +12226,27 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-secondary .result-career-heading{margin-top:0!important}
 #personality-result-copy .result-job-category-title{padding-left:18px!important;padding-right:18px!important;font-family:"Noto Sans TC",sans-serif!important;font-weight:900!important}
 #personality-result-copy .result-focus-mark{color:#7895FF!important}
+</style>
+<style id="result-corrections-20261108b">
+/* 修正結果頁：左上文字維持原文；性格標籤樣式套用在職業區下方 */
+#personality-result-copy .result-belongs-heading{display:block!important;width:auto!important;max-width:none!important;padding:0!important;margin:0 0 12px!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--result-explanation-color)!important;text-align:left!important}
+#personality-result-copy .result-trait-heading{display:block!important;width:max-content!important;max-width:100%!important;box-sizing:border-box!important;padding:6px 12px!important;margin:8px 0 10px!important;border-radius:0!important;background:var(--result-explanation-color)!important;color:#fff!important}
+#personality-result-copy .result-trait-heading .result-player-name{color:#F07824!important}
+/* 職業區延伸至遊戲畫面左右邊緣；內文保留左右留白 */
+#personality-result-copy .result-secondary{left:-11px!important;width:calc(100% + 22px)!important;padding-left:18px!important;padding-right:18px!important}
+#personality-result-copy .result-career-heading{width:calc(100% + 36px)!important;margin:10px 0 10px -18px!important}
+/* 職業介紹與分類：分類文字保持原本 Dela 字體，並真正置中 */
+#personality-result-copy .result-career-intro{margin-top:7px!important;font-size:clamp(21px,calc(4.2cqw + 8px),25px)!important}
+#personality-result-copy .result-job-category-title{display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;font-family:"Dela Gothic One",sans-serif!important;font-weight:400!important;padding-left:8px!important;padding-right:8px!important}
+/* 好奇星的重點色使用原本星球黃色 */
+#personality-result-copy .result-focus-mark{color:#F6B800!important}
+#personality-result-copy .result-keywords.result-keywords-curiosity span{background:#F6B800!important;color:#fff!important}
+/* 創意／態度標籤：背景稍微加寬，字與說明文字各增加1.2px，上下間距略縮 */
+#personality-result-copy .result-keywords{gap:10px!important}
+#personality-result-copy .result-keywords span{padding-left:26px!important;padding-right:26px!important;font-size:calc(clamp(15px,calc(4.2cqw + 2px),19px) + 1.2px)!important}
+#personality-result-copy p{font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 1.2px)!important}
+/* 一般大標題縮小3px；不影響適合職業標題 */
+#personality-result-copy h2:not(.result-career-heading){font-size:49px!important}
 </style>
 </body>
 </html>
