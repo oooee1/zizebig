@@ -9961,7 +9961,7 @@ function openPersonalityResult(first,second){
  layers.innerHTML=imgs.map(x=>'<img class="personality-result-layer" style="z-index:'+x[1]+'" src="'+RESULT_ROOT+x[0]+'" alt="">').join("");
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replaceAll("()",'<span class="result-player-name">'+player+'</span>');
- const starColors={"好奇星":"#EAB744","同情星":"#9A6CBF","爽快星":"#9BBF3C","熱情星":"#B94C4B"};
+ const starColors={"好奇星":"#F6B800","同情星":"#A65CE0","爽快星":"#A8D900","熱情星":"#E34B50"};
  const primaryColor=starColors[first]||starColors["好奇星"];
  const secondaryColor=starColors[second]||primaryColor;
  const emphasize=(value,star,color)=>{
@@ -9973,7 +9973,7 @@ function openPersonalityResult(first,second){
   });
   return out;
  };
- let html='<div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'" style="--star-color:'+primaryColor+'">'+d.english+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'" style="--star-color:'+primaryColor+'">'+first+'</h1><p class="result-tagline">'+replace(d.tagline)+'</p><div class="result-keywords">'+d.keys.map(k=>'<span>'+k+'</span>').join("")+'</div>';
+ let html='<div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+d.english+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+first+'</h1><div class="result-keywords">'+d.keys.map(k=>'<span style="--highlight-color:'+primaryColor+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
   html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+replace(d.traits)+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+replace(d.work)+'</p></section>';
   const jobs={
@@ -12012,20 +12012,20 @@ function toggleBGM(btnEl) {
 .personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:top left;pointer-events:none;}
 #personality-result-layers .personality-result-layer:first-child{position:relative;display:block;inset:auto;width:100%;height:auto;object-fit:contain;object-position:top left}
 #personality-result-copy{position:absolute;inset:0;z-index:12;box-sizing:border-box;padding:clamp(150px,28%,260px) 5px 24px;color:#17132b;font-family:'CPTrans',sans-serif;line-height:1.65;overflow:visible;}
-#personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:clamp(13px,3.6cqw,25px);letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157}
-#personality-result-copy .result-english.result-english-curiosity{font-size:40px;color:var(--star-color)}
-#personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(30px,8cqw,64px);font-weight:400;line-height:1.2;text-align:center;color:var(--star-color);margin:0 0 10px}
-#personality-result-copy .result-name.result-name-curiosity{font-size:120px}
-#personality-result-copy .result-tagline{font-family:Arial,sans-serif;font-size:clamp(13px,3.4cqw,18px);font-weight:700;margin:10px auto 18px;text-align:center}
-#personality-result-copy .result-keywords{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;margin:12px 0 22px;width:100%;text-align:left}
-#personality-result-copy .result-keywords span{display:block;width:fit-content;max-width:100%;box-sizing:border-box;white-space:normal;font-family:Arial,sans-serif;font-weight:700;padding:5px 24px;background:#27243a;color:#fff;border-radius:4px;font-size:14px}
-#personality-result-copy h2{font-family:'Dela Gothic One',sans-serif;font-size:50px;font-weight:400;margin:30px 0 10px;color:#27243a}
-#personality-result-copy .result-heading-mark{margin-left:-.22em}
-#personality-result-copy .result-player-name{color:#D7763D}
+#personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:15px;letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#344D78;line-height:1.5}
+#personality-result-copy .result-english.result-english-curiosity{font-size:15px;color:#344D78}
+#personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(30px,8cqw,64px);font-weight:400;line-height:1.25;text-align:center;color:#344D78;margin:0 0 10px}
+#personality-result-copy .result-name.result-name-curiosity{font-size:120px;color:#344D78}
+#personality-result-copy .result-tagline{font-family:Arial,sans-serif;font-size:clamp(23px,4.2cqw,28px);font-weight:700;line-height:1.7;margin:10px auto 18px;text-align:left;color:#344D78}
+#personality-result-copy .result-keywords{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:12px;margin:12px 0 8px;width:100%;text-align:left}
+#personality-result-copy .result-keywords span{display:block;width:fit-content;max-width:100%;box-sizing:border-box;white-space:normal;font-family:Arial,sans-serif;font-weight:700;padding:7px 24px;background:var(--highlight-color);color:#344D78;border-radius:4px;font-size:clamp(23px,4.2cqw,28px);line-height:1.55}
+#personality-result-copy h2{font-family:'Dela Gothic One',sans-serif;font-size:50px;font-weight:400;line-height:1.5;margin:30px 0 10px;color:#344D78}
+#personality-result-copy .result-heading-mark{margin-left:-.42em}
+#personality-result-copy .result-player-name{color:#F07824}
 #personality-result-copy .result-highlight{color:var(--highlight-color);font-weight:800}
-#personality-result-copy p{font-family:Arial,sans-serif;font-size:clamp(13px,3.2cqw,17px);font-weight:700;line-height:1.4;-webkit-text-stroke:.25px currentColor;margin:8px 0 14px;white-space:pre-line}
+#personality-result-copy p{font-family:Arial,sans-serif;font-size:clamp(23px,4.2cqw,27px);font-weight:700;line-height:1.7;-webkit-text-stroke:.25px currentColor;margin:8px 0 14px;white-space:pre-line;color:#344D78}
 #personality-result-copy .result-section{padding:8px 0 16px;border-bottom:1px solid rgba(25,25,35,.2)}
-#personality-result-copy .result-disclaimer{font-family:Arial,sans-serif;font-weight:700;text-align:center;font-size:13px;margin-top:26px}
+#personality-result-copy .result-disclaimer{font-family:Arial,sans-serif;font-weight:700;text-align:center;font-size:23px;line-height:1.7;margin-top:26px;color:#344D78}
 #personality-result-copy .result-continue{text-align:center;margin:32px 0 0;font-family:'Dela Gothic One',sans-serif;font-size:20px}
 /* 測驗結果頁完全不顯示任何保存／下載圖片或控制項 */
 #personality-result-toolbar,
