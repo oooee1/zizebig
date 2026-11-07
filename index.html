@@ -12148,3 +12148,23 @@ function toggleBGM(btnEl) {
     opacity: .82;
 }
 </style>
+
+<style id="result-layout-and-restart-press-adjustments-20261107">
+/* 最終結果：玩家歸屬標籤移至左上角，其餘內容整體下移 40px */
+#personality-result-copy{padding-top:calc(clamp(150px,28%,260px) + 40px)!important}
+#personality-result-copy .result-belongs-heading{
+ position:absolute!important;top:12px!important;left:14px!important;
+ margin:0!important;text-align:left!important;
+}
+/* 大標題放大，並縮短大標與說明文字間距 */
+#personality-result-copy h2{font-size:52px!important;margin-bottom:0!important}
+#personality-result-copy .result-section h2 + p{margin-top:0!important}
+#personality-result-copy p{font-size:clamp(14px,calc(4.2cqw + 1px),18px)!important}
+#personality-result-copy .result-disclaimer{
+ font-size:clamp(15px,calc(4.2cqw + 2px),19px)!important
+}
+/* 小遊戲重整按鈕維持黑底白字，按下時仍有輕微下壓位移 */
+#mail-game-restart-button:active,#wire-game-restart-button:active{
+ transform:translate(-50%,2px)!important;box-shadow:none!important;
+}
+</style>
