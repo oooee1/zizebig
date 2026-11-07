@@ -9945,7 +9945,8 @@ function alignResultRoleToTextArtwork(role,layers){
    // 讓職業插圖的非透明部分置中對齊「背景 文字」的非透明區域，完整保留原圖比例。
    const scale=Math.min(target.width/subject.width,target.height/subject.height)*1.1;
    const left=target.x+target.width/2-(subject.x+subject.width/2)*scale;
-   const top=target.y+target.height/2-(subject.y+subject.height/2)*scale+18;
+   const displayScale=layers.clientWidth/textArtwork.naturalWidth;
+   const top=target.y+target.height/2-(subject.y+subject.height/2)*scale+18+(8/displayScale);
    role.style.left=(left/textArtwork.naturalWidth*100)+"%";
    role.style.top=(top/textArtwork.naturalHeight*100)+"%";
    role.style.width=(role.naturalWidth*scale/textArtwork.naturalWidth*100)+"%";
@@ -9975,8 +9976,8 @@ function positionResultTextElements(layers,copy){
    const career=copy.querySelector(".result-secondary");
    if(career){
     career.style.position="absolute";
-    career.style.left="0";
-    career.style.width="100%";
+    career.style.left=(textBounds.x*scale)+"px";
+    career.style.width=(textBounds.width*scale)+"px";
     career.style.top=((textBounds.y+textBounds.height)*scale)+"px";
    }
   }
@@ -9999,7 +10000,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((b.y+b.height)*scale-90)+"px";
+    note.style.top=((b.y+b.height)*scale-80)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -10057,8 +10058,8 @@ function openPersonalityResult(first,second){
    "熱情星":"面對挑戰時勇於嘗試，能積極找到解決方法，不輕易受限於現況，帶領大家開拓新的方向。職業選擇上，經營管理、專案執行或規劃等領域，來發揮組織能力與領導潛力。好奇星的特質帶來創新的想法，熱情星則提供積極行動的動力，推動計畫，帶領團隊朝目標前進。團隊合作中，能運用熱情星的感染力帶動氣氛，透過實際行動逐步實現，朝共同的目標邁進(^^ゞ！"
   };
   const careerIntro=second==="好奇星"?"結合()第二高分的星球還是好奇星(?!)":"結合()第二高分的星球是"+second;
-  const jobCategories=String(jobs[second]||"").split("\n").map(line=>{const parts=line.split("：");const heading=parts.shift()||"";const description=parts.join("：");return '<div class="result-job-category"><div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
-  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<br>可能適合的職業類別是...</p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的性格")+'</p><p>'+replace(traits[second])+'</p><p>'+replace(details[second])+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
+  const jobCategories=String(jobs[second]||"").split("\n").map(line=>{const parts=line.split("：");const heading=parts.shift()||"";const description="(如:上面寫的職業。)";return '<div class="result-job-category"><div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<br>可能適合的職業類別是...</p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的性格：")+'</p><p>'+replace(traits[second])+'</p><p>'+replace(details[second])+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
  }else{
   html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2 class="result-career-heading">適合職業</h2><p>第二高分星球：'+second+'</p></section>';
  }
@@ -12247,6 +12248,26 @@ function toggleBGM(btnEl) {
 #personality-result-copy p{font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 1.2px)!important}
 /* 一般大標題縮小3px；不影響適合職業標題 */
 #personality-result-copy h2:not(.result-career-heading){font-size:49px!important}
+</style>
+<style id="result-final-layout-fix-20261108c">
+/* 創意／態度：顏色與說明文字一致，恢復原本項目間距，背景上下收窄 */
+#personality-result-copy .result-keywords{gap:12px!important}
+#personality-result-copy .result-keywords span{
+ background:var(--result-explanation-color)!important;
+ color:#fff!important;
+ padding-top:4px!important;
+ padding-bottom:4px!important;
+}
+/* 職業標題背景精準對齊「背景 文字」圖片的透明內容範圍 */
+#personality-result-copy .result-secondary{box-sizing:border-box!important;padding-left:11px!important;padding-right:11px!important}
+#personality-result-copy .result-career-heading{
+ box-sizing:border-box!important;
+ width:100%!important;
+ margin:10px 0 10px!important;
+ padding:4px 8px!important;
+}
+/* 結合介紹兩行往右移，與星格特質標題的左側距離一致 */
+#personality-result-copy .result-career-intro{position:relative!important;left:8px!important}
 </style>
 </body>
 </html>
