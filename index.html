@@ -9987,7 +9987,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=((b.y+b.height*.52)*scale-80)+"px";
+    button.style.top=((b.y+b.height*.52)*scale-76)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -9999,7 +9999,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((b.y+b.height)*scale-110)+"px";
+    note.style.top=((b.y+b.height)*scale-103)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -12197,6 +12197,12 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-career-heading{font-size:82px!important;color:#fff!important;background:var(--result-explanation-color)!important;padding:4px 8px!important;line-height:1.35!important}
 /* 兩個職業分類背景共用較長標題寬度，並明顯增加上下高度；白字維持不變 */
 #personality-result-copy .result-job-category-title{width:var(--result-job-title-width,max-content)!important;max-width:100%;box-sizing:border-box;padding:22px 8px!important;line-height:1.15!important;color:#fff!important;white-space:nowrap}
+</style>
+
+<style id="result-horizontal-spacing-20261107">
+/* 結果頁左右與螢幕邊緣的間距統一為7px */
+#personality-result-copy{padding-left:7px!important;padding-right:7px!important}
+#personality-result-copy .result-career-heading{width:calc(100% + 14px)!important;margin-left:-7px!important}
 </style>
 </body>
 </html>
