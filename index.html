@@ -8237,6 +8237,29 @@ function activateImages(container) { if (!container) return; container.querySele
             return [...new Set(paths.filter(Boolean))];
         }
 
+        // 測驗結果頁會用到的所有底圖與角色插圖，統一加入啟動預載。
+        // 四種主星球的專屬紙張／裝飾圖都先載入，避免結果頁切換時才逐張出現。
+        function getPersonalityResultAssetPaths() {
+            const stars = ["好奇星", "同情星", "爽快星", "熱情星"];
+            const paths = [
+                "./最終結果/背景 下面的倒V紙.webp",
+                "./最終結果/背景 長條紙.webp",
+                "./最終結果/背景 文字.webp",
+                "./最終結果/！？.webp",
+                "./最終結果/星辰考古學家（好奇星、熱情星）.webp",
+                "./最終結果/星辰寵物醫師（同情星、爽快星）.webp"
+            ];
+            stars.forEach(star => {
+                paths.push(
+                    "./最終結果/背景 " + star + " 下面那張諾蘭紙.webp",
+                    "./最終結果/背景 " + star + " 上面那張諾蘭紙.webp",
+                    "./最終結果/背景 " + star + "上面.webp",
+                    "./最終結果/" + star + " 破洞紙.webp"
+                );
+            });
+            return paths;
+        }
+
         function getSceneAssetPaths(stepIndex) {
             const scene = storyScript[stepIndex];
             if (!scene) return [];
@@ -10559,7 +10582,8 @@ function openPersonalityResult(first,second){
             }).then(() => {
                 // 開場只載入第一幕需要的素材；題目 UI 會在進入題目時再載入，避免開頭等待所有題目圖片。
                 const initialAssets = [
-                    ...getSceneAssetPaths(0)
+                    ...getSceneAssetPaths(0),
+                    ...getPersonalityResultAssetPaths()
                 ];
 
                 const loadingScreen = document.getElementById('loading-screen');
@@ -11931,11 +11955,11 @@ function toggleBGM(btnEl) {
 #personality-result-layers .personality-result-layer:first-child{position:relative;display:block;inset:auto;width:100%;height:auto;object-fit:contain;object-position:top left}
 #personality-result-copy{position:absolute;inset:0;z-index:12;box-sizing:border-box;padding:clamp(150px,28%,260px) 7% 24px;color:#17132b;font-family:'CPTrans',sans-serif;line-height:1.65;overflow:visible;}
 #personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:clamp(13px,3.6cqw,25px);letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157}
-#personality-result-copy .result-name{font-family:'Dela Gothic One',sans-serif;font-size:clamp(30px,8cqw,64px);line-height:1.2;text-align:center;color:#2369bd;margin:0 0 10px}
-#personality-result-copy .result-tagline{text-align:center;font-size:clamp(13px,3.4cqw,18px);font-weight:bold;margin:10px auto 18px}
+#personality-result-copy .result-name{font-family:'CPTrans',sans-serif;font-size:clamp(30px,8cqw,64px);font-weight:400;line-height:1.2;text-align:center;color:#2369bd;margin:0 0 10px}
+#personality-result-copy .result-tagline{text-align:center;font-size:clamp(13px,3.4cqw,18px);font-weight:400;margin:10px auto 18px}
 #personality-result-copy .result-keywords{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0 22px}
 #personality-result-copy .result-keywords span{padding:5px 12px;background:#27243a;color:#fff;border-radius:4px;font-size:14px}
-#personality-result-copy h2{font-family:'Dela Gothic One',sans-serif;font-size:clamp(19px,5cqw,32px);margin:30px 0 10px;color:#27243a}
+#personality-result-copy h2{font-family:'CPTrans',sans-serif;font-size:clamp(19px,5cqw,32px);font-weight:400;margin:30px 0 10px;color:#27243a}
 #personality-result-copy p{font-size:clamp(13px,3.2cqw,17px);margin:8px 0 14px;white-space:pre-line}
 #personality-result-copy .result-section{padding:8px 0 16px;border-bottom:1px solid rgba(25,25,35,.2)}
 #personality-result-copy .result-disclaimer{text-align:center;font-size:13px;margin-top:26px}
