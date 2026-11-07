@@ -11918,6 +11918,9 @@ function toggleBGM(btnEl) {
 /* 結果頁捲動範圍由底圖的實際尺寸決定，不由文字高度決定 */
 #personality-result-screen{display:none;position:absolute;inset:0;z-index:2147483000;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:transparent;pointer-events:auto}
 #personality-result-screen.show{display:block}
+/* 隱藏結果頁右側捲動條，但保留滑鼠滾輪、觸控板與觸控捲動 */
+#personality-result-screen{scrollbar-width:none;-ms-overflow-style:none}
+#personality-result-screen::-webkit-scrollbar{display:none;width:0;height:0}
 #personality-result-toolbar{position:absolute;top:8px;right:8px;z-index:30;display:flex;justify-content:flex-end;pointer-events:none}
 #personality-result-toolbar button{pointer-events:auto;border:2px solid #111;border-radius:10px;padding:7px 16px;background:#fff;color:#111;font:16px 'CPTrans',sans-serif}
 /* 第一張全畫布圖片保留原比例並決定整張頁面的高度；其餘透明圖層沿用同一畫布座標 */
