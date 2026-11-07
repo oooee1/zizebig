@@ -12174,14 +12174,15 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-layout-corrections-20261107b">
-/* 以英文標題為起點，整個結果內容下移 120px */
-#personality-result-copy{padding-top:calc(clamp(150px,28%,260px) + 120px)!important}
-/* 關鍵詞「創意…態度」加粗 */
-#personality-result-copy .result-keywords span{font-weight:800!important}
-/* 修正前次通用文字尺寸覆蓋到大型標題的問題 */
+/* 保留原始上方留白，直接將英文標題起的所有結果內容往下移 120px */
+#personality-result-copy{padding-top:clamp(150px,28%,260px)!important}
+#personality-result-copy > :not(.result-belongs-heading){position:relative!important;top:120px!important}
+/* 關鍵詞粗細與說明文字一致 */
+#personality-result-copy .result-keywords span{font-weight:700!important}
+/* 維持職業標題與繼續遊戲的大尺寸 */
 #personality-result-copy .result-career-heading{font-size:82px!important}
 #personality-result-copy .result-continue{font-size:82px!important}
 #personality-result-copy .result-continue-game{font-size:inherit!important}
-/* 驚嘆號再靠近「質」 */
-#personality-result-copy .result-heading-mark{margin-left:-.22em!important}
+/* 驚嘆號再貼近「質」 */
+#personality-result-copy .result-heading-mark{margin-left:-.35em!important}
 </style>
