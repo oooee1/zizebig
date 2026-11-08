@@ -10473,7 +10473,8 @@ function openPersonalityResult(first,second){
   const preloadStates=await Promise.all(resultImageQueue.map(async item=>{
    try{
     if(!item.img.src)item.img.src=item.src;
-    if(!item.img.complete||!item.img.naturalWidth){
+    if(item.img.complete&&!item.img.naturalWidth)throw new Error("結果圖片載入失敗："+item.src);
+    if(!item.img.complete){
      await new Promise((resolve,reject)=>{
       item.img.addEventListener("load",resolve,{once:true});
       item.img.addEventListener("error",()=>reject(new Error("結果圖片載入失敗："+item.src)),{once:true});
