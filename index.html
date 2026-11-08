@@ -10466,14 +10466,39 @@ function openPersonalityResult(first,second){
  role.dataset.resultRole="true";
  layers.appendChild(role);
  resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
- // 不要在圖片載入前先顯示結果；每張圖片載入／解碼完成後才進入定位流程。
+ // 先同時載入／解碼所有結果素材，再以兩個工作佇列處理圖片。
+ // 避免「前一張下載完才開始下載下一張」的長時間串行等待；同時限制 Canvas
+ // 轉檔併發數，避免 iPhone／iPad Safari 一次建立太多大型畫布而耗盡記憶體。
  (async()=>{
-  for(const item of resultImageQueue){
+  const preloadStates=await Promise.all(resultImageQueue.map(async item=>{
    try{
-    await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);
+    if(!item.img.src)item.img.src=item.src;
+    if(!item.img.complete||!item.img.naturalWidth){
+     await new Promise((resolve,reject)=>{
+      item.img.addEventListener("load",resolve,{once:true});
+      item.img.addEventListener("error",()=>reject(new Error("結果圖片載入失敗："+item.src)),{once:true});
+     });
+    }
     if(item.img.decode)await item.img.decode().catch(()=>{});
-   }catch(error){console.warn("[結果頁] 圖片處理失敗：",item.src,error);}
-  }
+    return true;
+   }catch(error){
+    console.warn("[結果頁] 圖片預載失敗：",item.src,error);
+    return false;
+   }
+  }));
+  let nextImageIndex=0;
+  const worker=async()=>{
+   while(nextImageIndex<resultImageQueue.length){
+    const index=nextImageIndex++;
+    const item=resultImageQueue[index];
+    if(!preloadStates[index])continue;
+    try{
+     await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);
+     if(item.img.decode)await item.img.decode().catch(()=>{});
+    }catch(error){console.warn("[結果頁] 圖片處理失敗：",item.src,error);}
+   }
+  };
+  await Promise.all(Array.from({length:Math.min(2,resultImageQueue.length)},()=>worker()));
   if(document.fonts&&document.fonts.ready){
    try{await document.fonts.ready;}catch(error){}
   }
