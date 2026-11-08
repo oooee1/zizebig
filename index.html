@@ -10404,7 +10404,7 @@ function openPersonalityResult(first,second){
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace("結合()第二高分的星球是"+second)+'</p></section>';
  }
  }
- html+='<p class="result-continue"><span class="result-continue-game">繼續<span class="result-player-name">遊</span>戲</span></p>';
+ html+='<p class="result-continue"><span class="result-continue-game"><span class="result-continue-char">繼</span><span class="result-continue-char">續</span><span class="result-continue-char result-player-name">遊</span><span class="result-continue-char">戲</span></span></p>';
  copy.innerHTML=html;
  // 手機結果頁：逐一讀取每個實際文字元素原本的計算字級，再統一減少 1.5px。
  // 先一次記錄原始字級再套用，避免巢狀元素重複扣除；不改圖片、定位或區塊尺寸。
@@ -10420,6 +10420,23 @@ function openPersonalityResult(first,second){
   const continueText=copy.querySelector(".result-continue-game");
   if(continueText){const size=parseFloat(getComputedStyle(continueText).fontSize);if(Number.isFinite(size))continueText.style.setProperty("font-size",Math.max(1,size-10)+"px","important");}
  }
+ // 職業介紹「結合……是……」整體縮小3px；說明文字在目前計算字級上增加1px。
+ const careerIntro=copy.querySelector(".result-career-intro");
+ if(careerIntro){const size=parseFloat(getComputedStyle(careerIntro).fontSize);if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size-3)+"px","important");}
+ const explanationTexts=Array.from(copy.querySelectorAll(".result-primary > p, .result-secondary > p:not(.result-career-heading):not(.result-career-intro), .result-job-category-description"));
+ explanationTexts.forEach(el=>{const size=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(size))el.style.setProperty("font-size",(size+1)+"px","important");});
+ // 「繼、續、遊、戲」逐字使用同一字體、字級、行高與基線；只保留「遊」的橘色。
+ copy.querySelectorAll(".result-continue-char").forEach(el=>{
+  el.style.setProperty("display","inline-block","important");
+  el.style.setProperty("font-family","inherit","important");
+  el.style.setProperty("font-size","1em","important");
+  el.style.setProperty("font-weight","inherit","important");
+  el.style.setProperty("line-height","1em","important");
+  el.style.setProperty("vertical-align","baseline","important");
+  el.style.setProperty("position","static","important");
+  el.style.setProperty("transform","none","important");
+  el.style.setProperty("translate","none","important");
+ });
  // 「屬於…的特質」標籤直接複製下一段說明文字的實際粗度與描邊，確保視覺一致。
  const traitHeading=copy.querySelector(".result-trait-heading");
  const traitDescription=traitHeading&&traitHeading.nextElementSibling;
@@ -12908,6 +12925,25 @@ function toggleBGM(btnEl) {
  filter:none!important;
 }
 /* 手機職業插圖再上移3px。 */
+</style>
+
+
+<style id="result-mobile-trait-and-typography-unify-20261109">
+/* 手機「屬於（）的特質」標籤完全沿用電腦版：字體、字級、底色與內距一致。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy .result-trait-heading-label{
+  all:initial!important;display:inline-block!important;box-sizing:border-box!important;
+  max-width:100%!important;padding:5px 6px!important;margin:0!important;
+  border:0!important;border-radius:0!important;
+  background:var(--result-explanation-color)!important;color:#fff!important;
+  font-family:"Noto Sans TC",sans-serif!important;font-size:20px!important;
+  font-weight:700!important;line-height:1.5!important;letter-spacing:0!important;
+  white-space:normal!important;-webkit-text-stroke:0!important;text-shadow:none!important;
+ }
+ #personality-result-screen #personality-result-copy .result-trait-heading-label .result-player-name{
+  color:#F07824!important;font:inherit!important;
+ }
+}
 </style>
 
 </html>
