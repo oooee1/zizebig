@@ -10066,8 +10066,8 @@ function positionResultTextElements(layers,copy){
  if(window._resultPositionResize)window.removeEventListener("resize",window._resultPositionResize);
  window._resultPositionResize=apply;window.addEventListener("resize",apply,{passive:true});
 }
-function compactResultPosterToVisibleBottom(layers){
- // 保留每張已裁透明圖層目前的實際像素位置與尺寸，只縮短承載畫布底部多餘的透明高度。
+function compactResultPosterToVisibleBottom(layers,copy){
+ // 以圖片與實際文字內容的最底端決定海報高度，不讓透明畫布或溢出的空白形成額外捲動區。
  const rect=layers.getBoundingClientRect();
  if(!rect.width||!rect.height)return;
  const images=Array.from(layers.querySelectorAll("img.personality-result-layer"));
@@ -10076,8 +10076,14 @@ function compactResultPosterToVisibleBottom(layers){
   return {img,left:r.left-rect.left,top:r.top-rect.top,width:r.width,height:r.height,bottom:r.bottom-rect.top};
  }).filter(item=>item.width>0&&item.height>0);
  if(!geometry.length)return;
- const visibleBottom=Math.max(...geometry.map(item=>item.bottom));
- if(!Number.isFinite(visibleBottom)||visibleBottom<=0||visibleBottom>=rect.height-2)return;
+ let visibleBottom=Math.max(...geometry.map(item=>item.bottom));
+ if(copy){
+  Array.from(copy.children).forEach(el=>{
+   const r=el.getBoundingClientRect();
+   if(r.width>0&&r.height>0)visibleBottom=Math.max(visibleBottom,r.bottom-rect.top);
+  });
+ }
+ if(!Number.isFinite(visibleBottom)||visibleBottom<=0)return;
  geometry.forEach(item=>{
   const img=item.img;
   img.style.setProperty("position","absolute","important");
@@ -10090,7 +10096,11 @@ function compactResultPosterToVisibleBottom(layers){
  layers.style.setProperty("aspect-ratio","auto","important");
  layers.style.setProperty("height",visibleBottom+"px","important");
  const poster=layers.closest("#personality-result-poster");
- if(poster)poster.style.setProperty("height",visibleBottom+"px","important");
+ if(poster){
+  poster.style.setProperty("height",visibleBottom+"px","important");
+  poster.style.setProperty("overflow","hidden","important");
+ }
+ if(copy)copy.style.setProperty("height",visibleBottom+"px","important");
 }
 async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false){
  // 先逐張縮小，再裁掉透明邊；裁切後用原畫布百分比還原位置，視覺座標不變。
@@ -10101,6 +10111,8 @@ async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false)
   img.onerror=()=>reject(new Error("結果圖片載入失敗："+src));
   img.src=src;
  });
+ // 好奇星角色與職業插圖保留原始圖片直接載入，避免 Canvas 轉檔造成圖片消失。
+ if(img.classList.contains("result-curiosity-decoration")||img.dataset.resultRole==="true")return;
  const originalWidth=img.naturalWidth,originalHeight=img.naturalHeight;
  const scale=Math.min(1,maxWidth/originalWidth,5000/originalHeight);
  const canvas=document.createElement("canvas");
@@ -10150,6 +10162,21 @@ function openPersonalityResult(first,second){
  // 結果頁開啟時攔截點擊與觸控，避免事件穿透到下方劇情頁而推進對話。
  if(screen&&!screen.dataset.inputGuard){
   ["click","pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>event.stopPropagation(),{capture:true,passive:type==="touchstart"}));
+  // iOS Safari 仍可能在捲動邊界橡皮筋回彈；只在頂端／底端攔截越界手勢。
+  let lastTouchY=0;
+  screen.addEventListener("touchstart",event=>{if(event.touches&&event.touches.length)lastTouchY=event.touches[0].clientY;},{passive:true});
+  screen.addEventListener("touchmove",event=>{
+   if(!event.touches||!event.touches.length)return;
+   const y=event.touches[0].clientY,delta=y-lastTouchY;
+   const atTop=screen.scrollTop<=0;
+   const atBottom=screen.scrollTop+screen.clientHeight>=screen.scrollHeight-1;
+   if((atTop&&delta>0)||(atBottom&&delta<0))event.preventDefault();
+   lastTouchY=y;
+  },{passive:false});
+  screen.addEventListener("wheel",event=>{
+   const atTop=screen.scrollTop<=0,atBottom=screen.scrollTop+screen.clientHeight>=screen.scrollHeight-1;
+   if((atTop&&event.deltaY<0)||(atBottom&&event.deltaY>0))event.preventDefault();
+  },{passive:false});
   screen.dataset.inputGuard="1";
  }
  const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8]];
@@ -10172,7 +10199,7 @@ function openPersonalityResult(first,second){
   curiosityDecoration.alt="";
   curiosityDecoration.dataset.resultSrc="./pct/1好奇星.webp";
   // 插圖緊接在「好奇星 破洞紙」上方一層，保留其下方紙張、上方！？圖層的順序。
-  curiosityDecoration.style.zIndex="7.5";
+  curiosityDecoration.style.zIndex="9.5";
   // 改用固定比例直接放在整張結果海報頂端，不再依賴破洞紙量測、Canvas 或圖片載入後的定位回呼。
   // 海報為 9:16；方形插圖置中放大，直接進入破洞紙上方的透明開口。
   curiosityDecoration.style.position="absolute";
@@ -10296,7 +10323,8 @@ function openPersonalityResult(first,second){
  role.className="personality-result-layer";
  const roleSrc=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");
  role.dataset.resultSrc=roleSrc;
- role.style.zIndex="10";
+ role.style.zIndex="11";
+ role.dataset.resultRole="true";
  layers.appendChild(role);
  resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
  screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
@@ -10308,7 +10336,7 @@ function openPersonalityResult(first,second){
   }
   positionResultTextElements(layers,copy);
   alignResultRoleToTextArtwork(role,layers);
-  compactResultPosterToVisibleBottom(layers);
+  compactResultPosterToVisibleBottom(layers,copy);
  })();
 }
 
@@ -12342,7 +12370,7 @@ function toggleBGM(btnEl) {
 @font-face{font-family:"Sigmar One";src:url("./font/SigmarOne-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;}
 @font-face{font-family:"Noto Sans TC";src:url("./font/NotoSansTC-VariableFont_wght.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap;}
 /* 結果頁捲動範圍由底圖的實際尺寸決定，不由文字高度決定 */
-#personality-result-screen{display:none;position:absolute;inset:0;z-index:2147483000;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:transparent;pointer-events:auto}
+#personality-result-screen{display:none;position:absolute;inset:0;z-index:2147483000;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none;background:transparent;pointer-events:auto}
 #personality-result-screen.show{display:block}
 /* 隱藏結果頁右側捲動條，但保留滑鼠滾輪、觸控板與觸控捲動 */
 #personality-result-screen{scrollbar-width:none;-ms-overflow-style:none}
@@ -12355,7 +12383,7 @@ function toggleBGM(btnEl) {
 #personality-result-layers{position:relative;inset:auto;display:block;width:100%;height:auto;min-height:0;z-index:0;pointer-events:none;overflow:visible}
 .personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:top left;pointer-events:none;}
 #personality-result-layers .personality-result-layer:first-child{position:relative;display:block;inset:auto;width:100%;height:auto;object-fit:contain;object-position:top left}
-#personality-result-copy{--result-explanation-color:#38354A;font-family:'Noto Sans TC',sans-serif;position:absolute;inset:0;z-index:12;box-sizing:border-box;padding:clamp(150px,28%,260px) 11px 24px;color:var(--result-explanation-color);font-family:'CPTrans',sans-serif;line-height:1.65;overflow:visible;}
+#personality-result-copy{--result-explanation-color:#38354A;font-family:'Noto Sans TC',sans-serif;position:absolute;inset:0;z-index:12;box-sizing:border-box;padding:clamp(150px,28%,260px) 11px 24px;color:var(--result-explanation-color);font-family:'CPTrans',sans-serif;line-height:1.65;overflow:hidden;}
 #personality-result-copy .result-belongs-heading{font-family:'Noto Sans TC',sans-serif;font-size:clamp(16px,4.2cqw,20px);font-weight:700;line-height:1.6;text-align:center;margin:0 0 12px;color:var(--result-explanation-color)}
 #personality-result-copy .result-english{font-family:'Sigmar One',sans-serif;font-size:18px;letter-spacing:.06em;text-align:center;text-transform:uppercase;color:#1d3157;line-height:1.5}
 #personality-result-copy .result-english.result-english-curiosity{font-size:18px;color:#1d3157}
@@ -12498,6 +12526,17 @@ function toggleBGM(btnEl) {
 }
 /* 結合介紹兩行往右移，與星格特質標題的左側距離一致 */
 #personality-result-copy .result-career-intro{position:relative!important;left:8px!important}
+</style>
+<style id="result-mobile-position-and-scroll-guard-20261108">
+/* 手機版：適合職業以前的主標、英文、名稱與說明文字整體上移15px；保留既有手機字級縮小設定。 */
+@media (max-width:768px){
+ #personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  top:424px!important;
+ }
+}
+/* 結果頁只阻止頂端／底端的橡皮筋回彈，不影響正常上下閱讀。 */
+#personality-result-screen{overscroll-behavior-y:none!important;touch-action:pan-y}
+#personality-result-poster{overflow:hidden!important}
 </style>
 </body>
 </html>
