@@ -12738,28 +12738,24 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-curiosity-pop-and-bounce-20261108">
-/* 入場先由破洞位置彈出，完成後才切換成獨立、較有彈性的常駐跳動。 */
+/* 入場：從紙洞後方快速彈出一次；常駐：規律、柔順的上下跳躍，不持續扭轉或縮放。 */
 .result-star-decoration-curiosity.result-curiosity-enter{
- animation:resultCuriosityPop .72s cubic-bezier(.12,1.35,.28,1) both!important;
- transform-origin:center 78%!important;
+ animation:resultCuriosityPop .62s cubic-bezier(.2,.8,.25,1) both!important;
+ transform-origin:center bottom!important;
 }
 @keyframes resultCuriosityPop{
- 0%{transform:translateY(30px) scale(.02) rotate(-9deg);opacity:0}
- 32%{transform:translateY(-19px) scale(1.22) rotate(11deg);opacity:1}
- 52%{transform:translateY(7px) scale(.88) rotate(5deg);opacity:1}
- 70%{transform:translateY(-7px) scale(1.08) rotate(10deg);opacity:1}
- 84%{transform:translateY(2px) scale(.97) rotate(7deg);opacity:1}
- 100%{transform:translateY(0) scale(1) rotate(8deg);opacity:1}
+ 0%{transform:translateY(26px) scale(.12);opacity:0}
+ 58%{transform:translateY(-13px) scale(1.06);opacity:1}
+ 78%{transform:translateY(3px) scale(.98);opacity:1}
+ 100%{transform:translateY(0) scale(1);opacity:1}
 }
 .result-star-decoration-curiosity.result-curiosity-idle{
- animation:resultCuriosityIdleBounce .9s cubic-bezier(.33,1.4,.55,1) infinite!important;
+ animation:resultCuriosityIdleBounce 1.15s ease-in-out infinite!important;
+ transform-origin:center bottom!important;
 }
 @keyframes resultCuriosityIdleBounce{
- 0%,100%{transform:translateY(0) rotate(8deg) scale(1)}
- 22%{transform:translateY(-15px) rotate(3deg) scale(1.035)}
- 43%{transform:translateY(1px) rotate(11deg) scale(.97)}
- 65%{transform:translateY(-9px) rotate(12deg) scale(1.02)}
- 82%{transform:translateY(0) rotate(6deg) scale(.99)}
+ 0%,100%{transform:translateY(0)}
+ 50%{transform:translateY(-12px)}
 }
 </style>
 <style id="result-layout-final-corrections-20261108">
@@ -12816,9 +12812,12 @@ function toggleBGM(btnEl) {
  #personality-result-copy .result-primary > p,
  #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
  #personality-result-copy .result-job-category-description{
-  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 12px)!important;
+  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 15px)!important;
  }
- #personality-result-copy .result-english{position:relative!important;top:4px!important}
+ #personality-result-copy .result-english{position:relative!important;top:2px!important}
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 12px!important;
+ }
 }
 /* 職業介紹整句直接向左5px，不再依賴 left 與舊版定位互相覆蓋。 */
 #personality-result-copy .result-career-intro{
