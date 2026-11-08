@@ -10843,10 +10843,10 @@ function openPersonalityResult(first,second){
                 showFontLoadError(error);
             }).then(() => {
                 // 開場只載入第一幕需要的素材；題目 UI 會在進入題目時再載入，避免開頭等待所有題目圖片。
-                const initialAssets = [
-                    ...getSceneAssetPaths(0),
-                    ...getPersonalityResultAssetPaths()
-                ];
+                // 啟動時只載入第一幕真正需要的素材。
+                // 最終結果頁的多張大圖延後到玩家開啟結果頁時才載入，
+                // 避免 iPhone/iPad Safari 在啟動瞬間同時下載、解碼大量圖片而被系統終止。
+                const initialAssets = getSceneAssetPaths(0);
 
                 const loadingScreen = document.getElementById('loading-screen');
                 const loadingMessage = loadingScreen &&
