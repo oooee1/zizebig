@@ -10021,7 +10021,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.transform="rotate(4deg)";
   decoration.style.transformOrigin="center center";
   decoration.style.filter=star==="好奇星"?"drop-shadow(0 0 7px #fff) drop-shadow(0 0 16px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,.9))":"drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
-  decoration.style.setProperty("z-index","9","important");
+  decoration.style.setProperty("z-index","6","important");
  };
  if(decoration.complete&&paper.complete)align();
  else{
@@ -10293,7 +10293,7 @@ function openPersonalityResult(first,second){
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
   starDecoration.dataset.resultSrc=starImageSrc;
-  starDecoration.style.setProperty("z-index","9","important");
+  starDecoration.style.setProperty("z-index","6","important");
   starDecoration.style.setProperty("display","block","important");
   starDecoration.style.setProperty("visibility","visible","important");
   starDecoration.style.setProperty("opacity","1","important");
