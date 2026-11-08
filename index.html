@@ -10069,19 +10069,6 @@ function openPersonalityResult(first,second){
  }
  const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8]];
  layers.innerHTML=imgs.map(x=>'<img class="personality-result-layer" style="z-index:'+x[1]+'" src="'+RESULT_ROOT+x[0]+'" alt="">').join("");
- if(first==="好奇星"){
-  const curiosityDecoration=document.createElement("img");
-  curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
-  curiosityDecoration.src="./pct/1好奇星.webp";
-  curiosityDecoration.alt="";
-  curiosityDecoration.style.zIndex="9";
-  curiosityDecoration.style.position="absolute";
-  curiosityDecoration.style.inset="0";
-  curiosityDecoration.style.width="100%";
-  curiosityDecoration.style.height="100%";
-  curiosityDecoration.style.objectFit="contain";
-  layers.insertBefore(curiosityDecoration,layers.children[7]||null);
- }
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replace(/\(\)/g,'<span class="result-player-name">'+player+'</span>');
  const belongsHeadingHtml=[..."屬於"].map((ch,index)=>'<span class="result-belongs-char result-belongs-char-'+index+'">'+ch+'</span>').join("")
@@ -12729,15 +12716,19 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-user-adjustments-20261108g">
-/* 標題改為30px、正常字重，黑色描邊加粗至6px */
+/* 標題改為28px、正常字重；一般文字黑色描邊加粗至16px */
 #personality-result-copy .result-belongs-heading{
- font-size:30px!important;font-weight:400!important;
- -webkit-text-stroke:6px #111!important;paint-order:stroke fill!important;
+ font-size:28px!important;font-weight:400!important;
+ -webkit-text-stroke:16px #111!important;paint-order:stroke fill!important;
 }
-#personality-result-copy .result-belongs-char,
-#personality-result-copy .result-belongs-player-char{
- font-weight:400!important;-webkit-text-stroke:6px #111!important;
+#personality-result-copy .result-belongs-char{
+ font-weight:400!important;-webkit-text-stroke:16px #111!important;
  paint-order:stroke fill!important;
+}
+/* 玩家名稱維持原本橘色，只有描邊改成白色 */
+#personality-result-copy .result-belongs-player-char{
+ color:#F07824!important;font-weight:400!important;
+ -webkit-text-stroke:16px #fff!important;paint-order:stroke fill!important;
 }
 /* 職業介紹整體上移5px，並增加與下方職業內容的距離13px */
 #personality-result-copy .result-career-intro{
@@ -12748,4 +12739,19 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-career-intro-star{
  color:var(--result-career-star-color)!important;
 }
+</style>
+
+<style id="curiosity-character-glow-20261108">
+/* 1好奇星是遊戲角色的邊緣泛光：放在立繪後方，縮小10%、順時針微轉 */
+#page1 .角色圖.全好奇星{position:relative}
+#page1 .角色圖.全好奇星::before{
+ content:""!important;display:block!important;position:absolute!important;
+ left:0!important;top:0!important;width:135%!important;height:100%!important;
+ background-image:url("./pct/1好奇星.webp")!important;
+ background-repeat:no-repeat!important;background-position:center!important;
+ background-size:contain!important;pointer-events:none!important;
+ transform:scale(.9) rotate(2deg)!important;transform-origin:center center!important;
+ z-index:0!important;
+}
+#page1 .角色圖.全好奇星 img{position:relative!important;z-index:1!important}
 </style>
