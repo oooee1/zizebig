@@ -13326,3 +13326,42 @@ function toggleBGM(btnEl) {
 #personality-result-layers .personality-result-layer:first-child{position:absolute!important;display:block!important;inset:auto!important;}
 </style>
 
+
+<style id="result-desktop-final-adjustments-20261108j">
+/* 電腦版：適合職業以前的文字在目前位置上再下移10px。 */
+@media (min-width:769px){
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 22px!important;
+ }
+ /* 英文標題在目前位置上往上3px。 */
+ #personality-result-copy .result-english{
+  top:-1px!important;
+ }
+ /* 電腦版好奇星中文名稱放大10px；手機版維持原設定。 */
+ #personality-result-copy .result-name.result-name-curiosity{
+  font-size:140px!important;
+ }
+}
+/* 電腦版「屬於（）的特質：」灰線清除：同時排除文字裝飾、邊框、背景圖與偽元素產生的線。 */
+#personality-result-copy .result-trait-heading,
+#personality-result-copy .result-trait-heading *,
+#personality-result-copy .result-trait-heading::before,
+#personality-result-copy .result-trait-heading::after,
+#personality-result-copy .result-trait-heading *::before,
+#personality-result-copy .result-trait-heading *::after{
+ text-decoration:none!important;
+ text-decoration-line:none!important;
+ text-decoration-color:transparent!important;
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ background-image:none!important;
+}
+#personality-result-copy .result-trait-heading::before,
+#personality-result-copy .result-trait-heading::after,
+#personality-result-copy .result-trait-heading *::before,
+#personality-result-copy .result-trait-heading *::after{
+ content:none!important;
+ display:none!important;
+}
+</style>
