@@ -10074,7 +10074,7 @@ function openPersonalityResult(first,second){
   curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
   curiosityDecoration.src="./pct/1好奇星.webp";
   curiosityDecoration.alt="";
-  curiosityDecoration.style.zIndex="7.5";
+  curiosityDecoration.style.zIndex="11";
   curiosityDecoration.style.position="absolute";
   curiosityDecoration.style.inset="0";
   curiosityDecoration.style.width="100%";
@@ -12762,18 +12762,23 @@ function toggleBGM(btnEl) {
 
 
 <style id="result-belongs-outline-cleanup-20261108">
-/* 最上方標題改用爽快星送信小遊戲成功的多層圓潤 drop-shadow；描邊比原本 16px 收細，且不覆蓋字面 */
+/* 標題使用圓潤外圍陰影，粗度約為上一版 1.5 倍；文字本身不使用 text-stroke */
 #personality-result-copy .result-belongs-heading{
  -webkit-text-stroke:0!important;
  paint-order:normal!important;
  text-shadow:none!important;
 }
-#personality-result-copy .result-belongs-char,
-#personality-result-copy .result-belongs-player-char{
+#personality-result-copy .result-belongs-char{
  -webkit-text-stroke:0!important;
  paint-order:normal!important;
  text-shadow:none!important;
  filter:
+  drop-shadow(0 0 0.5px #111)
+  drop-shadow(0 0 0.5px #111)
+  drop-shadow(0 0 0.5px #111)
+  drop-shadow(0 0 0.5px #111)
+  drop-shadow(0 0 0.5px #111)
+  drop-shadow(0 0 0.5px #111)
   drop-shadow(0 0 0.5px #111)
   drop-shadow(0 0 0.5px #111)
   drop-shadow(0 0 0.5px #111)
@@ -12786,8 +12791,11 @@ function toggleBGM(btnEl) {
   drop-shadow(0 0 0.5px #111)
   drop-shadow(0 0 0.5px #111)!important;
 }
-/* 玩家名稱維持橘色，外圍仍使用白色；陰影只向外擴散，不蓋住字 */
 #personality-result-copy .result-belongs-player-char{
+ color:#F07824!important;
+ -webkit-text-stroke:0!important;
+ paint-order:normal!important;
+ text-shadow:none!important;
  filter:
   drop-shadow(0 0 0.5px #fff)
   drop-shadow(0 0 0.5px #fff)
@@ -12799,6 +12807,16 @@ function toggleBGM(btnEl) {
   drop-shadow(0 0 0.5px #fff)
   drop-shadow(0 0 0.5px #fff)
   drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
   drop-shadow(0 0 0.5px #fff)!important;
+}
+/* 同分時保留「還是好奇星」完整句意，星球名稱沿用第二高分重點色 */
+#personality-result-copy .result-career-intro-star{
+ color:var(--result-career-star-color)!important;
 }
 </style>
