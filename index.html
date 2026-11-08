@@ -13677,3 +13677,42 @@ function toggleBGM(btnEl) {
   }
 }
 </style>
+
+
+<style id="desktop-story-portrait-and-result-spacing-20261109">
+/* 電腦版劇情立繪微調：在既有位置上獨立調整，不影響手機版。 */
+@media (min-width:769px){
+  #page1 .角色圖.全好奇星{
+    translate:0 -14px!important;
+  }
+  #page1 .角色圖.全同情星{
+    translate:4px -10px!important;
+  }
+  #page1 .角色圖.全星辰{
+    translate:0 -4px!important;
+  }
+
+  /* 結果頁：適合職業以前的文字整體上移20px。 */
+  #personality-result-screen #personality-result-copy > .result-belongs-heading{
+    top:0!important;
+  }
+  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+    top:427px!important;
+  }
+
+  /* 「屬於…的特質」標籤向右5px（原本 left:4px）。 */
+  #personality-result-screen #personality-result-copy .result-trait-heading{
+    left:9px!important;
+  }
+
+  /*
+   * 灰線來源確認：基礎 .result-section 設有 border-bottom，
+   * 線可能來自前一個 result-primary，而不在 result-secondary 本身。
+   * 因此只取消電腦版結果頁各 section 的底線，不再只處理職業區。
+   */
+  #personality-result-screen #personality-result-copy .result-section{
+    border-bottom:0!important;
+    background-image:none!important;
+  }
+}
+</style>
