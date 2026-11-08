@@ -12921,3 +12921,22 @@ function toggleBGM(btnEl) {
 #personality-result-layers{aspect-ratio:3/25!important;}
 #personality-result-layers .personality-result-layer:first-child{position:absolute!important;display:block!important;inset:auto!important;}
 </style>
+<style id="mobile-result-text-size-adjustment-20261108">
+/* 僅手機最終結果頁：所有文字統一縮小 1.5px，圖片、位置、間距與桌面版不變 */
+@media (max-width: 768px){
+ #personality-result-copy .result-belongs-heading,
+ #personality-result-copy .result-english,
+ #personality-result-copy .result-name,
+ #personality-result-copy .result-tagline,
+ #personality-result-copy .result-keywords span,
+ #personality-result-copy h2,
+ #personality-result-copy p,
+ #personality-result-copy .result-continue,
+ #personality-result-copy .result-continue-game,
+ #personality-result-copy .result-career-heading,
+ #personality-result-copy .result-job-category-title,
+ #personality-result-copy .result-job-category-or{
+  font-size:calc(1em - 1.5px)!important;
+ }
+}
+</style>
