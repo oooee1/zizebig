@@ -10084,18 +10084,21 @@ function openPersonalityResult(first,second){
   curiosityDecoration.alt="";
   // 插圖緊接在「好奇星 破洞紙」上方一層，保留其下方紙張、上方！？圖層的順序。
   curiosityDecoration.style.zIndex="7.5";
+  // 改用固定比例直接放在整張結果海報頂端，不再依賴破洞紙量測、Canvas 或圖片載入後的定位回呼。
+  // 海報為 9:16；方形插圖置中放大，直接進入破洞紙上方的透明開口。
   curiosityDecoration.style.position="absolute";
-  curiosityDecoration.style.inset="0";
-  curiosityDecoration.style.width="100%";
-  curiosityDecoration.style.height="100%";
+  curiosityDecoration.style.inset="auto";
+  curiosityDecoration.style.left="10%";
+  curiosityDecoration.style.top="0.5%";
+  curiosityDecoration.style.width="80%";
+  curiosityDecoration.style.height="auto";
   curiosityDecoration.style.objectFit="contain";
-  // 在原本 90% 的基礎上再縮小 10%。
-  curiosityDecoration.style.transform="scale(.81) rotate(2deg)";
+  curiosityDecoration.style.transform="rotate(2deg)";
   curiosityDecoration.style.transformOrigin="center center";
-  // 黃金色柔和泛光，沿著插圖透明邊緣發光。
   curiosityDecoration.style.filter="drop-shadow(0 0 4px rgba(246,184,0,.95)) drop-shadow(0 0 8px rgba(246,184,0,.72)) drop-shadow(0 0 14px rgba(255,220,90,.48))";
+  curiosityDecoration.onload=()=>console.info("[結果頁] 好奇星插圖載入成功");
+  curiosityDecoration.onerror=()=>console.error("[結果頁] 好奇星插圖載入失敗：",curiosityDecoration.src);
   layers.insertBefore(curiosityDecoration,layers.children[7]||null);
-  alignCuriosityDecorationToHolePaper(curiosityDecoration,layers);
  }
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replace(/\(\)/g,'<span class="result-player-name">'+player+'</span>');
@@ -12699,8 +12702,10 @@ function toggleBGM(btnEl) {
 }
 /* 1好奇星插圖：高於好奇星破洞紙，位置由破洞紙透明範圍計算 */
 #personality-result-layers .result-curiosity-decoration{
- position:absolute!important;object-fit:contain!important;pointer-events:none!important;
- transform:scale(.81) rotate(2deg)!important;transform-origin:center center!important;
+ position:absolute!important;inset:auto!important;left:10%!important;top:.5%!important;
+ width:80%!important;height:auto!important;object-fit:contain!important;
+ transform:rotate(2deg)!important;transform-origin:center center!important;
+ pointer-events:none!important;z-index:7.5!important;
 }
 </style>
 
