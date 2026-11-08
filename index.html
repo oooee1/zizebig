@@ -10285,7 +10285,10 @@ function openPersonalityResult(first,second){
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
   starDecoration.dataset.resultSrc=starImageSrc;
-  starDecoration.style.setProperty("z-index","7","important");\n  starDecoration.style.setProperty("display","block","important");\n  starDecoration.style.setProperty("visibility","visible","important");\n  starDecoration.style.setProperty("opacity","1","important");
+  starDecoration.style.setProperty("z-index","7","important");
+  starDecoration.style.setProperty("display","block","important");
+  starDecoration.style.setProperty("visibility","visible","important");
+  starDecoration.style.setProperty("opacity","1","important");
   starDecoration.style.position="absolute";
   starDecoration.style.inset="auto";
   starDecoration.style.width="30%";
@@ -10386,7 +10389,12 @@ function openPersonalityResult(first,second){
  role.className="personality-result-layer";
  const roleSrc=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");
  role.dataset.resultSrc=roleSrc;
- role.style.setProperty("z-index","31","important");\n role.style.setProperty("display","block","important");\n role.style.setProperty("visibility","visible","important");\n role.style.setProperty("opacity","1","important");\n role.style.objectFit="contain";\n role.style.pointerEvents="none";
+ role.style.setProperty("z-index","11","important");
+ role.style.setProperty("display","block","important");
+ role.style.setProperty("visibility","visible","important");
+ role.style.setProperty("opacity","1","important");
+ role.style.objectFit="contain";
+ role.style.pointerEvents="none";
  role.dataset.resultRole="true";
  layers.appendChild(role);
  resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
