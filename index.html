@@ -9968,26 +9968,41 @@ function preloadResultAssets(){
  });
  urls.add(RESULT_ROOT+"星辰考古學家（好奇星、熱情星）.webp");
  urls.add(RESULT_ROOT+"星辰寵物醫師（同情星、爽快星）.webp");
- const list=[...urls].map(src=>({src}));
  const cache=window.__resultPreloadedImages=window.__resultPreloadedImages||new Map();
- let next=0;
- const worker=async()=>{
-  while(next<list.length){
-   const item=list[next++];
-   if(cache.has(item.src))continue;
-   const img=new Image();
-   img.decoding="async";
-   try{img.fetchPriority="low";}catch(e){}
-   cache.set(item.src,img);
-   await new Promise(resolve=>{
-    img.onload=()=>resolve();
-    img.onerror=()=>{cache.delete(item.src);console.warn("[結果頁預載] 圖片載入失敗：",item.src);resolve();};
-    img.src=item.src;
-    if(img.complete)resolve();
-   });
+ const processed=window.__resultPreprocessedAssets=window.__resultPreprocessedAssets||new Map();
+ const list=[...urls];
+ const loadOriginal=src=>new Promise(resolve=>{
+  if(cache.has(src)&&cache.get(src).complete&&cache.get(src).naturalWidth){resolve(cache.get(src));return;}
+  const img=new Image();img.decoding="async";
+  try{img.fetchPriority="low";}catch(e){}
+  cache.set(src,img);
+  img.onload=()=>resolve(img);
+  img.onerror=()=>{cache.delete(src);console.warn("[結果頁預載] 圖片載入失敗：",src);resolve(null);};
+  img.src=src;if(img.complete)resolve(img.naturalWidth?img:null);
+ });
+ const waitForBreathingRoom=()=>new Promise(resolve=>setTimeout(resolve,80));
+ window.__resultPreloadPromise=(async()=>{
+  // 先把原圖放進瀏覽器快取，再逐張縮到結果頁實際使用的尺寸。
+  // 角色立繪與職業圖保留原圖；其他結果紙張縮至寬 600px 並裁除透明邊。
+  for(const src of list){
+   const original=await loadOriginal(src);
+   if(!original)continue;
+   const isProcessable=src.startsWith(RESULT_ROOT)&&!src.includes("星辰考古學家")&&!src.includes("星辰寵物醫師");
+   if(isProcessable&&!processed.has(src)){
+    await waitForBreathingRoom();
+    const temp=new Image();temp.decoding="async";
+    try{
+     await downsampleResultImage(temp,src,600,true);
+     if(temp.src&&temp.src.startsWith("blob:")){
+      const urls=window.__resultImageObjectURLs||[];
+      const index=urls.indexOf(temp.src);if(index>=0)urls.splice(index,1);
+      processed.set(src,{url:temp.src,left:temp.style.left,top:temp.style.top,width:temp.style.width,height:temp.style.height});
+     }
+    }catch(error){console.warn("[結果頁預縮圖] 處理失敗，結果頁將即時處理：",src,error);}
+   }
   }
- };
- window.__resultPreloadPromise=Promise.all([worker(),worker()]).then(()=>console.info("[結果頁預載] 背景預載完成，共",cache.size,"張圖片"));
+  console.info("[結果頁預載] 完成；原圖",cache.size,"張，已預縮圖",processed.size,"張");
+ })();
  return window.__resultPreloadPromise;
 }
 function openPersonalityResultFromScores(){
@@ -10535,7 +10550,7 @@ function openPersonalityResult(first,second){
     }catch(error){console.warn("[結果頁] 圖片預載失敗：",item.src,error);return false;}
    }));
    let next=0;
-   const worker=async()=>{while(next<items.length){const index=next++;if(!states[index])continue;const item=items[index];try{await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);if(item.img.decode)await item.img.decode().catch(()=>{});}catch(error){console.warn("[結果頁] 圖片處理失敗：",item.src,error);}}};
+   const worker=async()=>{while(next<items.length){const index=next++;if(!states[index])continue;const item=items[index];try{const cached=window.__resultPreprocessedAssets&&window.__resultPreprocessedAssets.get(item.src);if(cached){item.img.style.setProperty("position","absolute","important");item.img.style.setProperty("inset","auto","important");item.img.style.setProperty("left",cached.left,"important");item.img.style.setProperty("top",cached.top,"important");item.img.style.setProperty("width",cached.width,"important");item.img.style.setProperty("height",cached.height,"important");item.img.src=cached.url;}else{await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);}if(item.img.decode)await item.img.decode().catch(()=>{});}catch(error){console.warn("[結果頁] 圖片處理失敗：",item.src,error);}}};
    await Promise.all(Array.from({length:Math.min(2,items.length)},()=>worker()));
   }
   function layoutResult(){
