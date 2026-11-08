@@ -13408,3 +13408,80 @@ function toggleBGM(btnEl) {
  box-shadow:none!important;text-shadow:none!important;background-image:none!important;
 }
 </style>
+
+<style id="result-desktop-position-and-trait-redesign-20261108l">
+@media (min-width:769px){
+ /* 不再用 translate；原本 top:439px 才是實際控制位置的屬性，直接增加20px。 */
+ #personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  top:459px!important;
+ }
+ /* 英文標題以自己的 top 定位，從上一版位置再往上9px。 */
+ #personality-result-copy .result-english{top:-19px!important}
+ /* 好奇星三字在目前140px基礎上再放大20px。 */
+ #personality-result-copy .result-name.result-name-curiosity{font-size:160px!important}
+ /* 說明文字在上一版基礎上再增加3px。 */
+ #personality-result-copy .result-primary > p,
+ #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
+ #personality-result-copy .result-job-category-description{
+  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 23px)!important;
+ }
+}
+/* 「屬於星辰的特質」重新設計：完全脫離舊段落樣式，以獨立標籤呈現。 */
+#personality-result-copy .result-trait-heading{
+ all:initial!important;
+ display:block!important;
+ position:relative!important;
+ box-sizing:border-box!important;
+ width:max-content!important;
+ max-width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ margin:12px 0 8px!important;
+ padding:0!important;
+ border:0!important;
+ outline:0!important;
+ background:none!important;
+ box-shadow:none!important;
+ text-decoration:none!important;
+ line-height:normal!important;
+}
+#personality-result-copy .result-trait-heading-label{
+ all:initial!important;
+ display:inline-block!important;
+ box-sizing:border-box!important;
+ max-width:100%!important;
+ padding:5px 10px!important;
+ margin:0!important;
+ border:0!important;
+ outline:0!important;
+ border-radius:0!important;
+ background:#45434d!important;
+ color:#fff!important;
+ box-shadow:none!important;
+ text-decoration:none!important;
+ text-decoration-line:none!important;
+ text-decoration-color:transparent!important;
+ font-family:"Noto Sans TC",sans-serif!important;
+ font-size:20px!important;
+ font-weight:700!important;
+ line-height:1.5!important;
+ letter-spacing:0!important;
+ white-space:normal!important;
+ -webkit-text-stroke:0!important;
+ text-shadow:none!important;
+}
+#personality-result-copy .result-trait-heading-label .result-player-name{
+ color:#F07824!important;
+ font:inherit!important;
+ -webkit-text-stroke:0!important;
+ text-decoration:none!important;
+}
+/* 不讓任何繼承的裝飾線或偽元素穿過新標籤。 */
+#personality-result-copy .result-trait-heading::before,
+#personality-result-copy .result-trait-heading::after,
+#personality-result-copy .result-trait-heading-label::before,
+#personality-result-copy .result-trait-heading-label::after{
+ content:none!important;
+ display:none!important;
+}
+</style>
