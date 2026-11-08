@@ -10003,7 +10003,8 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   const paperRect=paper.getBoundingClientRect();
   if(!posterRect.width||!paperRect.width)return;
   // 插圖置中放在破洞紙上方的破洞區域，不再把 top 算成負值推到海報外。
-  const imageWidth=paperRect.width*.30;
+  // 四顆星球插圖都以各自破洞紙為定位基準，放大 1.5 倍並略微順時針傾斜。
+  const imageWidth=paperRect.width*.45;
   const imageHeight=imageWidth*(decoration.naturalHeight/decoration.naturalWidth);
   const left=paperRect.left-posterRect.left+(paperRect.width-imageWidth)/2;
   const top=paperRect.top-posterRect.top+paperRect.height*.018;
@@ -10014,6 +10015,10 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.width=imageWidth+"px";
   decoration.style.height=imageHeight+"px";
   decoration.style.objectFit="contain";
+  decoration.style.transform="rotate(4deg)";
+  decoration.style.transformOrigin="center center";
+  decoration.style.filter="drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
+  decoration.style.zIndex="9";
  };
  if(decoration.complete&&paper.complete)align();
  else{
@@ -12703,6 +12708,20 @@ function toggleBGM(btnEl) {
  margin-left:2px!important;
 }
 </style>
+
+<style id="result-user-adjustments-20261108h">
+/* 電腦版說明文字放大 5px；不改動手機版字級與其他標題。 */
+@media (min-width:769px){
+ #personality-result-copy .result-primary > p,
+ #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
+ #personality-result-copy .result-job-category-description{
+  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 5px)!important;
+ }
+}
+/* 「結合……是……」職業介紹兩段一起往左 5px，不依螢幕寬度或文字距離改變。 */
+#personality-result-copy .result-career-intro{left:3px!important}
+</style>
+
 </body>
 </html>
 
