@@ -10067,6 +10067,21 @@ function openPersonalityResult(first,second){
   ["click","pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>event.stopPropagation(),{capture:true,passive:type==="touchstart"}));
   screen.dataset.inputGuard="1";
  }
+ if(first==="好奇星"){
+  const curiosityDecoration=document.createElement("img");
+  curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
+  curiosityDecoration.src="./pct/1好奇星.webp";
+  curiosityDecoration.alt="";
+  curiosityDecoration.style.zIndex="7.5";
+  curiosityDecoration.style.position="absolute";
+  curiosityDecoration.style.inset="0";
+  curiosityDecoration.style.width="100%";
+  curiosityDecoration.style.height="100%";
+  curiosityDecoration.style.objectFit="contain";
+  curiosityDecoration.style.transform="scale(.9) rotate(2deg)";
+  curiosityDecoration.style.transformOrigin="center center";
+  layers.insertBefore(curiosityDecoration,layers.children[7]||null);
+ }
  const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8]];
  layers.innerHTML=imgs.map(x=>'<img class="personality-result-layer" style="z-index:'+x[1]+'" src="'+RESULT_ROOT+x[0]+'" alt="">').join("");
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
@@ -12672,6 +12687,7 @@ function toggleBGM(btnEl) {
 /* 1好奇星插圖：高於好奇星破洞紙，位置由破洞紙透明範圍計算 */
 #personality-result-layers .result-curiosity-decoration{
  position:absolute!important;object-fit:contain!important;pointer-events:none!important;
+ transform:scale(.9) rotate(2deg)!important;transform-origin:center center!important;
 }
 </style>
 
@@ -12741,16 +12757,4 @@ function toggleBGM(btnEl) {
 }
 </style>
 
-<style id="curiosity-character-glow-20261108">
-/* 1好奇星是遊戲角色的邊緣泛光：放在立繪後方，縮小10%、順時針微轉 */
-#page1 .角色圖.全好奇星::before{
- content:""!important;display:block!important;position:absolute!important;
- left:0!important;top:0!important;width:135%!important;height:100%!important;
- background-image:url("./pct/1好奇星.webp")!important;
- background-repeat:no-repeat!important;background-position:center!important;
- background-size:contain!important;pointer-events:none!important;
- transform:scale(.9) rotate(2deg)!important;transform-origin:center center!important;
- z-index:0!important;
-}
-#page1 .角色圖.全好奇星 img{position:relative!important;z-index:1!important}
-</style>
+
