@@ -10010,7 +10010,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   const imageWidth=paperRect.width*(star==="好奇星"?.78:.45);
   const imageHeight=imageWidth*(decoration.naturalHeight/decoration.naturalWidth);
   const left=paperRect.left-posterRect.left+(paperRect.width-imageWidth)/2;
-  const top=paperRect.top-posterRect.top+paperRect.height*.018;
+  const top=paperRect.top-posterRect.top+paperRect.height*.018+(star==="好奇星"?3:0);
   decoration.style.position="absolute";
   decoration.style.inset="auto";
   decoration.style.left=left+"px";
@@ -10022,6 +10022,16 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.transformOrigin="center center";
   decoration.style.filter=star==="好奇星"?"drop-shadow(0 0 7px #fff) drop-shadow(0 0 16px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,.9))":"drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
   decoration.style.setProperty("z-index","9","important");
+  if(star==="好奇星"){
+   decoration.style.removeProperty("opacity");
+   if(!decoration.dataset.curiosityMotionBound){
+    decoration.dataset.curiosityMotionBound="true";
+    decoration.addEventListener("animationend",event=>{
+     if(event.animationName!=="resultCuriosityPop")return;
+     decoration.classList.add("result-curiosity-idle");
+    });
+   }
+  }
  };
  if(decoration.complete&&paper.complete)align();
  else{
@@ -10055,7 +10065,7 @@ function alignResultRoleToTextArtwork(role,layers){
    const scale=Math.min(targetWidth/subject.width,targetHeight/subject.height)*1.15;
    const left=targetLeft+targetWidth/2-(subject.x+subject.width/2)*scale;
    const displayScale=layers.clientWidth/textArtwork.naturalWidth;
-   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale)-(window.matchMedia&&window.matchMedia("(max-width:768px)").matches?5:0)-15;
+   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale)-(window.matchMedia&&window.matchMedia("(max-width:768px)").matches?5:0)-(window.matchMedia&&window.matchMedia("(max-width:768px)").matches?18:15);
    role.style.setProperty("position","absolute","important");
    role.style.setProperty("inset","auto","important");
    role.style.setProperty("left",left+"px","important");
@@ -12726,32 +12736,28 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-curiosity-pop-and-bounce-20261108">
-/* 好奇星先藏在破洞紙後方，再快速彈出放大；完成後接續較有彈性的持續跳動。 */
+/* 入場先由破洞位置彈出，完成後才切換成獨立、較有彈性的常駐跳動。 */
 .result-star-decoration-curiosity{
- animation:resultCuriosityPop .82s cubic-bezier(.16,1.15,.32,1) both,
-           resultCuriosityIdleBounce 1.05s cubic-bezier(.36,0,.62,1) .82s infinite!important;
- transform-origin:center bottom!important;
+ animation:resultCuriosityPop .72s cubic-bezier(.12,1.35,.28,1) both!important;
+ transform-origin:center 78%!important;
 }
 @keyframes resultCuriosityPop{
- 0%{transform:translateY(34px) scale(.04) rotate(-7deg);opacity:0}
- 48%{transform:translateY(-13px) scale(1.13) rotate(5deg);opacity:1}
- 68%{transform:translateY(5px) scale(.94) rotate(1deg);opacity:1}
- 84%{transform:translateY(-3px) scale(1.035) rotate(4deg);opacity:1}
- 100%{transform:translateY(0) scale(1) rotate(4deg);opacity:1}
+ 0%{transform:translateY(30px) scale(.02) rotate(-9deg);opacity:0}
+ 32%{transform:translateY(-19px) scale(1.22) rotate(11deg);opacity:1}
+ 52%{transform:translateY(7px) scale(.88) rotate(5deg);opacity:1}
+ 70%{transform:translateY(-7px) scale(1.08) rotate(10deg);opacity:1}
+ 84%{transform:translateY(2px) scale(.97) rotate(7deg);opacity:1}
+ 100%{transform:translateY(0) scale(1) rotate(8deg);opacity:1}
+}
+.result-star-decoration-curiosity.result-curiosity-idle{
+ animation:resultCuriosityIdleBounce .9s cubic-bezier(.33,1.4,.55,1) infinite!important;
 }
 @keyframes resultCuriosityIdleBounce{
- 0%,100%{transform:translateY(0) rotate(4deg)}
- 18%{transform:translateY(-13px) rotate(1deg)}
- 36%{transform:translateY(0) rotate(5deg)}
- 55%{transform:translateY(-8px) rotate(6deg)}
- 72%{transform:translateY(0) rotate(3deg)}
- 86%{transform:translateY(-4px) rotate(2deg)}
-}
-#personality-result-copy .result-career-intro-tie-group .result-career-intro-star{
- font-size:calc(1em + 5px)!important;
-}
-#personality-result-copy .result-continue-game .result-player-name{
- font-size:inherit!important;line-height:inherit!important;vertical-align:baseline!important;transform:none!important;
+ 0%,100%{transform:translateY(0) rotate(8deg) scale(1)}
+ 22%{transform:translateY(-15px) rotate(3deg) scale(1.035)}
+ 43%{transform:translateY(1px) rotate(11deg) scale(.97)}
+ 65%{transform:translateY(-9px) rotate(12deg) scale(1.02)}
+ 82%{transform:translateY(0) rotate(6deg) scale(.99)}
 }
 </style>
 <style id="result-layout-final-corrections-20261108">
@@ -12790,6 +12796,55 @@ function toggleBGM(btnEl) {
 }
 </style>
 </body>
+
+<style id="result-user-final-adjustments-20261108i">
+/* 手機：好奇星中文主標縮小10px，並讓中文名稱再靠近英文4px。 */
+@media (max-width:768px){
+ #personality-result-copy .result-name.result-name-curiosity{
+  font-size:110px!important;
+  margin-top:-32px!important;
+ }
+ /* 適合職業以前的所有文字再整體上移8px。 */
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 -34px!important;
+ }
+}
+/* 電腦：說明文字在目前基礎上再放大2px，英文往下4px。 */
+@media (min-width:769px){
+ #personality-result-copy .result-primary > p,
+ #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
+ #personality-result-copy .result-job-category-description{
+  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 12px)!important;
+ }
+ #personality-result-copy .result-english{position:relative!important;top:4px!important}
+}
+/* 職業介紹整句直接向左5px，不再依賴 left 與舊版定位互相覆蓋。 */
+#personality-result-copy .result-career-intro{
+ translate:-5px 0!important;
+}
+/* 星球名稱在所有裝置放大10px，包含同分版型。 */
+#personality-result-copy .result-career-intro-star,
+#personality-result-copy .result-career-intro-tie-group .result-career-intro-star{
+ font-size:calc(1em + 10px)!important;
+}
+/* 徹底清除「屬於（）的特質」標籤及內層文字可能繼承的灰線效果。 */
+#personality-result-copy .result-trait-heading,
+#personality-result-copy .result-trait-heading *,
+#personality-result-copy .result-trait-heading::before,
+#personality-result-copy .result-trait-heading::after{
+ text-decoration:none!important;
+ text-decoration-line:none!important;
+ text-decoration-color:transparent!important;
+ text-decoration-thickness:0!important;
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ text-shadow:none!important;
+ filter:none!important;
+}
+/* 手機職業插圖再上移3px。 */
+</style>
+
 </html>
 
 
