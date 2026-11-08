@@ -10353,9 +10353,17 @@ function openPersonalityResult(first,second){
   }
   // 等待瀏覽器完成圖片與字型造成的版面計算，再量測透明邊界。
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  positionResultTextElements(layers,copy);
-  alignResultRoleToTextArtwork(role,layers);
-  compactResultPosterToVisibleBottom(layers,copy);
+  try{
+   positionResultTextElements(layers,copy);
+   alignResultRoleToTextArtwork(role,layers);
+   compactResultPosterToVisibleBottom(layers,copy);
+  }catch(error){
+   console.warn("[結果頁] 定位計算失敗，保留原始圖片比例與版面：",error);
+   // 單一圖片的透明像素量測失敗時，不讓整個結果頁永久停留在隱藏狀態。
+   layers.style.removeProperty("height");
+   if(poster)poster.style.removeProperty("height");
+   copy.style.removeProperty("height");
+  }
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   screen.scrollTop=0;
   screen.classList.remove("result-loading");
