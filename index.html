@@ -8603,7 +8603,7 @@ if (!hasScoredOptions) {
     // 沒有對話、也沒有角色的純背景幕：等背景動畫（最長約 0.5 秒）結束後顯示提示。
     const hasCharacters = Array.isArray(scene.characters) && scene.characters.length > 0;
     const isBackgroundOnlyScene = !hasScoredOptions && !hasText && !hasCharacters;
-    if (isBackgroundOnlyScene && pageEl) {
+    if (isBackgroundOnlyScene && pageEl && Number(scene.id) !== 337.1) {
         window.emptySceneHintTimer = setTimeout(() => {
             if (currentStep === stepIndex) {
                 const hint = document.getElementById('empty-scene-next-hint');
@@ -10205,12 +10205,28 @@ async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false)
  let crop={x:0,y:0,width:canvas.width,height:canvas.height};
  if(trimTransparent){
   try{
-   const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
-   let minX=canvas.width,minY=canvas.height,maxX=-1,maxY=-1;
-   for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++){
-    if(pixels[(y*canvas.width+x)*4+3]>8){if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;}
+   // 只用最多 512px 的縮圖找透明邊界，不再逐像素掃描最高 5000px 的整張畫布。
+   // 定位本身也使用縮圖取樣，這個精度足以保留透明留白座標，能大幅減少 CPU 時間。
+   const sampleScale=Math.min(1,512/Math.max(canvas.width,canvas.height));
+   const sample=document.createElement("canvas");
+   sample.width=Math.max(1,Math.round(canvas.width*sampleScale));
+   sample.height=Math.max(1,Math.round(canvas.height*sampleScale));
+   const sampleCtx=sample.getContext("2d",{willReadFrequently:true});
+   if(sampleCtx){
+    sampleCtx.drawImage(canvas,0,0,sample.width,sample.height);
+    const pixels=sampleCtx.getImageData(0,0,sample.width,sample.height).data;
+    let minX=sample.width,minY=sample.height,maxX=-1,maxY=-1;
+    for(let y=0;y<sample.height;y++)for(let x=0;x<sample.width;x++){
+     if(pixels[(y*sample.width+x)*4+3]>8){if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;}
+    }
+    if(maxX>=minX&&maxY>=minY){
+     const sx=canvas.width/sample.width,sy=canvas.height/sample.height;
+     const x=Math.max(0,Math.floor(minX*sx)),y=Math.max(0,Math.floor(minY*sy));
+     const right=Math.min(canvas.width,Math.ceil((maxX+1)*sx)),bottom=Math.min(canvas.height,Math.ceil((maxY+1)*sy));
+     crop={x,y,width:Math.max(1,right-x),height:Math.max(1,bottom-y)};
+    }
    }
-   if(maxX>=minX&&maxY>=minY)crop={x:minX,y:minY,width:maxX-minX+1,height:maxY-minY+1};
+   sample.width=sample.height=0;
   }catch(error){console.warn("[結果頁] 透明範圍裁切略過：",src,error);}
  }
  const output=document.createElement("canvas");
@@ -10500,6 +10516,9 @@ function openPersonalityResult(first,second){
         }
 
         function nextStep() {
+            // 337.1 是「我的選擇」專用停留畫面；除了專用按鈕，不允許一般點擊推進。
+            const activeSceneForChoice = storyScript[currentStep];
+            if (activeSceneForChoice && Number(activeSceneForChoice.id) === 337.1) return;
             const wirePage = document.getElementById("page1");
             if (wirePage && (wirePage.classList.contains("wire-game-mode") || wirePage.classList.contains("mail-game-mode"))) return;
             // 目前場景還在載素材時，任何點擊都不能推進或跳過對話。
@@ -10601,6 +10620,16 @@ function openPersonalityResult(first,second){
             }
 
             // 背景、透明區、其他畫面元素一律不觸發任何操作。
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+        }, true);
+
+        // 337.1「我的選擇」是唯一可操作入口：捕獲階段就攔截畫面其他位置的點擊。
+        document.addEventListener("click", function (e) {
+            const scene = storyScript[currentStep];
+            if (!scene || Number(scene.id) !== 337.1) return;
+            if (e.target && e.target.closest && e.target.closest("#my-choice-result-button")) return;
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -12445,6 +12474,15 @@ function toggleBGM(btnEl) {
     outline: 3px solid #F6A23A;
     outline-offset: 5px;
 }
+@media (min-width: 769px) {
+    #my-choice-result-button {
+        bottom: 10%;
+        padding: 22px 52px 26px;
+        font-size: clamp(100px, 12vw, 150px);
+        line-height: 1.2;
+        letter-spacing: .025em;
+    }
+}
 @media (max-width: 600px) {
     #my-choice-result-button {
         bottom: 7%;
@@ -12507,6 +12545,17 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="desktop-story-portraits-up-10-20261108">
+/* 電腦版劇情立繪上移 10px；使用獨立 translate，不覆蓋同情星原有的 transform。 */
+@media (min-width: 769px) {
+    #page1 .角色圖.全同情星,
+    #page1 .角色圖.全好奇星,
+    #page1 .角色圖.全爽快星 {
+        translate: 0 -10px !important;
+    }
+}
+</style>
 <style id="personality-result-page-style">
 @font-face{font-family:"Sigmar One";src:url("./font/SigmarOne-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap;}
 @font-face{font-family:"Noto Sans TC";src:url("./font/NotoSansTC-VariableFont_wght.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap;}
