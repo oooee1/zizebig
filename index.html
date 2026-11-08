@@ -10542,7 +10542,16 @@ function openPersonalityResult(first,second){
   async function loadAndProcess(items){
    const states=await Promise.all(items.map(async item=>{
     try{
-     if(!item.img.src)item.img.src=item.src;
+     const cached=window.__resultPreprocessedAssets&&window.__resultPreprocessedAssets.get(item.src);
+     if(cached){
+      item.img.style.setProperty("position","absolute","important");
+      item.img.style.setProperty("inset","auto","important");
+      item.img.style.setProperty("left",cached.left,"important");
+      item.img.style.setProperty("top",cached.top,"important");
+      item.img.style.setProperty("width",cached.width,"important");
+      item.img.style.setProperty("height",cached.height,"important");
+      item.img.src=cached.url;
+     }else if(!item.img.src)item.img.src=item.src;
      if(item.img.complete&&!item.img.naturalWidth)throw new Error("結果圖片載入失敗："+item.src);
      if(!item.img.complete)await new Promise((resolve,reject)=>{item.img.addEventListener("load",resolve,{once:true});item.img.addEventListener("error",()=>reject(new Error("結果圖片載入失敗："+item.src)),{once:true});});
      if(item.img.decode)await item.img.decode().catch(()=>{});
