@@ -10075,8 +10075,12 @@ function openPersonalityResult(first,second){
   curiosityDecoration.src="./pct/1好奇星.webp";
   curiosityDecoration.alt="";
   curiosityDecoration.style.zIndex="7.5";
+  curiosityDecoration.style.position="absolute";
+  curiosityDecoration.style.inset="0";
+  curiosityDecoration.style.width="100%";
+  curiosityDecoration.style.height="100%";
+  curiosityDecoration.style.objectFit="contain";
   layers.insertBefore(curiosityDecoration,layers.children[7]||null);
-  alignCuriosityDecorationToHolePaper(curiosityDecoration,layers);
  }
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replace(/\(\)/g,'<span class="result-player-name">'+player+'</span>');
@@ -10119,8 +10123,8 @@ function openPersonalityResult(first,second){
    "爽快星":"喜歡四處探索，找出問題的答案。面對未知事物時，不會只停留在想像，而是主動採取行動。遇到突發狀況時，能靈活調整方向，不斷從嘗試中累積經驗，找到更合適的做法( ･｀ω･´)工作裡可選擇適合探索、應變與實際執行的領域，能將好奇轉化為新的想法，透過爽快果斷的行動，逐步實現自己的目標！好奇星讓他們不斷發現新的可能，爽快星則付諸行動。",
    "熱情星":"面對挑戰時勇於嘗試，能積極找到解決方法，不輕易受限於現況，帶領大家開拓新的方向。職業選擇上，經營管理、專案執行或規劃等領域，來發揮組織能力與領導潛力。好奇星的特質帶來創新的想法，熱情星則提供積極行動的動力，推動計畫，帶領團隊朝目標前進。團隊合作中，能運用熱情星的感染力帶動氣氛，透過實際行動逐步實現，朝共同的目標邁進(^^ゞ！"
   };
-  const careerIntro="結合()第二高分的星球是";
-  const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";const description="(如:"+parts.join("：")+")";return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
+  const careerIntro=first===second?"結合()的第二高分星球還是":"結合()的第二高分星球是";
+  const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";let description="(如:"+parts.join("：")+")";if(second==="好奇星"&&index===0)description=description.replace("資料分析師、","資料分析師、<br>");return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
   const curiosityCareerText=(value)=>replace(value).replace("知識！","知識！<br>").replace("方法。","方法。<br>").replace("優勢。","優勢。<br>");
   const curiosityCareerDetails=curiosityMark(curiosityCareerText(details[second]),["主動蒐集資訊、嘗試不同的方法","細節"]);
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span><span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
@@ -12709,5 +12713,17 @@ function toggleBGM(btnEl) {
 /* 好奇星插圖使用實際紙張位置與尺寸計算，不影響職業插圖定位 */
 #personality-result-layers .result-curiosity-decoration{
  position:absolute!important;object-fit:contain!important;pointer-events:none!important;
+}
+</style>
+
+<style id="result-user-adjustments-20261108f">
+/* 「屬於（）的星球是：」標題放大至40px */
+#personality-result-copy .result-belongs-heading{font-size:40px!important}
+/* 特質標籤與下方第一段文字靠近 */
+#personality-result-copy .result-trait-heading{margin-bottom:0!important}
+/* 職業介紹的兩句話彼此靠近；第二句與下方職業類別增加5px距離 */
+#personality-result-copy .result-career-intro{margin-bottom:19px!important}
+#personality-result-copy .result-career-intro-next{
+ display:block!important;margin-top:-4px!important;margin-bottom:0!important;
 }
 </style>
