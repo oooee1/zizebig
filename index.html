@@ -8603,7 +8603,8 @@ if (!hasScoredOptions) {
     // 沒有對話、也沒有角色的純背景幕：等背景動畫（最長約 0.5 秒）結束後顯示提示。
     const hasCharacters = Array.isArray(scene.characters) && scene.characters.length > 0;
     const isBackgroundOnlyScene = !hasScoredOptions && !hasText && !hasCharacters;
-    if (isBackgroundOnlyScene && pageEl && Number(scene.id) !== 337.1) {
+    const isMyChoicePage = myChoiceButton && myChoiceButton.style.display !== "none";
+    if (isBackgroundOnlyScene && pageEl && !isMyChoicePage) {
         window.emptySceneHintTimer = setTimeout(() => {
             if (currentStep === stepIndex) {
                 const hint = document.getElementById('empty-scene-next-hint');
@@ -10516,9 +10517,10 @@ function openPersonalityResult(first,second){
         }
 
         function nextStep() {
-            // 337.1 是「我的選擇」專用停留畫面；除了專用按鈕，不允許一般點擊推進。
-            const activeSceneForChoice = storyScript[currentStep];
-            if (activeSceneForChoice && Number(activeSceneForChoice.id) === 337.1) return;
+            // 只要目前畫面正在顯示「我的選擇」按鈕，就鎖住一般劇情推進。
+            // 以實際顯示的按鈕判斷，不把場景編號寫死在 nextStep 裡。
+            const myChoiceButton = document.getElementById("my-choice-result-button");
+            if (myChoiceButton && myChoiceButton.style.display !== "none") return;
             const wirePage = document.getElementById("page1");
             if (wirePage && (wirePage.classList.contains("wire-game-mode") || wirePage.classList.contains("mail-game-mode"))) return;
             // 目前場景還在載素材時，任何點擊都不能推進或跳過對話。
@@ -10625,10 +10627,10 @@ function openPersonalityResult(first,second){
             e.stopImmediatePropagation();
         }, true);
 
-        // 337.1「我的選擇」是唯一可操作入口：捕獲階段就攔截畫面其他位置的點擊。
+        // 畫面顯示「我的選擇」按鈕時，它就是唯一可操作入口；其他點擊全部攔截。
         document.addEventListener("click", function (e) {
-            const scene = storyScript[currentStep];
-            if (!scene || Number(scene.id) !== 337.1) return;
+            const myChoiceButton = document.getElementById("my-choice-result-button");
+            if (!myChoiceButton || myChoiceButton.style.display === "none") return;
             if (e.target && e.target.closest && e.target.closest("#my-choice-result-button")) return;
             e.preventDefault();
             e.stopPropagation();
