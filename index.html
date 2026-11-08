@@ -9982,7 +9982,7 @@ function positionResultTextElements(layers,copy){
     career.style.position="absolute";
     career.style.setProperty("left",(imageRect.left-copyRect.left+textBounds.x*scaleX)+"px","important");
     career.style.setProperty("width",(textBounds.width*scaleX)+"px","important");
-    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-21)+"px";
+    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-18)+"px";
    }
   }
   if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
@@ -10049,12 +10049,12 @@ function openPersonalityResult(first,second){
   const curiosityBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>").replace(/好奇，/g,"好奇，<br>").replace(/方式。/g,"方式。<br>").replace(/可能性！/g,"可能性！<br>");
   const curiosityMark=(value,terms)=>{let out=value;terms.forEach(term=>{out=out.split(term).join('<span class="result-highlight" style="--highlight-color:'+primaryColor+'">'+term+'</span>');});return out;};
   const curiosityWorkBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>");
-  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+curiosityMark(curiosityBreaks(d.traits),["喜歡嘗試不同的可能性","靈活多變"])+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+curiosityMark(curiosityWorkBreaks(d.work),["很難長時間專注在重複性的工作上"])+'</p></section>';
+  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+curiosityMark(curiosityBreaks(d.traits),["嘗試不同的可能性"])+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+curiosityMark(curiosityWorkBreaks(d.work),["很難長時間專注在重複性的工作上"])+'</p></section>';
   const jobs={
-   "好奇星":"調查與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員...等。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員...等.",
-   "同情星":"資訊媒體傳播：記者、新聞編輯、節目企劃、採訪編輯、紀錄片導演...等。\n設計群：平面設計師、室內設計師、廣告設計師、UI設計師、插畫師...等.",
-   "爽快星":"活動企劃與展演服務：創意行銷企劃、活動企劃師、展覽策劃人、舞台監督、婚禮企劃師...等。\n商業與銷售：業務員、門市銷售人員、廣告文案、市場分析師、數位行銷專員...等.",
-   "熱情星":"觀光和事業：博物館導覽員、導遊、旅遊行銷人員、節慶活動企劃、活動企劃人員...等。\n行政與管理：營運企劃、資料分析師、專案助理、活動執行人員、總務人員...等."
+   "好奇星":"研究與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員...等。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員...等。",
+   "同情星":"資訊媒體傳播：記者、新聞編輯、節目企劃、採訪編輯、紀錄片導演...等。\n設計群：平面設計師、室內設計師、廣告設計師、UI設計師、插畫師...等。",
+   "爽快星":"活動企劃與展演服務：創意行銷企劃、活動企劃師、展覽策劃人、舞台監督、婚禮企劃師...等。\n商業與銷售：業務員、門市銷售人員、廣告文案、市場分析師、數位行銷專員...等。",
+   "熱情星":"觀光和事業：博物館導覽員、導遊、旅遊行銷人員、節慶活動企劃、活動企劃人員...等。\n行政與管理：營運企劃、資料分析師、專案助理、活動執行人員、總務人員...等。"
   };
   const traits={
    "好奇星":"好奇星對新鮮事物總是充滿興趣，遇到不懂的事情時，會想主動找出答案，弄清楚背後的原因。喜歡親自探索、嘗試不同的方法，從過程中學習新知識，也因為常常思考問題，發現更多意想不到的可能性！",
@@ -10069,10 +10069,10 @@ function openPersonalityResult(first,second){
    "熱情星":"面對挑戰時勇於嘗試，能積極找到解決方法，不輕易受限於現況，帶領大家開拓新的方向。職業選擇上，經營管理、專案執行或規劃等領域，來發揮組織能力與領導潛力。好奇星的特質帶來創新的想法，熱情星則提供積極行動的動力，推動計畫，帶領團隊朝目標前進。團隊合作中，能運用熱情星的感染力帶動氣氛，透過實際行動逐步實現，朝共同的目標邁進(^^ゞ！"
   };
   const careerIntro=second==="好奇星"?"結合()第二高分的星球還是好奇星(?!)":"結合()第二高分的星球是"+second;
-  const jobCategories=String(jobs[second]||"").split("\n").map(line=>{const parts=line.split("：");const heading=parts.shift()||"";const description="(如："+parts.join("：")+")";return '<div class="result-job-category"><div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
+  const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";const description="(如："+parts.join("：")+")";return '<div class="result-job-category">'+(index===1?'<div class="result-job-category-or">或</div>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
   const curiosityCareerText=(value)=>replace(value).replace("知識！","知識！<br>").replace("方法。","方法。<br>").replace("優勢。","優勢。<br>");
   const curiosityCareerDetails=curiosityMark(curiosityCareerText(details[second]),["主動蒐集資訊、嘗試不同的方法","細節"]);
-  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<br>可能適合的職業類別是...</p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的性格：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的性格：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
  }else{
   html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2 class="result-career-heading">適合職業</h2><p>第二高分星球：'+second+'</p></section>';
  }
@@ -12440,5 +12440,45 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-job-category-description{
  min-height:0!important;
  line-height:1.7!important;
+}
+</style>
+
+
+<style id="result-user-adjustments-20261108">
+/* 標籤字放大2，背景左右留白縮小 */
+#personality-result-copy .result-keywords span{
+ font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 3.2px)!important;
+ padding-left:18px!important;
+ padding-right:18px!important;
+}
+#personality-result-copy .result-keywords.result-keywords-curiosity span{
+ font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + .2px)!important;
+}
+/* 說明文字與畫面左右邊緣的距離增加1 */
+#personality-result-copy{padding-left:12px!important;padding-right:12px!important}
+/* 說明文字色彩只微幅提高飽和度，往藍紫方向調整 */
+#personality-result-copy{--result-explanation-color:hsl(255 18% 24.902%)!important}
+/* 星格特質、職場優勢與劣勢標題到說明文字的距離縮短3 */
+#personality-result-copy .result-section h2:not(.result-career-heading) + p{margin-top:-3px!important}
+/* 重點字只改顏色，不加粗 */
+#personality-result-copy .result-highlight{font-weight:400!important}
+/* 適合職業區下移3px由透明圖片定位公式處理 */
+/* 職業分類標題背景統一依最長標題寬度 */
+#personality-result-copy .result-job-category-title{
+ width:var(--result-job-title-width,max-content)!important;
+}
+/* 第二個職業分類前的「或」：與說明文字相同樣式 */
+#personality-result-copy .result-job-category-or{
+ font-family:'Noto Sans TC',sans-serif!important;
+ font-size:clamp(13px,4.2cqw,17px)!important;
+ font-weight:700!important;
+ line-height:1.7!important;
+ color:var(--result-explanation-color)!important;
+ text-align:center!important;
+ margin:14px 0 8px!important;
+}
+#personality-result-copy .result-career-intro-next{
+ display:block!important;
+ margin-top:8px!important;
 }
 </style>
