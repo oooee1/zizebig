@@ -10074,14 +10074,18 @@ function openPersonalityResult(first,second){
   curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
   curiosityDecoration.src="./pct/1好奇星.webp";
   curiosityDecoration.alt="";
-  curiosityDecoration.style.zIndex="11";
+  // 插圖緊接在「好奇星 破洞紙」上方一層，保留其下方紙張、上方！？圖層的順序。
+  curiosityDecoration.style.zIndex="7.5";
   curiosityDecoration.style.position="absolute";
   curiosityDecoration.style.inset="0";
   curiosityDecoration.style.width="100%";
   curiosityDecoration.style.height="100%";
   curiosityDecoration.style.objectFit="contain";
-  curiosityDecoration.style.transform="scale(.9) rotate(2deg)";
+  // 在原本 90% 的基礎上再縮小 10%。
+  curiosityDecoration.style.transform="scale(.81) rotate(2deg)";
   curiosityDecoration.style.transformOrigin="center center";
+  // 黃金色柔和泛光，沿著插圖透明邊緣發光。
+  curiosityDecoration.style.filter="drop-shadow(0 0 6px rgba(246,184,0,.95)) drop-shadow(0 0 13px rgba(246,184,0,.72)) drop-shadow(0 0 22px rgba(255,220,90,.48))";
   layers.insertBefore(curiosityDecoration,layers.children[7]||null);
   alignCuriosityDecorationToHolePaper(curiosityDecoration,layers);
  }
