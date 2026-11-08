@@ -10066,6 +10066,32 @@ function positionResultTextElements(layers,copy){
  if(window._resultPositionResize)window.removeEventListener("resize",window._resultPositionResize);
  window._resultPositionResize=apply;window.addEventListener("resize",apply,{passive:true});
 }
+function compactResultPosterToVisibleBottom(layers){
+ // 保留每張已裁透明圖層目前的實際像素位置與尺寸，只縮短承載畫布底部多餘的透明高度。
+ const rect=layers.getBoundingClientRect();
+ if(!rect.width||!rect.height)return;
+ const images=Array.from(layers.querySelectorAll("img.personality-result-layer"));
+ const geometry=images.map(img=>{
+  const r=img.getBoundingClientRect();
+  return {img,left:r.left-rect.left,top:r.top-rect.top,width:r.width,height:r.height,bottom:r.bottom-rect.top};
+ }).filter(item=>item.width>0&&item.height>0);
+ if(!geometry.length)return;
+ const visibleBottom=Math.max(...geometry.map(item=>item.bottom));
+ if(!Number.isFinite(visibleBottom)||visibleBottom<=0||visibleBottom>=rect.height-2)return;
+ geometry.forEach(item=>{
+  const img=item.img;
+  img.style.setProperty("position","absolute","important");
+  img.style.setProperty("inset","auto","important");
+  img.style.setProperty("left",item.left+"px","important");
+  img.style.setProperty("top",item.top+"px","important");
+  img.style.setProperty("width",item.width+"px","important");
+  img.style.setProperty("height",item.height+"px","important");
+ });
+ layers.style.setProperty("aspect-ratio","auto","important");
+ layers.style.setProperty("height",visibleBottom+"px","important");
+ const poster=layers.closest("#personality-result-poster");
+ if(poster)poster.style.setProperty("height",visibleBottom+"px","important");
+}
 async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false){
  // 先逐張縮小，再裁掉透明邊；裁切後用原畫布百分比還原位置，視覺座標不變。
  img.dataset.resultSrc=src;
@@ -10209,7 +10235,7 @@ function openPersonalityResult(first,second){
   const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";let description="(如:"+parts.join("：")+")";if(second==="好奇星"&&index===0)description=description.replace("資料分析師、","資料分析師、<br>");return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
   const curiosityCareerText=(value)=>replace(value).replace("知識！","知識！<br>").replace("方法。","方法。<br>").replace("優勢。","優勢。<br>");
   const curiosityCareerDetails=curiosityMark(curiosityCareerText(details[second]),["主動蒐集資訊、嘗試不同的方法","細節"]);
-  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span><span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>'+(first===second?'<span class="result-career-intro-tie-mark">(?!)</span>':'')+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
  }else{
   html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2 class="result-career-heading">適合職業</h2><p>第二高分星球：'+second+'</p></section>';
  }
@@ -10224,6 +10250,26 @@ function openPersonalityResult(first,second){
   const originalSizes=textElements.map(el=>[el,parseFloat(getComputedStyle(el).fontSize)]);
   originalSizes.forEach(([el,size])=>{
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1.5)+"px","important");
+  });
+  // 好奇星名稱比原本手機字級再小10px；繼續遊戲再小10px。
+  if(first==="好奇星"){
+   const curiosityName=copy.querySelector(".result-name");
+   if(curiosityName){const size=parseFloat(getComputedStyle(curiosityName).fontSize);if(Number.isFinite(size))curiosityName.style.setProperty("font-size",Math.max(1,size-10)+"px","important");}
+  }
+  const continueText=copy.querySelector(".result-continue-game");
+  if(continueText){const size=parseFloat(getComputedStyle(continueText).fontSize);if(Number.isFinite(size))continueText.style.setProperty("font-size",Math.max(1,size-10)+"px","important");}
+ }
+ // 「屬於…的特質」標籤直接複製下一段說明文字的實際粗度與描邊，確保視覺一致。
+ const traitHeading=copy.querySelector(".result-trait-heading");
+ const traitDescription=traitHeading&&traitHeading.nextElementSibling;
+ if(traitHeading&&traitDescription){
+  const traitStyle=getComputedStyle(traitDescription);
+  traitHeading.style.setProperty("font-weight",traitStyle.fontWeight,"important");
+  traitHeading.style.setProperty("-webkit-text-stroke",traitStyle.webkitTextStroke,"important");
+  traitHeading.style.setProperty("font-family",traitStyle.fontFamily,"important");
+  traitHeading.querySelectorAll("*").forEach(el=>{
+   el.style.setProperty("font-weight",traitStyle.fontWeight,"important");
+   el.style.setProperty("-webkit-text-stroke",traitStyle.webkitTextStroke,"important");
   });
  }
  // 兩個職業分類標籤共用較長標題的實際寬度；字型載入完成後再量一次，避免量到替代字型
@@ -10262,6 +10308,7 @@ function openPersonalityResult(first,second){
   }
   positionResultTextElements(layers,copy);
   alignResultRoleToTextArtwork(role,layers);
+  compactResultPosterToVisibleBottom(layers);
  })();
 }
 
