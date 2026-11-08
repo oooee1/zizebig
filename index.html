@@ -10067,6 +10067,8 @@ function openPersonalityResult(first,second){
   ["click","pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>event.stopPropagation(),{capture:true,passive:type==="touchstart"}));
   screen.dataset.inputGuard="1";
  }
+ const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8]];
+ layers.innerHTML=imgs.map(x=>'<img class="personality-result-layer" style="z-index:'+x[1]+'" src="'+RESULT_ROOT+x[0]+'" alt="">').join("");
  if(first==="好奇星"){
   const curiosityDecoration=document.createElement("img");
   curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
@@ -10082,8 +10084,6 @@ function openPersonalityResult(first,second){
   curiosityDecoration.style.transformOrigin="center center";
   layers.insertBefore(curiosityDecoration,layers.children[7]||null);
  }
- const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8]];
- layers.innerHTML=imgs.map(x=>'<img class="personality-result-layer" style="z-index:'+x[1]+'" src="'+RESULT_ROOT+x[0]+'" alt="">').join("");
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replace(/\(\)/g,'<span class="result-player-name">'+player+'</span>');
  const belongsHeadingHtml=[..."屬於"].map((ch,index)=>'<span class="result-belongs-char result-belongs-char-'+index+'">'+ch+'</span>').join("")
