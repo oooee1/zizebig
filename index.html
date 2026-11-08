@@ -9941,11 +9941,11 @@ function getResultImageAlphaBounds(img){
  const sx=sourceWidth/canvas.width,sy=sourceHeight/canvas.height;
  return {x:minX*sx,y:minY*sy,width:(maxX-minX+1)*sx,height:(maxY-minY+1)*sy};
 }
-function alignCuriosityDecorationToHolePaper(decoration,layers){
+function alignStarDecorationToHolePaper(decoration,layers,star){
  // 不再用 Canvas 掃描透明像素：直接依破洞紙的實際顯示尺寸定位，避免 Safari 額外建立畫布。
  const paper=Array.from(layers.querySelectorAll("img")).find(img=>{
-  try{return decodeURIComponent(img.src).includes("好奇星 破洞紙.webp");}
-  catch(error){return img.src.includes("好奇星");}
+  try{return decodeURIComponent(img.src).includes(star+" 破洞紙.webp");}
+  catch(error){return img.src.includes(star+" 破洞紙");}
  });
  if(!paper)return;
  const align=()=>{
@@ -9975,8 +9975,8 @@ function alignCuriosityDecorationToHolePaper(decoration,layers){
   if(decoration.complete)ready();
   if(paper.complete)ready();
  }
- if(window._resultCuriosityDecorationResize)window.removeEventListener("resize",window._resultCuriosityDecorationResize);
- window._resultCuriosityDecorationResize=align;
+ if(window._resultStarDecorationResize)window.removeEventListener("resize",window._resultStarDecorationResize);
+ window._resultStarDecorationResize=align;
  window.addEventListener("resize",align,{passive:true});
 }
 function alignResultRoleToTextArtwork(role,layers){
@@ -10076,7 +10076,13 @@ function compactResultPosterToVisibleBottom(layers,copy){
   return {img,left:r.left-rect.left,top:r.top-rect.top,width:r.width,height:r.height,bottom:r.bottom-rect.top};
  }).filter(item=>item.width>0&&item.height>0);
  if(!geometry.length)return;
- let visibleBottom=Math.max(...geometry.map(item=>item.bottom));
+ let visibleBottom=0;
+ geometry.forEach(item=>{
+  const bounds=getResultImageAlphaBounds(item.img);
+  const scale=item.height/Math.max(1,item.img.naturalHeight);
+  const alphaBottom=bounds?item.top+(bounds.y+bounds.height)*scale:item.bottom;
+  visibleBottom=Math.max(visibleBottom,alphaBottom);
+ });
  if(copy){
   Array.from(copy.children).forEach(el=>{
    const r=el.getBoundingClientRect();
@@ -10196,7 +10202,7 @@ function openPersonalityResult(first,second){
   },{passive:false});
   screen.dataset.inputGuard="1";
  }
- const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8]];
+ const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+"上面.webp",4.5],["背景 "+first+" 上面那張諾蘭紙.webp",5],[first+" 破洞紙.webp",7],["！？.webp",8]];
  layers.innerHTML="";
  const resultImageQueue=[];
  imgs.forEach(([name,z])=>{
@@ -10209,30 +10215,25 @@ function openPersonalityResult(first,second){
   layers.appendChild(image);
   resultImageQueue.push({img:image,src,maxWidth:600,trimTransparent:true});
  });
- if(first==="好奇星"){
-  const curiosityDecoration=document.createElement("img");
-  curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
-  curiosityDecoration.decoding="async";
-  curiosityDecoration.alt="";
-  curiosityDecoration.dataset.resultSrc="./pct/1好奇星.webp";
-  // 插圖緊接在「好奇星 破洞紙」上方一層，保留其下方紙張、上方！？圖層的順序。
-  curiosityDecoration.style.zIndex="9.5";
-  // 改用固定比例直接放在整張結果海報頂端，不再依賴破洞紙量測、Canvas 或圖片載入後的定位回呼。
-  // 海報為 9:16；方形插圖置中放大，直接進入破洞紙上方的透明開口。
-  curiosityDecoration.style.position="absolute";
-  curiosityDecoration.style.inset="auto";
-  curiosityDecoration.style.left="10%";
-  curiosityDecoration.style.top="0.5%";
-  curiosityDecoration.style.width="80%";
-  curiosityDecoration.style.height="auto";
-  curiosityDecoration.style.objectFit="contain";
-  curiosityDecoration.style.transform="rotate(2deg)";
-  curiosityDecoration.style.transformOrigin="center center";
-  curiosityDecoration.style.filter="drop-shadow(0 0 4px rgba(246,184,0,.95)) drop-shadow(0 0 8px rgba(246,184,0,.72)) drop-shadow(0 0 14px rgba(255,220,90,.48))";
-  curiosityDecoration.onload=()=>console.info("[結果頁] 好奇星插圖載入成功");
-  curiosityDecoration.onerror=()=>console.error("[結果頁] 好奇星插圖載入失敗：",curiosityDecoration.src);
-  layers.insertBefore(curiosityDecoration,layers.children[7]||null);
-  resultImageQueue.push({img:curiosityDecoration,src:"./pct/1好奇星.webp",maxWidth:900});
+ {
+  const starImageFiles={"好奇星":"1好奇星.webp","同情星":"2同情星.webp","爽快星":"3爽快星.webp","熱情星":"4熱情星.webp"};
+  const starDecoration=document.createElement("img");
+  starDecoration.className="personality-result-layer result-star-decoration";
+  starDecoration.decoding="async";
+  starDecoration.alt="";
+  const starImageSrc="./pct/"+starImageFiles[first];
+  starDecoration.dataset.resultSrc=starImageSrc;
+  starDecoration.style.zIndex="7.5";
+  starDecoration.style.position="absolute";
+  starDecoration.style.inset="auto";
+  starDecoration.style.width="30%";
+  starDecoration.style.height="auto";
+  starDecoration.style.objectFit="contain";
+  starDecoration.style.pointerEvents="none";
+  starDecoration.onload=()=>console.info("[結果頁] "+first+" 插圖載入成功");
+  starDecoration.onerror=()=>console.error("[結果頁] "+first+" 插圖載入失敗：",starDecoration.src);
+  layers.appendChild(starDecoration);
+  resultImageQueue.push({img:starDecoration,src:starImageSrc,maxWidth:900});
  }
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replace(/\(\)/g,'<span class="result-player-name">'+player+'</span>');
@@ -10354,6 +10355,8 @@ function openPersonalityResult(first,second){
   // 等待瀏覽器完成圖片與字型造成的版面計算，再量測透明邊界。
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   try{
+   const starDecoration=layers.querySelector(".result-star-decoration");
+   if(starDecoration)alignStarDecorationToHolePaper(starDecoration,layers,first);
    positionResultTextElements(layers,copy);
    alignResultRoleToTextArtwork(role,layers);
    compactResultPosterToVisibleBottom(layers,copy);
@@ -12411,7 +12414,7 @@ function toggleBGM(btnEl) {
 #personality-result-toolbar{position:absolute;top:8px;right:8px;z-index:30;display:flex;justify-content:flex-end;pointer-events:none}
 #personality-result-toolbar button{pointer-events:auto;border:2px solid #111;border-radius:10px;padding:7px 16px;background:#fff;color:#111;font:16px 'CPTrans',sans-serif}
 /* 第一張全畫布圖片保留原比例並決定整張頁面的高度；其餘透明圖層沿用同一畫布座標 */
-#personality-result-poster{position:relative;display:block;width:100%;min-width:0;height:auto;min-height:0;max-width:none;max-height:none;margin:0;overflow:visible;background:#fff;isolation:isolate}
+#personality-result-poster{position:relative;display:block;width:100%;min-width:0;height:auto;min-height:0;max-width:none;max-height:none;margin:0;overflow:visible;background:transparent;isolation:isolate}
 /* 圖層容器本身參與排版；第一張完整畫布圖片負責撐開海報高度 */
 #personality-result-layers{position:relative;inset:auto;display:block;width:100%;height:auto;min-height:0;z-index:0;pointer-events:none;overflow:visible}
 .personality-result-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:top left;pointer-events:none;}
