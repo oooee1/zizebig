@@ -13647,3 +13647,33 @@ function toggleBGM(btnEl) {
   }
 }
 </style>
+
+<style id="result-desktop-adjustments-20261109">
+@media (min-width:769px){
+  /* Curiosity title: +5px, with a 6px gap from the English label. */
+  #personality-result-screen #personality-result-copy .result-name.result-name-curiosity{
+    font-size:135px!important;
+    margin-top:6px!important;
+  }
+
+  /* Move the pre-career text group upward by 13px. */
+  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+    top:447px!important;
+  }
+
+  /* Trait label background: narrower horizontal padding, matching explanation color, shifted right 4px. */
+  #personality-result-screen #personality-result-copy .result-trait-heading{
+    left:4px!important;
+  }
+  #personality-result-screen #personality-result-copy .result-trait-heading-label{
+    padding-left:6px!important;
+    padding-right:6px!important;
+    background-color:var(--result-explanation-color)!important;
+  }
+
+  /* Career intro phrase: reduce font size by 3px as a group. */
+  #personality-result-screen #personality-result-copy .result-career-intro{
+    font-size:clamp(16px,calc(4.2cqw + 3px),20px)!important;
+  }
+}
+</style>
