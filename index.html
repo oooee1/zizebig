@@ -10305,7 +10305,7 @@ function openPersonalityResult(first,second){
   const src=RESULT_ROOT+name;
   image.dataset.resultSrc=src;
   layers.appendChild(image);
-  resultImageQueue.push({img:image,src,maxWidth:600,trimTransparent:true});
+  resultImageQueue.push({img:image,src,maxWidth:600,trimTransparent:true,critical:["背景 "+first+" 下面那張諾蘭紙.webp","背景 長條紙.webp","背景 文字.webp",first+" 破洞紙.webp"].includes(name)});
  });
  {
   const starImageFiles={"好奇星":"1好奇星.webp","同情星":"2同情星.webp","爽快星":"3爽快星.webp","熱情星":"4熱情星.webp"};
@@ -10470,57 +10470,39 @@ function openPersonalityResult(first,second){
  // 避免「前一張下載完才開始下載下一張」的長時間串行等待；同時限制 Canvas
  // 轉檔併發數，避免 iPhone／iPad Safari 一次建立太多大型畫布而耗盡記憶體。
  (async()=>{
-  const preloadStates=await Promise.all(resultImageQueue.map(async item=>{
-   try{
-    if(!item.img.src)item.img.src=item.src;
-    if(item.img.complete&&!item.img.naturalWidth)throw new Error("結果圖片載入失敗："+item.src);
-    if(!item.img.complete){
-     await new Promise((resolve,reject)=>{
-      item.img.addEventListener("load",resolve,{once:true});
-      item.img.addEventListener("error",()=>reject(new Error("結果圖片載入失敗："+item.src)),{once:true});
-     });
-    }
-    if(item.img.decode)await item.img.decode().catch(()=>{});
-    return true;
-   }catch(error){
-    console.warn("[結果頁] 圖片預載失敗：",item.src,error);
-    return false;
-   }
-  }));
-  let nextImageIndex=0;
-  const worker=async()=>{
-   while(nextImageIndex<resultImageQueue.length){
-    const index=nextImageIndex++;
-    const item=resultImageQueue[index];
-    if(!preloadStates[index])continue;
+  // 第一階段只載入版面必要圖片；其他圖層在結果頁顯示後背景載入。
+  const criticalResultImages=resultImageQueue.filter(item=>item.critical);
+  const deferredResultImages=resultImageQueue.filter(item=>!item.critical);
+  async function loadAndProcess(items){
+   const states=await Promise.all(items.map(async item=>{
     try{
-     await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);
+     if(!item.img.src)item.img.src=item.src;
+     if(item.img.complete&&!item.img.naturalWidth)throw new Error("結果圖片載入失敗："+item.src);
+     if(!item.img.complete)await new Promise((resolve,reject)=>{item.img.addEventListener("load",resolve,{once:true});item.img.addEventListener("error",()=>reject(new Error("結果圖片載入失敗："+item.src)),{once:true});});
      if(item.img.decode)await item.img.decode().catch(()=>{});
-    }catch(error){console.warn("[結果頁] 圖片處理失敗：",item.src,error);}
-   }
-  };
-  await Promise.all(Array.from({length:Math.min(2,resultImageQueue.length)},()=>worker()));
-  if(document.fonts&&document.fonts.ready){
-   try{await document.fonts.ready;}catch(error){}
+     return true;
+    }catch(error){console.warn("[結果頁] 圖片預載失敗：",item.src,error);return false;}
+   }));
+   let next=0;
+   const worker=async()=>{while(next<items.length){const index=next++;if(!states[index])continue;const item=items[index];try{await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);if(item.img.decode)await item.img.decode().catch(()=>{});}catch(error){console.warn("[結果頁] 圖片處理失敗：",item.src,error);}}};
+   await Promise.all(Array.from({length:Math.min(2,items.length)},()=>worker()));
   }
-  // 等待瀏覽器完成圖片與字型造成的版面計算，再量測透明邊界。
-  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  try{
-   const starDecoration=layers.querySelector(".result-star-decoration");
-   if(starDecoration)alignStarDecorationToHolePaper(starDecoration,layers,first);
-   positionResultTextElements(layers,copy);
-   alignResultRoleToTextArtwork(role,layers);
-   compactResultPosterToVisibleBottom(layers,copy);
-  }catch(error){
-   console.warn("[結果頁] 定位計算失敗，保留原始圖片比例與版面：",error);
-   // 單一圖片的透明像素量測失敗時，不讓整個結果頁永久停留在隱藏狀態。
-   layers.style.removeProperty("height");
-   if(poster)poster.style.removeProperty("height");
-   copy.style.removeProperty("height");
+  function layoutResult(){
+   try{
+    const starDecoration=layers.querySelector(".result-star-decoration");
+    if(starDecoration&&starDecoration.complete&&starDecoration.naturalWidth)alignStarDecorationToHolePaper(starDecoration,layers,first);
+    positionResultTextElements(layers,copy);
+    if(role.complete&&role.naturalWidth)alignResultRoleToTextArtwork(role,layers);
+    compactResultPosterToVisibleBottom(layers,copy);
+   }catch(error){console.warn("[結果頁] 版面定位失敗：",error);layers.style.removeProperty("height");if(poster)poster.style.removeProperty("height");copy.style.removeProperty("height");}
   }
+  await loadAndProcess(criticalResultImages);
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  layoutResult();
   screen.scrollTop=0;
   screen.classList.remove("result-loading");
+  // 裝飾與職業圖繼續載入，但不再隱藏結果頁，也不阻止觸控／捲動。
+  loadAndProcess(deferredResultImages).then(()=>{layoutResult();});
  })();
 }
 
