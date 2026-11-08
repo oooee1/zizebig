@@ -10262,7 +10262,7 @@ function openPersonalityResult(first,second){
   const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";let description="(如:"+parts.join("：")+")";if(second==="好奇星"&&index===0)description=description.replace("資料分析師、","資料分析師、<br>");return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
   const curiosityCareerText=(value)=>replace(value).replace("知識！","知識！<br>").replace("方法。","方法。<br>").replace("優勢。","優勢。<br>");
   const curiosityCareerDetails=curiosityMark(curiosityCareerText(details[second]),["主動蒐集資訊、嘗試不同的方法","細節"]);
-  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>'+(first===second?'<span class="result-career-intro-tie-mark">(?!)</span>':'')+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+replace(careerIntro)+(first===second?'<span class="result-career-intro-tie-group"><span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span><span class="result-career-intro-tie-mark">(?!)</span></span>':'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>')+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
  }else{
   html+='<section class="result-section"><h2>星格特質</h2><p>此星球結果頁將依照 Dropbox 原始資料製作。</p></section><section class="result-section"><h2>職場優勢與劣勢</h2><p>此部分尚待製作。</p></section><section class="result-section"><h2 class="result-career-heading">適合職業</h2><p>第二高分星球：'+second+'</p></section>';
  }
@@ -10278,11 +10278,7 @@ function openPersonalityResult(first,second){
   originalSizes.forEach(([el,size])=>{
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1.5)+"px","important");
   });
-  // 好奇星名稱比原本手機字級再小10px；繼續遊戲再小10px。
-  if(first==="好奇星"){
-   const curiosityName=copy.querySelector(".result-name");
-   if(curiosityName){const size=parseFloat(getComputedStyle(curiosityName).fontSize);if(Number.isFinite(size))curiosityName.style.setProperty("font-size",Math.max(1,size-10)+"px","important");}
-  }
+  // 好奇星中文名稱不額外縮放；只有英文標題保留既有的 O／E 字級調整。
   const continueText=copy.querySelector(".result-continue-game");
   if(continueText){const size=parseFloat(getComputedStyle(continueText).fontSize);if(Number.isFinite(size))continueText.style.setProperty("font-size",Math.max(1,size-10)+"px","important");}
  }
@@ -12537,6 +12533,42 @@ function toggleBGM(btnEl) {
 /* 結果頁只阻止頂端／底端的橡皮筋回彈，不影響正常上下閱讀。 */
 #personality-result-screen{overscroll-behavior-y:none!important;touch-action:pan-y}
 #personality-result-poster{overflow:hidden!important}
+</style>
+<style id="result-curiosity-name-and-tie-line-fix-20261108">
+/* 好奇星中文名稱三字維持完全相同字級、行高與基線；不動英文 O／E 的既有放大設定。 */
+#personality-result-copy .result-name.result-name-curiosity .result-focus-mark{
+ display:inline!important;
+ position:static!important;
+ inset:auto!important;
+ font-size:1em!important;
+ line-height:inherit!important;
+ vertical-align:baseline!important;
+ transform:none!important;
+}
+/* 同分時將星球名稱與 (?!) 綁成不可拆行的一組；此介紹段可延伸至距螢幕左側2px。 */
+#personality-result-copy .result-career-intro-tied{
+ box-sizing:border-box!important;
+ width:calc(100% + 18px)!important;
+ max-width:none!important;
+ margin-left:-9px!important;
+ margin-right:0!important;
+ padding-left:0!important;
+ padding-right:2px!important;
+ left:0!important;
+ overflow:visible!important;
+}
+#personality-result-copy .result-career-intro-tie-group{
+ display:inline-flex!important;
+ flex-wrap:nowrap!important;
+ align-items:baseline!important;
+ white-space:nowrap!important;
+ vertical-align:baseline!important;
+}
+#personality-result-copy .result-career-intro-tie-mark{
+ display:inline!important;
+ white-space:nowrap!important;
+ margin-left:2px!important;
+}
 </style>
 </body>
 </html>
