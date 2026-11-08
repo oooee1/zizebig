@@ -10024,13 +10024,8 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.setProperty("z-index","9","important");
   if(star==="好奇星"){
    decoration.style.removeProperty("opacity");
-   if(!decoration.dataset.curiosityMotionBound){
-    decoration.dataset.curiosityMotionBound="true";
-    decoration.addEventListener("animationend",event=>{
-     if(event.animationName!=="resultCuriosityPop")return;
-     decoration.classList.add("result-curiosity-idle");
-    });
-   }
+   decoration.classList.remove("result-curiosity-idle");
+   decoration.classList.add("result-curiosity-enter");
   }
  };
  if(decoration.complete&&paper.complete)align();
@@ -10303,6 +10298,13 @@ function openPersonalityResult(first,second){
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
   starDecoration.dataset.resultSrc=starImageSrc;
+  if(first==="好奇星"){
+   starDecoration.addEventListener("animationend",event=>{
+    if(event.animationName!=="resultCuriosityPop")return;
+    starDecoration.classList.remove("result-curiosity-enter");
+    starDecoration.classList.add("result-curiosity-idle");
+   });
+  }
   starDecoration.style.setProperty("z-index","9","important");
   starDecoration.style.setProperty("display","block","important");
   starDecoration.style.setProperty("visibility","visible","important");
@@ -12737,7 +12739,7 @@ function toggleBGM(btnEl) {
 
 <style id="result-curiosity-pop-and-bounce-20261108">
 /* 入場先由破洞位置彈出，完成後才切換成獨立、較有彈性的常駐跳動。 */
-.result-star-decoration-curiosity{
+.result-star-decoration-curiosity.result-curiosity-enter{
  animation:resultCuriosityPop .72s cubic-bezier(.12,1.35,.28,1) both!important;
  transform-origin:center 78%!important;
 }
