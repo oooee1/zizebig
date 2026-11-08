@@ -10083,6 +10083,7 @@ function openPersonalityResult(first,second){
   curiosityDecoration.style.transform="scale(.9) rotate(2deg)";
   curiosityDecoration.style.transformOrigin="center center";
   layers.insertBefore(curiosityDecoration,layers.children[7]||null);
+  alignCuriosityDecorationToHolePaper(curiosityDecoration,layers);
  }
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replace(/\(\)/g,'<span class="result-player-name">'+player+'</span>');
@@ -12758,3 +12759,46 @@ function toggleBGM(btnEl) {
 </style>
 
 
+
+
+<style id="result-belongs-outline-cleanup-20261108">
+/* 最上方標題改用爽快星送信小遊戲成功的多層圓潤 drop-shadow；描邊比原本 16px 收細，且不覆蓋字面 */
+#personality-result-copy .result-belongs-heading{
+ -webkit-text-stroke:0!important;
+ paint-order:normal!important;
+ text-shadow:none!important;
+}
+#personality-result-copy .result-belongs-char,
+#personality-result-copy .result-belongs-player-char{
+ -webkit-text-stroke:0!important;
+ paint-order:normal!important;
+ text-shadow:none!important;
+ filter:
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)
+  drop-shadow(0 0 0.5px currentColor)!important;
+}
+/* 玩家名稱維持橘色，外圍仍使用白色；陰影只向外擴散，不蓋住字 */
+#personality-result-copy .result-belongs-player-char{
+ filter:
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)
+  drop-shadow(0 0 0.5px #fff)!important;
+}
+</style>
