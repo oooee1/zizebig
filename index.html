@@ -10157,6 +10157,23 @@ async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false)
 function openPersonalityResult(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
+ const poster=layers&&layers.closest("#personality-result-poster");
+ // 每次開啟都清除上一次結果留下的動態高度與量測值，避免不同結果長度互相污染。
+ if(layers){
+  layers.style.removeProperty("height");
+  layers.style.removeProperty("aspect-ratio");
+ }
+ if(poster)poster.style.removeProperty("height");
+ if(copy){
+  copy.style.removeProperty("height");
+  copy.style.removeProperty("--result-job-title-width");
+ }
+ if(screen){
+  screen.classList.add("result-loading");
+  screen.classList.add("show");
+  screen.setAttribute("aria-hidden","false");
+  screen.scrollTop=0;
+ }
  if(window.__resultImageObjectURLs){window.__resultImageObjectURLs.forEach(url=>URL.revokeObjectURL(url));}
  window.__resultImageObjectURLs=[];
  // 結果頁開啟時攔截點擊與觸控，避免事件穿透到下方劇情頁而推進對話。
@@ -10323,16 +10340,25 @@ function openPersonalityResult(first,second){
  role.dataset.resultRole="true";
  layers.appendChild(role);
  resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
- screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
- // 一次只解碼、縮小一張結果圖；避免點擊跳轉時 8 張 1440x12000 圖片同時佔用數百 MiB。
+ // 不要在圖片載入前先顯示結果；每張圖片載入／解碼完成後才進入定位流程。
  (async()=>{
   for(const item of resultImageQueue){
-   try{await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);}
-   catch(error){console.warn("[結果頁] 圖片處理失敗：",error);}
+   try{
+    await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);
+    if(item.img.decode)await item.img.decode().catch(()=>{});
+   }catch(error){console.warn("[結果頁] 圖片處理失敗：",item.src,error);}
   }
+  if(document.fonts&&document.fonts.ready){
+   try{await document.fonts.ready;}catch(error){}
+  }
+  // 等待瀏覽器完成圖片與字型造成的版面計算，再量測透明邊界。
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   positionResultTextElements(layers,copy);
   alignResultRoleToTextArtwork(role,layers);
   compactResultPosterToVisibleBottom(layers,copy);
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  screen.scrollTop=0;
+  screen.classList.remove("result-loading");
  })();
 }
 
@@ -12368,6 +12394,9 @@ function toggleBGM(btnEl) {
 /* 結果頁捲動範圍由底圖的實際尺寸決定，不由文字高度決定 */
 #personality-result-screen{display:none;position:absolute;inset:0;z-index:2147483000;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:none;background:transparent;pointer-events:auto}
 #personality-result-screen.show{display:block}
+/* 圖片與版面尚未完成定位時先隱藏，避免首次跳轉閃現錯位畫面。 */
+#personality-result-screen.result-loading{visibility:hidden!important;pointer-events:none!important}
+#personality-result-screen.show.result-loading{display:block}
 /* 隱藏結果頁右側捲動條，但保留滑鼠滾輪、觸控板與觸控捲動 */
 #personality-result-screen{scrollbar-width:none;-ms-overflow-style:none}
 #personality-result-screen::-webkit-scrollbar{display:none;width:0;height:0}
@@ -12415,6 +12444,11 @@ function toggleBGM(btnEl) {
 #personality-result-screen img[title*="保存"],
 #personality-result-save,
 .personality-result-download{display:none!important;visibility:hidden!important;pointer-events:none!important}
+
+@media (max-width: 768px){
+ /* 好奇星主標題手機版由 130px 縮小 10px；桌面版完全不變。 */
+ #personality-result-copy .result-name.result-name-curiosity{font-size:120px!important}
+}
 </style>
 <style id="minigame-restart-button-style">
 /* 小遊戲底部置中重整按鈕 */
