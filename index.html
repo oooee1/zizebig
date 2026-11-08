@@ -9917,10 +9917,16 @@ function openPersonalityResultFromScores(){
 function jumpToPersonalityResult(star,event){if(event){event.preventDefault();event.stopPropagation();}const p=document.getElementById("developer-tools-panel");if(p)p.classList.remove("open");openPersonalityResult(star,star);}
 function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");}}
 function getResultImageAlphaBounds(img){
+ // 手機 Safari 不建立原圖尺寸的大型 Canvas；縮圖取樣即可定位透明邊界。
+ const sourceWidth=img.naturalWidth,sourceHeight=img.naturalHeight;
+ if(!sourceWidth||!sourceHeight)return null;
+ const sampleScale=Math.min(1,256/Math.max(sourceWidth,sourceHeight));
  const canvas=document.createElement("canvas");
- canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+ canvas.width=Math.max(1,Math.round(sourceWidth*sampleScale));
+ canvas.height=Math.max(1,Math.round(sourceHeight*sampleScale));
  const ctx=canvas.getContext("2d",{willReadFrequently:true});
- ctx.drawImage(img,0,0);
+ if(!ctx)return null;
+ ctx.drawImage(img,0,0,canvas.width,canvas.height);
  const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
  let minX=canvas.width,minY=canvas.height,maxX=-1,maxY=-1;
  for(let y=0;y<canvas.height;y++){
@@ -9931,7 +9937,9 @@ function getResultImageAlphaBounds(img){
    }
   }
  }
- return maxX<0?null:{x:minX,y:minY,width:maxX-minX+1,height:maxY-minY+1};
+ if(maxX<0)return null;
+ const sx=sourceWidth/canvas.width,sy=sourceHeight/canvas.height;
+ return {x:minX*sx,y:minY*sy,width:(maxX-minX+1)*sx,height:(maxY-minY+1)*sy};
 }
 function alignCuriosityDecorationToHolePaper(decoration,layers){
  const paper=Array.from(layers.querySelectorAll("img")).find(img=>decodeURIComponent(img.src).includes("好奇星 破洞紙.webp"));
@@ -12692,7 +12700,7 @@ function toggleBGM(btnEl) {
 /* 1好奇星插圖：高於好奇星破洞紙，位置由破洞紙透明範圍計算 */
 #personality-result-layers .result-curiosity-decoration{
  position:absolute!important;object-fit:contain!important;pointer-events:none!important;
- transform:scale(.9) rotate(2deg)!important;transform-origin:center center!important;
+ transform:scale(.81) rotate(2deg)!important;transform-origin:center center!important;
 }
 </style>
 
