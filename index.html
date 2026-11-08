@@ -10010,7 +10010,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   const imageWidth=paperRect.width*(star==="好奇星"?.78:.45);
   const imageHeight=imageWidth*(decoration.naturalHeight/decoration.naturalWidth);
   const left=paperRect.left-posterRect.left+(paperRect.width-imageWidth)/2;
-  const top=paperRect.top-posterRect.top+paperRect.height*.018+(star==="好奇星"?3:0);
+  const top=paperRect.top-posterRect.top+paperRect.height*.018+(star==="好奇星"?7:0);
   decoration.style.position="absolute";
   decoration.style.inset="auto";
   decoration.style.left=left+"px";
@@ -10018,7 +10018,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.width=imageWidth+"px";
   decoration.style.height=imageHeight+"px";
   decoration.style.objectFit="contain";
-  decoration.style.transform="rotate(4deg)";
+  decoration.style.transform="rotate(6deg)";
   decoration.style.transformOrigin="center center";
   decoration.style.filter=star==="好奇星"?"drop-shadow(0 0 7px #fff) drop-shadow(0 0 16px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,.9))":"drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
   decoration.style.setProperty("z-index","9","important");
@@ -10365,7 +10365,7 @@ function openPersonalityResult(first,second){
   const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";let description="(如:"+parts.join("：")+")";if(second==="好奇星"&&index===0)description=description.replace("資料分析師、","資料分析師、<br>");return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
   const curiosityCareerText=(value)=>replace(value).replace("知識！","知識！<br>").replace("方法。","方法。<br>").replace("優勢。","優勢。<br>");
   const curiosityCareerDetails=curiosityMark(curiosityCareerText(details[second]),["主動蒐集資訊、嘗試不同的方法","細節"]);
-  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+replace(careerIntro)+(first===second?'<span class="result-career-intro-tie-group"><span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span><span class="result-career-intro-tie-mark">(?!)</span></span>':'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>')+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+replace(careerIntro)+(first===second?'<span class="result-career-intro-tie-group"><span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span><span class="result-career-intro-tie-mark">(?!)</span></span>':'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>')+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<div class="result-trait-heading"><span class="result-trait-heading-label">'+replace("屬於()的特質：")+'</span></div><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
  }
  else{
  const sourceData=parseResultSource(first);
@@ -10382,7 +10382,7 @@ function openPersonalityResult(first,second){
   const summary=resultTextHtml(career.traitSummary,replace,emphasize,second,secondaryColor);
   const details=resultTextHtml(career.details,replace,emphasize,second,secondaryColor);
   const disclaimer=career.disclaimer||"(測驗結果僅供參考)";
-  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+intro+'<span class="result-career-intro-next">'+career.possible+'</span></p>'+categories+'<p class="result-trait-heading">'+replace(career.traitHeading)+'</p><p>'+summary+'</p>'+(details?'<p>'+details+'</p>':'')+'</section><p class="result-disclaimer">'+replace(disclaimer)+'</p>';
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+intro+'<span class="result-career-intro-next">'+career.possible+'</span></p>'+categories+'<div class="result-trait-heading"><span class="result-trait-heading-label">'+replace(career.traitHeading)+'</span></div><p>'+summary+'</p>'+(details?'<p>'+details+'</p>':'')+'</section><p class="result-disclaimer">'+replace(disclaimer)+'</p>';
  }else{
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace("結合()第二高分的星球是"+second)+'</p></section>';
  }
@@ -12744,18 +12744,22 @@ function toggleBGM(btnEl) {
  transform-origin:center bottom!important;
 }
 @keyframes resultCuriosityPop{
- 0%{transform:translateY(26px) scale(.12);opacity:0}
- 58%{transform:translateY(-13px) scale(1.06);opacity:1}
- 78%{transform:translateY(3px) scale(.98);opacity:1}
- 100%{transform:translateY(0) scale(1);opacity:1}
+ 0%{transform:translateY(26px) rotate(6deg) scale(.12);opacity:0}
+ 48%{transform:translateY(-18px) rotate(8deg) scale(1.08);opacity:1}
+ 72%{transform:translateY(4px) rotate(5deg) scale(.96);opacity:1}
+ 100%{transform:translateY(0) rotate(6deg) scale(1);opacity:1}
 }
 .result-star-decoration-curiosity.result-curiosity-idle{
- animation:resultCuriosityIdleBounce 1.15s ease-in-out infinite!important;
+ animation:resultCuriosityIdleBounce 1.35s cubic-bezier(.28,.72,.35,1) infinite!important;
  transform-origin:center bottom!important;
 }
 @keyframes resultCuriosityIdleBounce{
- 0%,100%{transform:translateY(0)}
- 50%{transform:translateY(-12px)}
+ 0%,100%{transform:translateY(0) rotate(6deg) scale(1,1)}
+ 9%{transform:translateY(3px) rotate(5deg) scale(1.07,.91)}
+ 25%{transform:translateY(-20px) rotate(8deg) scale(.95,1.08)}
+ 39%{transform:translateY(1px) rotate(5deg) scale(1.09,.9)}
+ 51%{transform:translateY(-8px) rotate(7deg) scale(.98,1.03)}
+ 63%{transform:translateY(0) rotate(6deg) scale(1,1)}
 }
 </style>
 <style id="result-layout-final-corrections-20261108">
@@ -13363,5 +13367,44 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-trait-heading *::after{
  content:none!important;
  display:none!important;
+}
+</style>
+
+<style id="result-desktop-and-trait-rebuild-20261108k">
+@media (min-width:769px){
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){translate:0 42px!important}
+ #personality-result-copy .result-english{top:-10px!important}
+ #personality-result-copy .result-primary > p,
+ #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
+ #personality-result-copy .result-job-category-description{
+  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 20px)!important;
+ }
+ #personality-result-copy .result-belongs-heading{top:22px!important}
+}
+#personality-result-copy .result-career-intro{translate:-12px 0!important}
+#personality-result-copy .result-secondary{text-decoration:none!important}
+#personality-result-copy .result-trait-heading{
+ display:block!important;position:relative!important;width:max-content!important;
+ max-width:100%!important;height:auto!important;min-height:0!important;
+ padding:0!important;margin:8px 0 10px!important;border:0!important;
+ outline:0!important;background:transparent!important;background-image:none!important;
+ box-shadow:none!important;text-decoration:none!important;text-decoration-line:none!important;
+}
+#personality-result-copy .result-trait-heading-label{
+ all:unset!important;display:inline-block!important;box-sizing:border-box!important;
+ padding:4px 8px!important;color:#fff!important;
+ background-color:var(--result-explanation-color)!important;background-image:none!important;
+ border:0!important;border-bottom:0!important;outline:0!important;box-shadow:none!important;
+ text-decoration:none!important;text-decoration-line:none!important;
+ font:inherit!important;line-height:inherit!important;
+}
+#personality-result-copy .result-trait-heading-label .result-player-name{color:#F07824!important}
+#personality-result-copy .result-secondary,
+#personality-result-copy .result-trait-heading,
+#personality-result-copy .result-trait-heading-label,
+#personality-result-copy .result-trait-heading-label *{
+ text-decoration:none!important;text-decoration-line:none!important;
+ text-decoration-color:transparent!important;border-top:0!important;border-bottom:0!important;
+ box-shadow:none!important;text-shadow:none!important;background-image:none!important;
 }
 </style>
