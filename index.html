@@ -10021,7 +10021,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.transform="rotate(4deg)";
   decoration.style.transformOrigin="center center";
   decoration.style.filter=star==="好奇星"?"drop-shadow(0 0 7px #fff) drop-shadow(0 0 16px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,.9))":"drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
-  decoration.style.setProperty("z-index","6","important");
+  decoration.style.setProperty("z-index","9","important");
  };
  if(decoration.complete&&paper.complete)align();
  else{
@@ -10055,7 +10055,7 @@ function alignResultRoleToTextArtwork(role,layers){
    const scale=Math.min(targetWidth/subject.width,targetHeight/subject.height)*1.15;
    const left=targetLeft+targetWidth/2-(subject.x+subject.width/2)*scale;
    const displayScale=layers.clientWidth/textArtwork.naturalWidth;
-   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale)-(window.matchMedia&&window.matchMedia("(max-width:768px)").matches?5:0)-8;
+   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale)-(window.matchMedia&&window.matchMedia("(max-width:768px)").matches?5:0)-15;
    role.style.setProperty("position","absolute","important");
    role.style.setProperty("inset","auto","important");
    role.style.setProperty("left",left+"px","important");
@@ -10293,7 +10293,7 @@ function openPersonalityResult(first,second){
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
   starDecoration.dataset.resultSrc=starImageSrc;
-  starDecoration.style.setProperty("z-index","6","important");
+  starDecoration.style.setProperty("z-index","9","important");
   starDecoration.style.setProperty("display","block","important");
   starDecoration.style.setProperty("visibility","visible","important");
   starDecoration.style.setProperty("opacity","1","important");
@@ -12668,7 +12668,7 @@ function toggleBGM(btnEl) {
 /* 手機版：適合職業以前的所有文字區塊明顯上移20px；用獨立 translate 避免覆蓋各自原有定位與動畫。 */
 @media (max-width:768px){
  #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  translate:0 -20px!important;
+  translate:0 -26px!important;
  }
 }
 /* 結果頁只阻止頂端／底端的橡皮筋回彈，不影響正常上下閱讀。 */
@@ -12752,6 +12752,41 @@ function toggleBGM(btnEl) {
 }
 #personality-result-copy .result-continue-game .result-player-name{
  font-size:inherit!important;line-height:inherit!important;vertical-align:baseline!important;transform:none!important;
+}
+</style>
+<style id="result-layout-final-corrections-20261108">
+/* 「屬於星辰的特質」標籤：清除可能繼承的刪除線／上框線／偽元素裝飾。 */
+#personality-result-copy .result-trait-heading,
+#personality-result-copy .result-trait-heading *{
+ text-decoration:none!important;
+ text-decoration-line:none!important;
+ border-top:0!important;
+ box-shadow:none!important;
+}
+#personality-result-copy .result-trait-heading::before,
+#personality-result-copy .result-trait-heading::after{
+ content:none!important;
+ display:none!important;
+}
+/* 「結合……是……」整句再往左6px；星球名字在手機、電腦都再放大。 */
+#personality-result-copy .result-career-intro{left:-3px!important}
+#personality-result-copy .result-career-intro-tied{left:-6px!important}
+#personality-result-copy .result-career-intro-star{font-size:calc(1em + 8px)!important}
+/* 好奇星中文名稱與英文標題之間增加6px距離。 */
+#personality-result-copy .result-name.result-name-curiosity{margin-top:6px!important}
+/* 電腦版適合職業以前的內容下移6px；手機版沿用上移設定。 */
+@media (min-width:769px){
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 6px!important;
+ }
+}
+/* 海報底部不保留額外 padding／margin，避免產生透明尾巴。 */
+#personality-result-layers,
+#personality-result-copy,
+#personality-result-poster{
+ padding-bottom:0!important;
+ margin-bottom:0!important;
+ min-height:0!important;
 }
 </style>
 </body>
