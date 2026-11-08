@@ -9993,8 +9993,11 @@ function getResultImageAlphaBounds(img){
 function alignStarDecorationToHolePaper(decoration,layers,star){
  // 不再用 Canvas 掃描透明像素：直接依破洞紙的實際顯示尺寸定位，避免 Safari 額外建立畫布。
  const paper=Array.from(layers.querySelectorAll("img")).find(img=>{
-  try{return decodeURIComponent(img.src).includes(star+" 破洞紙.webp");}
-  catch(error){return img.src.includes(star+" 破洞紙");}
+  // 圖片經 downsampleResultImage 轉成 blob URL 後，img.src 不再含原始檔名；
+  // 必須優先讀取保留原始路徑的 dataset.resultSrc。
+  const source=img.dataset.resultSrc||img.currentSrc||img.src;
+  try{return decodeURIComponent(source).includes(star+" 破洞紙.webp");}
+  catch(error){return source.includes(star+" 破洞紙");}
  });
  if(!paper)return;
  const align=()=>{
@@ -10018,7 +10021,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.transform="rotate(4deg)";
   decoration.style.transformOrigin="center center";
   decoration.style.filter="drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
-  decoration.style.zIndex="9";
+  decoration.style.setProperty("z-index","9","important");
  };
  if(decoration.complete&&paper.complete)align();
  else{
@@ -10290,7 +10293,7 @@ function openPersonalityResult(first,second){
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
   starDecoration.dataset.resultSrc=starImageSrc;
-  starDecoration.style.setProperty("z-index","7","important");
+  starDecoration.style.setProperty("z-index","9","important");
   starDecoration.style.setProperty("display","block","important");
   starDecoration.style.setProperty("visibility","visible","important");
   starDecoration.style.setProperty("opacity","1","important");
