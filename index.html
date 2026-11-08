@@ -9937,19 +9937,26 @@ function alignCuriosityDecorationToHolePaper(decoration,layers){
  const paper=Array.from(layers.querySelectorAll("img")).find(img=>decodeURIComponent(img.src).includes("好奇星 破洞紙.webp"));
  if(!paper)return;
  const align=()=>{
-  if(!decoration.naturalWidth||!paper.naturalWidth)return;
+  if(!decoration.naturalWidth||!paper.complete||!paper.naturalWidth)return;
   try{
    const target=getResultImageAlphaBounds(paper);
    const subject=getResultImageAlphaBounds(decoration);
    if(!target||!subject)return;
-   const scale=Math.min(target.width*.22/subject.width,target.height*.30/subject.height);
-   const left=target.x+target.width*.76-(subject.x+subject.width/2)*scale;
-   const top=target.y+target.height*.07-subject.y*scale;
+   const posterRect=layers.getBoundingClientRect();
+   const paperRect=paper.getBoundingClientRect();
+   const scale=(target.width*.24)/subject.width;
+   const displayScale=paperRect.width/paper.naturalWidth;
+   const imageWidth=decoration.naturalWidth*scale*displayScale;
+   const imageHeight=decoration.naturalHeight*scale*displayScale;
+   const left=paperRect.left-posterRect.left+(target.x+target.width*.72)*displayScale-imageWidth/2;
+   const top=paperRect.top-posterRect.top+(target.y)*displayScale-imageHeight*.82;
+   decoration.style.position="absolute";
    decoration.style.inset="auto";
-   decoration.style.left=(left/paper.naturalWidth*100)+"%";
-   decoration.style.top=(top/paper.naturalHeight*100)+"%";
-   decoration.style.width=(decoration.naturalWidth*scale/paper.naturalWidth*100)+"%";
-   decoration.style.height=(decoration.naturalHeight*scale/paper.naturalHeight*100)+"%";
+   decoration.style.left=left+"px";
+   decoration.style.top=top+"px";
+   decoration.style.width=imageWidth+"px";
+   decoration.style.height=imageHeight+"px";
+   decoration.style.objectFit="contain";
   }catch(error){console.warn("好奇星插圖定位失敗：",error);}
  };
  if(decoration.complete&&paper.complete)align();
@@ -10068,7 +10075,7 @@ function openPersonalityResult(first,second){
   curiosityDecoration.src="./pct/1好奇星.webp";
   curiosityDecoration.alt="";
   curiosityDecoration.style.zIndex="7.5";
-  layers.appendChild(curiosityDecoration);
+  layers.insertBefore(curiosityDecoration,layers.children[7]||null);
   alignCuriosityDecorationToHolePaper(curiosityDecoration,layers);
  }
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
@@ -10088,7 +10095,7 @@ function openPersonalityResult(first,second){
   });
   return out;
  };
- let html='<p class="result-belongs-heading" style="--result-belongs-player-color:'+primaryColor+'">'+belongsHeadingHtml+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">TO</span>'):d.english)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+(first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first)+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
+ let html='<p class="result-belongs-heading">'+belongsHeadingHtml+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">TO</span>'):d.english)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+(first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first)+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
   const curiosityBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>").replace(/好奇，/g,"好奇，<br>").replace(/方式。/g,"方式。<br>").replace(/可能性！/g,"可能性！<br>");
   const curiosityMark=(value,terms)=>{let out=value;terms.forEach(term=>{out=out.split(term).join('<span class="result-highlight" style="--highlight-color:'+primaryColor+'">'+term+'</span>');});return out;};
@@ -12672,6 +12679,34 @@ function toggleBGM(btnEl) {
  color:var(--result-belongs-player-color)!important;
 }
 /* 1好奇星插圖：高於好奇星破洞紙，位置由破洞紙透明範圍計算 */
+#personality-result-layers .result-curiosity-decoration{
+ position:absolute!important;object-fit:contain!important;pointer-events:none!important;
+}
+</style>
+
+
+<style id="result-user-adjustments-20261108e">
+/* 最上方標題字級調整為20px；玩家名稱維持原本專屬橘色 */
+#personality-result-copy .result-belongs-heading{
+ font-size:20px!important;
+ -webkit-text-stroke:3px #111!important;
+ paint-order:stroke fill!important;
+}
+#personality-result-copy .result-belongs-player-char{
+ color:#F07824!important;
+ -webkit-text-stroke:3px #111!important;
+}
+/* O、E 明確放大，保持原始比例，不做縱向拉伸 */
+#personality-result-copy .result-english-curiosity .result-letter-raised{
+ font-size:1.25em!important;
+ transform:none!important;
+ -webkit-text-stroke:0!important;
+}
+/* 特質背景左右再收窄一點 */
+#personality-result-copy .result-trait-heading{
+ padding-left:5px!important;padding-right:5px!important;
+}
+/* 好奇星插圖使用實際紙張位置與尺寸計算，不影響職業插圖定位 */
 #personality-result-layers .result-curiosity-decoration{
  position:absolute!important;object-fit:contain!important;pointer-events:none!important;
 }
