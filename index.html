@@ -10007,7 +10007,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   if(!posterRect.width||!paperRect.width)return;
   // 插圖置中放在破洞紙上方的破洞區域，不再把 top 算成負值推到海報外。
   // 四顆星球插圖都以各自破洞紙為定位基準，放大 1.5 倍並略微順時針傾斜。
-  const imageWidth=paperRect.width*.45;
+  const imageWidth=paperRect.width*(star==="好奇星"?.9:.45);
   const imageHeight=imageWidth*(decoration.naturalHeight/decoration.naturalWidth);
   const left=paperRect.left-posterRect.left+(paperRect.width-imageWidth)/2;
   const top=paperRect.top-posterRect.top+paperRect.height*.018;
@@ -10020,7 +10020,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.objectFit="contain";
   decoration.style.transform="rotate(4deg)";
   decoration.style.transformOrigin="center center";
-  decoration.style.filter="drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
+  decoration.style.filter=star==="好奇星"?"drop-shadow(0 0 7px #fff) drop-shadow(0 0 16px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,.9))":"drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
   decoration.style.setProperty("z-index","9","important");
  };
  if(decoration.complete&&paper.complete)align();
@@ -10055,7 +10055,7 @@ function alignResultRoleToTextArtwork(role,layers){
    const scale=Math.min(targetWidth/subject.width,targetHeight/subject.height)*1.15;
    const left=targetLeft+targetWidth/2-(subject.x+subject.width/2)*scale;
    const displayScale=layers.clientWidth/textArtwork.naturalWidth;
-   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale);
+   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale)-(window.matchMedia&&window.matchMedia("(max-width:768px)").matches?5:0);
    role.style.setProperty("position","absolute","important");
    role.style.setProperty("inset","auto","important");
    role.style.setProperty("left",left+"px","important");
@@ -10288,7 +10288,7 @@ function openPersonalityResult(first,second){
  {
   const starImageFiles={"好奇星":"1好奇星.webp","同情星":"2同情星.webp","爽快星":"3爽快星.webp","熱情星":"4熱情星.webp"};
   const starDecoration=document.createElement("img");
-  starDecoration.className="personality-result-layer result-star-decoration";
+  starDecoration.className="personality-result-layer result-star-decoration"+(first==="好奇星"?" result-star-decoration-curiosity":"");
   starDecoration.decoding="async";
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
@@ -12534,7 +12534,7 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-disclaimer{font-family:'Noto Sans TC',sans-serif;font-size:clamp(7px,calc(4.2cqw - 6px),11px);font-weight:700;line-height:1.7;-webkit-text-stroke:.25px currentColor;text-align:center;margin-top:26px;color:#77747D}
 #personality-result-copy .result-continue{text-align:center;margin:32px 0 0;font-family:'Dela Gothic One',sans-serif;font-size:82px;font-weight:400;line-height:1.35}
 #personality-result-copy .result-continue-game{display:inline-block;padding:8px 24px;background:#000;color:#fff;border:4px solid #fff;font-weight:400}
-#personality-result-copy .result-continue-game .result-player-name{color:#F07824}
+#personality-result-copy .result-continue-game .result-player-name{color:#F07824;font-size:inherit!important;line-height:inherit!important;vertical-align:baseline!important;transform:none!important}
 #personality-result-copy .result-career-heading{box-sizing:border-box;width:calc(100% + 22px);margin:2px 0 10px -11px;padding:4px 8px;text-align:center;font-family:'Dela Gothic One',sans-serif;font-size:82px;font-weight:400;line-height:1.35;color:#fff;background:var(--result-explanation-color)}
 /* 測驗結果頁完全不顯示任何保存／下載圖片或控制項 */
 #personality-result-toolbar,
@@ -12668,7 +12668,7 @@ function toggleBGM(btnEl) {
 /* 手機版：適合職業以前的主標、英文、名稱與說明文字整體上移15px；保留既有手機字級縮小設定。 */
 @media (max-width:768px){
  #personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  top:424px!important;
+  top:414px!important;
  }
 }
 /* 結果頁只阻止頂端／底端的橡皮筋回彈，不影響正常上下閱讀。 */
@@ -12725,6 +12725,28 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-career-intro{left:3px!important}
 </style>
 
+<style id="result-curiosity-pop-and-bounce-20261108">
+/* 好奇星插圖：先從破洞紙後方彈出，再持續輕快跳動；定位仍由 JS 計算。 */
+#personality-result-layers .result-star-decoration-curiosity{
+ animation:resultCuriosityPop .62s cubic-bezier(.18,.88,.28,1.28) both,
+           resultCuriosityIdleBounce 1.45s ease-in-out .62s infinite!important;
+ transform-origin:center bottom!important;
+}
+@keyframes resultCuriosityPop{
+ 0%{transform:translateY(95px) scale(.08) rotate(4deg);opacity:.15}
+ 62%{transform:translateY(-12px) scale(1.08) rotate(4deg);opacity:1}
+ 82%{transform:translateY(4px) scale(.96) rotate(4deg);opacity:1}
+ 100%{transform:translateY(0) scale(1) rotate(4deg);opacity:1}
+}
+@keyframes resultCuriosityIdleBounce{
+ 0%,100%{transform:translateY(0) rotate(4deg)}
+ 45%{transform:translateY(-9px) rotate(4deg)}
+ 70%{transform:translateY(-3px) rotate(4deg)}
+}
+#personality-result-copy .result-continue-game .result-player-name{
+ font-size:inherit!important;line-height:inherit!important;vertical-align:baseline!important;transform:none!important;
+}
+</style>
 </body>
 </html>
 
