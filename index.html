@@ -10318,6 +10318,36 @@ function openPersonalityResult(first,second){
   return out;
  };
  let html='<p class="result-belongs-heading">'+belongsHeadingHtml+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">TO</span>'):d.english)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+(first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first)+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
+ if(first==="好奇星"){
+  const curiosityBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>").replace(/好奇，/g,"好奇，<br>").replace(/方式。/g,"方式。<br>").replace(/可能性！/g,"可能性！<br>");
+  const curiosityMark=(value,terms)=>{let out=value;terms.forEach(term=>{out=out.split(term).join('<span class="result-highlight" style="--highlight-color:'+primaryColor+'">'+term+'</span>');});return out;};
+  const curiosityWorkBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>");
+  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+curiosityMark(curiosityBreaks(d.traits),["嘗試不同的可能性"])+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+curiosityMark(curiosityWorkBreaks(d.work),["很難長時間專注在重複性的工作上"])+'</p></section>';
+  const jobs={
+   "好奇星":"研究與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員...等。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員...等。",
+   "同情星":"資訊媒體傳播：記者、新聞編輯、節目企劃、採訪編輯、紀錄片導演...等。\n設計群：平面設計師、室內設計師、廣告設計師、UI設計師、插畫師...等。",
+   "爽快星":"活動企劃與展演服務：創意行銷企劃、活動企劃師、展覽策劃人、舞台監督、婚禮企劃師...等。\n商業與銷售：業務員、門市銷售人員、廣告文案、市場分析師、數位行銷專員...等。",
+   "熱情星":"觀光和事業：博物館導覽員、導遊、旅遊行銷人員、節慶活動企劃、活動企劃人員...等。\n行政與管理：營運企劃、資料分析師、專案助理、活動執行人員、總務人員...等。"
+  };
+  const traits={
+   "好奇星":"好奇星對新鮮事物總是充滿興趣，遇到不懂的事情時，會想主動找出答案，弄清楚背後的原因。喜歡親自探索、嘗試不同的方法，從過程中學習新知識，也因為常常思考問題，發現更多意想不到的可能性！",
+   "同情星":"想知道別人經歷了什麼，也理解他們的處境。透過提問和傾聽，幫助他人理解自己的想法，發現人們遇到的問題，並設法用創意讓生活變得更好。",
+   "爽快星":"喜歡探索不同的可能性，且願意親自嘗試。遇到問題時，能快速採取行動，靈活地應對各種情況，並透過不斷嘗試與調整，找到有效的解決方法，將想法實踐出來！",
+   "熱情星":"有著好奇與行動力，不害怕挑戰未知。面對不同的想法時，能主動尋找機會並付諸實踐，運用自身的熱情激勵身邊的人，讓團隊更有動力，共同朝著目標前進。"
+  };
+  const details={
+   "好奇星":"總是對周遭的事物充滿興趣，喜歡追問事情背後的原因，從觀察與探索中發現新的知識！主動蒐集資訊、嘗試不同的方法。在職業選擇上，適合研究、科學或資訊技術等領域，能透過分析、調查與實驗發揮自己的優勢。()的優勢在於總能從不同角度看待事物，發現容易被忽略的細節|дﾟ)。這種探索的精神能帶來更多想法，找到值得深入研究的方向！",
+   "同情星":"喜歡探索不同的領域，並主動尋找問題背後的原因。對他人的情緒與處境有一定的敏感度，願意傾聽不同的聲音，理解與自己想法不同的人。設計的領域中，同情星善於觀察使用者的需求與感受，將好奇星轉化為創意，並透過設計解決問題，創造更貼近人心的作品(´･ωゞ)。想知道世界為什麼如此運作，如何讓事情變得更好。",
+   "爽快星":"喜歡四處探索，找出問題的答案。面對未知事物時，不會只停留在想像，而是主動採取行動。遇到突發狀況時，能靈活調整方向，不斷從嘗試中累積經驗，找到更合適的做法( ･｀ω･´)工作裡可選擇適合探索、應變與實際執行的領域，能將好奇轉化為新的想法，透過爽快果斷的行動，逐步實現自己的目標！好奇星讓他們不斷發現新的可能，爽快星則付諸行動。",
+   "熱情星":"面對挑戰時勇於嘗試，能積極找到解決方法，不輕易受限於現況，帶領大家開拓新的方向。職業選擇上，經營管理、專案執行或規劃等領域，來發揮組織能力與領導潛力。好奇星的特質帶來創新的想法，熱情星則提供積極行動的動力，推動計畫，帶領團隊朝目標前進。團隊合作中，能運用熱情星的感染力帶動氣氛，透過實際行動逐步實現，朝共同的目標邁進(^^ゞ！"
+  };
+  const careerIntro=first===second?"結合()的第二高分星球還是":"結合()的第二高分星球是";
+  const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";let description="(如:"+parts.join("：")+")";if(second==="好奇星"&&index===0)description=description.replace("資料分析師、","資料分析師、<br>");return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
+  const curiosityCareerText=(value)=>replace(value).replace("知識！","知識！<br>").replace("方法。","方法。<br>").replace("優勢。","優勢。<br>");
+  const curiosityCareerDetails=curiosityMark(curiosityCareerText(details[second]),["主動蒐集資訊、嘗試不同的方法","細節"]);
+  html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+replace(careerIntro)+(first===second?'<span class="result-career-intro-tie-group"><span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span><span class="result-career-intro-tie-mark">(?!)</span></span>':'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>')+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
+ }
+ else{
  const sourceData=parseResultSource(first);
  d.traits=sourceData.traits;
  d.work=sourceData.work;
@@ -10335,6 +10365,7 @@ function openPersonalityResult(first,second){
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+intro+'<span class="result-career-intro-next">'+career.possible+'</span></p>'+categories+'<p class="result-trait-heading">'+replace(career.traitHeading)+'</p><p>'+summary+'</p>'+(details?'<p>'+details+'</p>':'')+'</section><p class="result-disclaimer">'+replace(disclaimer)+'</p>';
  }else{
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace("結合()第二高分的星球是"+second)+'</p></section>';
+ }
  }
  html+='<p class="result-continue"><span class="result-continue-game">繼續<span class="result-player-name">遊</span>戲</span></p>';
  copy.innerHTML=html;
