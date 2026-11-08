@@ -9965,7 +9965,7 @@ function openPersonalityResultFromScores(){
  openPersonalityResult(first,second);
 }
 function jumpToPersonalityResult(star,event){if(event){event.preventDefault();event.stopPropagation();}const p=document.getElementById("developer-tools-panel");if(p)p.classList.remove("open");openPersonalityResult(star,star);}
-function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");}const diagnostic=document.getElementById("result-version-diagnostic");if(diagnostic)diagnostic.style.display="none";}
+function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");}}
 function getResultImageAlphaBounds(img){
  // 手機 Safari 不建立原圖尺寸的大型 Canvas；縮圖取樣即可定位透明邊界。
  const sourceWidth=img.naturalWidth,sourceHeight=img.naturalHeight;
@@ -10271,19 +10271,6 @@ function openPersonalityResult(first,second){
   screen.classList.add("show");
   screen.setAttribute("aria-hidden","false");
   screen.scrollTop=0;
- }
- // 暫時診斷標記：只在桌面版開啟測驗結果時顯示，用來確認線上頁面是否真的執行到這份新版 JavaScript。
- if(screen&&window.matchMedia("(min-width: 769px)").matches){
-  let diagnostic=document.getElementById("result-version-diagnostic");
-  if(!diagnostic){
-   diagnostic=document.createElement("div");
-   diagnostic.id="result-version-diagnostic";
-   diagnostic.textContent="新版程式已執行｜測試 1109";
-   diagnostic.setAttribute("aria-hidden","true");
-   diagnostic.style.cssText="position:fixed;top:12px;right:12px;z-index:2147483647;display:block;padding:12px 18px;background:#ffea00;color:#111;border:5px solid #ff1744;border-radius:0;font:900 22px/1.3 Arial,sans-serif;letter-spacing:1px;box-shadow:0 0 0 4px #111;pointer-events:none;";
-   document.body.appendChild(diagnostic);
-  }
-  diagnostic.style.display="block";
  }
  if(window.__resultImageObjectURLs){window.__resultImageObjectURLs.forEach(url=>URL.revokeObjectURL(url));}
  window.__resultImageObjectURLs=[];
@@ -12888,12 +12875,6 @@ function toggleBGM(btnEl) {
 }
 </style>
 
-<!-- STATIC VERSION CHECK: remove after deployment diagnosis -->
-<style id="static-version-check-style">
-@media (min-width:769px){#static-version-check{display:block!important;position:fixed!important;top:12px!important;left:12px!important;z-index:2147483647!important;padding:14px 20px!important;background:#ffea00!important;color:#111!important;border:6px solid #ff1744!important;font:900 24px/1.3 Arial,sans-serif!important;box-shadow:0 0 0 5px #111!important;pointer-events:none!important}}
-@media (max-width:768px){#static-version-check{display:none!important}}
-</style>
-<div id="static-version-check" style="display:none">HTML 最新版已載入｜STATIC 1109</div>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
@@ -13615,7 +13596,7 @@ function toggleBGM(btnEl) {
 
   /* 好奇星三字共用160px、同一行高與基線；不對「奇」字做獨立放大或位移。 */
   #personality-result-screen #personality-result-copy .result-name.result-name-curiosity{
-    font-size:160px!important;
+    font-size:130px!important;
     line-height:1.25!important;
   }
   #personality-result-screen #personality-result-copy .result-name.result-name-curiosity .result-focus-mark{
@@ -13633,7 +13614,7 @@ function toggleBGM(btnEl) {
   #personality-result-screen #personality-result-copy .result-primary > p,
   #personality-result-screen #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
   #personality-result-screen #personality-result-copy .result-job-category-description{
-    font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 13px)!important;
+    font-size:clamp(14px,calc(4.2cqw + 1px),18px)!important;
   }
 
   /* 灰線的 CSS 來源為 .result-section 的 border-bottom。
@@ -13658,6 +13639,11 @@ function toggleBGM(btnEl) {
   #personality-result-screen #personality-result-copy .result-trait-heading-label::after{
     content:none!important;
     display:none!important;
+  }
+}
+@media (max-width:768px){
+  #personality-result-screen #personality-result-copy .result-name.result-name-curiosity{
+    font-size:120px!important;
   }
 }
 </style>
