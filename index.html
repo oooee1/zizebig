@@ -10082,10 +10082,13 @@ function openPersonalityResult(first,second){
  const jobTitleEls=Array.from(copy.querySelectorAll(".result-job-category-title"));
  if(jobTitleEls.length){
   const syncJobTitleWidths=()=>{
-   jobTitleEls.forEach(el=>{el.style.width="max-content";el.style.maxWidth="100%";});
-   const longestWidth=Math.max(...jobTitleEls.map(el=>el.scrollWidth));
-   const sharedWidth=Math.min(longestWidth,copy.clientWidth);
-   copy.style.setProperty("--result-job-title-width",sharedWidth+"px");
+   jobTitleEls.forEach(el=>{
+    el.style.setProperty("width","max-content","important");
+    el.style.setProperty("max-width","none","important");
+    el.style.setProperty("white-space","nowrap","important");
+   });
+   const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width));
+   copy.style.setProperty("--result-job-title-width",longestWidth+"px");
   };
   syncJobTitleWidths();
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncJobTitleWidths);
@@ -12480,5 +12483,35 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-career-intro-next{
  display:block!important;
  margin-top:8px!important;
+}
+</style>
+
+
+<style id="result-followup-precision-20261108">
+/* 重點字維持說明文字本身的粗度，不另行加粗 */
+#personality-result-copy .result-highlight{font-weight:inherit!important}
+/* 創意／探索標籤比目前設定縮小1 */
+#personality-result-copy .result-keywords span{
+ font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 2.2px)!important;
+}
+#personality-result-copy .result-keywords.result-keywords-curiosity span{
+ font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) - .8px)!important;
+}
+/* 前段大標與說明文字的距離再縮短5 */
+#personality-result-copy .result-section h2:not(.result-career-heading) + p{margin-top:-8px!important}
+/* 「或」直接沿用說明文字的字型、字級、粗度、行高與文字描邊 */
+#personality-result-copy .result-job-category-or{
+ font:inherit!important;
+ -webkit-text-stroke:inherit!important;
+ letter-spacing:inherit!important;
+ line-height:inherit!important;
+ margin:14px 0 8px!important;
+}
+/* 分類背景寬度使用實際量測的最長標題寬度 */
+#personality-result-copy .result-job-category-title{
+ box-sizing:border-box!important;
+ width:var(--result-job-title-width)!important;
+ max-width:none!important;
+ white-space:nowrap!important;
 }
 </style>
