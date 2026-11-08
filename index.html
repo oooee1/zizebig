@@ -10007,7 +10007,7 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   if(!posterRect.width||!paperRect.width)return;
   // 插圖置中放在破洞紙上方的破洞區域，不再把 top 算成負值推到海報外。
   // 四顆星球插圖都以各自破洞紙為定位基準，放大 1.5 倍並略微順時針傾斜。
-  const imageWidth=paperRect.width*(star==="好奇星"?.9:.45);
+  const imageWidth=paperRect.width*(star==="好奇星"?.78:.45);
   const imageHeight=imageWidth*(decoration.naturalHeight/decoration.naturalWidth);
   const left=paperRect.left-posterRect.left+(paperRect.width-imageWidth)/2;
   const top=paperRect.top-posterRect.top+paperRect.height*.018;
@@ -10055,7 +10055,7 @@ function alignResultRoleToTextArtwork(role,layers){
    const scale=Math.min(targetWidth/subject.width,targetHeight/subject.height)*1.15;
    const left=targetLeft+targetWidth/2-(subject.x+subject.width/2)*scale;
    const displayScale=layers.clientWidth/textArtwork.naturalWidth;
-   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale)-(window.matchMedia&&window.matchMedia("(max-width:768px)").matches?5:0);
+   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale)-(window.matchMedia&&window.matchMedia("(max-width:768px)").matches?5:0)-8;
    role.style.setProperty("position","absolute","important");
    role.style.setProperty("inset","auto","important");
    role.style.setProperty("left",left+"px","important");
@@ -12665,10 +12665,10 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-career-intro{position:relative!important;left:8px!important}
 </style>
 <style id="result-mobile-position-and-scroll-guard-20261108">
-/* 手機版：適合職業以前的主標、英文、名稱與說明文字整體上移15px；保留既有手機字級縮小設定。 */
+/* 手機版：適合職業以前的所有文字區塊明顯上移20px；用獨立 translate 避免覆蓋各自原有定位與動畫。 */
 @media (max-width:768px){
- #personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  top:414px!important;
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 -20px!important;
  }
 }
 /* 結果頁只阻止頂端／底端的橡皮筋回彈，不影響正常上下閱讀。 */
@@ -12726,22 +12726,29 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-curiosity-pop-and-bounce-20261108">
-/* 好奇星插圖：先從破洞紙後方彈出，再持續輕快跳動；定位仍由 JS 計算。 */
-#personality-result-layers .result-star-decoration-curiosity{
- animation:resultCuriosityPop .62s cubic-bezier(.18,.88,.28,1.28) both,
-           resultCuriosityIdleBounce 1.45s ease-in-out .62s infinite!important;
+/* 好奇星先藏在破洞紙後方，再快速彈出放大；完成後接續較有彈性的持續跳動。 */
+.result-star-decoration-curiosity{
+ animation:resultCuriosityPop .82s cubic-bezier(.16,1.15,.32,1) both,
+           resultCuriosityIdleBounce 1.05s cubic-bezier(.36,0,.62,1) .82s infinite!important;
  transform-origin:center bottom!important;
 }
 @keyframes resultCuriosityPop{
- 0%{transform:translateY(95px) scale(.08) rotate(4deg);opacity:.15}
- 62%{transform:translateY(-12px) scale(1.08) rotate(4deg);opacity:1}
- 82%{transform:translateY(4px) scale(.96) rotate(4deg);opacity:1}
+ 0%{transform:translateY(34px) scale(.04) rotate(-7deg);opacity:0}
+ 48%{transform:translateY(-13px) scale(1.13) rotate(5deg);opacity:1}
+ 68%{transform:translateY(5px) scale(.94) rotate(1deg);opacity:1}
+ 84%{transform:translateY(-3px) scale(1.035) rotate(4deg);opacity:1}
  100%{transform:translateY(0) scale(1) rotate(4deg);opacity:1}
 }
 @keyframes resultCuriosityIdleBounce{
  0%,100%{transform:translateY(0) rotate(4deg)}
- 45%{transform:translateY(-9px) rotate(4deg)}
- 70%{transform:translateY(-3px) rotate(4deg)}
+ 18%{transform:translateY(-13px) rotate(1deg)}
+ 36%{transform:translateY(0) rotate(5deg)}
+ 55%{transform:translateY(-8px) rotate(6deg)}
+ 72%{transform:translateY(0) rotate(3deg)}
+ 86%{transform:translateY(-4px) rotate(2deg)}
+}
+#personality-result-copy .result-career-intro-tie-group .result-career-intro-star{
+ font-size:calc(1em + 5px)!important;
 }
 #personality-result-copy .result-continue-game .result-player-name{
  font-size:inherit!important;line-height:inherit!important;vertical-align:baseline!important;transform:none!important;
