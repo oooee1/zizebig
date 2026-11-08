@@ -9942,30 +9942,29 @@ function getResultImageAlphaBounds(img){
  return {x:minX*sx,y:minY*sy,width:(maxX-minX+1)*sx,height:(maxY-minY+1)*sy};
 }
 function alignCuriosityDecorationToHolePaper(decoration,layers){
- const paper=Array.from(layers.querySelectorAll("img")).find(img=>decodeURIComponent(img.src).includes("好奇星 破洞紙.webp"));
+ // 不再用 Canvas 掃描透明像素：直接依破洞紙的實際顯示尺寸定位，避免 Safari 額外建立畫布。
+ const paper=Array.from(layers.querySelectorAll("img")).find(img=>{
+  try{return decodeURIComponent(img.src).includes("好奇星 破洞紙.webp");}
+  catch(error){return img.src.includes("好奇星");}
+ });
  if(!paper)return;
  const align=()=>{
   if(!decoration.naturalWidth||!paper.complete||!paper.naturalWidth)return;
-  try{
-   const target=getResultImageAlphaBounds(paper);
-   const subject=getResultImageAlphaBounds(decoration);
-   if(!target||!subject)return;
-   const posterRect=layers.getBoundingClientRect();
-   const paperRect=paper.getBoundingClientRect();
-   const scale=(target.width*.24)/subject.width;
-   const displayScale=paperRect.width/paper.naturalWidth;
-   const imageWidth=decoration.naturalWidth*scale*displayScale;
-   const imageHeight=decoration.naturalHeight*scale*displayScale;
-   const left=paperRect.left-posterRect.left+(target.x+target.width*.72)*displayScale-imageWidth/2;
-   const top=paperRect.top-posterRect.top+(target.y)*displayScale-imageHeight*.82;
-   decoration.style.position="absolute";
-   decoration.style.inset="auto";
-   decoration.style.left=left+"px";
-   decoration.style.top=top+"px";
-   decoration.style.width=imageWidth+"px";
-   decoration.style.height=imageHeight+"px";
-   decoration.style.objectFit="contain";
-  }catch(error){console.warn("好奇星插圖定位失敗：",error);}
+  const posterRect=layers.getBoundingClientRect();
+  const paperRect=paper.getBoundingClientRect();
+  if(!posterRect.width||!paperRect.width)return;
+  // 插圖置中放在破洞紙上方的破洞區域，不再把 top 算成負值推到海報外。
+  const imageWidth=paperRect.width*.30;
+  const imageHeight=imageWidth*(decoration.naturalHeight/decoration.naturalWidth);
+  const left=paperRect.left-posterRect.left+(paperRect.width-imageWidth)/2;
+  const top=paperRect.top-posterRect.top+paperRect.height*.018;
+  decoration.style.position="absolute";
+  decoration.style.inset="auto";
+  decoration.style.left=left+"px";
+  decoration.style.top=top+"px";
+  decoration.style.width=imageWidth+"px";
+  decoration.style.height=imageHeight+"px";
+  decoration.style.objectFit="contain";
  };
  if(decoration.complete&&paper.complete)align();
  else{
@@ -10080,6 +10079,7 @@ function openPersonalityResult(first,second){
  if(first==="好奇星"){
   const curiosityDecoration=document.createElement("img");
   curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
+  curiosityDecoration.decoding="async";
   curiosityDecoration.src="./pct/1好奇星.webp";
   curiosityDecoration.alt="";
   // 插圖緊接在「好奇星 破洞紙」上方一層，保留其下方紙張、上方！？圖層的順序。
@@ -10093,7 +10093,7 @@ function openPersonalityResult(first,second){
   curiosityDecoration.style.transform="scale(.81) rotate(2deg)";
   curiosityDecoration.style.transformOrigin="center center";
   // 黃金色柔和泛光，沿著插圖透明邊緣發光。
-  curiosityDecoration.style.filter="drop-shadow(0 0 6px rgba(246,184,0,.95)) drop-shadow(0 0 13px rgba(246,184,0,.72)) drop-shadow(0 0 22px rgba(255,220,90,.48))";
+  curiosityDecoration.style.filter="drop-shadow(0 0 4px rgba(246,184,0,.95)) drop-shadow(0 0 8px rgba(246,184,0,.72)) drop-shadow(0 0 14px rgba(255,220,90,.48))";
   layers.insertBefore(curiosityDecoration,layers.children[7]||null);
   alignCuriosityDecorationToHolePaper(curiosityDecoration,layers);
  }
