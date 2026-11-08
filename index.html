@@ -10034,18 +10034,31 @@ function alignResultRoleToTextArtwork(role,layers){
  const align=()=>{
   if(!role.naturalWidth||!textArtwork.naturalWidth)return;
   try{
+   const imageRect=textArtwork.getBoundingClientRect();
+   const layerRect=layers.getBoundingClientRect();
    const target=getResultImageAlphaBounds(textArtwork);
-   const subject=getResultImageAlphaBounds(role);
-   if(!target||!subject)return;
-   // 讓職業插圖的非透明部分置中對齊「背景 文字」的非透明區域，完整保留原圖比例。
-   const scale=Math.min(target.width/subject.width,target.height/subject.height)*1.15;
-   const left=target.x+target.width/2-(subject.x+subject.width/2)*scale;
+   const subject=getResultImageAlphaBounds(role)||{x:0,y:0,width:role.naturalWidth,height:role.naturalHeight};
+   const scaleX=imageRect.width/textArtwork.naturalWidth;
+   const scaleY=imageRect.height/textArtwork.naturalHeight;
+   const targetLeft=imageRect.left-layerRect.left+((target?target.x:0)*scaleX);
+   const targetTop=imageRect.top-layerRect.top+((target?target.y:0)*scaleY);
+   const targetWidth=(target?target.width:textArtwork.naturalWidth)*scaleX;
+   const targetHeight=(target?target.height:textArtwork.naturalHeight)*scaleY;
+   const scale=Math.min(targetWidth/subject.width,targetHeight/subject.height)*1.15;
+   const left=targetLeft+targetWidth/2-(subject.x+subject.width/2)*scale;
    const displayScale=layers.clientWidth/textArtwork.naturalWidth;
-   const top=target.y+target.height/2-(subject.y+subject.height/2)*scale+18+(15/displayScale);
-   role.style.left=(left/textArtwork.naturalWidth*100)+"%";
-   role.style.top=(top/textArtwork.naturalHeight*100)+"%";
-   role.style.width=(role.naturalWidth*scale/textArtwork.naturalWidth*100)+"%";
-   role.style.height=(role.naturalHeight*scale/textArtwork.naturalHeight*100)+"%";
+   const top=targetTop+targetHeight/2-(subject.y+subject.height/2)*scale+18+(15/displayScale);
+   role.style.setProperty("position","absolute","important");
+   role.style.setProperty("inset","auto","important");
+   role.style.setProperty("left",left+"px","important");
+   role.style.setProperty("top",top+"px","important");
+   role.style.setProperty("width",(role.naturalWidth*scale)+"px","important");
+   role.style.setProperty("height",(role.naturalHeight*scale)+"px","important");
+   role.style.setProperty("z-index","31","important");
+   role.style.setProperty("display","block","important");
+   role.style.setProperty("visibility","visible","important");
+   role.style.setProperty("opacity","1","important");
+   role.style.objectFit="contain";
   }catch(error){console.warn("結果職業插圖定位失敗：",error);}
  };
  if(role.complete&&textArtwork.complete)align();
@@ -10119,7 +10132,7 @@ function compactResultPosterToVisibleBottom(layers,copy){
  // 以圖片與實際文字內容的最底端決定海報高度，不讓透明畫布或溢出的空白形成額外捲動區。
  const rect=layers.getBoundingClientRect();
  if(!rect.width||!rect.height)return;
- const images=Array.from(layers.querySelectorAll("img.personality-result-layer"));
+ const images=Array.from(layers.querySelectorAll("img.personality-result-layer")).filter(img=>!img.classList.contains("result-star-decoration")&&img.dataset.resultRole!=="true");
  const geometry=images.map(img=>{
   const r=img.getBoundingClientRect();
   return {img,left:r.left-rect.left,top:r.top-rect.top,width:r.width,height:r.height,bottom:r.bottom-rect.top};
