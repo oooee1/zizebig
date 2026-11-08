@@ -13416,7 +13416,7 @@ function toggleBGM(btnEl) {
   top:459px!important;
  }
  /* 英文標題以自己的 top 定位，從上一版位置再往上9px。 */
- #personality-result-copy .result-english{top:-19px!important}
+ #personality-result-copy > .result-english:not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:-19px!important}
  /* 好奇星三字在目前140px基礎上再放大20px。 */
  #personality-result-copy .result-name.result-name-curiosity{font-size:160px!important}
  /* 說明文字在上一版基礎上再增加3px。 */
