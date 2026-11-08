@@ -10074,7 +10074,7 @@ function openPersonalityResult(first,second){
   curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
   curiosityDecoration.src="./pct/1好奇星.webp";
   curiosityDecoration.alt="";
-  curiosityDecoration.style.zIndex="7.5";
+  curiosityDecoration.style.zIndex="9";
   curiosityDecoration.style.position="absolute";
   curiosityDecoration.style.inset="0";
   curiosityDecoration.style.width="100%";
@@ -12725,5 +12725,27 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-career-intro{margin-bottom:19px!important}
 #personality-result-copy .result-career-intro-next{
  display:block!important;margin-top:-4px!important;margin-bottom:0!important;
+}
+</style>
+
+<style id="result-user-adjustments-20261108g">
+/* 標題改為30px、正常字重，黑色描邊加粗至6px */
+#personality-result-copy .result-belongs-heading{
+ font-size:30px!important;font-weight:400!important;
+ -webkit-text-stroke:6px #111!important;paint-order:stroke fill!important;
+}
+#personality-result-copy .result-belongs-char,
+#personality-result-copy .result-belongs-player-char{
+ font-weight:400!important;-webkit-text-stroke:6px #111!important;
+ paint-order:stroke fill!important;
+}
+/* 職業介紹整體上移5px，並增加與下方職業內容的距離13px */
+#personality-result-copy .result-career-intro{
+ position:relative!important;top:-5px!important;
+ margin-bottom:32px!important;
+}
+/* 同分時句尾星球名稱仍使用第二高分星球的重點色 */
+#personality-result-copy .result-career-intro-star{
+ color:var(--result-career-star-color)!important;
 }
 </style>
