@@ -9980,7 +9980,7 @@ function alignCuriosityDecorationToHolePaper(decoration,layers){
  window.addEventListener("resize",align,{passive:true});
 }
 function alignResultRoleToTextArtwork(role,layers){
- const textArtwork=Array.from(layers.querySelectorAll("img")).find(img=>decodeURIComponent(img.src).includes("背景 文字.webp"));
+ const textArtwork=Array.from(layers.querySelectorAll("img")).find(img=>(img.dataset.resultSrc||decodeURIComponent(img.src)).includes("背景 文字.webp"));
  if(!textArtwork)return;
  const align=()=>{
   if(!role.naturalWidth||!textArtwork.naturalWidth)return;
@@ -10010,7 +10010,7 @@ function alignResultRoleToTextArtwork(role,layers){
  }
 }
 function positionResultTextElements(layers,copy){
- const findImage=name=>Array.from(layers.querySelectorAll("img")).find(img=>decodeURIComponent(img.src).includes(name));
+ const findImage=name=>Array.from(layers.querySelectorAll("img")).find(img=>(img.dataset.resultSrc||decodeURIComponent(img.src)).includes(name));
  const textPaper=findImage("背景 文字.webp");
  const lowerNolan=findImage("下面那張諾蘭紙.webp")||layers.querySelector("img");
  const longStrip=findImage("背景 長條紙.webp");
@@ -10066,22 +10066,66 @@ function positionResultTextElements(layers,copy){
  if(window._resultPositionResize)window.removeEventListener("resize",window._resultPositionResize);
  window._resultPositionResize=apply;window.addEventListener("resize",apply,{passive:true});
 }
+async function downsampleResultImage(img,src,maxWidth=600){
+ // 結果圖原始尺寸高達 1440x12000；逐張解碼後縮成 600x5000 以內，避免手機同時解碼多張 66MiB 圖片。
+ img.dataset.resultSrc=src;
+ await new Promise((resolve,reject)=>{
+  if(img.complete&&img.naturalWidth){resolve();return;}
+  img.onload=()=>resolve();
+  img.onerror=()=>reject(new Error("結果圖片載入失敗："+src));
+  img.src=src;
+ });
+ const scale=Math.min(1,maxWidth/img.naturalWidth,5000/img.naturalHeight);
+ if(scale>=1)return;
+ const canvas=document.createElement("canvas");
+ canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+ canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+ const ctx=canvas.getContext("2d");
+ if(!ctx){canvas.width=canvas.height=0;return;}
+ ctx.drawImage(img,0,0,canvas.width,canvas.height);
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",.9));
+ if(!blob){canvas.width=canvas.height=0;return;}
+ const url=URL.createObjectURL(blob);
+ window.__resultImageObjectURLs=window.__resultImageObjectURLs||[];
+ window.__resultImageObjectURLs.push(url);
+ canvas.width=canvas.height=0;
+ img.onload=null;img.onerror=null;
+ img.src=url;
+ await new Promise(resolve=>{
+  if(img.complete&&img.naturalWidth){resolve();return;}
+  img.onload=()=>resolve();
+  img.onerror=()=>resolve();
+ });
+}
 function openPersonalityResult(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
+ if(window.__resultImageObjectURLs){window.__resultImageObjectURLs.forEach(url=>URL.revokeObjectURL(url));}
+ window.__resultImageObjectURLs=[];
  // 結果頁開啟時攔截點擊與觸控，避免事件穿透到下方劇情頁而推進對話。
  if(screen&&!screen.dataset.inputGuard){
   ["click","pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>event.stopPropagation(),{capture:true,passive:type==="touchstart"}));
   screen.dataset.inputGuard="1";
  }
  const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+" 上面那張諾蘭紙.webp",5],["背景 "+first+"上面.webp",6],[first+" 破洞紙.webp",7],["！？.webp",8]];
- layers.innerHTML=imgs.map(x=>'<img class="personality-result-layer" style="z-index:'+x[1]+'" src="'+RESULT_ROOT+x[0]+'" alt="">').join("");
+ layers.innerHTML="";
+ const resultImageQueue=[];
+ imgs.forEach(([name,z])=>{
+  const image=document.createElement("img");
+  image.className="personality-result-layer";
+  image.style.zIndex=String(z);
+  image.alt="";
+  const src=RESULT_ROOT+name;
+  image.dataset.resultSrc=src;
+  layers.appendChild(image);
+  resultImageQueue.push({img:image,src,maxWidth:600});
+ });
  if(first==="好奇星"){
   const curiosityDecoration=document.createElement("img");
   curiosityDecoration.className="personality-result-layer result-curiosity-decoration";
   curiosityDecoration.decoding="async";
-  curiosityDecoration.src="./pct/1好奇星.webp";
   curiosityDecoration.alt="";
+  curiosityDecoration.dataset.resultSrc="./pct/1好奇星.webp";
   // 插圖緊接在「好奇星 破洞紙」上方一層，保留其下方紙張、上方！？圖層的順序。
   curiosityDecoration.style.zIndex="7.5";
   // 改用固定比例直接放在整張結果海報頂端，不再依賴破洞紙量測、Canvas 或圖片載入後的定位回呼。
@@ -10099,6 +10143,7 @@ function openPersonalityResult(first,second){
   curiosityDecoration.onload=()=>console.info("[結果頁] 好奇星插圖載入成功");
   curiosityDecoration.onerror=()=>console.error("[結果頁] 好奇星插圖載入失敗：",curiosityDecoration.src);
   layers.insertBefore(curiosityDecoration,layers.children[7]||null);
+  resultImageQueue.push({img:curiosityDecoration,src:"./pct/1好奇星.webp",maxWidth:900});
  }
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replace(/\(\)/g,'<span class="result-player-name">'+player+'</span>');
@@ -10171,9 +10216,23 @@ function openPersonalityResult(first,second){
   syncJobTitleWidths();
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncJobTitleWidths);
  }
- positionResultTextElements(layers,copy);
- const role=document.createElement("img");role.className="personality-result-layer";role.src=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");role.style.zIndex="10";layers.appendChild(role);alignResultRoleToTextArtwork(role,layers);
+ const role=document.createElement("img");
+ role.className="personality-result-layer";
+ const roleSrc=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");
+ role.dataset.resultSrc=roleSrc;
+ role.style.zIndex="10";
+ layers.appendChild(role);
+ resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
  screen.classList.add("show");screen.setAttribute("aria-hidden","false");screen.scrollTop=0;
+ // 一次只解碼、縮小一張結果圖；避免點擊跳轉時 8 張 1440x12000 圖片同時佔用數百 MiB。
+ (async()=>{
+  for(const item of resultImageQueue){
+   try{await downsampleResultImage(item.img,item.src,item.maxWidth);}
+   catch(error){console.warn("[結果頁] 圖片處理失敗：",error);}
+  }
+  positionResultTextElements(layers,copy);
+  alignResultRoleToTextArtwork(role,layers);
+ })();
 }
 
         function showEndCredits() {
