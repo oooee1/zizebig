@@ -10069,7 +10069,7 @@ function openPersonalityResult(first,second){
    "熱情星":"面對挑戰時勇於嘗試，能積極找到解決方法，不輕易受限於現況，帶領大家開拓新的方向。職業選擇上，經營管理、專案執行或規劃等領域，來發揮組織能力與領導潛力。好奇星的特質帶來創新的想法，熱情星則提供積極行動的動力，推動計畫，帶領團隊朝目標前進。團隊合作中，能運用熱情星的感染力帶動氣氛，透過實際行動逐步實現，朝共同的目標邁進(^^ゞ！"
   };
   const careerIntro=second==="好奇星"?"結合()第二高分的星球還是好奇星(?!)":"結合()第二高分的星球是"+second;
-  const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";const description="(如："+parts.join("：")+")";return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
+  const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=parts.shift()||"";const description="(如:"+parts.join("：")+")";return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
   const curiosityCareerText=(value)=>replace(value).replace("知識！","知識！<br>").replace("方法。","方法。<br>").replace("優勢。","優勢。<br>");
   const curiosityCareerDetails=curiosityMark(curiosityCareerText(details[second]),["主動蒐集資訊、嘗試不同的方法","細節"]);
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace(careerIntro)+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<p class="result-trait-heading">'+replace("屬於()的特質：")+'</p><p>'+replace(traits[second])+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
@@ -12555,4 +12555,32 @@ function toggleBGM(btnEl) {
  width:var(--result-job-title-width)!important;
  border-radius:16px!important;
 }
+</style>
+
+
+<style id="result-user-adjustments-20261108c">
+/* 說明文字再往藍色微調一點 */
+#personality-result-copy{--result-explanation-color:hsl(235 24% 24.902%)!important}
+/* O、E 恢復原本位置，保留放大效果與原本縱向比例 */
+#personality-result-copy .result-english-curiosity .result-letter-raised{
+ position:static!important;
+ top:auto!important;
+ display:inline-block!important;
+ font-size:calc(1em + 1px)!important;
+ transform:scaleY(1.25)!important;
+ transform-origin:center bottom!important;
+ vertical-align:baseline!important;
+}
+/* 「或」上方再增加14px、下方再增加5px */
+#personality-result-copy .result-job-category-or{margin-top:36px!important;margin-bottom:16px!important}
+/* 所有重點字及特質標題沿用一般文字粗度，不額外加粗 */
+#personality-result-copy .result-highlight,
+#personality-result-copy .result-trait-heading,
+#personality-result-copy .result-trait-heading .result-player-name{font-weight:inherit!important}
+/* 屬於…的特質下方兩段說明之間增加8px */
+#personality-result-copy .result-trait-heading + p + p{margin-top:16px!important}
+/* 「具有…事物」等上方標語文字，下方距離減少2px */
+#personality-result-copy .result-tagline{margin-bottom:16px!important}
+/* 職場優勢與劣勢說明區不顯示多餘的細分隔線 */
+#personality-result-copy .result-primary{border-bottom:0!important}
 </style>
