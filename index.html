@@ -9982,7 +9982,7 @@ function positionResultTextElements(layers,copy){
     career.style.position="absolute";
     career.style.setProperty("left",(imageRect.left-copyRect.left+textBounds.x*scaleX)+"px","important");
     career.style.setProperty("width",(textBounds.width*scaleX)+"px","important");
-    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)+"px";
+    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-30)+"px";
    }
   }
   if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
@@ -10008,7 +10008,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-71)+"px";
+    note.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-62)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -12405,5 +12405,11 @@ function toggleBGM(btnEl) {
 /* 適合職業以前的文字整體上移1px */
 #personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
  top:439px!important;
+}
+</style>
+<style id="result-adjustments-20261108f">
+/* 創意／態度標籤字級與說明文字完全相同 */
+#personality-result-copy .result-keywords span{
+ font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 1.2px)!important;
 }
 </style>
