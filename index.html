@@ -10066,8 +10066,8 @@ function positionResultTextElements(layers,copy){
  if(window._resultPositionResize)window.removeEventListener("resize",window._resultPositionResize);
  window._resultPositionResize=apply;window.addEventListener("resize",apply,{passive:true});
 }
-async function downsampleResultImage(img,src,maxWidth=600){
- // 結果圖原始尺寸高達 1440x12000；逐張解碼後縮成 600x5000 以內，避免手機同時解碼多張 66MiB 圖片。
+async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false){
+ // 先逐張縮小，再裁掉透明邊；裁切後用原畫布百分比還原位置，視覺座標不變。
  img.dataset.resultSrc=src;
  await new Promise((resolve,reject)=>{
   if(img.complete&&img.naturalWidth){resolve();return;}
@@ -10075,27 +10075,46 @@ async function downsampleResultImage(img,src,maxWidth=600){
   img.onerror=()=>reject(new Error("結果圖片載入失敗："+src));
   img.src=src;
  });
- const scale=Math.min(1,maxWidth/img.naturalWidth,5000/img.naturalHeight);
- if(scale>=1)return;
+ const originalWidth=img.naturalWidth,originalHeight=img.naturalHeight;
+ const scale=Math.min(1,maxWidth/originalWidth,5000/originalHeight);
  const canvas=document.createElement("canvas");
- canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
- canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
- const ctx=canvas.getContext("2d");
+ canvas.width=Math.max(1,Math.round(originalWidth*scale));
+ canvas.height=Math.max(1,Math.round(originalHeight*scale));
+ const ctx=canvas.getContext("2d",{willReadFrequently:trimTransparent});
  if(!ctx){canvas.width=canvas.height=0;return;}
  ctx.drawImage(img,0,0,canvas.width,canvas.height);
- const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",.9));
- if(!blob){canvas.width=canvas.height=0;return;}
+ let crop={x:0,y:0,width:canvas.width,height:canvas.height};
+ if(trimTransparent){
+  try{
+   const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+   let minX=canvas.width,minY=canvas.height,maxX=-1,maxY=-1;
+   for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++){
+    if(pixels[(y*canvas.width+x)*4+3]>8){if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;}
+   }
+   if(maxX>=minX&&maxY>=minY)crop={x:minX,y:minY,width:maxX-minX+1,height:maxY-minY+1};
+  }catch(error){console.warn("[結果頁] 透明範圍裁切略過：",src,error);}
+ }
+ const output=document.createElement("canvas");
+ output.width=crop.width;output.height=crop.height;
+ const outCtx=output.getContext("2d");
+ if(!outCtx){canvas.width=canvas.height=output.width=output.height=0;return;}
+ outCtx.drawImage(canvas,crop.x,crop.y,crop.width,crop.height,0,0,crop.width,crop.height);
+ const blob=await new Promise(resolve=>output.toBlob(resolve,"image/webp",.9));
+ canvas.width=canvas.height=output.width=output.height=0;
+ if(!blob)return;
+ if(trimTransparent){
+  img.style.setProperty("position","absolute","important");
+  img.style.setProperty("inset","auto","important");
+  img.style.setProperty("left",(crop.x/Math.max(1,Math.round(originalWidth*scale))*100)+"%","important");
+  img.style.setProperty("top",(crop.y/Math.max(1,Math.round(originalHeight*scale))*100)+"%","important");
+  img.style.setProperty("width",(crop.width/Math.max(1,Math.round(originalWidth*scale))*100)+"%","important");
+  img.style.setProperty("height",(crop.height/Math.max(1,Math.round(originalHeight*scale))*100)+"%","important");
+ }
  const url=URL.createObjectURL(blob);
  window.__resultImageObjectURLs=window.__resultImageObjectURLs||[];
  window.__resultImageObjectURLs.push(url);
- canvas.width=canvas.height=0;
- img.onload=null;img.onerror=null;
- img.src=url;
- await new Promise(resolve=>{
-  if(img.complete&&img.naturalWidth){resolve();return;}
-  img.onload=()=>resolve();
-  img.onerror=()=>resolve();
- });
+ img.onload=null;img.onerror=null;img.src=url;
+ await new Promise(resolve=>{if(img.complete&&img.naturalWidth){resolve();return;}img.onload=()=>resolve();img.onerror=()=>resolve();});
 }
 function openPersonalityResult(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
@@ -10118,7 +10137,7 @@ function openPersonalityResult(first,second){
   const src=RESULT_ROOT+name;
   image.dataset.resultSrc=src;
   layers.appendChild(image);
-  resultImageQueue.push({img:image,src,maxWidth:600});
+  resultImageQueue.push({img:image,src,maxWidth:600,trimTransparent:true});
  });
  if(first==="好奇星"){
   const curiosityDecoration=document.createElement("img");
@@ -10227,7 +10246,7 @@ function openPersonalityResult(first,second){
  // 一次只解碼、縮小一張結果圖；避免點擊跳轉時 8 張 1440x12000 圖片同時佔用數百 MiB。
  (async()=>{
   for(const item of resultImageQueue){
-   try{await downsampleResultImage(item.img,item.src,item.maxWidth);}
+   try{await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);}
    catch(error){console.warn("[結果頁] 圖片處理失敗：",error);}
   }
   positionResultTextElements(layers,copy);
@@ -12895,4 +12914,10 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-career-intro-star{
  color:var(--result-career-star-color)!important;
 }
+</style>
+
+<style id="result-transparent-crop-preserve-layout-20261108">
+/* 結果背景裁掉透明邊後，仍以原始 1440×12000 畫布比例作為定位基準 */
+#personality-result-layers{aspect-ratio:3/25!important;}
+#personality-result-layers .personality-result-layer:first-child{position:absolute!important;display:block!important;inset:auto!important;}
 </style>
