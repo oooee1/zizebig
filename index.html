@@ -9982,7 +9982,7 @@ function positionResultTextElements(layers,copy){
     career.style.position="absolute";
     career.style.setProperty("left",(imageRect.left-copyRect.left+textBounds.x*scaleX)+"px","important");
     career.style.setProperty("width",(textBounds.width*scaleX)+"px","important");
-    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-26)+"px";
+    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-21)+"px";
    }
   }
   if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
@@ -10047,13 +10047,14 @@ function openPersonalityResult(first,second){
  let html='<p class="result-belongs-heading">'+replace("屬於()的星球是：")+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">TO</span>'):d.english)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+(first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first)+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
   const curiosityBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>").replace(/好奇，/g,"好奇，<br>").replace(/方式。/g,"方式。<br>").replace(/可能性！/g,"可能性！<br>");
-  const curiosityMark=(value,terms)=>{let out=value;terms.forEach(term=>{out=out.split(term).join('<span class="result-highlight result-curiosity-highlight">'+term+'</span>');});return out;};
-  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+curiosityMark(curiosityBreaks(d.traits),["喜歡嘗試不同的可能性","靈活多變"])+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+curiosityMark(curiosityBreaks(d.work).replace("但是太追求新鮮感","但是太追求新鮮感"),["很難長時間專注在重複性的工作上"])+'</p></section>';
+  const curiosityMark=(value,terms)=>{let out=value;terms.forEach(term=>{out=out.split(term).join('<span class="result-highlight" style="--highlight-color:'+primaryColor+'">'+term+'</span>');});return out;};
+  const curiosityWorkBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>");
+  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+curiosityMark(curiosityBreaks(d.traits),["喜歡嘗試不同的可能性","靈活多變"])+'</p></section><section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+curiosityMark(curiosityWorkBreaks(d.work),["很難長時間專注在重複性的工作上"])+'</p></section>';
   const jobs={
-   "好奇星":"探索與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員。",
-   "同情星":"資訊媒體傳播：記者、新聞編輯、節目企劃、採訪編輯、紀錄片導演。\n設計群：平面設計師、室內設計師、廣告設計師、UI設計師、插畫師。",
-   "爽快星":"活動企劃與展演服務：創意行銷企劃、活動企劃師、展覽策劃人、舞台監督、婚禮企劃師。\n商業與銷售：業務員、門市銷售人員、廣告文案、市場分析師、數位行銷專員。",
-   "熱情星":"觀光和事業：博物館導覽員、導遊、旅遊行銷人員、節慶活動企劃、活動企劃人員。\n行政與管理：營運企劃、資料分析師、專案助理、活動執行人員、總務人員。"
+   "好奇星":"調查與資訊分析：記者、調查員、資料分析師、使用者研究員、情報分析人員...等。\n資訊與技術：軟體測試人員、數位產品設計師、資訊技術人員、產品開發工程師、網頁開發人員...等.",
+   "同情星":"資訊媒體傳播：記者、新聞編輯、節目企劃、採訪編輯、紀錄片導演...等。\n設計群：平面設計師、室內設計師、廣告設計師、UI設計師、插畫師...等.",
+   "爽快星":"活動企劃與展演服務：創意行銷企劃、活動企劃師、展覽策劃人、舞台監督、婚禮企劃師...等。\n商業與銷售：業務員、門市銷售人員、廣告文案、市場分析師、數位行銷專員...等.",
+   "熱情星":"觀光和事業：博物館導覽員、導遊、旅遊行銷人員、節慶活動企劃、活動企劃人員...等。\n行政與管理：營運企劃、資料分析師、專案助理、活動執行人員、總務人員...等."
   };
   const traits={
    "好奇星":"好奇星對新鮮事物總是充滿興趣，遇到不懂的事情時，會想主動找出答案，弄清楚背後的原因。喜歡親自探索、嘗試不同的方法，從過程中學習新知識，也因為常常思考問題，發現更多意想不到的可能性！",
@@ -12421,14 +12422,17 @@ function toggleBGM(btnEl) {
 
 <style id="result-curiosity-linebreak-highlight-fix-20261108">
 /* 好奇星結果文字：重點色與英文字母微調 */
-#personality-result-copy .result-curiosity-highlight{
- color:var(--result-explanation-color)!important;
- font-weight:900!important;
+#personality-result-copy .result-keywords.result-keywords-curiosity span{
+ font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) - 1.8px)!important;
 }
 #personality-result-copy .result-english-curiosity .result-letter-raised{
- position:relative!important;
- top:-2px!important;
+ position:static!important;
+ top:auto!important;
  display:inline-block!important;
+ font-size:calc(1em + 1px)!important;
+ transform:scaleY(1.25)!important;
+ transform-origin:center bottom!important;
+ vertical-align:baseline!important;
 }
 #personality-result-copy .result-job-category-title{
  min-height:72px!important;
