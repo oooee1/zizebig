@@ -10215,6 +10215,17 @@ function openPersonalityResult(first,second){
  }
  html+='<p class="result-continue"><span class="result-continue-game">繼續<span class="result-player-name">遊</span>戲</span></p>';
  copy.innerHTML=html;
+ // 手機結果頁：逐一讀取每個實際文字元素原本的計算字級，再統一減少 1.5px。
+ // 先一次記錄原始字級再套用，避免巢狀元素重複扣除；不改圖片、定位或區塊尺寸。
+ if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
+  const textElements=Array.from(copy.querySelectorAll("*")).filter(el=>
+   Array.from(el.childNodes).some(node=>node.nodeType===3&&node.textContent.trim())
+  );
+  const originalSizes=textElements.map(el=>[el,parseFloat(getComputedStyle(el).fontSize)]);
+  originalSizes.forEach(([el,size])=>{
+   if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1.5)+"px","important");
+  });
+ }
  // 兩個職業分類標籤共用較長標題的實際寬度；字型載入完成後再量一次，避免量到替代字型
  const jobTitleEls=Array.from(copy.querySelectorAll(".result-job-category-title"));
  if(jobTitleEls.length){
@@ -12921,22 +12932,4 @@ function toggleBGM(btnEl) {
 #personality-result-layers{aspect-ratio:3/25!important;}
 #personality-result-layers .personality-result-layer:first-child{position:absolute!important;display:block!important;inset:auto!important;}
 </style>
-<style id="mobile-result-text-size-adjustment-20261108">
-/* 僅手機最終結果頁：所有文字統一縮小 1.5px，圖片、位置、間距與桌面版不變 */
-@media (max-width: 768px){
- #personality-result-copy .result-belongs-heading,
- #personality-result-copy .result-english,
- #personality-result-copy .result-name,
- #personality-result-copy .result-tagline,
- #personality-result-copy .result-keywords span,
- #personality-result-copy h2,
- #personality-result-copy p,
- #personality-result-copy .result-continue,
- #personality-result-copy .result-continue-game,
- #personality-result-copy .result-career-heading,
- #personality-result-copy .result-job-category-title,
- #personality-result-copy .result-job-category-or{
-  font-size:calc(1em - 1.5px)!important;
- }
-}
-</style>
+
