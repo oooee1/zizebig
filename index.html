@@ -13333,19 +13333,7 @@ function toggleBGM(btnEl) {
 
 <style id="result-desktop-final-adjustments-20261108j">
 /* 電腦版：適合職業以前的文字在目前位置上再下移10px。 */
-@media (min-width:769px){
- #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  translate:0 22px!important;
- }
- /* 英文標題在目前位置上往上3px。 */
- #personality-result-copy .result-english{
-  top:-1px!important;
- }
- /* 電腦版好奇星中文名稱放大10px；手機版維持原設定。 */
- #personality-result-copy .result-name.result-name-curiosity{
-  font-size:140px!important;
- }
-}
+
 /* 電腦版「屬於（）的特質：」灰線清除：同時排除文字裝飾、邊框、背景圖與偽元素產生的線。 */
 #personality-result-copy .result-trait-heading,
 #personality-result-copy .result-trait-heading *,
@@ -13371,16 +13359,7 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-desktop-and-trait-rebuild-20261108k">
-@media (min-width:769px){
- #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){translate:0 42px!important}
- #personality-result-copy .result-english{top:-10px!important}
- #personality-result-copy .result-primary > p,
- #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
- #personality-result-copy .result-job-category-description{
-  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 20px)!important;
- }
- #personality-result-copy .result-belongs-heading{top:22px!important}
-}
+
 #personality-result-copy .result-career-intro{translate:-12px 0!important}
 #personality-result-copy .result-secondary{text-decoration:none!important}
 #personality-result-copy .result-trait-heading{
@@ -13410,22 +13389,7 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-desktop-position-and-trait-redesign-20261108l">
-@media (min-width:769px){
- /* 不再用 translate；原本 top:439px 才是實際控制位置的屬性，直接增加20px。 */
- #personality-result-copy > :not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  top:459px!important;
- }
- /* 英文標題以自己的 top 定位，從上一版位置再往上9px。 */
- #personality-result-copy > .result-english:not(.result-belongs-heading):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:-19px!important}
- /* 好奇星三字在目前140px基礎上再放大20px。 */
- #personality-result-copy .result-name.result-name-curiosity{font-size:160px!important}
- /* 說明文字在上一版基礎上再增加3px。 */
- #personality-result-copy .result-primary > p,
- #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
- #personality-result-copy .result-job-category-description{
-  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 23px)!important;
- }
-}
+
 /* 「屬於星辰的特質」重新設計：完全脫離舊段落樣式，以獨立標籤呈現。 */
 #personality-result-copy .result-trait-heading{
  all:initial!important;
@@ -13488,25 +13452,7 @@ function toggleBGM(btnEl) {
 
 
 <style id="result-desktop-hard-override-20261108m">
-@media (min-width:769px){
- /* 只調整適合職業之前的區塊；英文獨立往上移，不再跟著整組下移。 */
- #personality-result-copy > :not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  translate:0 20px!important;
- }
- #personality-result-copy > .result-english{
-  translate:0 -9px!important;
-  top:auto!important;
- }
- /* 好奇星中文主標確實放大；說明段落在上一版基礎再增加3px。 */
- #personality-result-copy .result-name.result-name-curiosity{
-  font-size:160px!important;
- }
- #personality-result-copy .result-primary > p,
- #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
- #personality-result-copy .result-job-category-description{
-  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 26px)!important;
- }
-}
+
 /* 灰線清除：同時處理標籤、職業區、其子元素及各層偽元素。 */
 #personality-result-copy .result-secondary,
 #personality-result-copy .result-secondary *,
@@ -13544,4 +13490,53 @@ function toggleBGM(btnEl) {
 }
 #personality-result-copy .result-secondary hr,
 #personality-result-copy .result-trait-heading hr{display:none!important}
+</style>
+
+<style id="result-desktop-final-controlled-20261108">
+/* 電腦版結果頁唯一定位規則：以原始 top:439px 為基準，再分別位移。 */
+@media (min-width:769px){
+  /* 「適合職業」以前的文字區塊整體下移20px；不碰職業區的 JS 透明邊界定位。 */
+  #personality-result-screen #personality-result-copy > :not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+    translate:0 20px!important;
+  }
+
+  /* 一般文字元素回到原始 top 基準，避免舊版 459px 與 translate 疊加成下移40px。 */
+  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+    top:439px!important;
+  }
+
+  /* 英文標題獨立以原始位置為基準上移9px，不影響中文星球名稱。 */
+  #personality-result-screen #personality-result-copy > .result-english{
+    top:439px!important;
+    translate:0 -9px!important;
+  }
+
+  /* 好奇星中文主標題三字共用同一字級、行高與基線。 */
+  #personality-result-screen #personality-result-copy .result-name.result-name-curiosity{
+    font-size:160px!important;
+    line-height:1.25!important;
+  }
+  #personality-result-screen #personality-result-copy .result-name.result-name-curiosity .result-focus-mark{
+    display:inline!important;
+    position:static!important;
+    inset:auto!important;
+    font-size:1em!important;
+    line-height:inherit!important;
+    vertical-align:baseline!important;
+    transform:none!important;
+  }
+
+  /* 說明文字以先前 +23px 的調整為基礎，再增加3px；不套用到適合職業標題。 */
+  #personality-result-screen #personality-result-copy .result-primary > p,
+  #personality-result-screen #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
+  #personality-result-screen #personality-result-copy .result-job-category-description{
+    font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 26px)!important;
+  }
+
+  /* 灰線來源是 .result-section 的 border-bottom；只移除職業 section 的底線，
+     不清除標籤背景、文字顏色或其他裝飾。 */
+  #personality-result-screen #personality-result-copy .result-secondary{
+    border-bottom:0!important;
+  }
+}
 </style>
