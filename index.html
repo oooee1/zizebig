@@ -9980,7 +9980,10 @@ function preloadResultAssets(){
   img.onerror=()=>{cache.delete(src);console.warn("[結果頁預載] 圖片載入失敗：",src);resolve(null);};
   img.src=src;if(img.complete)resolve(img.naturalWidth?img:null);
  });
- const waitForBreathingRoom=()=>new Promise(resolve=>setTimeout(resolve,80));
+ const waitForBreathingRoom=()=>new Promise(resolve=>{
+  if("requestIdleCallback" in window)window.requestIdleCallback(()=>resolve(),{timeout:1800});
+  else setTimeout(resolve,250);
+ });
  window.__resultPreloadPromise=(async()=>{
   // 先把原圖放進瀏覽器快取，再逐張縮到結果頁實際使用的尺寸。
   // 角色立繪與職業圖保留原圖；其他結果紙張縮至寬 600px 並裁除透明邊。
@@ -9997,6 +10000,8 @@ function preloadResultAssets(){
       const urls=window.__resultImageObjectURLs||[];
       const index=urls.indexOf(temp.src);if(index>=0)urls.splice(index,1);
       processed.set(src,{url:temp.src,left:temp.style.left,top:temp.style.top,width:temp.style.width,height:temp.style.height});
+      // 已有縮圖後釋放原圖的解碼記憶體；瀏覽器仍可從 HTTP 快取重新取用原檔。
+      cache.delete(src);original.src="";
      }
     }catch(error){console.warn("[結果頁預縮圖] 處理失敗，結果頁將即時處理：",src,error);}
    }
