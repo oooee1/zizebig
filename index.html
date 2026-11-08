@@ -13485,3 +13485,63 @@ function toggleBGM(btnEl) {
  display:none!important;
 }
 </style>
+
+
+<style id="result-desktop-hard-override-20261108m">
+@media (min-width:769px){
+ /* 只調整適合職業之前的區塊；英文獨立往上移，不再跟著整組下移。 */
+ #personality-result-copy > :not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 20px!important;
+ }
+ #personality-result-copy > .result-english{
+  translate:0 -9px!important;
+  top:auto!important;
+ }
+ /* 好奇星中文主標確實放大；說明段落在上一版基礎再增加3px。 */
+ #personality-result-copy .result-name.result-name-curiosity{
+  font-size:160px!important;
+ }
+ #personality-result-copy .result-primary > p,
+ #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
+ #personality-result-copy .result-job-category-description{
+  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 26px)!important;
+ }
+}
+/* 灰線清除：同時處理標籤、職業區、其子元素及各層偽元素。 */
+#personality-result-copy .result-secondary,
+#personality-result-copy .result-secondary *,
+#personality-result-copy .result-trait-heading,
+#personality-result-copy .result-trait-heading *,
+#personality-result-copy .result-secondary::before,
+#personality-result-copy .result-secondary::after,
+#personality-result-copy .result-secondary *::before,
+#personality-result-copy .result-secondary *::after,
+#personality-result-copy .result-trait-heading::before,
+#personality-result-copy .result-trait-heading::after,
+#personality-result-copy .result-trait-heading *::before,
+#personality-result-copy .result-trait-heading *::after{
+ text-decoration:none!important;
+ text-decoration-line:none!important;
+ text-decoration-color:transparent!important;
+ text-decoration-thickness:0!important;
+ border-top:0!important;
+ border-bottom:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ text-shadow:none!important;
+ background-image:none!important;
+}
+#personality-result-copy .result-secondary::before,
+#personality-result-copy .result-secondary::after,
+#personality-result-copy .result-secondary *::before,
+#personality-result-copy .result-secondary *::after,
+#personality-result-copy .result-trait-heading::before,
+#personality-result-copy .result-trait-heading::after,
+#personality-result-copy .result-trait-heading *::before,
+#personality-result-copy .result-trait-heading *::after{
+ content:none!important;
+ display:none!important;
+}
+#personality-result-copy .result-secondary hr,
+#personality-result-copy .result-trait-heading hr{display:none!important}
+</style>
