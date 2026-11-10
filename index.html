@@ -10085,7 +10085,9 @@ function parseResultSource(star){
    let disclaimer="";
    const disclaimerLine=tailLines.findIndex(line=>/^\s*\([^\n]*(測驗結果|測試的結果|測試結果)/.test(line));
    if(disclaimerLine>=0){
-    disclaimer=tailLines[disclaimerLine].trim().replace(/(測驗結果[^）]*）)\1+/g,"$1");
+    disclaimer=tailLines[disclaimerLine].trim();
+    const disclaimerHalf=disclaimer.length/2;
+    if(Number.isInteger(disclaimerHalf)&&disclaimer.slice(0,disclaimerHalf)===disclaimer.slice(disclaimerHalf))disclaimer=disclaimer.slice(0,disclaimerHalf);
     afterTrait=tailLines.slice(0,disclaimerLine).join("\n");
    }
    const paragraphs=trimBlock(afterTrait).split(/\n\s*\n/).map(x=>x.replace(/^\n+|\n+$/g,"")).filter(Boolean);
@@ -10619,7 +10621,9 @@ function openPersonalityResult(first,second){
   const categories=career.categories.map((item,index)=>'<div class="result-job-category" style="margin-left:auto!important;margin-right:auto!important;text-align:center!important;">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title.replace("設計與內容創作","設計與媒體創作")+'</div><p class="result-job-category-description" style="text-align:center!important;">(如:'+replace(item.description).replace(/\n/g,"<br>")+')</p></div>').join("");
   const summary=resultTextHtml(career.traitSummary,replace,emphasize,second,secondaryColor);
   const details=resultTextHtml(career.details,replace,emphasize,second,secondaryColor);
-  const disclaimer=(career.disclaimer||"(測驗結果僅供參考)").replace(/(測驗結果[^）]*）)\1+/g,"$1");
+  let disclaimer=career.disclaimer||"(測驗結果僅供參考)";
+  const disclaimerHalf=disclaimer.length/2;
+  if(Number.isInteger(disclaimerHalf)&&disclaimer.slice(0,disclaimerHalf)===disclaimer.slice(disclaimerHalf))disclaimer=disclaimer.slice(0,disclaimerHalf);
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+intro+'<span class="result-career-intro-next">'+career.possible+'</span></p>'+categories+'<div class="result-trait-heading"><span class="result-trait-heading-label">'+replace(career.traitHeading)+'</span></div><p>'+summary+'</p>'+(details?'<p>'+details+'</p>':'')+'</section><p class="result-disclaimer">'+replace(disclaimer)+'</p>';
  }else{
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro">'+replace("結合()第二高分的星球是"+second)+'</p></section>';
