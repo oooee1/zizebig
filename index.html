@@ -142,6 +142,26 @@
     object-fit: cover;
 }
 
+/* CG 圖以漫畫背景襯底；正方形 CG 保持比例並置中顯示。 */
+#漫畫背景 { z-index: 0; }
+.CG圖 { z-index: 2; }
+.CG圖.cg-square-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.CG圖.cg-square-image img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(72vmin, 720px);
+    height: min(72vmin, 720px);
+    max-width: 82%;
+    max-height: 82%;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
+}
+
 /* 漫畫模式專用背景加深，保留原圖構圖與細節。 */
 #漫畫背景 img {
     filter: brightness(0.45);
@@ -8451,9 +8471,14 @@ function renderScene(stepIndex) {
     const wireGameDialogue = document.getElementById("wire-game-dialogue-text");
     if (wireGameDialogue) { const firstInstruction = currentSceneId === 36 ? storyScript.find(item => Number(item.id) === 36.100) : null; wireGameDialogue.dataset.instructionPage = "0"; wireGameDialogue.textContent = firstInstruction ? String(firstInstruction.text || "").replace(/\/\/n|\\n/g, "\n") : (currentSceneId === 36 ? "" : String(scene.text || "").replace(/\/\/n|\\n/g, "\n")); }
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
+    // CG 圖以漫畫背景為底，再將 CG 圖獨立疊在中央。
+    const sceneBackgroundElement = scene.background ? document.getElementById(scene.background) : null;
+    const requestedCGId = !isComicMode && sceneBackgroundElement && sceneBackgroundElement.classList.contains('CG圖')
+        ? scene.background
+        : null;
     // 只有背景真的改變時才淡入；同一背景的連續對話不做場景過渡。
-    const requestedBackgroundId = isComicMode ? "漫畫背景" : (scene.background || null);
-    const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景, .CG圖'))
+    const requestedBackgroundId = (isComicMode || requestedCGId) ? "漫畫背景" : (scene.background || null);
+    const currentlyVisibleBackground = Array.from(document.querySelectorAll('.背景圖, .背景'))
         .find(el => getComputedStyle(el).display !== 'none');
     const requestedBackgroundContainer = requestedBackgroundId
         ? document.getElementById(requestedBackgroundId)
@@ -8523,7 +8548,7 @@ function renderScene(stepIndex) {
     // 1. 一般劇情才切換背景；計分問題先保留上一幕畫面，讓題目介面疊上來。
 if (!hasScoredOptions) {
     // 先記住原本正在顯示的背景，再隱藏其他背景。
-    const previousBgContainer = Array.from(document.querySelectorAll('.背景圖, .背景, .CG圖'))
+    const previousBgContainer = Array.from(document.querySelectorAll('.背景圖, .背景'))
         .find(el => getComputedStyle(el).display !== 'none');
 
     document.querySelectorAll('.背景圖, .背景, .CG圖').forEach(el => {
@@ -8531,7 +8556,7 @@ if (!hasScoredOptions) {
         el.classList.remove('is-shaking', 'bg-impact-shake', 'scene-transition-fade');
     });
 
-    // 沒有指定新背景時沿用原背景；同一背景的連續對話不重播過渡。
+    // CG 場景固定顯示漫畫背景作底圖；一般場景沿用原本背景。
     const currentBgId = requestedBackgroundId;
     const bgContainer = currentBgId ? document.getElementById(currentBgId) : previousBgContainer;
 
@@ -8550,6 +8575,25 @@ if (!hasScoredOptions) {
 
         if (isImpact) bgContainer.classList.add('bg-impact-shake');
         else if (isNormalShake) bgContainer.classList.add('is-shaking');
+    }
+
+    // CG 圖疊在漫畫背景上；正方形 CG 會依原始比例縮放並置中。
+    if (requestedCGId) {
+        const cgContainer = document.getElementById(requestedCGId);
+        if (cgContainer) {
+            activateImages(cgContainer);
+            cgContainer.style.display = 'block';
+            const cgImage = cgContainer.querySelector('img');
+            const updateCGShape = () => {
+                if (!cgImage || !cgImage.naturalWidth || !cgImage.naturalHeight) return;
+                const ratio = cgImage.naturalWidth / cgImage.naturalHeight;
+                cgContainer.classList.toggle('cg-square-image', Math.abs(ratio - 1) <= 0.04);
+            };
+            if (cgImage) {
+                if (cgImage.complete) updateCGShape();
+                else cgImage.addEventListener('load', updateCGShape, { once: true });
+            }
+        }
     }
 }
 
