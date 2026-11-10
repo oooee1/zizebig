@@ -1935,6 +1935,21 @@ img { max-width:100%; }
             color: #ffb30f;
             font-size: 14px;
         }
+        #developer-score-display {
+            margin-top: 12px;
+            padding: 9px 10px;
+            border-top: 1px solid rgba(255,255,255,.28);
+            color: #fff;
+            font-size: 13px;
+            line-height: 1.65;
+            font-variant-numeric: tabular-nums;
+        }
+        #developer-score-display .developer-score-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        #developer-score-display strong { color: #ffcf70; font-weight: 800; }
         #developer-tools-panel button {
             display: block;
             width: 100%;
@@ -2866,6 +2881,12 @@ img { max-width:100%; }
             <button type="button" onclick="jumpToPersonalityResult('熱情星', event)">熱情星測驗結果</button>
             <button type="button" onclick="jumpToCharacterStory(308, event)">遇見父母</button>
             <button type="button" onclick="jumpToCharacterStory(350, event)">片尾</button>
+            <div id="developer-score-display" aria-live="polite">
+                <div class="developer-score-row"><span>好奇星：</span><strong>0</strong></div>
+                <div class="developer-score-row"><span>同情星：</span><strong>0</strong></div>
+                <div class="developer-score-row"><span>爽快星：</span><strong>0</strong></div>
+                <div class="developer-score-row"><span>熱情星：</span><strong>0</strong></div>
+            </div>
         </div>
     </div>
 
@@ -3329,7 +3350,18 @@ img { max-width:100%; }
         window.currentFullText = "";
 
         const scoredSceneIds = new Set();
-        const scores = {};
+        const scores = { "好奇星": 0, "同情星": 0, "爽快星": 0, "熱情星": 0 };
+
+        // 開發者面板即時顯示四顆星球的累計分數。
+        function updateDeveloperScoreDisplay() {
+            const display = document.getElementById("developer-score-display");
+            if (!display) return;
+            display.innerHTML = ["好奇星", "同情星", "爽快星", "熱情星"]
+                .map(name => '<div class="developer-score-row"><span>' + name + '：</span><strong>' + Number(scores[name] || 0) + '</strong></div>')
+                .join("");
+        }
+        window.updateDeveloperScoreDisplay = updateDeveloperScoreDisplay;
+        updateDeveloperScoreDisplay();
 
         document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -9312,7 +9344,7 @@ if (window.currentSceneBGM !== scene.bgm) {
                             if (Number.isFinite(points)) scores[character] += points;
                         }
                         scoredSceneIds.add(String(pending.scene.id));
-                        window.__starScores = { ...scores };
+                        window.__starScores = { ...scores };\n                        updateDeveloperScoreDisplay();
                         console.info('[星辰之路計分] 已確認選項', {
                             sceneId: pending.scene.id,
                             option: pending.option.text,
@@ -9629,7 +9661,7 @@ if (window.currentSceneBGM !== scene.bgm) {
                     if (Number.isFinite(points)) scores[character] += points;
                 }
                 scoredSceneIds.add(String(currentScene.id));
-                window.__starScores = { ...scores };
+                window.__starScores = { ...scores };\n                        updateDeveloperScoreDisplay();
                 console.info('[星辰之路計分] 已選擇選項', {
                     sceneId: currentScene.id,
                     option: option.text,
@@ -10105,7 +10137,7 @@ function preloadResultAssets(){
 function openPersonalityResultFromScores(){
  const order=["好奇星","同情星","爽快星","熱情星"];
  const ranked=order.map(name=>({name,score:Number(scores[name]||0)})).sort((a,b)=>b.score-a.score||order.indexOf(a.name)-order.indexOf(b.name));
- window.__starScores = { ...scores };
+ window.__starScores = { ...scores };\n                        updateDeveloperScoreDisplay();
  console.info('[星辰之路計分] 揭曉時的總分', { scores: { ...scores }, ranked });
  let first=ranked[0].name,second=ranked[1].name;
  if(ranked.every(x=>x.score===ranked[0].score)){
@@ -10426,7 +10458,18 @@ function openPersonalityResult(first,second){
  window.__resultImageObjectURLs=[];
  // 結果頁開啟時攔截點擊與觸控，避免事件穿透到下方劇情頁而推進對話。
  if(screen&&!screen.dataset.inputGuard){
-  ["click","pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>event.stopPropagation(),{capture:true,passive:type==="touchstart"}));
+  ["click","pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>{
+   if(type==="click"&&event.target&&event.target.closest&&event.target.closest(".result-continue")){
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    closePersonalityResult();
+    const nextStoryIndex=storyScript.findIndex(scene=>Number(scene.id)===338);
+    if(nextStoryIndex>=0){currentStep=nextStoryIndex;renderScene(currentStep);}
+    return;
+   }
+   event.stopPropagation();
+  },{capture:true,passive:type==="touchstart"}));
   // iOS Safari 仍可能在捲動邊界橡皮筋回彈；只在頂端／底端攔截越界手勢。
   let lastTouchY=0;
   screen.addEventListener("touchstart",event=>{if(event.touches&&event.touches.length)lastTouchY=event.touches[0].clientY;},{passive:true});
@@ -12649,7 +12692,7 @@ function toggleBGM(btnEl) {
     background: #000;
     color: #fff;
     font-family: 'Dela Gothic One', sans-serif;
-    font-size: clamp(23px, calc(6.2vw - 15px), 61px);
+    font-size: clamp(23px, calc(6.2vw - 22px), 61px);
     line-height: 1.25;
     letter-spacing: .04em;
     white-space: nowrap;
@@ -12666,7 +12709,7 @@ function toggleBGM(btnEl) {
     #my-choice-result-button {
         bottom: 10%;
         padding: 22px 52px 26px;
-        font-size: clamp(85px, calc(12vw - 15px), 135px);
+        font-size: clamp(85px, calc(12vw - 22px), 135px);
         line-height: 1.2;
         letter-spacing: .025em;
     }
@@ -12675,7 +12718,7 @@ function toggleBGM(btnEl) {
     #my-choice-result-button {
         bottom: 7%;
         padding: 10px 22px 12px;
-        font-size: clamp(19px, calc(9vw - 15px), 41px);
+        font-size: clamp(19px, calc(9vw - 22px), 41px);
     }
 }
 </style>
@@ -12782,7 +12825,7 @@ function toggleBGM(btnEl) {
 #personality-result-copy .result-section{padding:8px 0 16px;border-bottom:1px solid rgba(25,25,35,.2)}
 #personality-result-copy .result-disclaimer{font-family:'Noto Sans TC',sans-serif;font-size:clamp(7px,calc(4.2cqw - 6px),11px);font-weight:700;line-height:1.7;-webkit-text-stroke:.25px currentColor;text-align:center;margin-top:26px;color:#77747D}
 #personality-result-copy .result-continue{text-align:center;margin:32px 0 0;font-family:'Dela Gothic One',sans-serif;font-size:82px;font-weight:400;line-height:1.35}
-#personality-result-copy .result-continue-game{display:inline-block;padding:8px 24px;background:#000;color:#fff;border:4px solid #fff;font-weight:400}
+#personality-result-copy .result-continue-game{display:inline-block;padding:8px 24px;background:#000;color:#fff;border:4px solid #fff;font-weight:400;cursor:pointer;pointer-events:auto;touch-action:manipulation}
 #personality-result-copy .result-continue-game .result-player-name{color:#F07824;font-size:inherit!important;line-height:inherit!important;vertical-align:baseline!important;transform:none!important}
 #personality-result-copy .result-career-heading{box-sizing:border-box;width:calc(100% + 22px);margin:2px 0 10px -11px;padding:4px 8px;text-align:center;font-family:'Dela Gothic One',sans-serif;font-size:82px;font-weight:400;line-height:1.35;color:#fff;background:var(--result-explanation-color)}
 /* 測驗結果頁完全不顯示任何保存／下載圖片或控制項 */
