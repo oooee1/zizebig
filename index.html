@@ -14040,3 +14040,26 @@ function toggleBGM(btnEl) {
   translate:0 -8px!important;
 }
 </style>
+
+
+<style id="result-pre-career-group-up8-20261110">
+/* 適合職業之前的整個內容區一起上移8px；職業區、繼續遊戲與備註不動。 */
+@media (min-width:769px){
+  #personality-result-screen #personality-result-copy > .result-belongs-heading{
+    top:-8px!important;
+  }
+  #personality-result-screen #personality-result-copy > .result-english{
+    top:423px!important;
+    translate:none!important;
+  }
+  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+    top:419px!important;
+    translate:none!important;
+  }
+}
+@media (max-width:768px){
+  #personality-result-screen #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+    translate:0 -34px!important;
+  }
+}
+</style>
