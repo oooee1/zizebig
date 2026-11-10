@@ -10639,6 +10639,8 @@ function openPersonalityResult(first,second){
   );
   const originalSizes=textElements.map(el=>[el,parseFloat(getComputedStyle(el).fontSize)]);
   originalSizes.forEach(([el,size])=>{
+   // 好奇星主標由獨立的0.6倍規則控制，連同「奇」字一起跳過全頁文字縮小，避免三字大小不一致。
+   if(el.closest&&el.closest(".result-name-curiosity"))return;
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1.5)+"px","important");
   });
   // 好奇星中文名稱不額外縮放；只有英文標題保留既有的 O／E 字級調整。
