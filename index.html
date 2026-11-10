@@ -10874,8 +10874,23 @@ function openPersonalityResult(first,second){
             e.stopImmediatePropagation();
         }, true);
 
-        // 畫面顯示「我的選擇」按鈕時，它就是唯一可操作入口；其他點擊全部攔截。
+        // 「我的選擇」畫面只允許入口按鈕；結果頁覆蓋在上方時，必須優先放行「繼續遊戲」。
         document.addEventListener("click", function (e) {
+            const continueButton = e.target && e.target.closest && e.target.closest("#personality-result-copy .result-continue-game");
+            if (continueButton) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                closePersonalityResult();
+                const targetIndex = storyScript.findIndex(scene => Number(scene.id) === 338);
+                if (targetIndex >= 0) {
+                    currentStep = targetIndex;
+                    renderScene(currentStep);
+                } else {
+                    console.error("[星辰之路] 找不到場景 338，無法從結果頁繼續遊戲。");
+                }
+                return;
+            }
             const myChoiceButton = document.getElementById("my-choice-result-button");
             if (!myChoiceButton || myChoiceButton.style.display === "none") return;
             if (e.target && e.target.closest && e.target.closest("#my-choice-result-button")) return;
@@ -13967,18 +13982,18 @@ function toggleBGM(btnEl) {
 
 
 <style id="user-fixes-20261110">
-/* 「我的選擇」文字再縮小7px；只改字級，不改按鈕位置、底色與內距。 */
+/* 「我的選擇」文字在原本縮小7px的基礎上，再縮小10px；只改字級，不改按鈕位置、底色與內距。 */
 #my-choice-result-button {
-  font-size: clamp(9px, calc(6.2vw - 29px), 47px) !important;
+  font-size: clamp(1px, calc(6.2vw - 39px), 37px) !important;
 }
 @media (min-width: 769px) {
   #my-choice-result-button {
-    font-size: clamp(71px, calc(12vw - 29px), 121px) !important;
+    font-size: clamp(61px, calc(12vw - 39px), 111px) !important;
   }
 }
 @media (max-width: 600px) {
   #my-choice-result-button {
-    font-size: clamp(5px, calc(9vw - 29px), 27px) !important;
+    font-size: clamp(1px, calc(9vw - 39px), 17px) !important;
   }
 }
 /* 載入文字使用一般字重，不影響進度百分比或其他遊戲文字。 */
