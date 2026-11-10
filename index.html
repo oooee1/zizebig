@@ -10420,7 +10420,7 @@ function openPersonalityResult(first,second){
  const career=sourceData.careers[second]||sourceData.careers[first]||Object.values(sourceData.careers)[0];
  if(career){
   const intro=replace(career.intro).replace(second,'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>');
-  const categories=career.categories.map((item,index)=>'<div class="result-job-category">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title+'</div><p class="result-job-category-description">'+replace(item.description).replace(/\\n/g,"<br>")+'</p></div>').join("");
+  const categories=career.categories.map((item,index)=>'<div class="result-job-category">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title+'</div><p class="result-job-category-description">'+replace(item.description).replace(/\n/g,"<br>")+'</p></div>').join("");
   const summary=resultTextHtml(career.traitSummary,replace,emphasize,second,secondaryColor);
   const details=resultTextHtml(career.details,replace,emphasize,second,secondaryColor);
   const disclaimer=career.disclaimer||"(測驗結果僅供參考)";
