@@ -14061,5 +14061,10 @@ function toggleBGM(btnEl) {
   #personality-result-screen #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
     translate:0 -34px!important;
   }
+  /* 英文與中文名稱原本已獨立上移8px，這裡再多上移8px，與其餘前段內容同步累計。 */
+  #personality-result-screen #personality-result-copy > .result-english,
+  #personality-result-screen #personality-result-copy > .result-name{
+    translate:0 -16px!important;
+  }
 }
 </style>
