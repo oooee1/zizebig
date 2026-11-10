@@ -10551,6 +10551,7 @@ function openPersonalityResult(first,second){
  const starColors={"好奇星":"#F6B800","同情星":"#A65CE0","爽快星":"#A8D900","熱情星":"#E34B50"};
  const primaryColor=starColors[first]||starColors["好奇星"];
  const secondaryColor=starColors[second]||primaryColor;
+ if(copy)copy.style.setProperty("--result-primary-color",primaryColor);
  const emphasize=(value,star,color)=>{
   let out=String(value||"");
   const terms=[star,...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[])].filter(Boolean).sort((a,b)=>b.length-a.length);
@@ -11416,11 +11417,9 @@ function openPersonalityResult(first,second){
         window.addEventListener('DOMContentLoaded', () => {
             hideAllCharacters();
 
-            // 必須先成功載入兩個自訂字體，才開始載入第一幕素材。
-            preloadGameFonts().catch(error => {
-                // 字體載入失敗或逾時時，記錄原因並使用系統備用字體啟動，避免遊戲永遠卡在「正在連結」。
-                showFontLoadError(error);
-            }).then(() => {
+            // 自訂字體改為背景載入，不再阻擋遊戲啟動；即使字體伺服器沒有回應，也先進入第一幕。
+            preloadGameFonts().catch(showFontLoadError);
+            {
                 // 開場只載入第一幕需要的素材；題目 UI 會在進入題目時再載入，避免開頭等待所有題目圖片。
                 // 啟動時只載入第一幕真正需要的素材。
                 // 最終結果頁的多張大圖延後到玩家開啟結果頁時才載入，
@@ -11484,7 +11483,15 @@ function openPersonalityResult(first,second){
                 }
 
                 loadInitialAssets();
-            }).catch(showFontLoadError);
+
+                // 最後一道啟動保險：若素材回呼在網路異常時沒有返回，最多等待25秒就先進入第一幕。
+                setTimeout(() => {
+                    if (!firstSceneStarted) {
+                        console.error("[zizebig 啟動保險] 第一幕素材載入回呼逾時，先進入遊戲。");
+                        startFirstScene();
+                    }
+                }, 25000);
+            }
         });
 
         // 開發者工具：展開／收合角色劇情清單
@@ -13979,5 +13986,22 @@ function toggleBGM(btnEl) {
   pointer-events: auto !important;
   cursor: pointer;
   touch-action: manipulation;
+}
+</style>
+
+
+<style id="all-result-star-title-colors-20261110">
+/* 四種測驗結果的大字統一採用好奇星原有的大標呈現方式，顏色跟隨最高分星球的重點色。 */
+#personality-result-screen #personality-result-copy .result-english {
+  color:var(--result-primary-color)!important;
+}
+#personality-result-screen #personality-result-copy .result-name {
+  font-size:130px!important;
+  color:var(--result-primary-color)!important;
+}
+@media (max-width:768px) {
+  #personality-result-screen #personality-result-copy .result-name {
+    font-size:120px!important;
+  }
 }
 </style>
