@@ -10453,7 +10453,7 @@ function openPersonalityResult(first,second){
  const career=sourceData.careers[second]||sourceData.careers[first]||Object.values(sourceData.careers)[0];
  if(career){
   const intro=replace(career.intro).replace(second,'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>');
-  const categories=career.categories.map((item,index)=>'<div class="result-job-category">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title+'</div><p class="result-job-category-description">'+replace(item.description).replace(/\n/g,"<br>")+'</p></div>').join("");
+  const categories=career.categories.map((item,index)=>'<div class="result-job-category" style="margin-left:auto!important;margin-right:auto!important;text-align:center!important;">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title+'</div><p class="result-job-category-description" style="text-align:center!important;">'+replace(item.description).replace(/\n/g,"<br>")+'</p></div>').join("");
   const summary=resultTextHtml(career.traitSummary,replace,emphasize,second,secondaryColor);
   const details=resultTextHtml(career.details,replace,emphasize,second,secondaryColor);
   const disclaimer=career.disclaimer||"(測驗結果僅供參考)";
@@ -10482,7 +10482,7 @@ function openPersonalityResult(first,second){
  const careerIntro=copy.querySelector(".result-career-intro");
  if(careerIntro){const size=parseFloat(getComputedStyle(careerIntro).fontSize);if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size-3)+"px","important");}
  const explanationTexts=Array.from(copy.querySelectorAll(".result-tagline, .result-primary > p, .result-secondary > p:not(.result-career-heading):not(.result-career-intro), .result-job-category-description"));
- explanationTexts.forEach(el=>{const size=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(size)){const mobile=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;el.style.setProperty("font-size",Math.max(1,size+(mobile?0.5:-1.5))+"px","important");}});
+ explanationTexts.forEach(el=>{const size=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(size)){const mobile=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;el.style.setProperty("font-size",Math.max(1,size+(first==="好奇星"?0:(mobile?0.5:-1.5)))+"px","important");}});
  // 「繼、續、遊、戲」逐字使用同一字體、字級、行高與基線；只保留「遊」的橘色。
  copy.querySelectorAll(".result-continue-char").forEach(el=>{
   el.style.setProperty("display","inline-block","important");
