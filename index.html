@@ -10127,27 +10127,32 @@ function preloadResultAssets(){
   else setTimeout(resolve,250);
  });
  window.__resultPreloadPromise=(async()=>{
-  // 先把原圖放進瀏覽器快取，再逐張縮到結果頁實際使用的尺寸。
-  // 角色立繪與職業圖保留原圖；其他結果紙張縮至寬 600px 並裁除透明邊。
-  for(const src of list){
-   const original=await loadOriginal(src);
-   if(!original)continue;
-   const isProcessable=src.startsWith(RESULT_ROOT)&&!src.includes("星辰考古學家")&&!src.includes("星辰寵物醫師");
-   if(isProcessable&&!processed.has(src)){
-    await waitForBreathingRoom();
-    const temp=new Image();temp.decoding="async";
-    try{
-     await downsampleResultImage(temp,src,600,true);
-     if(temp.src&&temp.src.startsWith("blob:")){
-      const urls=window.__resultImageObjectURLs||[];
-      const index=urls.indexOf(temp.src);if(index>=0)urls.splice(index,1);
-      processed.set(src,{url:temp.src,left:temp.style.left,top:temp.style.top,width:temp.style.width,height:temp.style.height});
-      // 已有縮圖後釋放原圖的解碼記憶體；瀏覽器仍可從 HTTP 快取重新取用原檔。
-      cache.delete(src);original.src="";
-     }
-    }catch(error){console.warn("[結果頁預縮圖] 處理失敗，結果頁將即時處理：",src,error);}
+  // 先把所有候選結果原圖放進瀏覽器快取，再以兩個工作者預先縮圖。
+  // 這項工作在遊戲流程背景執行；不等結果頁被點開才逐張處理。
+  let cursor=0;
+  const prepareWorker=async()=>{
+   while(cursor<list.length){
+    const src=list[cursor++];
+    const original=await loadOriginal(src);
+    if(!original)continue;
+    const isProcessable=src.startsWith(RESULT_ROOT)&&!src.includes("星辰考古學家")&&!src.includes("星辰寵物醫師");
+    if(isProcessable&&!processed.has(src)){
+     await waitForBreathingRoom();
+     const temp=new Image();temp.decoding="async";
+     try{
+      await downsampleResultImage(temp,src,600,true);
+      if(temp.src&&temp.src.startsWith("blob:")){
+       const urls=window.__resultImageObjectURLs||[];
+       const index=urls.indexOf(temp.src);if(index>=0)urls.splice(index,1);
+       processed.set(src,{url:temp.src,left:temp.style.left,top:temp.style.top,width:temp.style.width,height:temp.style.height});
+       // 已有縮圖後釋放原圖的解碼記憶體；瀏覽器仍可從 HTTP 快取重新取用原檔。
+       cache.delete(src);original.src="";
+      }
+     }catch(error){console.warn("[結果頁預縮圖] 處理失敗，結果頁將即時處理：",src,error);}
+    }
    }
-  }
+  };
+  await Promise.all([prepareWorker(),prepareWorker()]);
   console.info("[結果頁預載] 完成；原圖",cache.size,"張，已預縮圖",processed.size,"張");
  })();
  return window.__resultPreloadPromise;
@@ -10700,9 +10705,7 @@ function openPersonalityResult(first,second){
  // 避免「前一張下載完才開始下載下一張」的長時間串行等待；同時限制 Canvas
  // 轉檔併發數，避免 iPhone／iPad Safari 一次建立太多大型畫布而耗盡記憶體。
  (async()=>{
-  // 第一階段只載入版面必要圖片；其他圖層在結果頁顯示後背景載入。
-  const criticalResultImages=resultImageQueue.filter(item=>item.critical);
-  const deferredResultImages=resultImageQueue.filter(item=>!item.critical);
+  // 結果頁採整頁揭曉：所有圖層都必須先載入、解碼並完成定位，不能在頁面出現後逐張補圖。
   async function loadAndProcess(items){
    const states=await Promise.all(items.map(async item=>{
     try{
@@ -10735,13 +10738,12 @@ function openPersonalityResult(first,second){
     compactResultPosterToVisibleBottom(layers,copy);
    }catch(error){console.warn("[結果頁] 版面定位失敗：",error);layers.style.removeProperty("height");if(poster)poster.style.removeProperty("height");copy.style.removeProperty("height");}
   }
-  await loadAndProcess(criticalResultImages);
+  // 等待紙張、角色立繪、星球插圖與職業插圖全部完成後，統一定位並一次顯示整頁。
+  await loadAndProcess(resultImageQueue);
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   layoutResult();
   screen.scrollTop=0;
   screen.classList.remove("result-loading");
-  // 裝飾與職業圖繼續載入，但不再隱藏結果頁，也不阻止觸控／捲動。
-  loadAndProcess(deferredResultImages).then(()=>{layoutResult();});
  })();
 }
 
