@@ -10403,15 +10403,6 @@ function openPersonalityResult(first,second){
   });
   return out;
  };
- const emphasize=(value,star,color)=>{
-  let out=String(value||"");
-  const terms=[star,...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[])].filter(Boolean).sort((a,b)=>b.length-a.length);
-  terms.forEach(term=>{
-   const mark='<span class="result-highlight" style="--highlight-color:'+color+'">'+term+'</span>';
-   out=out.split(term).join(mark);
-  });
-  return out;
- };
  let html='<p class="result-belongs-heading">'+belongsHeadingHtml+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">TO</span>'):d.english)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+(first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first)+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
   const curiosityBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>").replace(/好奇，/g,"好奇，<br>").replace(/方式。/g,"方式。<br>").replace(/可能性！/g,"可能性！<br>");
