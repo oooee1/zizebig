@@ -2892,7 +2892,7 @@ img { max-width:100%; }
 
         <!-- 載入畫面 -->
         <div id="loading-screen" style="font-family: 'CPTrans', sans-serif;">
-            <div>正在連結...</div>
+            <div class="loading-message" style="font-weight:400;">正在連結...</div>
             <div class="progress-container">
                 <img src="./pct/跳跳跳.gif" alt="Loading..." style="width: 120px; height: 120px; left: -50px; margin-bottom: 5px;">
                 <div id="progress-bar"></div>
@@ -9354,7 +9354,8 @@ if (window.currentSceneBGM !== scene.bgm) {
                             if (Number.isFinite(points)) scores[character] += points;
                         }
                         scoredSceneIds.add(String(pending.scene.id));
-                        window.__starScores = { ...scores };\n                        updateDeveloperScoreDisplay();
+                        window.__starScores = { ...scores };
+                        updateDeveloperScoreDisplay();
                         console.info('[星辰之路計分] 已確認選項', {
                             sceneId: pending.scene.id,
                             option: pending.option.text,
@@ -9671,7 +9672,8 @@ if (window.currentSceneBGM !== scene.bgm) {
                     if (Number.isFinite(points)) scores[character] += points;
                 }
                 scoredSceneIds.add(String(currentScene.id));
-                window.__starScores = { ...scores };\n                        updateDeveloperScoreDisplay();
+                window.__starScores = { ...scores };
+                        updateDeveloperScoreDisplay();
                 console.info('[星辰之路計分] 已選擇選項', {
                     sceneId: currentScene.id,
                     option: option.text,
@@ -10147,7 +10149,8 @@ function preloadResultAssets(){
 function openPersonalityResultFromScores(){
  const order=["好奇星","同情星","爽快星","熱情星"];
  const ranked=order.map(name=>({name,score:Number(scores[name]||0)})).sort((a,b)=>b.score-a.score||order.indexOf(a.name)-order.indexOf(b.name));
- window.__starScores = { ...scores };\n                        updateDeveloperScoreDisplay();
+ window.__starScores = { ...scores };
+                        updateDeveloperScoreDisplay();
  console.info('[星辰之路計分] 揭曉時的總分', { scores: { ...scores }, ranked });
  let first=ranked[0].name,second=ranked[1].name;
  if(ranked.every(x=>x.score===ranked[0].score)){
@@ -10469,7 +10472,7 @@ function openPersonalityResult(first,second){
  // 結果頁開啟時攔截點擊與觸控，避免事件穿透到下方劇情頁而推進對話。
  if(screen&&!screen.dataset.inputGuard){
   ["click","pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>{
-   if(type==="click"&&event.target&&event.target.closest&&event.target.closest(".result-continue")){
+   if(type==="click"&&event.target&&event.target.closest&&event.target.closest(".result-continue-game")){
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -13946,5 +13949,35 @@ function toggleBGM(btnEl) {
     border-bottom:0!important;
     background-image:none!important;
   }
+}
+</style>
+
+
+<style id="user-fixes-20261110">
+/* 「我的選擇」文字再縮小7px；只改字級，不改按鈕位置、底色與內距。 */
+#my-choice-result-button {
+  font-size: clamp(9px, calc(6.2vw - 29px), 47px) !important;
+}
+@media (min-width: 769px) {
+  #my-choice-result-button {
+    font-size: clamp(71px, calc(12vw - 29px), 121px) !important;
+  }
+}
+@media (max-width: 600px) {
+  #my-choice-result-button {
+    font-size: clamp(5px, calc(9vw - 29px), 27px) !important;
+  }
+}
+/* 載入文字使用一般字重，不影響進度百分比或其他遊戲文字。 */
+#loading-screen .loading-message {
+  font-weight: 400 !important;
+}
+/* 結果頁的「繼續遊戲」明確維持可點擊層級。 */
+#personality-result-copy .result-continue-game {
+  position: relative;
+  z-index: 5;
+  pointer-events: auto !important;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 </style>
