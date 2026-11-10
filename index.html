@@ -9259,12 +9259,28 @@ if (window.currentSceneBGM !== scene.bgm) {
                         return;
                     }
 
-                    // 分數只在確認「是的」時加入，並避免重複計分。
-                    if (pending.option.score && !scoredSceneIds.has(pending.scene.id)) {
+                    // 分數只在確認「是的」時加入，並避免同一題重複計分。
+                    // 將選項分數寫入唯一的累計物件，結果頁也會讀取同一份資料。
+                    if (pending.option.score && !scoredSceneIds.has(String(pending.scene.id))) {
                         for (const character in pending.option.score) {
-                            scores[character] = (scores[character] || 0) + pending.option.score[character];
+                            const points = Number(pending.option.score[character]);
+                            if (!Object.prototype.hasOwnProperty.call(scores, character)) scores[character] = 0;
+                            if (Number.isFinite(points)) scores[character] += points;
                         }
-                        scoredSceneIds.add(pending.scene.id);
+                        scoredSceneIds.add(String(pending.scene.id));
+                        window.__starScores = { ...scores };
+                        console.info('[星辰之路計分] 已確認選項', {
+                            sceneId: pending.scene.id,
+                            option: pending.option.text,
+                            added: pending.option.score,
+                            total: { ...scores }
+                        });
+                    } else {
+                        console.warn('[星辰之路計分] 此題沒有可計入的分數或已計過', {
+                            sceneId: pending.scene.id,
+                            option: pending.option && pending.option.text,
+                            score: pending.option && pending.option.score
+                        });
                     }
 
                     // 立刻收起選項畫面使用的星辰苦惱立繪，避免下一幕素材預載期間殘留在畫面上。
@@ -9562,11 +9578,20 @@ if (window.currentSceneBGM !== scene.bgm) {
 
         function selectOption(option, currentScene) {
             if (sceneTransitionLoading) return;
-            if (option.score && !scoredSceneIds.has(currentScene.id)) {
-                for (let character in option.score) {
-                    scores[character] = (scores[character] || 0) + option.score[character];
+            if (option.score && !scoredSceneIds.has(String(currentScene.id))) {
+                for (const character in option.score) {
+                    const points = Number(option.score[character]);
+                    if (!Object.prototype.hasOwnProperty.call(scores, character)) scores[character] = 0;
+                    if (Number.isFinite(points)) scores[character] += points;
                 }
-                scoredSceneIds.add(currentScene.id);
+                scoredSceneIds.add(String(currentScene.id));
+                window.__starScores = { ...scores };
+                console.info('[星辰之路計分] 已選擇選項', {
+                    sceneId: currentScene.id,
+                    option: option.text,
+                    added: option.score,
+                    total: { ...scores }
+                });
             }
 
             const nextIndex = storyScript.findIndex(s => s.id === option.nextId);
@@ -10036,9 +10061,13 @@ function preloadResultAssets(){
 function openPersonalityResultFromScores(){
  const order=["好奇星","同情星","爽快星","熱情星"];
  const ranked=order.map(name=>({name,score:Number(scores[name]||0)})).sort((a,b)=>b.score-a.score||order.indexOf(a.name)-order.indexOf(b.name));
+ window.__starScores = { ...scores };
+ console.info('[星辰之路計分] 揭曉時的總分', { scores: { ...scores }, ranked });
  let first=ranked[0].name,second=ranked[1].name;
- if(ranked.every(x=>x.score===ranked[0].score)){first="好奇星";second="好奇星";}
- else if(ranked.slice(1).every(x=>x.score<50)) second=first;
+ if(ranked.every(x=>x.score===ranked[0].score)){
+   console.error('[星辰之路計分] 所有星球分數相同，無法產生有效性格結果。請檢查前面的「已確認選項」紀錄。');
+   first="好奇星";second="好奇星";
+ } else if(ranked.slice(1).every(x=>x.score<50)) second=first;
  openPersonalityResult(first,second);
 }
 function jumpToPersonalityResult(star,event){if(event){event.preventDefault();event.stopPropagation();}const p=document.getElementById("developer-tools-panel");if(p)p.classList.remove("open");openPersonalityResult(star,star);}
@@ -12576,7 +12605,7 @@ function toggleBGM(btnEl) {
     background: #000;
     color: #fff;
     font-family: 'Dela Gothic One', sans-serif;
-    font-size: clamp(38px, 6.2vw, 76px);
+    font-size: clamp(23px, calc(6.2vw - 15px), 61px);
     line-height: 1.25;
     letter-spacing: .04em;
     white-space: nowrap;
@@ -12593,7 +12622,7 @@ function toggleBGM(btnEl) {
     #my-choice-result-button {
         bottom: 10%;
         padding: 22px 52px 26px;
-        font-size: clamp(100px, 12vw, 150px);
+        font-size: clamp(85px, calc(12vw - 15px), 135px);
         line-height: 1.2;
         letter-spacing: .025em;
     }
@@ -12602,7 +12631,7 @@ function toggleBGM(btnEl) {
     #my-choice-result-button {
         bottom: 7%;
         padding: 10px 22px 12px;
-        font-size: clamp(34px, 9vw, 56px);
+        font-size: clamp(19px, calc(9vw - 15px), 41px);
     }
 }
 </style>
