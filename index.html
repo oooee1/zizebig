@@ -10676,7 +10676,14 @@ function openPersonalityResult(first,second){
  const explanationTexts=Array.from(copy.querySelectorAll(".result-tagline, .result-primary > p, .result-secondary > p:not(.result-career-heading):not(.result-career-intro), .result-job-category-description"));
  explanationTexts.forEach(el=>{const size=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(size)){const mobile=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;el.style.setProperty("font-size",Math.max(1,size+(first==="好奇星"?0:(mobile?0.5:-1.5)))+"px","important");}});
  const resultTagline=copy.querySelector(".result-tagline");
- if(resultTagline&&!(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches)){const size=parseFloat(getComputedStyle(resultTagline).fontSize);if(Number.isFinite(size))resultTagline.style.setProperty("font-size",Math.max(1,size-2)+"px","important");}
+ // 標題下方「具有……」這句統一跟結果說明段落使用相同字級，四種星球與所有組合一致。
+ if(resultTagline){
+  const explanation=copy.querySelector(".result-primary > p");
+  if(explanation){
+   const explanationSize=parseFloat(getComputedStyle(explanation).fontSize);
+   if(Number.isFinite(explanationSize))resultTagline.style.setProperty("font-size",explanationSize+"px","important");
+  }
+ }
  // 「繼、續、遊、戲」逐字使用同一字體、字級、行高與基線；只保留「遊」的橘色。
  copy.querySelectorAll(".result-continue-char").forEach(el=>{
   el.style.setProperty("display","inline-block","important");
