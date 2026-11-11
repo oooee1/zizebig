@@ -10631,7 +10631,21 @@ function openPersonalityResult(first,second){
  }
  html+='<p class="result-continue"><span class="result-continue-game"><span class="result-continue-char">繼</span><span class="result-continue-char">續</span><span class="result-continue-char result-player-name">遊</span><span class="result-continue-char">戲</span></span></p>';
  copy.innerHTML=html;
-  // 兩種特定測驗提醒依文字內容分別調整字級；不改其他提醒。
+ // 手機結果頁：逐一讀取每個實際文字元素原本的計算字級，再統一減少 1.5px。
+ // 先一次記錄原始字級再套用，避免巢狀元素重複扣除；不改圖片、定位或區塊尺寸。
+ if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
+  const textElements=Array.from(copy.querySelectorAll("*")).filter(el=>
+   Array.from(el.childNodes).some(node=>node.nodeType===3&&node.textContent.trim())
+  );
+  const originalSizes=textElements.map(el=>[el,parseFloat(getComputedStyle(el).fontSize)]);
+  originalSizes.forEach(([el,size])=>{
+   // 好奇星主標由獨立的0.6倍規則控制，連同「奇」字一起跳過全頁文字縮小，避免三字大小不一致。
+   if(el.closest&&el.closest(".result-name-curiosity"))return;
+   if(el.closest&&el.closest(".result-career-intro-star"))return;
+   if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1.5)+"px","important");
+  });
+  // 好奇星中文名稱不額外縮放；只有英文標題保留既有的 O／E 字級調整。
+  // 特定提醒在手機版全域縮字完成後再套用，確保總縮小量精準。
   copy.querySelectorAll(".result-disclaimer").forEach(el=>{
    const text=el.textContent||"";
    if(text.includes("您的想法喔")){
@@ -10646,28 +10660,13 @@ function openPersonalityResult(first,second){
     }
    }
   });
-  // 職業類別標題剛好九字時，手機版額外縮小2px。
-  if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
-   copy.querySelectorAll(".result-job-category-title").forEach(el=>{
-    if(Array.from((el.textContent||"").trim()).length===9){
-     const size=parseFloat(getComputedStyle(el).fontSize);
-     if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
-    }
-   });
-  }
- // 手機結果頁：逐一讀取每個實際文字元素原本的計算字級，再統一減少 1.5px。
- // 先一次記錄原始字級再套用，避免巢狀元素重複扣除；不改圖片、定位或區塊尺寸。
- if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
-  const textElements=Array.from(copy.querySelectorAll("*")).filter(el=>
-   Array.from(el.childNodes).some(node=>node.nodeType===3&&node.textContent.trim())
-  );
-  const originalSizes=textElements.map(el=>[el,parseFloat(getComputedStyle(el).fontSize)]);
-  originalSizes.forEach(([el,size])=>{
-   // 好奇星主標由獨立的0.6倍規則控制，連同「奇」字一起跳過全頁文字縮小，避免三字大小不一致。
-   if(el.closest&&el.closest(".result-name-curiosity"))return;
-   if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1.5)+"px","important");
+  // 手機版九字職業類別名稱在原本字級上再縮小2px。
+  copy.querySelectorAll(".result-job-category-title").forEach(el=>{
+   if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches&&Array.from((el.textContent||"").trim()).length===9){
+    const size=parseFloat(getComputedStyle(el).fontSize);
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
+   }
   });
-  // 好奇星中文名稱不額外縮放；只有英文標題保留既有的 O／E 字級調整。
   const continueText=copy.querySelector(".result-continue-game");
   if(continueText){const size=parseFloat(getComputedStyle(continueText).fontSize);if(Number.isFinite(size))continueText.style.setProperty("font-size",Math.max(1,size-10)+"px","important");}
  }
