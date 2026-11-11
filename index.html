@@ -2875,10 +2875,26 @@ img { max-width:100%; }
             <button type="button" onclick="jumpToCharacterStory(137, event)">爽快星劇情</button>
             <button type="button" onclick="jumpToCharacterStory(205.1, event)">熱情星劇情</button>
             <p class="developer-tools-title">跳轉至測驗結果</p>
-            <button type="button" onclick="jumpToPersonalityResult('好奇星', event)">好奇星測驗結果</button>
-            <button type="button" onclick="jumpToPersonalityResult('同情星', event)">同情星測驗結果</button>
-            <button type="button" onclick="jumpToPersonalityResult('爽快星', event)">爽快星測驗結果</button>
-            <button type="button" onclick="jumpToPersonalityResult('熱情星', event)">熱情星測驗結果</button>
+            <p class="developer-result-group-title">好奇星</p>
+            <button type="button" onclick="jumpToPersonalityResult('好奇星','好奇星',event)">好奇星&好奇星</button>
+            <button type="button" onclick="jumpToPersonalityResult('好奇星','同情星',event)">好奇星&同情星</button>
+            <button type="button" onclick="jumpToPersonalityResult('好奇星','爽快星',event)">好奇星&爽快星</button>
+            <button type="button" onclick="jumpToPersonalityResult('好奇星','熱情星',event)">好奇星&熱情星</button>
+            <p class="developer-result-group-title">同情星</p>
+            <button type="button" onclick="jumpToPersonalityResult('同情星','好奇星',event)">同情星&好奇星</button>
+            <button type="button" onclick="jumpToPersonalityResult('同情星','同情星',event)">同情星&同情星</button>
+            <button type="button" onclick="jumpToPersonalityResult('同情星','爽快星',event)">同情星&爽快星</button>
+            <button type="button" onclick="jumpToPersonalityResult('同情星','熱情星',event)">同情星&熱情星</button>
+            <p class="developer-result-group-title">爽快星</p>
+            <button type="button" onclick="jumpToPersonalityResult('爽快星','好奇星',event)">爽快星&好奇星</button>
+            <button type="button" onclick="jumpToPersonalityResult('爽快星','同情星',event)">爽快星&同情星</button>
+            <button type="button" onclick="jumpToPersonalityResult('爽快星','爽快星',event)">爽快星&爽快星</button>
+            <button type="button" onclick="jumpToPersonalityResult('爽快星','熱情星',event)">爽快星&熱情星</button>
+            <p class="developer-result-group-title">熱情星</p>
+            <button type="button" onclick="jumpToPersonalityResult('熱情星','好奇星',event)">熱情星&好奇星</button>
+            <button type="button" onclick="jumpToPersonalityResult('熱情星','同情星',event)">熱情星&同情星</button>
+            <button type="button" onclick="jumpToPersonalityResult('熱情星','爽快星',event)">熱情星&爽快星</button>
+            <button type="button" onclick="jumpToPersonalityResult('熱情星','熱情星',event)">熱情星&熱情星</button>
             <button type="button" onclick="jumpToCharacterStory(308, event)">遇見父母</button>
             <button type="button" onclick="jumpToCharacterStory(350, event)">片尾</button>
             <div id="developer-score-display" aria-live="polite">
@@ -10174,7 +10190,12 @@ function openPersonalityResultFromScores(){
  } else if(ranked.slice(1).every(x=>x.score<50)) second=first;
  openPersonalityResult(first,second);
 }
-function jumpToPersonalityResult(star,event){if(event){event.preventDefault();event.stopPropagation();}const p=document.getElementById("developer-tools-panel");if(p)p.classList.remove("open");openPersonalityResult(star,star);}
+function jumpToPersonalityResult(first,second,event){
+ if(second&&typeof second==="object"){event=second;second=first;}
+ if(event){event.preventDefault();event.stopPropagation();}
+ const p=document.getElementById("developer-tools-panel");if(p)p.classList.remove("open");
+ openPersonalityResult(first,second||first);
+}
 function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");}}
 function getResultImageAlphaBounds(img){
  // 手機 Safari 不建立原圖尺寸的大型 Canvas；縮圖取樣即可定位透明邊界。
@@ -10569,7 +10590,12 @@ function openPersonalityResult(first,second){
  if(copy)copy.style.setProperty("--result-primary-color",primaryColor);
  const emphasize=(value,star,color)=>{
   let out=String(value||"");
-  const terms=[star,...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[])].filter(Boolean).sort((a,b)=>b.length-a.length);
+  const sameStarHighlights={
+  "同情星":["感受到理解與關懷","主動伸出援手","過於重視人際關係和團隊和諧","給予適當的鼓勵與協助","貼心"],
+  "爽快星":["在行動中找到解決問題的方法","毫不退縮的精神","忽略他人的想法與感受","習慣以直接有效的方式解決問題"],
+  "熱情星":["對自己認定的目標充滿幹勁","凝聚團隊","忽略實際限制","樂觀的態度帶動身邊的人","表達能力"]
+ };
+ const terms=[...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[]),...(first===second?(sameStarHighlights[first]||[]):[])].filter(Boolean).sort((a,b)=>b.length-a.length);
   terms.forEach(term=>{
    const mark='<span class="result-highlight" style="--highlight-color:'+color+'">'+term+'</span>';
    out=out.split(term).join(mark);
@@ -10611,14 +10637,15 @@ function openPersonalityResult(first,second){
  const sourceData=parseResultSource(first);
  d.traits=sourceData.traits;
  d.work=sourceData.work;
- const mainTraits=resultTextHtml(d.traits,replace,emphasize,first,primaryColor);
+ let mainTraits=resultTextHtml(d.traits,replace,emphasize,first,primaryColor);
+ if(first==="熱情星")mainTraits=mainTraits.replace(/<br\s*\/?\s*>/g," ");
  const mainWork=resultTextHtml(d.work,replace,emphasize,first,primaryColor);
  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+mainTraits+'</p></section>';
  html+='<section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+mainWork+'</p></section>';
  const career=sourceData.careers[second]||sourceData.careers[first]||Object.values(sourceData.careers)[0];
  if(career){
   const intro=replace(career.intro).replace(second,'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>');
-  const categories=career.categories.map((item,index)=>'<div class="result-job-category" style="margin-left:auto!important;margin-right:auto!important;text-align:center!important;">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title.replace("設計與內容創作","設計與媒體創作")+'</div><p class="result-job-category-description" style="text-align:center!important;">(如: '+replace(item.description).replace(/^\s+/,"").replace(/\n/g,"<br>")+')</p></div>').join("");
+  const categories=career.categories.map((item,index)=>'<div class="result-job-category" style="margin-left:auto!important;margin-right:auto!important;text-align:center!important;">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title.replace("設計與內容創作","設計與媒體創作").replace("娛樂表演與休閒服務","文教表演與休閒服務")+'</div><p class="result-job-category-description" style="text-align:center!important;">(如: '+replace(item.description).replace(/^\s+/,"").replace(/\n/g,"<br>")+')</p></div>').join("");
   const summary=resultTextHtml(career.traitSummary,replace,emphasize,second,secondaryColor);
   const details=resultTextHtml(career.details,replace,emphasize,second,secondaryColor);
   let disclaimer=career.disclaimer||"(測驗結果僅供參考)";
@@ -10650,7 +10677,8 @@ function openPersonalityResult(first,second){
    const text=el.textContent||"";
    if(text.includes("您的想法喔")){
     const size=parseFloat(getComputedStyle(el).fontSize);
-    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1)+"px","important");
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
+    el.style.setProperty("translate","1px 0","important");
    }
    if(text.includes("未來的人生是屬於")){
     el.classList.add("result-disclaimer-future");
@@ -10666,7 +10694,7 @@ function openPersonalityResult(first,second){
     const length=Array.from((el.textContent||"").trim()).length;
     const size=parseFloat(getComputedStyle(el).fontSize);
     if(Number.isFinite(size)&&length===9)el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
-    else if(Number.isFinite(size)&&length>9)el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
+    else if(Number.isFinite(size)&&length>9)el.style.setProperty("font-size",Math.max(1,size-4)+"px","important");
    }
   });
   const continueText=copy.querySelector(".result-continue-game");
