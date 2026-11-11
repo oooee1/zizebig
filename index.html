@@ -10676,8 +10676,6 @@ function openPersonalityResult(first,second){
   copy.querySelectorAll(".result-disclaimer").forEach(el=>{
    const text=el.textContent||"";
    if(text.includes("您的想法喔")){
-    const size=parseFloat(getComputedStyle(el).fontSize);
-    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
     el.style.setProperty("translate","1px 0","important");
    }
    if(text.includes("未來的人生是屬於")){
@@ -10699,6 +10697,15 @@ function openPersonalityResult(first,second){
   });
   const continueText=copy.querySelector(".result-continue-game");
   if(continueText){const size=parseFloat(getComputedStyle(continueText).fontSize);if(Number.isFinite(size))continueText.style.setProperty("font-size",Math.max(1,size-10)+"px","important");}
+ }
+ // 電腦版指定測驗提醒在目前字級上縮小2px；手機版只向右移1px、不改字級。
+ if(!(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches)){
+  copy.querySelectorAll(".result-disclaimer").forEach(el=>{
+   if((el.textContent||"").includes("您的想法喔")){
+    const size=parseFloat(getComputedStyle(el).fontSize);
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
+   }
+  });
  }
  // 職業介紹「結合……是……」整體縮小3px；說明文字在目前計算字級上增加1px。
  const careerIntro=copy.querySelector(".result-career-intro");
