@@ -14252,3 +14252,31 @@ function toggleBGM(btnEl) {
   }
 }
 </style>
+
+<style id="developer-panel-scroll-fix-20261111">
+/* 開發者清單固定在視窗內，讓面板本身承接觸控捲動。 */
+#developer-tools-panel{
+ position:fixed!important;
+ top:60px!important;
+ right:14px!important;
+ left:auto!important;
+ width:min(260px,calc(100vw - 28px))!important;
+ max-height:calc(100vh - 76px)!important;
+ max-height:calc(100dvh - 76px)!important;
+ height:auto!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-y:contain!important;
+ touch-action:pan-y!important;
+}
+#developer-tools-panel.open{
+ display:block!important;
+}
+#developer-tools-panel *{
+ touch-action:pan-y;
+}
+#developer-tools-panel button{
+ flex-shrink:0!important;
+}
+</style>
