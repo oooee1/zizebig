@@ -10652,6 +10652,8 @@ function openPersonalityResult(first,second){
  if(careerIntro){const size=parseFloat(getComputedStyle(careerIntro).fontSize);if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size-3)+"px","important");}
  const explanationTexts=Array.from(copy.querySelectorAll(".result-tagline, .result-primary > p, .result-secondary > p:not(.result-career-heading):not(.result-career-intro), .result-job-category-description"));
  explanationTexts.forEach(el=>{const size=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(size)){const mobile=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;el.style.setProperty("font-size",Math.max(1,size+(first==="好奇星"?0:(mobile?0.5:-1.5)))+"px","important");}});
+ const resultTagline=copy.querySelector(".result-tagline");
+ if(resultTagline&&!(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches)){const size=parseFloat(getComputedStyle(resultTagline).fontSize);if(Number.isFinite(size))resultTagline.style.setProperty("font-size",Math.max(1,size-2)+"px","important");}
  // 「繼、續、遊、戲」逐字使用同一字體、字級、行高與基線；只保留「遊」的橘色。
  copy.querySelectorAll(".result-continue-char").forEach(el=>{
   el.style.setProperty("display","inline-block","important");
@@ -13139,9 +13141,9 @@ function toggleBGM(btnEl) {
   font-size:110px!important;
   margin-top:-32px!important;
  }
- /* 適合職業以前的所有文字再整體上移8px。 */
+ /* 手機版適合職業以前的文字在目前位置上再整體上移8px。 */
  #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  translate:0 -34px!important;
+  translate:0 -42px!important;
  }
 }
 /* 電腦：說明文字在目前基礎上再放大2px，英文往下4px。 */
@@ -14055,14 +14057,14 @@ function toggleBGM(btnEl) {
 /* 適合職業之前的整個內容區一起上移8px；職業區、繼續遊戲與備註不動。 */
 @media (min-width:769px){
   #personality-result-screen #personality-result-copy > .result-belongs-heading{
-    top:-8px!important;
+    top:-14px!important;
   }
   #personality-result-screen #personality-result-copy > .result-english{
-    top:423px!important;
+    top:417px!important;
     translate:none!important;
   }
   #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-    top:419px!important;
+    top:413px!important;
     translate:none!important;
   }
 }
