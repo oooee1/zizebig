@@ -10650,7 +10650,7 @@ function openPersonalityResult(first,second){
    const text=el.textContent||"";
    if(text.includes("您的想法喔")){
     const size=parseFloat(getComputedStyle(el).fontSize);
-    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-4)+"px","important");
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1)+"px","important");
    }
    if(text.includes("未來的人生是屬於")){
     el.classList.add("result-disclaimer-future");
@@ -10662,9 +10662,11 @@ function openPersonalityResult(first,second){
   });
   // 手機版九字職業類別名稱在原本字級上再縮小2px。
   copy.querySelectorAll(".result-job-category-title").forEach(el=>{
-   if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches&&Array.from((el.textContent||"").trim()).length===9){
+   if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
+    const length=Array.from((el.textContent||"").trim()).length;
     const size=parseFloat(getComputedStyle(el).fontSize);
-    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
+    if(Number.isFinite(size)&&length===9)el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
+    else if(Number.isFinite(size)&&length>9)el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
    }
   });
   const continueText=copy.querySelector(".result-continue-game");
@@ -10673,6 +10675,8 @@ function openPersonalityResult(first,second){
  // 職業介紹「結合……是……」整體縮小3px；說明文字在目前計算字級上增加1px。
  const careerIntro=copy.querySelector(".result-career-intro");
  if(careerIntro){const size=parseFloat(getComputedStyle(careerIntro).fontSize);if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size-3)+"px","important");}
+ // 玩家名字在介紹句中必須跟隨句子字級；避免前面的手機全域縮字與這裡縮小整句造成相對字級偏大。
+ if(careerIntro)careerIntro.querySelectorAll(".result-player-name").forEach(el=>el.style.setProperty("font-size","1em","important"));
  const explanationTexts=Array.from(copy.querySelectorAll(".result-tagline, .result-primary > p, .result-secondary > p:not(.result-career-heading):not(.result-career-intro), .result-job-category-description"));
  explanationTexts.forEach(el=>{const size=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(size)){const mobile=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;el.style.setProperty("font-size",Math.max(1,size+(first==="好奇星"?0:(mobile?0.5:-1.5)))+"px","important");}});
  const resultTagline=copy.querySelector(".result-tagline");
@@ -13175,6 +13179,39 @@ function toggleBGM(btnEl) {
 @media (max-width:768px){
  #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
   translate:0 -60px!important;
+ }
+}
+</style>
+
+
+<style id="result-mobile-and-precareer-spacing-20261111">
+/* 手機：測驗提醒在原本字級（含先前縮小設定）上放大3px。 */
+@media (max-width:768px){
+ #personality-result-copy .result-disclaimer{
+  /* JS 會在手機全域縮字後將指定提醒調整為原字級-1px，較先前-4px放大3px。 */
+ }
+ /* 手機星球中文大標與英文標題一起上移8px，避免與創意／態度標籤重疊。 */
+ #personality-result-copy .result-name,
+ #personality-result-copy .result-english{
+  position:relative!important;
+  top:-8px!important;
+ }
+ /* 只有星球名稱放大；玩家名稱維持與句子相同字級。 */
+ #personality-result-copy .result-career-intro .result-career-intro-star{
+  font-size:calc(1em + 15px)!important;
+ }
+ #personality-result-copy .result-career-intro .result-player-name{
+  font-size:1em!important;
+ }
+ /* 手機版適合職業以上的文字再往上7px。 */
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 -67px!important;
+ }
+}
+/* 電腦與手機：適合職業以上的文字整體再往上7px；電腦版原本下移12px改為下移5px。 */
+@media (min-width:769px){
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 5px!important;
  }
 }
 </style>
