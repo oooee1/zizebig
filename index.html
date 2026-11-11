@@ -10631,6 +10631,30 @@ function openPersonalityResult(first,second){
  }
  html+='<p class="result-continue"><span class="result-continue-game"><span class="result-continue-char">繼</span><span class="result-continue-char">續</span><span class="result-continue-char result-player-name">遊</span><span class="result-continue-char">戲</span></span></p>';
  copy.innerHTML=html;
+  // 兩種特定測驗提醒依文字內容分別調整字級；不改其他提醒。
+  copy.querySelectorAll(".result-disclaimer").forEach(el=>{
+   const text=el.textContent||"";
+   if(text.includes("您的想法喔")){
+    const size=parseFloat(getComputedStyle(el).fontSize);
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-4)+"px","important");
+   }
+   if(text.includes("未來的人生是屬於")){
+    el.classList.add("result-disclaimer-future");
+    if(!(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches)){
+     const size=parseFloat(getComputedStyle(el).fontSize);
+     if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
+    }
+   }
+  });
+  // 職業類別標題剛好九字時，手機版額外縮小2px。
+  if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
+   copy.querySelectorAll(".result-job-category-title").forEach(el=>{
+    if(Array.from((el.textContent||"").trim()).length===9){
+     const size=parseFloat(getComputedStyle(el).fontSize);
+     if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
+    }
+   });
+  }
  // 手機結果頁：逐一讀取每個實際文字元素原本的計算字級，再統一減少 1.5px。
  // 先一次記錄原始字級再套用，避免巢狀元素重複扣除；不改圖片、定位或區塊尺寸。
  if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
@@ -13143,7 +13167,7 @@ function toggleBGM(btnEl) {
  }
  /* 手機版適合職業以前的文字在目前位置上再整體上移8px。 */
  #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  translate:0 -42px!important;
+  translate:0 -50px!important;
  }
 }
 /* 電腦：說明文字在目前基礎上再放大2px，英文往下4px。 */
@@ -14091,6 +14115,21 @@ function toggleBGM(btnEl) {
 #personality-result-screen #personality-result-copy .result-job-category-description{display:block!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;margin-left:auto!important;margin-right:auto!important;text-align:center!important;overflow-wrap:anywhere!important;}
 </style>
 
+
+<style id="result-requested-adjustments-20261111b">
+/* 「未來的人生是屬於…」提醒手機版置中，避免文字偏右。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy .result-disclaimer-future{
+  width:100%!important;box-sizing:border-box!important;
+  margin-left:auto!important;margin-right:auto!important;
+  text-align:center!important;left:0!important;translate:none!important;
+ }
+ /* 「屬於…的特質」手機版在原本位置上再向右3px。 */
+ #personality-result-screen #personality-result-copy .result-trait-heading{translate:9px 0!important;}
+}
+/* 職業介紹中的第二高分星球名稱，桌面與手機都放大3px。 */
+#personality-result-screen #personality-result-copy .result-career-intro-star{font-size:calc(1em + 3px)!important;}
+</style>
 
 <style id="mobile-result-title-unified-minus-2px-20261111">
 /* 手機版四種星球中文大標在原本統一尺寸上再縮小2px；英文標題尺寸、所有位置及桌面版維持不變。 */
