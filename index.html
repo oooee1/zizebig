@@ -13162,6 +13162,23 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+
+<style id="result-career-intro-player-and-mobile-shift-20261111">
+/* 「結合……是……」：玩家名字維持句子原字級，只有星球名稱額外放大；星球名稱較上一版再增加2px。 */
+#personality-result-copy .result-career-intro .result-player-name{
+ font-size:inherit!important;
+}
+#personality-result-copy .result-career-intro .result-career-intro-star{
+ font-size:calc(1em + 12px)!important;
+}
+/* 手機版：適合職業標題以上的內容，在原本位置上再整體上移10px；不影響適合職業區塊及電腦版。 */
+@media (max-width:768px){
+ #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  translate:0 -60px!important;
+ }
+}
+</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
