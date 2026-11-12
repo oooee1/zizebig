@@ -10092,7 +10092,7 @@ function parseResultSource(star){
    groups.forEach(group=>{
     if(group.length===1&&(group[0]==="或者"||group[0]==="或")){separator=group[0];return;}
     const title=group.shift()||"";
-    const description=group.join("\\n");
+    const description=group.join("\n");
     if(title)categories.push({title,description,separator:categories.length?separator:""});
     separator="";
    });
