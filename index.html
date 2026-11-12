@@ -10233,18 +10233,18 @@ function getResultImageAlphaBounds(img){
  const ctx=canvas.getContext("2d",{willReadFrequently:true});
  if(!ctx){canvas.width=canvas.height=0;resultAlphaBoundsCache.set(img,null);return null;}
  ctx.drawImage(img,0,0,canvas.width,canvas.height);
- const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
  const sampleWidth=canvas.width,sampleHeight=canvas.height;
- canvas.width=canvas.height=0;
+ const pixels=ctx.getImageData(0,0,sampleWidth,sampleHeight).data;
  let minX=sampleWidth,minY=sampleHeight,maxX=-1,maxY=-1;
- for(let y=0;y<canvas.height;y++){
-  for(let x=0;x<canvas.width;x++){
-   if(pixels[(y*canvas.width+x)*4+3]>8){
+ for(let y=0;y<sampleHeight;y++){
+  for(let x=0;x<sampleWidth;x++){
+   if(pixels[(y*sampleWidth+x)*4+3]>8){
     if(x<minX)minX=x;if(y<minY)minY=y;
     if(x>maxX)maxX=x;if(y>maxY)maxY=y;
    }
   }
  }
+ canvas.width=canvas.height=0;
  if(maxX<0){resultAlphaBoundsCache.set(img,null);return null;}
  const sx=sourceWidth/sampleWidth,sy=sourceHeight/sampleHeight;
  const bounds={x:minX*sx,y:minY*sy,width:(maxX-minX+1)*sx,height:(maxY-minY+1)*sy};
@@ -10445,6 +10445,17 @@ function compactResultPosterToVisibleBottom(layers,copy){
  }
  if(copy)copy.style.setProperty("height",visibleBottom+"px","important");
 }
+function layoutResult(){
+ const layers=document.getElementById("personality-result-layers");
+ const copy=document.getElementById("personality-result-copy");
+ if(!layers||!copy)return;
+ const decoration=layers.querySelector(".result-star-decoration");
+ if(decoration&&decoration.dataset.resultStar){
+  alignStarDecorationToHolePaper(decoration,layers,decoration.dataset.resultStar);
+ }
+ positionResultTextElements(layers,copy);
+ compactResultPosterToVisibleBottom(layers,copy);
+}
 async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false){
  // 先逐張縮小，再裁掉透明邊；裁切後用原畫布百分比還原位置，視覺座標不變。
  img.dataset.resultSrc=src;
@@ -10590,6 +10601,7 @@ function openPersonalityResultCore(first,second){
   const starDecoration=document.createElement("img");
   const starAnimationClass={"好奇星":"curiosity","同情星":"compassion","爽快星":"brisk","熱情星":"passion"}[first]||"curiosity";
   starDecoration.className="personality-result-layer result-star-decoration result-star-decoration-"+starAnimationClass;
+  starDecoration.dataset.resultStar=first;
   starDecoration.decoding="async";
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
@@ -10755,10 +10767,10 @@ function openPersonalityResultCore(first,second){
    const size=parseFloat(getComputedStyle(el).fontSize);
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
   });
-  // 手機版標題與英文統一使用 448px；不再由後續圖片定位函式額外疊加 translate。
+  // 手機版標題沿用結果頁最後確認的 442px；不再由圖片定位函式額外疊加 translate。
   copy.querySelectorAll(":scope > .result-name,:scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","448px","important");
+   el.style.setProperty("top","442px","important");
    el.style.setProperty("translate","none","important");
   });
  }
@@ -10858,23 +10870,25 @@ function openPersonalityResultCore(first,second){
    });
    try{
     updateResultLoadingProgress(0);
-    let finished=0;
-    for(const item of resultImageQueue){
-     try{
-      // 不使用可能殘留的 Blob／Canvas 快取，避免圖片來源互相覆寫。
-      item.img.removeAttribute("src");
-      item.img.src=item.src;
-      await waitForImage(item);
-      if(item.img.decode)await withTimeout(item.img.decode().catch(()=>{}),3000,"圖片解碼");
-      if(!item.img.naturalWidth)throw new Error("圖片沒有有效尺寸："+item.src);
-     }catch(error){
-      console.warn("[結果頁] 素材載入失敗，略過該圖層：",item.src,error);
-      item.img.style.setProperty("display","none","important");
-     }finally{
-      finished++;
-      updateResultLoadingProgress(resultImageQueue.length?finished/resultImageQueue.length*90:90);
+    let finished=0,cursor=0;
+    const loadWorker=async()=>{
+     while(cursor<resultImageQueue.length){
+      const item=resultImageQueue[cursor++];
+      try{
+       item.img.removeAttribute("src");
+       await downsampleResultImage(item.img,item.src,item.maxWidth||600,!!item.trimTransparent);
+       if(!item.img.naturalWidth)throw new Error("圖片沒有有效尺寸："+item.src);
+       if(item.img.decode)await withTimeout(item.img.decode().catch(()=>{}),3000,"圖片解碼");
+      }catch(error){
+       console.warn("[結果頁] 素材載入失敗，略過該圖層：",item.src,error);
+       item.img.style.setProperty("display","none","important");
+      }finally{
+       finished++;
+       updateResultLoadingProgress(resultImageQueue.length?finished/resultImageQueue.length*90:90);
+      }
      }
-    }
+    };
+    await Promise.all([loadWorker(),loadWorker()]);
     if(document.fonts&&document.fonts.ready)await withTimeout(document.fonts.ready,3000,"字型載入").catch(()=>{});
     await withTimeout(new Promise(resolve=>{
      if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>requestAnimationFrame(resolve));
@@ -14796,28 +14810,3 @@ function toggleBGM(btnEl) {
 </style>
 
 
-<style id="result-position-single-source-20261112">
-/* 結果頁定位唯一基準：桌面與手機各自只由這裡決定標題及前段內容的位置。
-   手機標題 top=448px；桌面標題/英文 top=399px/403px；其餘前段內容 top=404px。
-   職業區、繼續遊戲按鈕與提醒仍由圖片透明範圍的 JS 定位，不在此覆蓋。 */
-@media (min-width:769px){
- #personality-result-screen #personality-result-copy > .result-belongs-heading{
-  position:absolute!important;top:-23px!important;
- }
- #personality-result-screen #personality-result-copy > .result-english{
-  position:relative!important;top:403px!important;translate:none!important;
- }
- #personality-result-screen #personality-result-copy > .result-name{
-  position:relative!important;top:399px!important;translate:none!important;
- }
- #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer):not(.result-name){
-  position:relative!important;top:404px!important;
- }
-}
-@media (max-width:768px){
- #personality-result-screen #personality-result-copy > .result-name,
- #personality-result-screen #personality-result-copy > .result-english{
-  position:relative!important;top:448px!important;translate:none!important;
- }
-}
-</style>
