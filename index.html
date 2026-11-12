@@ -10345,6 +10345,15 @@ function positionResultTextElements(layers,copy){
  const longStrip=findImage("背景 長條紙.webp");
  const apply=()=>{
   if(!textPaper||!textPaper.naturalWidth||!copy.clientWidth)return;
+  // 手機標題與英文在目前計算位置上再上移 6px，保留原本 translate 後累加。
+  if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
+   copy.querySelectorAll(".result-name,.result-english").forEach(el=>{
+    const current=getComputedStyle(el).translate;
+    const parts=current&&current!=="none"?current.trim().split(" "):[];
+    const y=parts.length>1?parseFloat(parts[1]):0;
+    el.style.setProperty("translate","0 "+((Number.isFinite(y)?y:0)-6)+"px","important");
+   });
+  }
   const textBounds=getResultImageAlphaBounds(textPaper);
   if(textBounds){
    const career=copy.querySelector(".result-secondary");
@@ -10369,7 +10378,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale)+"px";
+    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale-6)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -13400,20 +13409,20 @@ function toggleBGM(btnEl) {
 }
 /* 職業類別背景左右總寬比目前再增加 4px（JS 量測寬度 +4px），上下各增加 2px。 */
 #personality-result-screen #personality-result-copy .result-job-category-title{
- padding-left:6px!important;
- padding-right:6px!important;
- padding-top:14px!important;
- padding-bottom:14px!important;
+ padding-left:8px!important;
+ padding-right:8px!important;
+ padding-top:16px!important;
+ padding-bottom:16px!important;
 }
 </style>
 
 <style id="result-loading-screen-cleanup-20261112">
-/* 結果圖片尚未全部載入時，顯示乾淨的完整遮罩，不讓底下劇情角色或尚未定位的職業插圖露出。 */
+/* 結果素材整理期間沿用遊戲開場載入畫面的深色、白字與跳跳跳動畫風格。 */
 #personality-result-screen.result-loading{
  visibility:visible!important;
  pointer-events:auto!important;
- background:#f7f4ed!important;
- z-index:1000000!important;
+ background:#0f0f0f!important;
+ z-index:2147483001!important;
 }
 #personality-result-screen.result-loading #personality-result-poster{
  visibility:hidden!important;
@@ -13425,30 +13434,26 @@ function toggleBGM(btnEl) {
  display:flex;
  align-items:center;
  justify-content:center;
- padding-top:58px;
+ padding-bottom:150px;
  box-sizing:border-box;
- color:#344d78;
- background:#f7f4ed;
- font-family:'Noto Sans TC',sans-serif;
- font-size:18px;
- font-weight:700;
- letter-spacing:1px;
- z-index:1000001;
+ color:#fff;
+ background:#0f0f0f;
+ font-family:'CPTrans',sans-serif;
+ font-size:22px;
+ font-weight:400;
+ letter-spacing:0;
+ z-index:2147483002;
 }
 #personality-result-screen.result-loading::after{
  content:"";
  position:fixed;
- left:calc(50% - 13px);
- top:calc(50% - 18px);
- width:26px;
- height:26px;
- border:3px solid rgba(52,77,120,.18);
- border-top-color:#344d78;
- border-radius:50%;
- animation:result-loading-spin .8s linear infinite;
- z-index:1000002;
+ left:calc(50% - 60px);
+ top:calc(50% - 5px);
+ width:120px;
+ height:120px;
+ background:url("./pct/跳跳跳.gif") center/contain no-repeat;
+ z-index:2147483003;
 }
-@keyframes result-loading-spin{to{transform:rotate(360deg)}}
 </style>
 </body>
 
