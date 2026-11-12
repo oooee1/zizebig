@@ -10793,7 +10793,7 @@ function openPersonalityResult(first,second){
     el.style.setProperty("max-width","none","important");
     el.style.setProperty("white-space","nowrap","important");
    });
-   const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width))+2;
+   const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width))+6;
    copy.style.setProperty("--result-job-title-width",longestWidth+"px");
    // 每個分類標題直接套用同一個實測寬度，避免 CSS 變數被其他樣式覆蓋。
    jobTitleEls.forEach(el=>{
@@ -13388,6 +13388,67 @@ function toggleBGM(btnEl) {
 @keyframes resultPassionEnter{0%{opacity:0;transform:translateY(12px) scale(.86) rotate(-5deg)}60%{opacity:1;transform:translateY(-4px) scale(1.035) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
 .result-star-decoration-passion.result-passion-idle{animation:resultPassionFloat 2.6s ease-in-out infinite!important;transform-origin:center bottom!important}
 @keyframes resultPassionFloat{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-4px) rotate(-1.8deg)}50%{transform:translateY(-8px) rotate(0)}75%{transform:translateY(-4px) rotate(1.8deg)}}
+</style>
+
+<style id="result-mobile-title-up-six-and-category-padding-20261112">
+/* 手機版星球中文大標與英文標題直接以 top 定位，從目前 448px 再上移 6px；不依賴 translate 疊加。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{
+  top:442px!important;
+ }
+}
+/* 職業類別背景左右總寬比目前再增加 4px（JS 量測寬度 +4px），上下各增加 2px。 */
+#personality-result-screen #personality-result-copy .result-job-category-title{
+ padding-left:6px!important;
+ padding-right:6px!important;
+ padding-top:14px!important;
+ padding-bottom:14px!important;
+}
+</style>
+
+<style id="result-loading-screen-cleanup-20261112">
+/* 結果圖片尚未全部載入時，顯示乾淨的完整遮罩，不讓底下劇情角色或尚未定位的職業插圖露出。 */
+#personality-result-screen.result-loading{
+ visibility:visible!important;
+ pointer-events:auto!important;
+ background:#f7f4ed!important;
+ z-index:1000000!important;
+}
+#personality-result-screen.result-loading #personality-result-poster{
+ visibility:hidden!important;
+}
+#personality-result-screen.result-loading::before{
+ content:"正在整理你的星球...";
+ position:fixed;
+ inset:0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding-top:58px;
+ box-sizing:border-box;
+ color:#344d78;
+ background:#f7f4ed;
+ font-family:'Noto Sans TC',sans-serif;
+ font-size:18px;
+ font-weight:700;
+ letter-spacing:1px;
+ z-index:1000001;
+}
+#personality-result-screen.result-loading::after{
+ content:"";
+ position:fixed;
+ left:calc(50% - 13px);
+ top:calc(50% - 18px);
+ width:26px;
+ height:26px;
+ border:3px solid rgba(52,77,120,.18);
+ border-top-color:#344d78;
+ border-radius:50%;
+ animation:result-loading-spin .8s linear infinite;
+ z-index:1000002;
+}
+@keyframes result-loading-spin{to{transform:rotate(360deg)}}
 </style>
 </body>
 
