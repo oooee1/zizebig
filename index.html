@@ -10376,7 +10376,14 @@ function positionResultTextElements(layers,copy){
     career.style.position="absolute";
     career.style.setProperty("left",(imageRect.left-copyRect.left+textBounds.x*scaleX)+"px","important");
     career.style.setProperty("width",(textBounds.width*scaleX)+"px","important");
-    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)+"px";
+    // 職業區接在前面主要文字（星格特質、職場優勢與劣勢）之後，
+    // 不再用背景紙透明邊界推算，避免文字高度或換行變動時整段職業內容提前重疊。
+    const precedingSections=Array.from(copy.querySelectorAll(":scope > .result-primary"));
+    const lastPrimary=precedingSections[precedingSections.length-1];
+    if(lastPrimary){
+     const primaryBottom=lastPrimary.getBoundingClientRect().bottom;
+     career.style.setProperty("top",(primaryBottom-copyRect.top+12)+"px","important");
+    }
    }
   }
   if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
