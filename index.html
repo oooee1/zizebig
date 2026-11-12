@@ -10587,7 +10587,11 @@ function openPersonalityResult(first,second){
  const starColors={"好奇星":"#F6B800","同情星":"#A65CE0","爽快星":"#A8D900","熱情星":"#E34B50"};
  const primaryColor=starColors[first]||starColors["好奇星"];
  const secondaryColor=starColors[second]||primaryColor;
- if(copy)copy.style.setProperty("--result-primary-color",primaryColor);
+ const titleSecondaryColors={"爽快星":"#4962CB","同情星":"#8D4E8C","熱情星":"#DF616D"};
+ if(copy){
+  copy.style.setProperty("--result-primary-color",primaryColor);
+  copy.style.setProperty("--result-title-secondary-color",titleSecondaryColors[first]||primaryColor);
+ }
  const emphasize=(value,star,color)=>{
   let out=String(value||"");
   const sameStarHighlights={
@@ -10603,7 +10607,7 @@ function openPersonalityResult(first,second){
   return out;
  };
  const englishTitle=first==="爽快星"?String(d.english).replace(/OUS/i,'<span class="result-title-second-color">OUS</span>'):first==="同情星"?String(d.english).replace(/ABLE/i,'<span class="result-title-second-color">ABLE</span>'):first==="熱情星"?String(d.english).replace(/EXTRA/i,'<span class="result-title-second-color">EXTRA</span>'):String(d.english);
- const chineseTitle=first==="爽快星"?'爽快<span class="result-title-second-color">星</span>':first==="同情星"?'同<span class="result-title-second-color">情</span>星':first==="熱情星"?'熱<span class="result-title-second-color">情</span>星':first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first;
+ const chineseTitle=first==="爽快星"?' <span class="result-title-second-color">爽</span>快<span class="result-title-second-color">星</span>':first==="同情星"?'同<span class="result-title-second-color">情</span>星':first==="熱情星"?'熱<span class="result-title-second-color">情</span>星':first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first;
  let html='<p class="result-belongs-heading">'+belongsHeadingHtml+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">TO</span>'):englishTitle)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+chineseTitle+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
   const curiosityBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>").replace(/好奇，/g,"好奇，<br>").replace(/方式。/g,"方式。<br>").replace(/可能性！/g,"可能性！<br>");
@@ -14270,7 +14274,7 @@ function toggleBGM(btnEl) {
  #personality-result-screen #personality-result-copy .result-english{
   position:relative!important;
   top:-16px!important;
-  translate:none!important;
+  translate:0 -16px!important;
  }
 }
 #personality-result-screen #personality-result-copy .result-title-second-color{
@@ -14325,14 +14329,5 @@ function toggleBGM(btnEl) {
 }
 #developer-tools-panel button{
  flex-shrink:0!important;
-}
-</style>
-<style id="result-star-specific-second-colors-20261112">
-/* 星球第二色依星球切換，只影響指定中文字與英文片段。 */
-#personality-result-screen #personality-result-copy:has(.result-name){
- --result-title-secondary-color:#4962CB;
-}
-#personality-result-screen #personality-result-copy:has(.result-name .result-title-second-color){
- --result-title-secondary-color:#4962CB;
 }
 </style>
