@@ -10239,10 +10239,10 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   if(!posterRect.width||!paperRect.width)return;
   // 插圖置中放在破洞紙上方的破洞區域，不再把 top 算成負值推到海報外。
   // 四顆星球插圖都以各自破洞紙為定位基準，放大 1.5 倍並略微順時針傾斜。
-  const imageWidth=paperRect.width*(star==="好奇星"?.78:.45);
+  const imageWidth=paperRect.width*.78;
   const imageHeight=imageWidth*(decoration.naturalHeight/decoration.naturalWidth);
   const left=paperRect.left-posterRect.left+(paperRect.width-imageWidth)/2;
-  const top=paperRect.top-posterRect.top+paperRect.height*.018+(star==="好奇星"?7:0);
+  const top=paperRect.top-posterRect.top+paperRect.height*.018+7;
   decoration.style.position="absolute";
   decoration.style.inset="auto";
   decoration.style.left=left+"px";
@@ -10252,9 +10252,9 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.objectFit="contain";
   decoration.style.transform="rotate(6deg)";
   decoration.style.transformOrigin="center center";
-  decoration.style.filter=star==="好奇星"?"drop-shadow(0 0 7px #fff) drop-shadow(0 0 16px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,.9))":"drop-shadow(0 0 3px #fff) drop-shadow(0 0 7px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(255,255,255,.65))";
+  decoration.style.filter="drop-shadow(0 0 7px #fff) drop-shadow(0 0 16px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,.9))";
   decoration.style.setProperty("z-index","9","important");
-  if(star==="好奇星"){
+  if(star==="好奇星"||star==="熱情星"){
    decoration.style.removeProperty("opacity");
    decoration.classList.remove("result-curiosity-idle");
    decoration.classList.add("result-curiosity-enter");
@@ -10552,12 +10552,12 @@ function openPersonalityResult(first,second){
  {
   const starImageFiles={"好奇星":"1好奇星.webp","同情星":"2同情星.webp","爽快星":"3爽快星.webp","熱情星":"4熱情星.webp"};
   const starDecoration=document.createElement("img");
-  starDecoration.className="personality-result-layer result-star-decoration"+(first==="好奇星"?" result-star-decoration-curiosity":"");
+  starDecoration.className="personality-result-layer result-star-decoration"+((first==="好奇星"||first==="熱情星")?" result-star-decoration-curiosity":"");
   starDecoration.decoding="async";
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
   starDecoration.dataset.resultSrc=starImageSrc;
-  if(first==="好奇星"){
+  if(first==="好奇星"||first==="熱情星"){
    starDecoration.addEventListener("animationend",event=>{
     if(event.animationName!=="resultCuriosityPop")return;
     starDecoration.classList.remove("result-curiosity-enter");
@@ -10606,8 +10606,10 @@ function openPersonalityResult(first,second){
   });
   return out;
  };
- const englishTitle=first==="爽快星"?String(d.english).replace(/OUS/i,'<span class="result-title-second-color">OUS</span>'):first==="同情星"?String(d.english).replace(/ABLE/i,'<span class="result-title-second-color">ABLE</span>'):first==="熱情星"?String(d.english).replace(/EXTRA/i,'<span class="result-title-second-color">EXTRA</span>'):String(d.english);
- const englishTitleWithLargeInitial=first==="好奇星"?englishTitle:'<span class="result-letter-raised">'+String(d.english).charAt(0)+'</span>'+englishTitle.slice(1);
+ const englishRaw=String(d.english);
+ const englishTitle=first==="爽快星"?englishRaw.replace(/OUS/i,'<span class="result-title-second-color">OUS</span>'):first==="同情星"?englishRaw.replace(/ABLE/i,'<span class="result-title-second-color">ABLE</span>'):first==="熱情星"?englishRaw.replace(/EXTRA/i,'<span class="result-title-second-color">EXTRA</span>'):englishRaw;
+ const englishRemainder=englishRaw.slice(1);
+ const englishTitleWithLargeInitial=first==="好奇星"?englishTitle:'<span class="result-letter-raised">'+englishRaw.charAt(0)+'</span>'+(first==="爽快星"?englishRemainder.replace(/OUS/i,'<span class="result-title-second-color">OUS</span>'):first==="同情星"?englishRemainder.replace(/ABLE/i,'<span class="result-title-second-color">ABLE</span>'):first==="熱情星"?englishRemainder.replace(/XTRA/i,'<span class="result-title-second-color">XTRA</span>'):englishRemainder);
  const chineseTitle=first==="爽快星"?'<span class="result-title-second-color">爽</span>快<span class="result-title-second-color">星</span>':first==="同情星"?'同<span class="result-title-second-color">情</span>星':first==="熱情星"?'熱<span class="result-title-second-color">情</span>星':first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first;
  let html='<p class="result-belongs-heading">'+belongsHeadingHtml+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">T<span class="result-letter-raised">O</span></span>'):englishTitleWithLargeInitial)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+chineseTitle+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
@@ -14466,6 +14468,22 @@ function toggleBGM(btnEl) {
   position:relative!important;
   top:453px!important;
   translate:none!important;
+ }
+}
+</style>
+
+
+<style id="result-title-up-five-px-20261112">
+/* 桌面版：中文星球名稱與英文標題各自依原定位上移5px。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy > .result-name{top:399px!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:403px!important}
+}
+/* 手機版：中文星球名稱與英文標題從目前453px定位上移5px。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{
+  top:448px!important;
  }
 }
 </style>
