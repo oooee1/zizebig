@@ -10453,6 +10453,8 @@ function layoutResult(){
  if(decoration&&decoration.dataset.resultStar){
   alignStarDecorationToHolePaper(decoration,layers,decoration.dataset.resultStar);
  }
+ const role=layers.querySelector('img[data-result-role="true"]');
+ if(role)alignResultRoleToTextArtwork(role,layers);
  positionResultTextElements(layers,copy);
  compactResultPosterToVisibleBottom(layers,copy);
 }
@@ -10638,6 +10640,27 @@ function openPersonalityResultCore(first,second){
   layers.appendChild(starDecoration);
   resultImageQueue.push({img:starDecoration,src:starImageSrc,maxWidth:900});
  }
+ // 恢復職業插圖：好奇星／熱情星使用考古學家，同情星／爽快星使用寵物醫師。
+ // 插圖依「背景 文字.webp」的實際可見範圍置中放大，保留原圖避免縮圖裁切。
+ {
+  const role=document.createElement("img");
+  role.className="personality-result-layer result-career-illustration";
+  const roleSrc=RESULT_ROOT+((first==="好奇星"||first==="熱情星")
+   ?"星辰考古學家（好奇星、熱情星）.webp"
+   :"星辰寵物醫師（同情星、爽快星）.webp");
+  role.dataset.resultSrc=roleSrc;
+  role.dataset.resultRole="true";
+  role.alt="";
+  role.decoding="async";
+  role.style.setProperty("z-index","11","important");
+  role.style.setProperty("display","block","important");
+  role.style.setProperty("visibility","visible","important");
+  role.style.setProperty("opacity","1","important");
+  role.style.objectFit="contain";
+  role.style.pointerEvents="none";
+  layers.appendChild(role);
+  resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
+ }
  const player=(window.playerName||"星辰").replace(/[<>]/g,"");
  const replace=s=>String(s||"").replace(/\(\)/g,'<span class="result-player-name">'+player+'</span>');
  const belongsHeadingHtml=[..."屬於"].map((ch,index)=>'<span class="result-belongs-char result-belongs-char-'+index+'">'+ch+'</span>').join("")
@@ -10780,7 +10803,7 @@ function openPersonalityResultCore(first,second){
   // 手機版標題沿用結果頁最後確認的 442px；不再由圖片定位函式額外疊加 translate。
   copy.querySelectorAll(":scope > .result-name,:scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","442px","important");
+   el.style.setProperty("top","434px","important");
    el.style.setProperty("translate","none","important");
   });
  }
@@ -14820,3 +14843,10 @@ function toggleBGM(btnEl) {
 </style>
 
 
+
+<style id="result-requested-position-adjustments-20261112">
+/* 「繼續遊戲」整個按鈕在目前定位上移動10px，不改字級與水平位置。 */
+#personality-result-screen #personality-result-copy > .result-continue{
+ translate:0 -10px!important;
+}
+</style>
