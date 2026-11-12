@@ -10352,18 +10352,7 @@ function positionResultTextElements(layers,copy){
  const longStrip=findImage("背景 長條紙.webp");
  const apply=()=>{
   if(!textPaper||!textPaper.naturalWidth||!copy.clientWidth)return;
-  // 手機標題與英文在目前計算位置上再上移 6px，保留原本 translate 後累加。
-  if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
-   copy.querySelectorAll(".result-name,.result-english").forEach(el=>{
-    if(!el.dataset.resultTitleBaseTranslate){
-     el.dataset.resultTitleBaseTranslate=getComputedStyle(el).translate;
-    }
-    const base=el.dataset.resultTitleBaseTranslate;
-    const parts=base&&base!=="none"?base.trim().split(" "):[];
-    const y=parts.length>1?parseFloat(parts[1]):0;
-    el.style.setProperty("translate","0 "+((Number.isFinite(y)?y:0)-6)+"px","important");
-   });
-  }
+  // 標題位置統一由結果建立時的 top 值控制；此函式只負責紙張與職業區定位，不再額外疊加 translate。
   const textBounds=getResultImageAlphaBounds(textPaper);
   if(textBounds){
    const career=copy.querySelector(".result-secondary");
@@ -10766,10 +10755,10 @@ function openPersonalityResultCore(first,second){
    const size=parseFloat(getComputedStyle(el).fontSize);
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
   });
-  // 直接用 top 位移並清除舊 translate 疊加，避開多組歷史 CSS 互相抵銷。
+  // 手機版標題與英文統一使用 448px；不再由後續圖片定位函式額外疊加 translate。
   copy.querySelectorAll(":scope > .result-name,:scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","416px","important");
+   el.style.setProperty("top","448px","important");
    el.style.setProperty("translate","none","important");
   });
  }
@@ -14804,4 +14793,31 @@ function toggleBGM(btnEl) {
 #personality-result-screen #personality-result-copy .result-job-category-title{padding:14px 6px!important}
 /* 重點字與一般說明文字共用相同字級，避免 span 自身樣式造成視覺大小差異。 */
 #personality-result-screen #personality-result-copy .result-highlight{font-size:inherit!important;font-weight:inherit!important}
+</style>
+
+
+<style id="result-position-single-source-20261112">
+/* 結果頁定位唯一基準：桌面與手機各自只由這裡決定標題及前段內容的位置。
+   手機標題 top=448px；桌面標題/英文 top=399px/403px；其餘前段內容 top=404px。
+   職業區、繼續遊戲按鈕與提醒仍由圖片透明範圍的 JS 定位，不在此覆蓋。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy > .result-belongs-heading{
+  position:absolute!important;top:-23px!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-english{
+  position:relative!important;top:403px!important;translate:none!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-name{
+  position:relative!important;top:399px!important;translate:none!important;
+ }
+ #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer):not(.result-name){
+  position:relative!important;top:404px!important;
+ }
+}
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{
+  position:relative!important;top:448px!important;translate:none!important;
+ }
+}
 </style>
