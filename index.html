@@ -10220,7 +10220,9 @@ function jumpToPersonalityResult(first,second,event){
  openPersonalityResult(first,second||first);
 }
 function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");}}
+const resultAlphaBoundsCache=new WeakMap();
 function getResultImageAlphaBounds(img){
+ if(resultAlphaBoundsCache.has(img))return resultAlphaBoundsCache.get(img);
  // 手機 Safari 不建立原圖尺寸的大型 Canvas；縮圖取樣即可定位透明邊界。
  const sourceWidth=img.naturalWidth,sourceHeight=img.naturalHeight;
  if(!sourceWidth||!sourceHeight)return null;
@@ -10229,10 +10231,12 @@ function getResultImageAlphaBounds(img){
  canvas.width=Math.max(1,Math.round(sourceWidth*sampleScale));
  canvas.height=Math.max(1,Math.round(sourceHeight*sampleScale));
  const ctx=canvas.getContext("2d",{willReadFrequently:true});
- if(!ctx)return null;
+ if(!ctx){canvas.width=canvas.height=0;resultAlphaBoundsCache.set(img,null);return null;}
  ctx.drawImage(img,0,0,canvas.width,canvas.height);
  const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
- let minX=canvas.width,minY=canvas.height,maxX=-1,maxY=-1;
+ const sampleWidth=canvas.width,sampleHeight=canvas.height;
+ canvas.width=canvas.height=0;
+ let minX=sampleWidth,minY=sampleHeight,maxX=-1,maxY=-1;
  for(let y=0;y<canvas.height;y++){
   for(let x=0;x<canvas.width;x++){
    if(pixels[(y*canvas.width+x)*4+3]>8){
@@ -10241,9 +10245,11 @@ function getResultImageAlphaBounds(img){
    }
   }
  }
- if(maxX<0)return null;
- const sx=sourceWidth/canvas.width,sy=sourceHeight/canvas.height;
- return {x:minX*sx,y:minY*sy,width:(maxX-minX+1)*sx,height:(maxY-minY+1)*sy};
+ if(maxX<0){resultAlphaBoundsCache.set(img,null);return null;}
+ const sx=sourceWidth/sampleWidth,sy=sourceHeight/sampleHeight;
+ const bounds={x:minX*sx,y:minY*sy,width:(maxX-minX+1)*sx,height:(maxY-minY+1)*sy};
+ resultAlphaBoundsCache.set(img,bounds);
+ return bounds;
 }
 function alignStarDecorationToHolePaper(decoration,layers,star){
  // 不再用 Canvas 掃描透明像素：直接依破洞紙的實際顯示尺寸定位，避免 Safari 額外建立畫布。
@@ -10846,6 +10852,14 @@ function openPersonalityResultCore(first,second){
  role.dataset.resultRole="true";
  layers.appendChild(role);
  resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
+ // 將已存在的定位函式接回實際載入流程，避免結果首次進入時沒有執行定位。
+ const layoutResult=()=>{
+  const decoration=layers.querySelector(".result-star-decoration");
+  if(decoration)alignStarDecorationToHolePaper(decoration,layers,first);
+  alignResultRoleToTextArtwork(role,layers);
+  positionResultTextElements(layers,copy);
+  compactResultPosterToVisibleBottom(layers,copy);
+ };
   // 結果頁載入只等待原始圖片完成；Canvas 縮圖／轉檔不再阻塞結果顯示。
   // 每張圖片都有獨立逾時，單一素材失敗也不能讓「正在連結」永久卡住。
   (async()=>{
@@ -10877,7 +10891,7 @@ function openPersonalityResultCore(first,second){
    try{
     updateResultLoadingProgress(0);
     let finished=0;
-    await Promise.all(resultImageQueue.map(async item=>{
+    for(const item of resultImageQueue){
      try{
       // 不使用可能殘留的 Blob／Canvas 快取，避免圖片來源互相覆寫。
       item.img.removeAttribute("src");
@@ -10892,7 +10906,7 @@ function openPersonalityResultCore(first,second){
       finished++;
       updateResultLoadingProgress(resultImageQueue.length?finished/resultImageQueue.length*90:90);
      }
-    }));
+    }
     if(document.fonts&&document.fonts.ready)await withTimeout(document.fonts.ready,3000,"字型載入").catch(()=>{});
     await withTimeout(new Promise(resolve=>{
      if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>requestAnimationFrame(resolve));
@@ -11686,7 +11700,7 @@ function openPersonalityResult(first,second){
                     enterGameAnimation();
                     renderScene(0);
                     // 不計入啟動畫面進度；玩家開始遊戲後，利用背景網路載入結果圖。
-                    setTimeout(()=>preloadResultAssets(),900);
+                    // 最終結果素材改為進入結果頁後才載入，避免遊戲期間背景預載、縮圖大量圖片造成手機／平板記憶體暴增。
                 }
 
                 function loadInitialAssets() {
@@ -13521,6 +13535,9 @@ function toggleBGM(btnEl) {
 #personality-result-screen.result-loading{
  visibility:visible!important;
  pointer-events:auto!important;
+ overflow:hidden!important;
+ overscroll-behavior:none!important;
+ touch-action:none!important;
  background:#0f0f0f!important;
  z-index:2147483001!important;
 }
@@ -14800,10 +14817,7 @@ function toggleBGM(btnEl) {
 #personality-result-screen.result-loading .result-loading-percent{color:#fff!important;font-size:16px!important;font-family:'CPTrans',sans-serif!important}
 /* 開發者測驗結果分組標題使用角色劇情相同的星球代表色。 */
 #developer-tools-panel > p.developer-result-group-title{font-weight:800!important;text-shadow:0 1px 2px rgba(0,0,0,.9)!important}
-#developer-tools-panel > p.developer-result-group-title:nth-of-type(3){color:#F6B800!important}
-#developer-tools-panel > p.developer-result-group-title:nth-of-type(4){color:#A65CE0!important}
-#developer-tools-panel > p.developer-result-group-title:nth-of-type(5){color:#A8D900!important}
-#developer-tools-panel > p.developer-result-group-title:nth-of-type(6){color:#E34B50!important}
+#developer-tools-panel > p.developer-result-group-title{color:#ffb30f!important}
 /* 玩家名稱在各標題與說明句中都繼承所在文字的字級。 */
 #personality-result-screen #personality-result-copy .result-player-name,
 #personality-result-screen #personality-result-copy .result-belongs-player-char{font-size:1em!important}
