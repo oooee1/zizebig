@@ -10381,7 +10381,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale-6)+"px";
+    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale-12)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -10533,6 +10533,13 @@ function openPersonalityResult(first,second){
  }
  if(screen){
   screen.classList.add("result-loading");
+  let loadingUI=screen.querySelector(".result-loading-ui");
+  if(!loadingUI){
+   loadingUI=document.createElement("div");
+   loadingUI.className="result-loading-ui";
+   loadingUI.innerHTML='<div class="result-loading-message">正在連結...</div><div class="result-loading-progress-container"><img src="./pct/跳跳跳.gif" alt=""><div class="result-loading-progress"><span></span></div></div><div class="result-loading-percent">請稍候</div>';
+   screen.appendChild(loadingUI);
+  }
   screen.classList.add("show");
   screen.setAttribute("aria-hidden","false");
   screen.scrollTop=0;
@@ -10690,7 +10697,7 @@ function openPersonalityResult(first,second){
  const career=sourceData.careers[second]||sourceData.careers[first]||Object.values(sourceData.careers)[0];
  if(career){
   const intro=replace(career.intro).replace(second,'<span class="result-career-intro-star" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>');
-  const categories=career.categories.map((item,index)=>'<div class="result-job-category" style="margin-left:auto!important;margin-right:auto!important;text-align:center!important;">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title.replace("設計與內容創作","設計與媒體創作").replace("娛樂表演與休閒服務","文教表演與休閒服務")+'</div><p class="result-job-category-description" style="text-align:center!important;">(如: '+replace(item.description).replace(/^\s+/,"").replace(/\n/g,"<br>")+')</p></div>').join("");
+  const categories=career.categories.map((item,index)=>'<div class="result-job-category" style="margin-left:auto!important;margin-right:auto!important;text-align:center!important;">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title.replace("設計與內容創作","設計與媒體創作").replace("娛樂表演與休閒服務","文教表演與休閒服務")+'</div><p class="result-job-category-description" style="text-align:center!important;">(如: '+replace(item.description).replace(/、(?=\.{3,}等)/g,"").replace(/^\s+/,"").replace(/\n/g,"<br>")+')</p></div>').join("");
   const summary=resultTextHtml(career.traitSummary,replace,emphasize,second,secondaryColor);
   const details=resultTextHtml(career.details,replace,emphasize,second,secondaryColor);
   let disclaimer=career.disclaimer||"(測驗結果僅供參考)";
@@ -10728,7 +10735,7 @@ function openPersonalityResult(first,second){
     el.style.setProperty("translate","2px 0","important");
    }
    if(text.includes("未來的人生是屬於")){
-    el.classList.add("result-disclaimer-future");
+    // 不加上會把絕對定位改成相對定位的 class，保留依紙張圖片定位。
     el.style.setProperty("translate","0 0","important");
     const size=parseFloat(getComputedStyle(el).fontSize);
     if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
@@ -10745,20 +10752,30 @@ function openPersonalityResult(first,second){
   });
   const continueText=copy.querySelector(".result-continue-game");
   if(continueText){const size=parseFloat(getComputedStyle(continueText).fontSize);if(Number.isFinite(size))continueText.style.setProperty("font-size",Math.max(1,size-10)+"px","important");}
+  // 手機「星格特質！」與「職場優勢與劣勢」各縮小 3px。
+  copy.querySelectorAll(".result-primary h2").forEach(el=>{
+   const size=parseFloat(getComputedStyle(el).fontSize);
+   if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
+  });
+  // 直接用 top 位移並清除舊 translate 疊加，避開多組歷史 CSS 互相抵銷。
+  copy.querySelectorAll(":scope > .result-name,:scope > .result-english").forEach(el=>{
+   el.style.setProperty("position","relative","important");
+   el.style.setProperty("top","430px","important");
+   el.style.setProperty("translate","none","important");
+  });
  }
  // 電腦版指定測驗提醒在目前字級上縮小2px；手機版只向右移1px、不改字級。
  if(!(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches)){
   copy.querySelectorAll(".result-disclaimer").forEach(el=>{
-   if((el.textContent||"").includes("您的想法喔")){
-    const size=parseFloat(getComputedStyle(el).fontSize);
-    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size+1.5)+"px","important");
-   }
+   const size=parseFloat(getComputedStyle(el).fontSize);
+   if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
   });
  }
  // 職業介紹「結合……是……」整體縮小3px；說明文字在目前計算字級上增加1px。
  const careerIntro=copy.querySelector(".result-career-intro");
  if(careerIntro){const size=parseFloat(getComputedStyle(careerIntro).fontSize);if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size-3)+"px","important");}
  // 玩家名字在介紹句中必須跟隨句子字級；避免前面的手機全域縮字與這裡縮小整句造成相對字級偏大。
+ copy.querySelectorAll(".result-player-name,.result-belongs-player-char").forEach(el=>el.style.setProperty("font-size","1em","important"));
  if(careerIntro)careerIntro.querySelectorAll(".result-player-name").forEach(el=>el.style.setProperty("font-size","1em","important"));
  const explanationTexts=Array.from(copy.querySelectorAll(".result-tagline, .result-primary > p, .result-secondary > p:not(.result-career-heading):not(.result-career-intro), .result-job-category-description"));
  explanationTexts.forEach(el=>{const size=parseFloat(getComputedStyle(el).fontSize);if(Number.isFinite(size)){const mobile=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;el.style.setProperty("font-size",Math.max(1,size+(first==="好奇星"?0:(mobile?0.5:-1.5)))+"px","important");}});
@@ -10805,7 +10822,7 @@ function openPersonalityResult(first,second){
     el.style.setProperty("max-width","none","important");
     el.style.setProperty("white-space","nowrap","important");
    });
-   const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width))+6;
+   const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width))+10;
    copy.style.setProperty("--result-job-title-width",longestWidth+"px");
    // 每個分類標題直接套用同一個實測寬度，避免 CSS 變數被其他樣式覆蓋。
    jobTitleEls.forEach(el=>{
@@ -10818,6 +10835,7 @@ function openPersonalityResult(first,second){
      el.style.setProperty("height","auto","important");
      el.style.setProperty("min-height","0","important");
      el.style.setProperty("align-self","center","important");
+     el.style.setProperty("padding","14px 6px","important");
    });
   };
   syncJobTitleWidths();
@@ -10875,10 +10893,30 @@ function openPersonalityResult(first,second){
   }
   // 等待紙張、角色立繪、星球插圖與職業插圖全部完成後，統一定位並一次顯示整頁。
   await loadAndProcess(resultImageQueue);
+  // 逐張再次確認完整載入與 decode；有任何一張背景、角色或職業圖未成功，都不揭開結果頁。
+  for(const item of resultImageQueue){
+   if(!item.img.complete||!item.img.naturalWidth){
+    await new Promise((resolve,reject)=>{
+     item.img.onload=resolve;
+     item.img.onerror=()=>reject(new Error("結果圖片仍未載入："+item.src));
+     item.img.src=item.src+(item.src.includes("?")?"&":"?")+"result-retry=1";
+    });
+   }
+   if(item.img.decode)await item.img.decode();
+   if(!item.img.naturalWidth)throw new Error("結果圖片解碼失敗："+item.src);
+  }
+  if(document.fonts&&document.fonts.ready)await document.fonts.ready;
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   layoutResult();
+  // 再等兩個繪製影格，確認版面定位與海報高度已穩定。
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  if(resultImageQueue.some(item=>!item.img.complete||!item.img.naturalWidth)){
+   throw new Error("結果素材尚未全部完成載入，維持載入畫面避免顯示半成品。");
+  }
   screen.scrollTop=0;
   screen.classList.remove("result-loading");
+  const loadingUI=screen.querySelector(".result-loading-ui");
+  if(loadingUI)loadingUI.remove();
  })();
 }
 
@@ -14673,4 +14711,45 @@ function toggleBGM(btnEl) {
   top:448px!important;
  }
 }
+</style>
+
+<style id="result-loading-match-game-and-final-overrides-20261112">
+/* 最終結果載入介面沿用遊戲「正在連結」的黑底、跳跳跳 GIF 與進度條配置。 */
+#personality-result-screen.result-loading .result-loading-ui{
+ position:fixed!important;inset:0!important;z-index:2147483003!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ gap:12px!important;background:#000!important;color:#fff!important;
+ font-family:'CPTrans',sans-serif!important;pointer-events:auto!important;
+}
+#personality-result-screen.result-loading::before,
+#personality-result-screen.result-loading::after{display:none!important;content:none!important}
+#personality-result-screen.result-loading .result-loading-message{
+ color:#fff!important;font-size:20px!important;font-weight:400!important;line-height:1.5!important;margin-bottom:12px!important;
+}
+#personality-result-screen.result-loading .result-loading-progress-container{
+ display:flex!important;flex-direction:column!important;align-items:center!important;gap:8px!important;width:180px!important;
+}
+#personality-result-screen.result-loading .result-loading-progress-container img{
+ display:block!important;width:120px!important;height:120px!important;object-fit:contain!important;
+}
+#personality-result-screen.result-loading .result-loading-progress{
+ width:160px!important;height:6px!important;border:1px solid #ffb30f!important;background:#242424!important;overflow:hidden!important;
+}
+#personality-result-screen.result-loading .result-loading-progress span{
+ display:block!important;width:35%!important;height:100%!important;background:#ffb30f!important;
+ animation:result-loading-progress 1.1s ease-in-out infinite alternate!important;
+}
+#personality-result-screen.result-loading .result-loading-percent{color:#fff!important;font-size:13px!important}
+@keyframes result-loading-progress{from{transform:translateX(0)}to{transform:translateX(185%)}}
+/* 開發者測驗結果分組標題使用角色劇情相同的星球代表色。 */
+#developer-tools-panel > p.developer-result-group-title{font-weight:800!important;text-shadow:0 1px 2px rgba(0,0,0,.9)!important}
+#developer-tools-panel > p.developer-result-group-title:nth-of-type(2){color:#F6B800!important}
+#developer-tools-panel > p.developer-result-group-title:nth-of-type(3){color:#A65CE0!important}
+#developer-tools-panel > p.developer-result-group-title:nth-of-type(4){color:#A8D900!important}
+#developer-tools-panel > p.developer-result-group-title:nth-of-type(5){color:#E34B50!important}
+/* 玩家名稱在各標題與說明句中都繼承所在文字的字級。 */
+#personality-result-screen #personality-result-copy .result-player-name,
+#personality-result-screen #personality-result-copy .result-belongs-player-char{font-size:1em!important}
+/* 職業類別背景四邊再加大，所有分類仍共用 JS 量測出的最長寬度。 */
+#personality-result-screen #personality-result-copy .result-job-category-title{padding:14px 6px!important}
 </style>
