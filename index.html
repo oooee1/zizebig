@@ -14828,17 +14828,25 @@ function toggleBGM(btnEl) {
 
 
 <style id="result-title-up-five-px-20261112">
-/* 桌面版：中文星球名稱與英文標題各自依原定位上移5px。 */
+/* 桌面版：中文星球名稱與英文標題各自依原定位上移15px（本次再上移10px）。 */
 @media (min-width:769px){
- #personality-result-screen #personality-result-copy > .result-name{top:399px!important}
- #personality-result-screen #personality-result-copy > .result-english{top:403px!important}
+ #personality-result-screen #personality-result-copy > .result-name{top:389px!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:393px!important}
 }
-/* 手機版：中文星球名稱與英文標題從目前453px定位上移5px。 */
+/* 手機版：中文星球名稱與英文標題從目前位置再上移10px。 */
 @media (max-width:768px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{
-  top:448px!important;
+  top:438px!important;
  }
+}
+</style>
+
+<style id="result-bottom-transparent-sliver-crop-20261112">
+/* 裁掉最終結果海報最底端多出的極細透明尾巴，不縮放或移動內容。 */
+#personality-result-screen #personality-result-poster{
+ overflow:hidden!important;
+ clip-path:inset(0 0 3px 0)!important;
 }
 </style>
 
