@@ -10381,7 +10381,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale-12)+"px";
+    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale-22)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -10537,7 +10537,7 @@ function openPersonalityResult(first,second){
   if(!loadingUI){
    loadingUI=document.createElement("div");
    loadingUI.className="result-loading-ui";
-   loadingUI.innerHTML='<div class="result-loading-message">正在連結...</div><div class="result-loading-progress-container"><img src="./pct/跳跳跳.gif" alt=""><div class="result-loading-progress"><span></span></div></div><div class="result-loading-percent">請稍候</div>';
+   loadingUI.innerHTML='<div class="result-loading-message">正在連結...</div><div class="result-loading-progress-container"><img src="./pct/跳跳跳.gif" alt="Loading..." style="width:120px;height:120px;left:-50px;margin-bottom:5px"><div class="result-loading-progress"><span></span></div></div><div class="result-loading-percent">0%</div>';
    screen.appendChild(loadingUI);
   }
   screen.classList.add("show");
@@ -10561,20 +10561,7 @@ function openPersonalityResult(first,second){
    event.stopPropagation();
   },{capture:true,passive:type==="touchstart"}));
   // iOS Safari 仍可能在捲動邊界橡皮筋回彈；只在頂端／底端攔截越界手勢。
-  let lastTouchY=0;
-  screen.addEventListener("touchstart",event=>{if(event.touches&&event.touches.length)lastTouchY=event.touches[0].clientY;},{passive:true});
-  screen.addEventListener("touchmove",event=>{
-   if(!event.touches||!event.touches.length)return;
-   const y=event.touches[0].clientY,delta=y-lastTouchY;
-   const atTop=screen.scrollTop<=0;
-   const atBottom=screen.scrollTop+screen.clientHeight>=screen.scrollHeight-1;
-   if((atTop&&delta>0)||(atBottom&&delta<0))event.preventDefault();
-   lastTouchY=y;
-  },{passive:false});
-  screen.addEventListener("wheel",event=>{
-   const atTop=screen.scrollTop<=0,atBottom=screen.scrollTop+screen.clientHeight>=screen.scrollHeight-1;
-   if((atTop&&event.deltaY<0)||(atBottom&&event.deltaY>0))event.preventDefault();
-  },{passive:false});
+  // 不攔截 touchmove／wheel：讓 iOS 原生慣性捲動完整接管，避免滑到底後反向滑動被邊界判斷卡住。
   screen.dataset.inputGuard="1";
  }
  const imgs=[["背景 "+first+" 下面那張諾蘭紙.webp",1],["背景 下面的倒V紙.webp",2],["背景 長條紙.webp",3],["背景 文字.webp",4],["背景 "+first+"上面.webp",4.5],["背景 "+first+" 上面那張諾蘭紙.webp",5],[first+" 破洞紙.webp",7],["！？.webp",8]];
@@ -10740,6 +10727,10 @@ function openPersonalityResult(first,second){
     const size=parseFloat(getComputedStyle(el).fontSize);
     if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
    }
+   if((text.includes("想法喔")||/的！[）)]?$/.test(text.trim())){
+    const size=parseFloat(getComputedStyle(el).fontSize);
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size+1)+"px","important");
+   }
   });
   // 手機版九字職業類別名稱在原本字級上再縮小2px。
   copy.querySelectorAll(".result-job-category-title").forEach(el=>{
@@ -10760,7 +10751,7 @@ function openPersonalityResult(first,second){
   // 直接用 top 位移並清除舊 translate 疊加，避開多組歷史 CSS 互相抵銷。
   copy.querySelectorAll(":scope > .result-name,:scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","430px","important");
+   el.style.setProperty("top","416px","important");
    el.style.setProperty("translate","none","important");
   });
  }
@@ -10893,6 +10884,16 @@ function openPersonalityResult(first,second){
   }
   // 等待紙張、角色立繪、星球插圖與職業插圖全部完成後，統一定位並一次顯示整頁。
   await loadAndProcess(resultImageQueue);
+  const updateResultLoadingProgress=value=>{
+   const ui=screen&&screen.querySelector(".result-loading-ui");
+   if(!ui)return;
+   const bar=ui.querySelector(".result-loading-progress span"),label=ui.querySelector(".result-loading-percent");
+   const percent=Math.max(0,Math.min(100,Math.round(value)));
+   if(bar)bar.style.width=percent+"%";
+   if(label)label.textContent=percent+"%";
+  };
+  updateResultLoadingProgress(0);
+  let decodedResultImages=0;
   // 逐張再次確認完整載入與 decode；有任何一張背景、角色或職業圖未成功，都不揭開結果頁。
   for(const item of resultImageQueue){
    if(!item.img.complete||!item.img.naturalWidth){
@@ -10904,6 +10905,8 @@ function openPersonalityResult(first,second){
    }
    if(item.img.decode)await item.img.decode();
    if(!item.img.naturalWidth)throw new Error("結果圖片解碼失敗："+item.src);
+   decodedResultImages++;
+   updateResultLoadingProgress(resultImageQueue.length?decodedResultImages/resultImageQueue.length*90:90);
   }
   if(document.fonts&&document.fonts.ready)await document.fonts.ready;
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
@@ -10913,6 +10916,7 @@ function openPersonalityResult(first,second){
   if(resultImageQueue.some(item=>!item.img.complete||!item.img.naturalWidth)){
    throw new Error("結果素材尚未全部完成載入，維持載入畫面避免顯示半成品。");
   }
+  updateResultLoadingProgress(100);
   screen.scrollTop=0;
   screen.classList.remove("result-loading");
   const loadingUI=screen.querySelector(".result-loading-ui");
@@ -14716,40 +14720,40 @@ function toggleBGM(btnEl) {
 <style id="result-loading-match-game-and-final-overrides-20261112">
 /* 最終結果載入介面沿用遊戲「正在連結」的黑底、跳跳跳 GIF 與進度條配置。 */
 #personality-result-screen.result-loading .result-loading-ui{
- position:fixed!important;inset:0!important;z-index:2147483003!important;
+ position:absolute!important;inset:0!important;z-index:2147483003!important;visibility:visible!important;
  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
- gap:12px!important;background:#000!important;color:#fff!important;
- font-family:'CPTrans',sans-serif!important;pointer-events:auto!important;
+ gap:15px!important;background:#0f0f0f!important;color:#fff!important;
+ font-family:'CPTrans',sans-serif!important;font-size:22px!important;font-weight:700!important;pointer-events:auto!important;
 }
 #personality-result-screen.result-loading::before,
 #personality-result-screen.result-loading::after{display:none!important;content:none!important}
 #personality-result-screen.result-loading .result-loading-message{
- color:#fff!important;font-size:20px!important;font-weight:400!important;line-height:1.5!important;margin-bottom:12px!important;
+ color:#fff!important;font-size:22px!important;font-weight:400!important;line-height:1.5!important;margin-bottom:0!important;
 }
 #personality-result-screen.result-loading .result-loading-progress-container{
- display:flex!important;flex-direction:column!important;align-items:center!important;gap:8px!important;width:180px!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;gap:0!important;width:70%!important;max-width:250px!important;border-radius:10px!important;overflow:hidden!important;
 }
 #personality-result-screen.result-loading .result-loading-progress-container img{
- display:block!important;width:120px!important;height:120px!important;object-fit:contain!important;
+ display:block!important;width:120px!important;height:120px!important;object-fit:contain!important;flex:none!important;
 }
 #personality-result-screen.result-loading .result-loading-progress{
- width:160px!important;height:6px!important;border:1px solid #ffb30f!important;background:#242424!important;overflow:hidden!important;
+ width:100%!important;height:12px!important;border:0!important;border-radius:999px!important;background:#222!important;overflow:hidden!important;
 }
 #personality-result-screen.result-loading .result-loading-progress span{
- display:block!important;width:35%!important;height:100%!important;background:#ffb30f!important;
- animation:result-loading-progress 1.1s ease-in-out infinite alternate!important;
+ display:block!important;width:0;height:100%!important;background:#62c6ff!important;border-radius:999px!important;transition:width .3s ease!important;animation:none!important;
 }
-#personality-result-screen.result-loading .result-loading-percent{color:#fff!important;font-size:13px!important}
-@keyframes result-loading-progress{from{transform:translateX(0)}to{transform:translateX(185%)}}
+#personality-result-screen.result-loading .result-loading-percent{color:#fff!important;font-size:16px!important;font-family:'CPTrans',sans-serif!important}
 /* 開發者測驗結果分組標題使用角色劇情相同的星球代表色。 */
 #developer-tools-panel > p.developer-result-group-title{font-weight:800!important;text-shadow:0 1px 2px rgba(0,0,0,.9)!important}
-#developer-tools-panel > p.developer-result-group-title:nth-of-type(2){color:#F6B800!important}
-#developer-tools-panel > p.developer-result-group-title:nth-of-type(3){color:#A65CE0!important}
-#developer-tools-panel > p.developer-result-group-title:nth-of-type(4){color:#A8D900!important}
-#developer-tools-panel > p.developer-result-group-title:nth-of-type(5){color:#E34B50!important}
+#developer-tools-panel > p.developer-result-group-title:nth-of-type(3){color:#F6B800!important}
+#developer-tools-panel > p.developer-result-group-title:nth-of-type(4){color:#A65CE0!important}
+#developer-tools-panel > p.developer-result-group-title:nth-of-type(5){color:#A8D900!important}
+#developer-tools-panel > p.developer-result-group-title:nth-of-type(6){color:#E34B50!important}
 /* 玩家名稱在各標題與說明句中都繼承所在文字的字級。 */
 #personality-result-screen #personality-result-copy .result-player-name,
 #personality-result-screen #personality-result-copy .result-belongs-player-char{font-size:1em!important}
 /* 職業類別背景四邊再加大，所有分類仍共用 JS 量測出的最長寬度。 */
 #personality-result-screen #personality-result-copy .result-job-category-title{padding:14px 6px!important}
+/* 重點字與一般說明文字共用相同字級，避免 span 自身樣式造成視覺大小差異。 */
+#personality-result-screen #personality-result-copy .result-highlight{font-size:inherit!important;font-weight:inherit!important}
 </style>
