@@ -10348,8 +10348,11 @@ function positionResultTextElements(layers,copy){
   // 手機標題與英文在目前計算位置上再上移 6px，保留原本 translate 後累加。
   if(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches){
    copy.querySelectorAll(".result-name,.result-english").forEach(el=>{
-    const current=getComputedStyle(el).translate;
-    const parts=current&&current!=="none"?current.trim().split(" "):[];
+    if(!el.dataset.resultTitleBaseTranslate){
+     el.dataset.resultTitleBaseTranslate=getComputedStyle(el).translate;
+    }
+    const base=el.dataset.resultTitleBaseTranslate;
+    const parts=base&&base!=="none"?base.trim().split(" "):[];
     const y=parts.length>1?parseFloat(parts[1]):0;
     el.style.setProperty("translate","0 "+((Number.isFinite(y)?y:0)-6)+"px","important");
    });
