@@ -10683,7 +10683,7 @@ function openPersonalityResult(first,second){
    const text=el.textContent||"";
    if(text.includes("您的想法喔")){
     const size=parseFloat(getComputedStyle(el).fontSize);
-    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size+3)+"px","important");
    }
    if(text.includes("星辰的")){
     el.style.setProperty("translate","2px 0","important");
