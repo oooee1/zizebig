@@ -10728,7 +10728,7 @@ function openPersonalityResultCore(first,second){
     const size=parseFloat(getComputedStyle(el).fontSize);
     if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
    }
-   if((text.includes("想法喔")||/的！[）)]?$/.test(text.trim())){
+   if((text.includes("想法喔")||/的！[）)]?$/.test(text.trim()))){
     const size=parseFloat(getComputedStyle(el).fontSize);
     if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size+1)+"px","important");
    }
