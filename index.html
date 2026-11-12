@@ -10484,6 +10484,13 @@ function layoutResult(){
  positionResultTextElements(layers,copy);
  compactResultPosterToVisibleBottom(layers,copy);
  applyResponsiveResultCopyScale(layers,copy);
+ // 收掉海報最底端的透明尾差：縮短海報本身的版面高度，而不只用 clip-path 遮住。
+ const finalPoster=layers.closest("#personality-result-poster");
+ if(finalPoster){
+  const finalHeight=layers.getBoundingClientRect().height;
+  if(finalHeight>12)finalPoster.style.setProperty("height",(finalHeight-12)+"px","important");
+  finalPoster.style.setProperty("overflow","hidden","important");
+ }
  window.__resultResponsiveLastWidth=layers.clientWidth;
  if(window.ResizeObserver&&window._resultLayoutResizeTarget!==layers){
   if(window._resultLayoutResizeObserver)window._resultLayoutResizeObserver.disconnect();
@@ -10841,7 +10848,7 @@ function openPersonalityResultCore(first,second){
   // 手機版中文星球大標與英文標題實際定位上移14px：直接改 inline !important 的 top，避免被後續 CSS 覆蓋。
   copy.querySelectorAll(":scope > .result-name,:scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","420px","important");
+   el.style.setProperty("top","410px","important");
    el.style.setProperty("translate","none","important");
   });
  }
@@ -14921,5 +14928,16 @@ function toggleBGM(btnEl) {
  overflow:hidden!important;
  clip-path:inset(0 0 10px 0)!important;
  margin-bottom:-10px!important;
+}
+</style>
+
+
+<style id="result-mobile-title-final-position-20261112">
+/* 標題位置由 JS inline top 控制；手機版只上移10px，桌面版完全不動。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{
+  translate:none!important;
+ }
 }
 </style>
