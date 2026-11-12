@@ -10517,7 +10517,7 @@ async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false)
  img.onload=null;img.onerror=null;img.src=url;
  await new Promise(resolve=>{if(img.complete&&img.naturalWidth){resolve();return;}img.onload=()=>resolve();img.onerror=()=>resolve();});
 }
-function openPersonalityResult(first,second){
+function openPersonalityResultCore(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
  const poster=layers&&layers.closest("#personality-result-poster");
@@ -10915,6 +10915,51 @@ function openPersonalityResult(first,second){
     }
    }
   })();
+}
+
+
+/* 結果頁啟動保護：先顯示載入介面，再於下一個事件循環執行建構；
+   若建構階段同步拋錯，立即記錄錯誤並解除遮罩，避免永久停在 0%。 */
+function openPersonalityResult(first,second){
+ const screen=document.getElementById("personality-result-screen");
+ if(screen){
+  screen.classList.add("show","result-loading");
+  screen.setAttribute("aria-hidden","false");
+  let ui=screen.querySelector(".result-loading-ui");
+  if(!ui){
+   ui=document.createElement("div");
+   ui.className="result-loading-ui";
+   ui.innerHTML='<div class="result-loading-message">正在準備結果...</div><div class="result-loading-progress-container"><img src="./pct/跳跳跳.gif" alt="Loading..." style="width:120px;height:120px;left:-50px;margin-bottom:5px"><div class="result-loading-progress"><span></span></div></div><div class="result-loading-percent">1%</div>';
+   screen.appendChild(ui);
+  }else{
+   const label=ui.querySelector(".result-loading-message");
+   const percent=ui.querySelector(".result-loading-percent");
+   const bar=ui.querySelector(".result-loading-progress span");
+   if(label)label.textContent="正在準備結果...";
+   if(percent)percent.textContent="1%";
+   if(bar)bar.style.width="1%";
+  }
+ }
+ window.__resultLoadingStage="wrapper-started";
+ setTimeout(()=>{
+  window.__resultLoadingStage="building-result";
+  try{
+   openPersonalityResultCore(first,second);
+   window.__resultLoadingStage="image-loading";
+  }catch(error){
+   window.__resultLoadingStage="sync-error";
+   console.error("[結果頁] 建構階段同步錯誤，載入流程未能啟動：",error);
+   if(screen){
+    const ui=screen.querySelector(".result-loading-ui");
+    const label=ui&&ui.querySelector(".result-loading-message");
+    const percent=ui&&ui.querySelector(".result-loading-percent");
+    if(label)label.textContent="結果頁發生錯誤，請重新進入";
+    if(percent)percent.textContent="錯誤";
+    screen.classList.remove("result-loading");
+    setTimeout(()=>{const current=screen.querySelector(".result-loading-ui");if(current)current.remove();},1800);
+   }
+  }
+ },0);
 }
 
         function showEndCredits() {
