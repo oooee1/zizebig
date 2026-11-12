@@ -10835,6 +10835,10 @@ function openPersonalityResultCore(first,second){
      el.style.setProperty("padding","14px 6px","important");
     });
    };
+   syncJobTitleWidths();
+  }
+  // 結果圖片載入必須獨立於職業標題是否存在，並在 async IIFE 中執行 await。
+  (async()=>{
    const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+"逾時")),ms))]);
    const waitForImage=item=>new Promise((resolve,reject)=>{
     const img=item.img;
