@@ -10404,7 +10404,7 @@ function positionResultTextElements(layers,copy){
  window._resultPositionResize=apply;window.addEventListener("resize",apply,{passive:true});
 }
 function compactResultPosterToVisibleBottom(layers,copy){
- // 以圖片與實際文字內容的最底端決定海報高度，不讓透明畫布或溢出的空白形成額外捲動區。
+ // 結果圖層以響應式畫布座標定位；不可把首次載入的像素尺寸鎖死。
  const rect=layers.getBoundingClientRect();
  if(!rect.width||!rect.height)return;
  const images=Array.from(layers.querySelectorAll("img.personality-result-layer")).filter(img=>!img.classList.contains("result-star-decoration")&&img.dataset.resultRole!=="true");
@@ -10417,8 +10417,7 @@ function compactResultPosterToVisibleBottom(layers,copy){
  geometry.forEach(item=>{
   const bounds=getResultImageAlphaBounds(item.img);
   const scale=item.height/Math.max(1,item.img.naturalHeight);
-  const alphaBottom=bounds?item.top+(bounds.y+bounds.height)*scale:item.bottom;
-  visibleBottom=Math.max(visibleBottom,alphaBottom);
+  visibleBottom=Math.max(visibleBottom,bounds?item.top+(bounds.y+bounds.height)*scale:item.bottom);
  });
  if(copy){
   Array.from(copy.children).forEach(el=>{
@@ -10427,36 +10426,74 @@ function compactResultPosterToVisibleBottom(layers,copy){
   });
  }
  if(!Number.isFinite(visibleBottom)||visibleBottom<=0)return;
+ // 左右以畫布寬度、上下以畫布高度換算百分比，窄螢幕時所有底圖仍維持相同比例。
  geometry.forEach(item=>{
   const img=item.img;
   img.style.setProperty("position","absolute","important");
   img.style.setProperty("inset","auto","important");
-  img.style.setProperty("left",item.left+"px","important");
-  img.style.setProperty("top",item.top+"px","important");
-  img.style.setProperty("width",item.width+"px","important");
-  img.style.setProperty("height",item.height+"px","important");
+  img.style.setProperty("left",(item.left/rect.width*100)+"%","important");
+  img.style.setProperty("top",(item.top/rect.height*100)+"%","important");
+  img.style.setProperty("width",(item.width/rect.width*100)+"%","important");
+  img.style.setProperty("height",(item.height/rect.height*100)+"%","important");
  });
- layers.style.setProperty("aspect-ratio","auto","important");
- layers.style.setProperty("height",visibleBottom+"px","important");
+ layers.style.setProperty("aspect-ratio",rect.width+" / "+visibleBottom,"important");
+ layers.style.setProperty("height","auto","important");
  const poster=layers.closest("#personality-result-poster");
  if(poster){
-  poster.style.setProperty("height",visibleBottom+"px","important");
+  poster.style.setProperty("height","auto","important");
   poster.style.setProperty("overflow","hidden","important");
  }
- if(copy)copy.style.setProperty("height",visibleBottom+"px","important");
+ if(copy)copy.style.setProperty("height","100%","important");
+}
+function applyResponsiveResultCopyScale(layers,copy){
+ // 手機設計基準寬度 390 CSS px；更窄時文字、固定定位與職業區同步縮小。
+ const width=layers.clientWidth;
+ if(!width)return;
+ const scale=Math.min(1,width/390);
+ copy.style.setProperty("position","absolute","important");
+ copy.style.setProperty("left","0","important");
+ copy.style.setProperty("top","0","important");
+ copy.style.setProperty("right","auto","important");
+ copy.style.setProperty("bottom","auto","important");
+ copy.style.setProperty("width",(100/scale)+"%","important");
+ copy.style.setProperty("height",(100/scale)+"%","important");
+ copy.style.setProperty("transform-origin","top left","important");
+ copy.style.setProperty("transform","scale("+scale+")","important");
 }
 function layoutResult(){
  const layers=document.getElementById("personality-result-layers");
  const copy=document.getElementById("personality-result-copy");
  if(!layers||!copy)return;
+ // 先解除前一次縮放，再依最新可用寬度重新計算，避免連續縮放累積誤差。
+ copy.style.removeProperty("transform");
+ copy.style.removeProperty("transform-origin");
+ copy.style.setProperty("position","absolute","important");
+ copy.style.setProperty("inset","0","important");
+ copy.style.setProperty("width","100%","important");
+ copy.style.setProperty("height","100%","important");
+ copy.style.setProperty("right","0","important");
+ copy.style.setProperty("bottom","0","important");
+ layers.style.setProperty("height","auto","important");
+ const poster=layers.closest("#personality-result-poster");
+ if(poster)poster.style.setProperty("height","auto","important");
  const decoration=layers.querySelector(".result-star-decoration");
- if(decoration&&decoration.dataset.resultStar){
-  alignStarDecorationToHolePaper(decoration,layers,decoration.dataset.resultStar);
- }
+ if(decoration&&decoration.dataset.resultStar)alignStarDecorationToHolePaper(decoration,layers,decoration.dataset.resultStar);
  const role=layers.querySelector('img[data-result-role="true"]');
  if(role)alignResultRoleToTextArtwork(role,layers);
  positionResultTextElements(layers,copy);
  compactResultPosterToVisibleBottom(layers,copy);
+ applyResponsiveResultCopyScale(layers,copy);
+ window.__resultResponsiveLastWidth=layers.clientWidth;
+ if(window.ResizeObserver&&window._resultLayoutResizeTarget!==layers){
+  if(window._resultLayoutResizeObserver)window._resultLayoutResizeObserver.disconnect();
+  window._resultLayoutResizeTarget=layers;
+  window._resultLayoutResizeObserver=new ResizeObserver(entries=>{
+   const entry=entries[0];
+   const nextWidth=entry&&entry.contentRect?entry.contentRect.width:layers.clientWidth;
+   if(Math.abs(nextWidth-(window.__resultResponsiveLastWidth||0))>.5)window.requestAnimationFrame(()=>layoutResult());
+  });
+  window._resultLayoutResizeObserver.observe(layers);
+ }
 }
 async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false){
  // 先逐張縮小，再裁掉透明邊；裁切後用原畫布百分比還原位置，視覺座標不變。
