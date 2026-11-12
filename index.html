@@ -10815,62 +10815,33 @@ function openPersonalityResultCore(first,second){
  const jobTitleEls=Array.from(copy.querySelectorAll(".result-job-category-title"));
  if(jobTitleEls.length){
   const syncJobTitleWidths=()=>{
-   jobTitleEls.forEach(el=>{
-    el.style.setProperty("width","max-content","important");
-    el.style.setProperty("max-width","none","important");
-    el.style.setProperty("white-space","nowrap","important");
-   });
-   const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width))+10;
-   copy.style.setProperty("--result-job-title-width",longestWidth+"px");
-   // 每個分類標題直接套用同一個實測寬度，避免 CSS 變數被其他樣式覆蓋。
-   jobTitleEls.forEach(el=>{
-    el.style.setProperty("box-sizing","border-box","important");
-    el.style.setProperty("width",longestWidth+"px","important");
-    el.style.setProperty("min-width",longestWidth+"px","important");
-    el.style.setProperty("max-width","none","important");
-    el.style.setProperty("white-space","nowrap","important");
-    el.style.setProperty("flex","0 0 auto","important");
+    // 先以內容自然寬度量測最長分類標題，再以分類容器實際可用寬度作上限。
+    // 舊版 max-width:none + nowrap 會讓較長的同情星／爽快星標題超出背景與畫面。
+    jobTitleEls.forEach(el=>{
+     el.style.setProperty("width","max-content","important");
+     el.style.setProperty("min-width","0","important");
+     el.style.setProperty("max-width","100%","important");
+     el.style.setProperty("white-space","nowrap","important");
+    });
+    const naturalWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width))+10;
+    const availableWidth=Math.min(...jobTitleEls.map(el=>el.parentElement?el.parentElement.getBoundingClientRect().width:copy.clientWidth));
+    const sharedWidth=Math.min(naturalWidth,Math.max(0,availableWidth));
+    copy.style.setProperty("--result-job-title-width",sharedWidth+"px");
+    // 兩個分類標題維持同寬；遇到較長名稱時在背景內自然換行，不再硬撐超出容器。
+    jobTitleEls.forEach(el=>{
+     el.style.setProperty("box-sizing","border-box","important");
+     el.style.setProperty("width",sharedWidth+"px","important");
+     el.style.setProperty("min-width","0","important");
+     el.style.setProperty("max-width","100%","important");
+     el.style.setProperty("white-space","normal","important");
+     el.style.setProperty("overflow-wrap","anywhere","important");
+     el.style.setProperty("flex","0 1 auto","important");
      el.style.setProperty("height","auto","important");
      el.style.setProperty("min-height","0","important");
      el.style.setProperty("align-self","center","important");
      el.style.setProperty("padding","14px 6px","important");
-   });
-  };
-  syncJobTitleWidths();
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncJobTitleWidths);
- }
- const role=document.createElement("img");
- role.className="personality-result-layer";
- const roleSrc=RESULT_ROOT+((first==="好奇星"||first==="熱情星")?"星辰考古學家（好奇星、熱情星）.webp":"星辰寵物醫師（同情星、爽快星）.webp");
- role.dataset.resultSrc=roleSrc;
- role.style.setProperty("z-index","11","important");
- role.style.setProperty("display","block","important");
- role.style.setProperty("visibility","visible","important");
- role.style.setProperty("opacity","1","important");
- role.style.objectFit="contain";
- role.style.pointerEvents="none";
- role.dataset.resultRole="true";
- layers.appendChild(role);
- resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
- // 將已存在的定位函式接回實際載入流程，避免結果首次進入時沒有執行定位。
- const layoutResult=()=>{
-  const decoration=layers.querySelector(".result-star-decoration");
-  if(decoration)alignStarDecorationToHolePaper(decoration,layers,first);
-  alignResultRoleToTextArtwork(role,layers);
-  positionResultTextElements(layers,copy);
-  compactResultPosterToVisibleBottom(layers,copy);
- };
-  // 結果頁載入只等待原始圖片完成；Canvas 縮圖／轉檔不再阻塞結果顯示。
-  // 每張圖片都有獨立逾時，單一素材失敗也不能讓「正在連結」永久卡住。
-  (async()=>{
-   const updateResultLoadingProgress=value=>{
-    const ui=screen&&screen.querySelector(".result-loading-ui");
-    if(!ui)return;
-    const bar=ui.querySelector(".result-loading-progress span"),label=ui.querySelector(".result-loading-percent");
-    const percent=Math.max(0,Math.min(100,Math.round(value)));
-    if(bar)bar.style.width=percent+"%";
-    if(label)label.textContent=percent+"%";
-   };
+    });
+   };;
    const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+"逾時")),ms))]);
    const waitForImage=item=>new Promise((resolve,reject)=>{
     const img=item.img;
