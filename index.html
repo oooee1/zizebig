@@ -10695,10 +10695,9 @@ function openPersonalityResult(first,second){
    }
    if(text.includes("未來的人生是屬於")){
     el.classList.add("result-disclaimer-future");
-    if(!(window.matchMedia&&window.matchMedia("(max-width: 768px)").matches)){
-     const size=parseFloat(getComputedStyle(el).fontSize);
-     if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
-    }
+    el.style.setProperty("translate","0 0","important");
+    const size=parseFloat(getComputedStyle(el).fontSize);
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
    }
   });
   // 手機版九字職業類別名稱在原本字級上再縮小2px。
@@ -10772,7 +10771,7 @@ function openPersonalityResult(first,second){
     el.style.setProperty("max-width","none","important");
     el.style.setProperty("white-space","nowrap","important");
    });
-   const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width));
+   const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width))+2;
    copy.style.setProperty("--result-job-title-width",longestWidth+"px");
    // 每個分類標題直接套用同一個實測寬度，避免 CSS 變數被其他樣式覆蓋。
    jobTitleEls.forEach(el=>{
@@ -13331,6 +13330,42 @@ function toggleBGM(btnEl) {
 #personality-result-screen #personality-result-copy .result-section > h2:not(.result-career-heading){
  font-size:50px!important;
 }
+</style>
+<style id="result-heading-and-spacing-adjustments-20261112">
+/* 星格特質！與職場優勢與劣勢兩個標題，各自縮小2px。 */
+#personality-result-screen #personality-result-copy .result-primary > h2{
+ font-size:calc(1em - 2px)!important;
+}
+/* 桌面與手機星球中文大標、英文都從實際定位再往上6px。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy > .result-name{top:393px!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:397px!important}
+}
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{top:442px!important}
+}
+/* 職業類別背景以 JS 實測最長標題寬度為基礎，額外增加左右各1px。 */
+#personality-result-screen #personality-result-copy .result-job-category-title{
+ padding-left:5px!important;padding-right:5px!important;
+}
+/* 未來人生提醒與其他結果提醒共用同一定位，不再額外水平偏移。 */
+#personality-result-screen #personality-result-copy .result-disclaimer-future{
+ translate:0 0!important;
+}
+/* 好奇星動畫維持原樣；其他星球動畫改成符合角色氣質的細緻動作。 */
+.result-star-decoration-compassion.result-compassion-enter{animation:resultCompassionEnter .65s ease-out both!important}
+@keyframes resultCompassionEnter{0%{opacity:0;transform:translateY(7px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.result-star-decoration-compassion.result-compassion-idle{animation:resultCompassionCrawl 3.2s ease-in-out infinite!important;transform-origin:center bottom!important}
+@keyframes resultCompassionCrawl{0%,100%{transform:translate(0,0) rotate(0) scale(1,1)}25%{transform:translate(2px,1px) rotate(1deg) scale(1.012,.995)}50%{transform:translate(0,0) rotate(0) scale(1,1)}75%{transform:translate(-2px,1px) rotate(-1deg) scale(1.012,.995)}}
+.result-star-decoration-brisk.result-brisk-enter{animation:resultBriskEnter .42s cubic-bezier(.2,.9,.25,1) both!important}
+@keyframes resultBriskEnter{0%{opacity:0;transform:translateY(13px) scale(.9)}55%{opacity:1;transform:translateY(-5px) scale(1.035)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.result-star-decoration-brisk.result-brisk-idle{animation:resultBriskHover .72s ease-in-out infinite!important;transform-origin:center center!important}
+@keyframes resultBriskHover{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-5px) rotate(1.2deg)}50%{transform:translateY(-1px) rotate(0)}75%{transform:translateY(-6px) rotate(-1.2deg)}}
+.result-star-decoration-passion.result-passion-enter{animation:resultPassionEnter .82s cubic-bezier(.2,.75,.25,1) both!important}
+@keyframes resultPassionEnter{0%{opacity:0;transform:translateY(12px) scale(.86) rotate(-5deg)}60%{opacity:1;transform:translateY(-4px) scale(1.035) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
+.result-star-decoration-passion.result-passion-idle{animation:resultPassionFloat 2.6s ease-in-out infinite!important;transform-origin:center bottom!important}
+@keyframes resultPassionFloat{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-4px) rotate(-1.8deg)}50%{transform:translateY(-8px) rotate(0)}75%{transform:translateY(-4px) rotate(1.8deg)}}
 </style>
 </body>
 
