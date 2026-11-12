@@ -10841,7 +10841,7 @@ function openPersonalityResultCore(first,second){
      el.style.setProperty("align-self","center","important");
      el.style.setProperty("padding","14px 6px","important");
     });
-   };;
+   };
    const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+"逾時")),ms))]);
    const waitForImage=item=>new Promise((resolve,reject)=>{
     const img=item.img;
