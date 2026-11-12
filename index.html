@@ -10524,6 +10524,17 @@ async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false)
  img.onload=null;img.onerror=null;img.src=url;
  await new Promise(resolve=>{if(img.complete&&img.naturalWidth){resolve();return;}img.onload=()=>resolve();img.onerror=()=>resolve();});
 }
+function updateResultLoadingProgress(progress){
+ const screen=document.getElementById("personality-result-screen");
+ if(!screen)return;
+ const ui=screen.querySelector(".result-loading-ui");
+ if(!ui)return;
+ const value=Math.max(1,Math.min(100,Math.round(Number(progress)||0)));
+ const percent=ui.querySelector(".result-loading-percent");
+ const bar=ui.querySelector(".result-loading-progress span");
+ if(percent)percent.textContent=value+"%";
+ if(bar)bar.style.width=value+"%";
+}
 function openPersonalityResultCore(first,second){
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
