@@ -10800,10 +10800,10 @@ function openPersonalityResultCore(first,second){
    const size=parseFloat(getComputedStyle(el).fontSize);
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
   });
-  // 手機版標題沿用結果頁最後確認的 442px；不再由圖片定位函式額外疊加 translate。
+  // 手機版中文星球大標與英文標題實際定位上移14px：直接改 inline !important 的 top，避免被後續 CSS 覆蓋。
   copy.querySelectorAll(":scope > .result-name,:scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","434px","important");
+   el.style.setProperty("top","420px","important");
    el.style.setProperty("translate","none","important");
   });
  }
