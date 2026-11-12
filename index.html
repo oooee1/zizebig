@@ -10392,7 +10392,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-232)/responsiveScale)+"px";
+    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-192)/responsiveScale)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -10848,7 +10848,7 @@ function openPersonalityResultCore(first,second){
   // 手機版中文星球大標與英文標題實際定位上移14px：直接改 inline !important 的 top，避免被後續 CSS 覆蓋。
   copy.querySelectorAll(":scope > .result-name,:scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","375px","important");
+   el.style.setProperty("top","381px","important");
    el.style.setProperty("translate","none","important");
   });
  }
