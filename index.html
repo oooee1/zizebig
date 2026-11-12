@@ -14263,6 +14263,25 @@ function toggleBGM(btnEl) {
 }
 </style>
 
+<style id="result-career-star-and-category-width-fix-20261112">
+/* 最終覆蓋：明確放大「結合…是…」句中的第二高分星球名稱。 */
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro-tie-group .result-career-intro-star{
+  font-size:calc(1em + 10px)!important;
+}
+/* 所有職業類別標籤背景共用 JS 量測出的最長標題寬度，短標題也必須等寬。 */
+#personality-result-screen #personality-result-copy .result-job-category-title{
+  box-sizing:border-box!important;
+  width:var(--result-job-title-width)!important;
+  min-width:var(--result-job-title-width)!important;
+  max-width:none!important;
+  white-space:nowrap!important;
+  overflow-wrap:normal!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+</style>
+
 <style id="developer-panel-scroll-fix-20261111">
 /* 開發者清單固定在視窗內，讓面板本身承接觸控捲動。 */
 #developer-tools-panel{
