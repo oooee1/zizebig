@@ -10883,7 +10883,6 @@ function openPersonalityResult(first,second){
    }catch(error){console.warn("[結果頁] 版面定位失敗：",error);layers.style.removeProperty("height");if(poster)poster.style.removeProperty("height");copy.style.removeProperty("height");}
   }
   // 等待紙張、角色立繪、星球插圖與職業插圖全部完成後，統一定位並一次顯示整頁。
-  await loadAndProcess(resultImageQueue);
   const updateResultLoadingProgress=value=>{
    const ui=screen&&screen.querySelector(".result-loading-ui");
    if(!ui)return;
@@ -10892,30 +10891,43 @@ function openPersonalityResult(first,second){
    if(bar)bar.style.width=percent+"%";
    if(label)label.textContent=percent+"%";
   };
+  const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+"逾時")),ms))]);
   updateResultLoadingProgress(0);
+  // 圖片預處理偶爾會被 iOS Safari 中斷；最多等待 20 秒，不能讓載入畫面永久鎖住。
+  try{await withTimeout(loadAndProcess(resultImageQueue),20000,"結果圖片預處理");}
+  catch(error){console.warn("[結果頁] 預處理逾時，改用原始圖片完成載入：",error);}
   let decodedResultImages=0;
-  // 逐張再次確認完整載入與 decode；有任何一張背景、角色或職業圖未成功，都不揭開結果頁。
   for(const item of resultImageQueue){
-   if(!item.img.complete||!item.img.naturalWidth){
-    await new Promise((resolve,reject)=>{
-     item.img.onload=resolve;
-     item.img.onerror=()=>reject(new Error("結果圖片仍未載入："+item.src));
-     item.img.src=item.src+(item.src.includes("?")?"&":"?")+"result-retry=1";
-    });
+   try{
+    if(!item.img.complete||!item.img.naturalWidth){
+     await withTimeout(new Promise((resolve,reject)=>{
+      const onLoad=()=>{cleanup();resolve();},onError=()=>{cleanup();reject(new Error("結果圖片載入失敗："+item.src));};
+      const cleanup=()=>{item.img.removeEventListener("load",onLoad);item.img.removeEventListener("error",onError);};
+      item.img.addEventListener("load",onLoad,{once:true});item.img.addEventListener("error",onError,{once:true});
+      item.img.src=item.src+(item.src.includes("?")?"&":"?")+"result-retry="+Date.now();
+      if(item.img.complete&&item.img.naturalWidth){cleanup();resolve();}
+     }),10000,"圖片載入");
+    }
+    if(item.img.decode)await withTimeout(item.img.decode().catch(()=>{}),4000,"圖片解碼");
+    if(!item.img.naturalWidth)throw new Error("圖片沒有有效尺寸："+item.src);
+   }catch(error){
+    // 單張素材失敗時隱藏壞圖並繼續，避免整個結果頁永遠停在載入畫面。
+    console.error("[結果頁] 素材載入失敗，略過該圖層：",item.src,error);
+    item.img.style.setProperty("display","none","important");
    }
-   if(item.img.decode)await item.img.decode();
-   if(!item.img.naturalWidth)throw new Error("結果圖片解碼失敗："+item.src);
    decodedResultImages++;
    updateResultLoadingProgress(resultImageQueue.length?decodedResultImages/resultImageQueue.length*90:90);
   }
-  if(document.fonts&&document.fonts.ready)await document.fonts.ready;
-  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  if(document.fonts&&document.fonts.ready)await withTimeout(document.fonts.ready,4000,"字型載入").catch(()=>{});
+  await withTimeout(new Promise(resolve=>{
+   if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>requestAnimationFrame(resolve));
+   else setTimeout(resolve,100);
+  }),1500,"版面繪製").catch(()=>{});
   layoutResult();
-  // 再等兩個繪製影格，確認版面定位與海報高度已穩定。
-  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  if(resultImageQueue.some(item=>!item.img.complete||!item.img.naturalWidth)){
-   throw new Error("結果素材尚未全部完成載入，維持載入畫面避免顯示半成品。");
-  }
+  await withTimeout(new Promise(resolve=>{
+   if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>requestAnimationFrame(resolve));
+   else setTimeout(resolve,100);
+  }),1500,"版面穩定").catch(()=>{});
   updateResultLoadingProgress(100);
   screen.scrollTop=0;
   screen.classList.remove("result-loading");
