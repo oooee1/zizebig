@@ -14896,3 +14896,30 @@ function toggleBGM(btnEl) {
  translate:0 -10px!important;
 }
 </style>
+
+
+<style id="result-latest-requested-adjustments-20261112">
+/* 星球中文大標與英文各自再往上10px；直接覆蓋前面重複的 top 設定。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy > .result-name{top:379px!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:383px!important}
+}
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{
+  top:428px!important;
+  translate:none!important;
+ }
+}
+/* 「適合職業」標題只微幅下移3px，不帶動職業內容。 */
+#personality-result-screen #personality-result-copy .result-career-heading{
+ position:relative!important;
+ translate:0 3px!important;
+}
+/* 底部透明尾端同時裁切並回收版面高度，避免留下可捲動的透明空隙。 */
+#personality-result-screen #personality-result-poster{
+ overflow:hidden!important;
+ clip-path:inset(0 0 10px 0)!important;
+ margin-bottom:-10px!important;
+}
+</style>
