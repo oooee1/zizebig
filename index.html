@@ -10713,7 +10713,7 @@ function openPersonalityResult(first,second){
   copy.querySelectorAll(".result-disclaimer").forEach(el=>{
    if((el.textContent||"").includes("您的想法喔")){
     const size=parseFloat(getComputedStyle(el).fontSize);
-    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size+1.5)+"px","important");
    }
   });
  }
@@ -14367,5 +14367,25 @@ function toggleBGM(btnEl) {
  flex:0 0 auto!important;
  align-self:center!important;
  vertical-align:middle!important;
+}
+</style>
+
+
+<style id="desktop-result-and-disclaimer-adjustments-20261112">
+/* 電腦版：適合職業之前的整組內容再上移3px。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy > .result-belongs-heading{top:-20px!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:411px!important}
+ #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:407px!important}
+}
+/* 「測驗結果只是參考！未來的人生是屬於…的！」固定向右2px，使用獨立 translate，避免被置中定位覆蓋。 */
+#personality-result-screen #personality-result-copy .result-disclaimer-future{
+ position:relative!important;
+ translate:2px 0!important;
+}
+/* 職業類別色塊上下各增加3px內距。 */
+#personality-result-screen #personality-result-copy .result-job-category-title{
+ padding-top:7px!important;
+ padding-bottom:7px!important;
 }
 </style>
