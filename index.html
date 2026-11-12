@@ -10352,6 +10352,7 @@ function positionResultTextElements(layers,copy){
  const longStrip=findImage("背景 長條紙.webp");
  const apply=()=>{
   if(!textPaper||!textPaper.naturalWidth||!copy.clientWidth)return;
+  const responsiveScale=Math.min(1,layers.clientWidth/390)||1;
   // 標題位置統一由結果建立時的 top 值控制；此函式只負責紙張與職業區定位，不再額外疊加 translate。
   const textBounds=getResultImageAlphaBounds(textPaper);
   if(textBounds){
@@ -10363,9 +10364,9 @@ function positionResultTextElements(layers,copy){
     const scaleX=imageRect.width/textPaper.naturalWidth;
     const scaleY=imageRect.height/textPaper.naturalHeight;
     career.style.position="absolute";
-    career.style.setProperty("left",(imageRect.left-copyRect.left+textBounds.x*scaleX)+"px","important");
-    career.style.setProperty("width",(textBounds.width*scaleX)+"px","important");
-    career.style.top=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)+"px";
+    career.style.setProperty("left",((imageRect.left-copyRect.left+textBounds.x*scaleX)/responsiveScale)+"px","important");
+    career.style.setProperty("width",(textBounds.width*scaleX/responsiveScale)+"px","important");
+    career.style.top=((imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale)+"px";
    }
   }
   if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
@@ -10377,7 +10378,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.5)*scale-22)+"px";
+    button.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.5)*scale-22)/responsiveScale)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -10391,7 +10392,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-62)+"px";
+    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-62)/responsiveScale)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -10432,9 +10433,9 @@ function compactResultPosterToVisibleBottom(layers,copy){
   img.style.setProperty("position","absolute","important");
   img.style.setProperty("inset","auto","important");
   img.style.setProperty("left",(item.left/rect.width*100)+"%","important");
-  img.style.setProperty("top",(item.top/rect.height*100)+"%","important");
+  img.style.setProperty("top",(item.top/visibleBottom*100)+"%","important");
   img.style.setProperty("width",(item.width/rect.width*100)+"%","important");
-  img.style.setProperty("height",(item.height/rect.height*100)+"%","important");
+  img.style.setProperty("height",(item.height/visibleBottom*100)+"%","important");
  });
  layers.style.setProperty("aspect-ratio",rect.width+" / "+visibleBottom,"important");
  layers.style.setProperty("height","auto","important");
