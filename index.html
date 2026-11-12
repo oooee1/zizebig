@@ -14405,3 +14405,27 @@ function toggleBGM(btnEl) {
  }
 }
 </style>
+
+<style id="result-keyword-and-category-final-adjustments-20261112">
+/* 電腦版：所有星球組合的「創意／態度」標籤字級統一比照好奇星&好奇星，不再因星球組合不同而有大小差異。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy .result-keywords span{
+  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) - .8px)!important;
+ }
+ /* 適合職業之前的文字整組再上移3px。 */
+ #personality-result-screen #personality-result-copy > .result-belongs-heading{top:-23px!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:408px!important}
+ #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:404px!important}
+}
+/* 手機版：星球簡介（創意／態度）標籤文字放大1px。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy .result-keywords span{
+  font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 1px)!important;
+ }
+}
+/* 職業類別背景上下各再增加1px。 */
+#personality-result-screen #personality-result-copy .result-job-category-title{
+ padding-top:8px!important;
+ padding-bottom:8px!important;
+}
+</style>
