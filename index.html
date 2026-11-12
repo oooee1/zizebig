@@ -10776,7 +10776,10 @@ function openPersonalityResult(first,second){
     el.style.setProperty("min-width",longestWidth+"px","important");
     el.style.setProperty("max-width","none","important");
     el.style.setProperty("white-space","nowrap","important");
-    el.style.setProperty("flex","0 0 "+longestWidth+"px","important");
+    el.style.setProperty("flex","0 0 auto","important");
+     el.style.setProperty("height","auto","important");
+     el.style.setProperty("min-height","0","important");
+     el.style.setProperty("align-self","center","important");
    });
   };
   syncJobTitleWidths();
@@ -14331,5 +14334,38 @@ function toggleBGM(btnEl) {
 }
 #developer-tools-panel button{
  flex-shrink:0!important;
+}
+</style>
+
+
+<style id="result-position-and-category-height-fix-20261112">
+/* 電腦版：英文仍在中文星球名稱上方，兩者與其餘「適合職業」前內容一起上移3px。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy > .result-belongs-heading{top:-17px!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:414px!important}
+ #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:410px!important}
+}
+/* 手機版：中文星球名稱與英文一起由目前位置下移13px，維持英文在上、中文在下。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{
+  translate:0 -3px!important;
+ }
+}
+/* 職業類別色塊只包住標題文字高度，不可被 flex 拉成高色塊。 */
+#personality-result-screen #personality-result-copy .result-job-category{
+ align-items:center!important;
+}
+#personality-result-screen #personality-result-copy .result-job-category-title{
+ display:inline-block!important;
+ height:auto!important;
+ min-height:0!important;
+ max-height:none!important;
+ line-height:1.35!important;
+ padding-top:4px!important;
+ padding-bottom:4px!important;
+ flex:0 0 auto!important;
+ align-self:center!important;
+ vertical-align:middle!important;
 }
 </style>
