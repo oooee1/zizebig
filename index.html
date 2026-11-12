@@ -10602,7 +10602,9 @@ function openPersonalityResult(first,second){
   });
   return out;
  };
- let html='<p class="result-belongs-heading">'+belongsHeadingHtml+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">TO</span>'):d.english)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+(first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first)+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
+ const englishTitle=first==="爽快星"?String(d.english).replace(/OUS/i,'<span class="result-title-second-color">OUS</span>'):first==="同情星"?String(d.english).replace(/ABLE/i,'<span class="result-title-second-color">ABLE</span>'):first==="熱情星"?String(d.english).replace(/EXTRA/i,'<span class="result-title-second-color">EXTRA</span>'):String(d.english);
+ const chineseTitle=first==="爽快星"?'爽快<span class="result-title-second-color">星</span>':first==="同情星"?'同<span class="result-title-second-color">情</span>星':first==="熱情星"?'熱<span class="result-title-second-color">情</span>星':first==="好奇星"?'好<span class="result-focus-mark">奇</span>星':first;
+ let html='<p class="result-belongs-heading">'+belongsHeadingHtml+'</p><div class="result-english'+(first==="好奇星"?' result-english-curiosity':'')+'">'+(first==="好奇星"?d.english.replace("OPENNESS",'<span class="result-letter-raised">O</span>PENNESS').replace("EXPERIENCE",'<span class="result-letter-raised">E</span>XPERIENCE').replace("TO",'<span class="result-focus-mark">TO</span>'):englishTitle)+'</div><h1 class="result-name'+(first==="好奇星"?' result-name-curiosity':'')+'">'+chineseTitle+'</h1><div class="result-keywords'+(first==="好奇星"?' result-keywords-curiosity':'')+'">'+d.keys.map(k=>'<span style="--highlight-color:'+(primaryColor)+'">'+k+'</span>').join("")+'</div><p class="result-tagline">'+replace(d.tagline)+'</p>';
  if(first==="好奇星"){
   const curiosityBreaks=(value)=>replace(value).replace(/可能性。/g,"可能性。<br>").replace(/好奇，/g,"好奇，<br>").replace(/方式。/g,"方式。<br>").replace(/可能性！/g,"可能性！<br>");
   const curiosityMark=(value,terms)=>{let out=value;terms.forEach(term=>{out=out.split(term).join('<span class="result-highlight" style="--highlight-color:'+primaryColor+'">'+term+'</span>');});return out;};
@@ -10676,7 +10678,11 @@ function openPersonalityResult(first,second){
   copy.querySelectorAll(".result-disclaimer").forEach(el=>{
    const text=el.textContent||"";
    if(text.includes("您的想法喔")){
-    el.style.setProperty("translate","1px 0","important");
+    const size=parseFloat(getComputedStyle(el).fontSize);
+    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-3)+"px","important");
+   }
+   if(text.includes("星辰的")){
+    el.style.setProperty("translate","2px 0","important");
    }
    if(text.includes("未來的人生是屬於")){
     el.classList.add("result-disclaimer-future");
@@ -10759,10 +10765,14 @@ function openPersonalityResult(first,second){
    });
    const longestWidth=Math.max(...jobTitleEls.map(el=>el.getBoundingClientRect().width));
    copy.style.setProperty("--result-job-title-width",longestWidth+"px");
+   // 每個分類標題直接套用同一個實測寬度，避免 CSS 變數被其他樣式覆蓋。
    jobTitleEls.forEach(el=>{
-    el.style.removeProperty("width");
-    el.style.removeProperty("max-width");
-    el.style.removeProperty("white-space");
+    el.style.setProperty("box-sizing","border-box","important");
+    el.style.setProperty("width",longestWidth+"px","important");
+    el.style.setProperty("min-width",longestWidth+"px","important");
+    el.style.setProperty("max-width","none","important");
+    el.style.setProperty("white-space","nowrap","important");
+    el.style.setProperty("flex","0 0 "+longestWidth+"px","important");
    });
   };
   syncJobTitleWidths();
@@ -14253,13 +14263,21 @@ function toggleBGM(btnEl) {
 }
 </style>
 
-<style id="mobile-result-title-up8-20261112">
-/* 手機版只將星球中文大標與英文標題，從目前位置再整體上移8px；其他內容及桌面版不變。 */
+<style id="mobile-result-title-position-and-color-fix-20261112">
+/* 手機版標題以 top 明確定位，避開多層 translate 規則互相覆蓋；中文與英文同步上移。 */
 @media (max-width:768px){
-  #personality-result-screen #personality-result-copy > .result-english,
-  #personality-result-screen #personality-result-copy > .result-name{
-    translate:0 -16px!important;
-  }
+ #personality-result-screen #personality-result-copy .result-name,
+ #personality-result-screen #personality-result-copy .result-english{
+  position:relative!important;
+  top:-16px!important;
+  translate:none!important;
+ }
+}
+#personality-result-screen #personality-result-copy .result-title-second-color{
+ color:var(--result-title-secondary-color)!important;
+}
+#personality-result-screen #personality-result-copy{
+ --result-title-secondary-color:#4962CB;
 }
 </style>
 
@@ -14307,5 +14325,14 @@ function toggleBGM(btnEl) {
 }
 #developer-tools-panel button{
  flex-shrink:0!important;
+}
+</style>
+<style id="result-star-specific-second-colors-20261112">
+/* 星球第二色依星球切換，只影響指定中文字與英文片段。 */
+#personality-result-screen #personality-result-copy:has(.result-name){
+ --result-title-secondary-color:#4962CB;
+}
+#personality-result-screen #personality-result-copy:has(.result-name .result-title-second-color){
+ --result-title-secondary-color:#4962CB;
 }
 </style>
