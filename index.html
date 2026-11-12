@@ -10571,7 +10571,10 @@ async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false)
   img.style.setProperty("position","absolute","important");
   img.style.setProperty("inset","auto","important");
   img.style.setProperty("left",(crop.x/Math.max(1,Math.round(originalWidth*scale))*100)+"%","important");
-  img.style.setProperty("top",(crop.y/Math.max(1,Math.round(originalHeight*scale))*100)+"%","important");
+  // 長條紙上半部的透明留白是要移除的版面空間，不應保留原始 crop.y。
+  // 裁切後可見內容頂端貼齊圖層頂端；底部透明比例仍保留，避免裁掉紙張底部。
+  const isBottomLongStrip=decodeURIComponent(src).includes("背景 長條紙.webp");
+  img.style.setProperty("top",(isBottomLongStrip?0:crop.y/Math.max(1,Math.round(originalHeight*scale))*100)+"%","important");
   img.style.setProperty("width",(crop.width/Math.max(1,Math.round(originalWidth*scale))*100)+"%","important");
   img.style.setProperty("height",(crop.height/Math.max(1,Math.round(originalHeight*scale))*100)+"%","important");
  }
