@@ -10266,12 +10266,12 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   const posterRect=layers.getBoundingClientRect();
   const paperRect=paper.getBoundingClientRect();
   if(!posterRect.width||!paperRect.width)return;
-  // 插圖置中放在破洞紙上方的破洞區域，不再把 top 算成負值推到海報外。
-  // 四顆星球插圖都以各自破洞紙為定位基準，放大 1.5 倍並略微順時針傾斜。
-  const imageWidth=paperRect.width*.78;
-  const imageHeight=imageWidth*(decoration.naturalHeight/decoration.naturalWidth);
+  // 角色立繪以破洞紙可見範圍為基準，寬高都盡量放大至 86%，並水平、垂直置中。
+  const scale=Math.min(paperRect.width*.86/decoration.naturalWidth,paperRect.height*.86/decoration.naturalHeight);
+  const imageWidth=decoration.naturalWidth*scale;
+  const imageHeight=decoration.naturalHeight*scale;
   const left=paperRect.left-posterRect.left+(paperRect.width-imageWidth)/2;
-  const top=paperRect.top-posterRect.top+paperRect.height*.018+7;
+  const top=paperRect.top-posterRect.top+(paperRect.height-imageHeight)/2;
   decoration.style.position="absolute";
   decoration.style.inset="auto";
   decoration.style.left=left+"px";
@@ -10461,9 +10461,19 @@ async function downsampleResultImage(img,src,maxWidth=600,trimTransparent=false)
  img.dataset.resultSrc=src;
  await new Promise((resolve,reject)=>{
   if(img.complete&&img.naturalWidth){resolve();return;}
-  img.onload=()=>resolve();
-  img.onerror=()=>reject(new Error("結果圖片載入失敗："+src));
+  let settled=false;
+  const timer=setTimeout(()=>finish(new Error("結果圖片載入逾時："+src)),15000);
+  const finish=error=>{
+   if(settled)return;
+   settled=true;
+   clearTimeout(timer);
+   img.onload=null;img.onerror=null;
+   error?reject(error):resolve();
+  };
+  img.onload=()=>finish();
+  img.onerror=()=>finish(new Error("結果圖片載入失敗："+src));
   img.src=src;
+  if(img.complete)finish(img.naturalWidth?null:new Error("結果圖片沒有有效尺寸："+src));
  });
  // 好奇星角色與職業插圖保留原始圖片直接載入，避免 Canvas 轉檔造成圖片消失。
  if(img.classList.contains("result-curiosity-decoration")||img.dataset.resultRole==="true")return;
