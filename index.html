@@ -10845,95 +10845,76 @@ function openPersonalityResult(first,second){
  role.dataset.resultRole="true";
  layers.appendChild(role);
  resultImageQueue.push({img:role,src:roleSrc,maxWidth:900});
- // 先同時載入／解碼所有結果素材，再以兩個工作佇列處理圖片。
- // 避免「前一張下載完才開始下載下一張」的長時間串行等待；同時限制 Canvas
- // 轉檔併發數，避免 iPhone／iPad Safari 一次建立太多大型畫布而耗盡記憶體。
- (async()=>{
-  // 結果頁採整頁揭曉：所有圖層都必須先載入、解碼並完成定位，不能在頁面出現後逐張補圖。
-  async function loadAndProcess(items){
-   const states=await Promise.all(items.map(async item=>{
-    try{
-     const cached=window.__resultPreprocessedAssets&&window.__resultPreprocessedAssets.get(item.src);
-     if(cached){
-      item.img.style.setProperty("position","absolute","important");
-      item.img.style.setProperty("inset","auto","important");
-      item.img.style.setProperty("left",cached.left,"important");
-      item.img.style.setProperty("top",cached.top,"important");
-      item.img.style.setProperty("width",cached.width,"important");
-      item.img.style.setProperty("height",cached.height,"important");
-      item.img.src=cached.url;
-     }else if(!item.img.src)item.img.src=item.src;
-     if(item.img.complete&&!item.img.naturalWidth)throw new Error("結果圖片載入失敗："+item.src);
-     if(!item.img.complete)await new Promise((resolve,reject)=>{item.img.addEventListener("load",resolve,{once:true});item.img.addEventListener("error",()=>reject(new Error("結果圖片載入失敗："+item.src)),{once:true});});
-     if(item.img.decode)await item.img.decode().catch(()=>{});
-     return true;
-    }catch(error){console.warn("[結果頁] 圖片預載失敗：",item.src,error);return false;}
-   }));
-   let next=0;
-   const worker=async()=>{while(next<items.length){const index=next++;if(!states[index])continue;const item=items[index];try{const cached=window.__resultPreprocessedAssets&&window.__resultPreprocessedAssets.get(item.src);if(cached){item.img.style.setProperty("position","absolute","important");item.img.style.setProperty("inset","auto","important");item.img.style.setProperty("left",cached.left,"important");item.img.style.setProperty("top",cached.top,"important");item.img.style.setProperty("width",cached.width,"important");item.img.style.setProperty("height",cached.height,"important");item.img.src=cached.url;}else{await downsampleResultImage(item.img,item.src,item.maxWidth,item.trimTransparent===true);}if(item.img.decode)await item.img.decode().catch(()=>{});}catch(error){console.warn("[結果頁] 圖片處理失敗：",item.src,error);}}};
-   await Promise.all(Array.from({length:Math.min(2,items.length)},()=>worker()));
-  }
-  function layoutResult(){
+  // 結果頁載入只等待原始圖片完成；Canvas 縮圖／轉檔不再阻塞結果顯示。
+  // 每張圖片都有獨立逾時，單一素材失敗也不能讓「正在連結」永久卡住。
+  (async()=>{
+   const updateResultLoadingProgress=value=>{
+    const ui=screen&&screen.querySelector(".result-loading-ui");
+    if(!ui)return;
+    const bar=ui.querySelector(".result-loading-progress span"),label=ui.querySelector(".result-loading-percent");
+    const percent=Math.max(0,Math.min(100,Math.round(value)));
+    if(bar)bar.style.width=percent+"%";
+    if(label)label.textContent=percent+"%";
+   };
+   const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+"逾時")),ms))]);
+   const waitForImage=item=>new Promise((resolve,reject)=>{
+    const img=item.img;
+    let settled=false;
+    let timer;
+    const cleanup=()=>{img.removeEventListener("load",onLoad);img.removeEventListener("error",onError);clearTimeout(timer);};
+    const finish=error=>{if(settled)return;settled=true;cleanup();error?reject(error):resolve();};
+    const onLoad=()=>finish();
+    const onError=()=>finish(new Error("結果圖片載入失敗："+item.src));
+    timer=setTimeout(()=>finish(new Error("結果圖片載入逾時："+item.src)),12000);
+    img.addEventListener("load",onLoad);
+    img.addEventListener("error",onError);
+    if(img.complete){
+     if(img.naturalWidth)finish();
+     else if(!img.getAttribute("src"))img.src=item.src;
+    }else if(!img.getAttribute("src"))img.src=item.src;
+   });
    try{
-    const starDecoration=layers.querySelector(".result-star-decoration");
-    if(starDecoration&&starDecoration.complete&&starDecoration.naturalWidth)alignStarDecorationToHolePaper(starDecoration,layers,first);
-    positionResultTextElements(layers,copy);
-    if(role.complete&&role.naturalWidth)alignResultRoleToTextArtwork(role,layers);
-    compactResultPosterToVisibleBottom(layers,copy);
-   }catch(error){console.warn("[結果頁] 版面定位失敗：",error);layers.style.removeProperty("height");if(poster)poster.style.removeProperty("height");copy.style.removeProperty("height");}
-  }
-  // 等待紙張、角色立繪、星球插圖與職業插圖全部完成後，統一定位並一次顯示整頁。
-  const updateResultLoadingProgress=value=>{
-   const ui=screen&&screen.querySelector(".result-loading-ui");
-   if(!ui)return;
-   const bar=ui.querySelector(".result-loading-progress span"),label=ui.querySelector(".result-loading-percent");
-   const percent=Math.max(0,Math.min(100,Math.round(value)));
-   if(bar)bar.style.width=percent+"%";
-   if(label)label.textContent=percent+"%";
-  };
-  const withTimeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+"逾時")),ms))]);
-  updateResultLoadingProgress(0);
-  // 圖片預處理偶爾會被 iOS Safari 中斷；最多等待 20 秒，不能讓載入畫面永久鎖住。
-  try{await withTimeout(loadAndProcess(resultImageQueue),20000,"結果圖片預處理");}
-  catch(error){console.warn("[結果頁] 預處理逾時，改用原始圖片完成載入：",error);}
-  let decodedResultImages=0;
-  for(const item of resultImageQueue){
-   try{
-    if(!item.img.complete||!item.img.naturalWidth){
-     await withTimeout(new Promise((resolve,reject)=>{
-      const onLoad=()=>{cleanup();resolve();},onError=()=>{cleanup();reject(new Error("結果圖片載入失敗："+item.src));};
-      const cleanup=()=>{item.img.removeEventListener("load",onLoad);item.img.removeEventListener("error",onError);};
-      item.img.addEventListener("load",onLoad,{once:true});item.img.addEventListener("error",onError,{once:true});
-      item.img.src=item.src+(item.src.includes("?")?"&":"?")+"result-retry="+Date.now();
-      if(item.img.complete&&item.img.naturalWidth){cleanup();resolve();}
-     }),10000,"圖片載入");
-    }
-    if(item.img.decode)await withTimeout(item.img.decode().catch(()=>{}),4000,"圖片解碼");
-    if(!item.img.naturalWidth)throw new Error("圖片沒有有效尺寸："+item.src);
+    updateResultLoadingProgress(0);
+    let finished=0;
+    await Promise.all(resultImageQueue.map(async item=>{
+     try{
+      // 不使用可能殘留的 Blob／Canvas 快取，避免圖片來源互相覆寫。
+      item.img.removeAttribute("src");
+      item.img.src=item.src;
+      await waitForImage(item);
+      if(item.img.decode)await withTimeout(item.img.decode().catch(()=>{}),3000,"圖片解碼");
+      if(!item.img.naturalWidth)throw new Error("圖片沒有有效尺寸："+item.src);
+     }catch(error){
+      console.warn("[結果頁] 素材載入失敗，略過該圖層：",item.src,error);
+      item.img.style.setProperty("display","none","important");
+     }finally{
+      finished++;
+      updateResultLoadingProgress(resultImageQueue.length?finished/resultImageQueue.length*90:90);
+     }
+    }));
+    if(document.fonts&&document.fonts.ready)await withTimeout(document.fonts.ready,3000,"字型載入").catch(()=>{});
+    await withTimeout(new Promise(resolve=>{
+     if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>requestAnimationFrame(resolve));
+     else setTimeout(resolve,80);
+    }),1200,"版面繪製").catch(()=>{});
+    layoutResult();
+    await withTimeout(new Promise(resolve=>{
+     if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>requestAnimationFrame(resolve));
+     else setTimeout(resolve,80);
+    }),1200,"版面穩定").catch(()=>{});
    }catch(error){
-    // 單張素材失敗時隱藏壞圖並繼續，避免整個結果頁永遠停在載入畫面。
-    console.error("[結果頁] 素材載入失敗，略過該圖層：",item.src,error);
-    item.img.style.setProperty("display","none","important");
+    console.error("[結果頁] 載入流程發生錯誤，仍解除載入遮罩：",error);
+    try{layoutResult();}catch(layoutError){console.warn("[結果頁] 最後定位略過：",layoutError);}
+   }finally{
+    updateResultLoadingProgress(100);
+    if(screen){
+     screen.scrollTop=0;
+     screen.classList.remove("result-loading");
+     const loadingUI=screen.querySelector(".result-loading-ui");
+     if(loadingUI)loadingUI.remove();
+    }
    }
-   decodedResultImages++;
-   updateResultLoadingProgress(resultImageQueue.length?decodedResultImages/resultImageQueue.length*90:90);
-  }
-  if(document.fonts&&document.fonts.ready)await withTimeout(document.fonts.ready,4000,"字型載入").catch(()=>{});
-  await withTimeout(new Promise(resolve=>{
-   if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>requestAnimationFrame(resolve));
-   else setTimeout(resolve,100);
-  }),1500,"版面繪製").catch(()=>{});
-  layoutResult();
-  await withTimeout(new Promise(resolve=>{
-   if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>requestAnimationFrame(resolve));
-   else setTimeout(resolve,100);
-  }),1500,"版面穩定").catch(()=>{});
-  updateResultLoadingProgress(100);
-  screen.scrollTop=0;
-  screen.classList.remove("result-loading");
-  const loadingUI=screen.querySelector(".result-loading-ui");
-  if(loadingUI)loadingUI.remove();
- })();
+  })();
 }
 
         function showEndCredits() {
