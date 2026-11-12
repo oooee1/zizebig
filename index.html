@@ -14267,21 +14267,23 @@ function toggleBGM(btnEl) {
 }
 </style>
 
-<style id="mobile-result-title-position-and-color-fix-20261112">
-/* 手機版標題以 top 明確定位，避開多層 translate 規則互相覆蓋；中文與英文同步上移。 */
+<style id="result-title-position-both-devices-20261112">
+/* 標題位移統一由 translate 負責，避免 top 與 translate 同時位移而加倍。 */
+#personality-result-screen #personality-result-copy .result-name,
+#personality-result-screen #personality-result-copy .result-english{
+ position:relative!important;
+ top:0!important;
+ translate:0 -8px!important;
+}
+/* 手機前面已要求上移兩次各8px，累計16px；桌面版這次同步上移8px。 */
 @media (max-width:768px){
  #personality-result-screen #personality-result-copy .result-name,
  #personality-result-screen #personality-result-copy .result-english{
-  position:relative!important;
-  top:-16px!important;
   translate:0 -16px!important;
  }
 }
 #personality-result-screen #personality-result-copy .result-title-second-color{
  color:var(--result-title-secondary-color)!important;
-}
-#personality-result-screen #personality-result-copy{
- --result-title-secondary-color:#4962CB;
 }
 </style>
 
