@@ -10087,15 +10087,15 @@ function parseResultSource(star){
   const traitAt=block.indexOf(traitMarker);
   if(second&&possibleAt>=0&&traitAt>possibleAt){
    const categoryText=block.slice(possibleAt+possible.length,traitAt);
-   const lines=categoryText.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+   const groups=categoryText.trim().split(/\r?\n\s*\r?\n+/).map(group=>group.split(/\r?\n/).map(line=>line.trim()).filter(Boolean)).filter(group=>group.length);
    const categories=[];let separator="";
-   for(let i=0;i<lines.length;){
-    if(lines[i]==="或者"||lines[i]==="或"){separator=lines[i++];continue;}
-    const title=lines[i++]||"";
-    const description=lines[i]&&!["或者","或"].includes(lines[i])?lines[i++]:"";
+   groups.forEach(group=>{
+    if(group.length===1&&(group[0]==="或者"||group[0]==="或")){separator=group[0];return;}
+    const title=group.shift()||"";
+    const description=group.join("\\n");
     if(title)categories.push({title,description,separator:categories.length?separator:""});
     separator="";
-   }
+   });
    let afterTrait=block.slice(traitAt+traitMarker.length);
    const tailLines=afterTrait.split(/\r?\n/);
    let disclaimer="";
@@ -10254,11 +10254,11 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.transformOrigin="center center";
   decoration.style.filter="drop-shadow(0 0 7px #fff) drop-shadow(0 0 16px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,.9))";
   decoration.style.setProperty("z-index","9","important");
-  if(star==="好奇星"||star==="熱情星"){
-   decoration.style.removeProperty("opacity");
-   decoration.classList.remove("result-curiosity-idle");
-   decoration.classList.add("result-curiosity-enter");
-  }
+  const animationClass={"好奇星":"curiosity","同情星":"compassion","爽快星":"brisk","熱情星":"passion"}[star]||"curiosity";
+  decoration.style.removeProperty("opacity");
+  decoration.classList.remove("result-curiosity-idle","result-compassion-idle","result-brisk-idle","result-passion-idle");
+  decoration.classList.remove("result-curiosity-enter","result-compassion-enter","result-brisk-enter","result-passion-enter");
+  decoration.classList.add("result-"+animationClass+"-enter");
  };
  if(decoration.complete&&paper.complete)align();
  else{
@@ -10347,7 +10347,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale-71)+"px";
+    button.style.top=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.52)*scale)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -10543,6 +10543,7 @@ function openPersonalityResult(first,second){
   const image=document.createElement("img");
   image.className="personality-result-layer";
   image.style.zIndex=String(z);
+  if(z===1){image.style.setProperty("display","block","important");image.style.setProperty("visibility","visible","important");image.style.setProperty("opacity","1","important");}
   image.alt="";
   const src=RESULT_ROOT+name;
   image.dataset.resultSrc=src;
@@ -10552,18 +10553,19 @@ function openPersonalityResult(first,second){
  {
   const starImageFiles={"好奇星":"1好奇星.webp","同情星":"2同情星.webp","爽快星":"3爽快星.webp","熱情星":"4熱情星.webp"};
   const starDecoration=document.createElement("img");
-  starDecoration.className="personality-result-layer result-star-decoration"+((first==="好奇星"||first==="熱情星")?" result-star-decoration-curiosity":"");
+  const starAnimationClass={"好奇星":"curiosity","同情星":"compassion","爽快星":"brisk","熱情星":"passion"}[first]||"curiosity";
+  starDecoration.className="personality-result-layer result-star-decoration result-star-decoration-"+starAnimationClass;
   starDecoration.decoding="async";
   starDecoration.alt="";
   const starImageSrc="./pct/"+starImageFiles[first];
   starDecoration.dataset.resultSrc=starImageSrc;
-  if(first==="好奇星"||first==="熱情星"){
-   starDecoration.addEventListener("animationend",event=>{
-    if(event.animationName!=="resultCuriosityPop")return;
-    starDecoration.classList.remove("result-curiosity-enter");
-    starDecoration.classList.add("result-curiosity-idle");
-   });
-  }
+  const starAnimationNames={"好奇星":"resultCuriosityPop","同情星":"resultCompassionEnter","爽快星":"resultBriskEnter","熱情星":"resultPassionEnter"};
+  const starIdleClasses={"好奇星":"result-curiosity-idle","同情星":"result-compassion-idle","爽快星":"result-brisk-idle","熱情星":"result-passion-idle"};
+  starDecoration.addEventListener("animationend",event=>{
+   if(event.animationName!==starAnimationNames[first])return;
+   starDecoration.classList.remove("result-"+starAnimationClass+"-enter");
+   starDecoration.classList.add(starIdleClasses[first]);
+  });
   starDecoration.style.setProperty("z-index","9","important");
   starDecoration.style.setProperty("display","block","important");
   starDecoration.style.setProperty("visibility","visible","important");
@@ -10627,7 +10629,7 @@ function openPersonalityResult(first,second){
    "好奇星":"好奇星對新鮮事物總是充滿興趣，遇到不懂的事情時，會想主動找出答案，弄清楚背後的原因。喜歡親自探索、嘗試不同的方法，從過程中學習新知識，也因為常常思考問題，發現更多意想不到的可能性！",
    "同情星":"想知道別人經歷了什麼，也理解他們的處境。透過提問和傾聽，幫助他人理解自己的想法，發現人們遇到的問題，並設法用創意讓生活變得更好。",
    "爽快星":"喜歡探索不同的可能性，且願意親自嘗試。遇到問題時，能快速採取行動，靈活地應對各種情況，並透過不斷嘗試與調整，找到有效的解決方法，將想法實踐出來！",
-   "熱情星":"有著好奇與行動力，不害怕挑戰未知。面對不同的想法時，能主動尋找機會並付諸實踐，運用自身的熱情激勵身邊的人，讓團隊更有動力，共同朝著目標前進。"
+   "熱情星":"有著好奇與行動力，不害怕挑戰未知。運用自身的熱情激勵身邊的人，讓團隊更有動力，共同朝著目標前進。"
   };
   const details={
    "好奇星":"總是對周遭的事物充滿興趣，喜歡追問事情背後的原因，從觀察與探索中發現新的知識！主動蒐集資訊、嘗試不同的方法。在職業選擇上，適合研究、科學或資訊技術等領域，能透過分析、調查與實驗發揮自己的優勢。()的優勢在於總能從不同角度看待事物，發現容易被忽略的細節|дﾟ)。這種探索的精神能帶來更多想法，找到值得深入研究的方向！",
@@ -13287,6 +13289,42 @@ function toggleBGM(btnEl) {
   translate:11.3px 0!important;
  }
 }
+</style>
+<style id="result-final-repair-20261112">
+/* 四顆星球各自使用不同的立繪動畫；好奇星保留原本彈出與跳動效果。 */
+.result-star-decoration-compassion.result-compassion-enter{animation:resultCompassionEnter .72s cubic-bezier(.2,.75,.25,1) both!important;transform-origin:center bottom!important}
+@keyframes resultCompassionEnter{0%{opacity:0;transform:translateY(18px) scale(.88)}65%{opacity:1;transform:translateY(-5px) scale(1.03)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.result-star-decoration-compassion.result-compassion-idle{animation:resultCompassionFloat 2.4s ease-in-out infinite!important;transform-origin:center bottom!important}
+@keyframes resultCompassionFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.result-star-decoration-brisk.result-brisk-enter{animation:resultBriskEnter .48s cubic-bezier(.15,.9,.3,1.2) both!important;transform-origin:center bottom!important}
+@keyframes resultBriskEnter{0%{opacity:0;transform:translateX(-28px) rotate(-8deg) scale(.7)}65%{opacity:1;transform:translateX(3px) rotate(3deg) scale(1.06)}100%{opacity:1;transform:translateX(0) rotate(0) scale(1)}}
+.result-star-decoration-brisk.result-brisk-idle{animation:resultBriskBounce 1.05s ease-in-out infinite!important;transform-origin:center bottom!important}
+@keyframes resultBriskBounce{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-13px) rotate(-2deg)}50%{transform:translateY(0) rotate(2deg)}75%{transform:translateY(-5px) rotate(0)}}
+.result-star-decoration-passion.result-passion-enter{animation:resultPassionEnter .68s cubic-bezier(.2,.8,.25,1) both!important;transform-origin:center bottom!important}
+@keyframes resultPassionEnter{0%{opacity:0;transform:scale(.25) rotate(12deg)}55%{opacity:1;transform:scale(1.12) rotate(-5deg)}78%{transform:scale(.94) rotate(3deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+.result-star-decoration-passion.result-passion-idle{animation:resultPassionSway 1.8s ease-in-out infinite!important;transform-origin:center bottom!important}
+@keyframes resultPassionSway{0%,100%{transform:rotate(0) translateY(0)}25%{transform:rotate(-3deg) translateY(-5px)}50%{transform:rotate(0) translateY(-10px)}75%{transform:rotate(3deg) translateY(-5px)}}
+
+/* 桌面、手機都明確把星球中文大標與英文往上移，取消舊 top/translate 疊加。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy > .result-name{top:394px!important;translate:none!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:398px!important;translate:none!important}
+ #personality-result-screen #personality-result-copy .result-keywords span{font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 15px)!important}
+}
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{top:443px!important;translate:none!important}
+ #personality-result-screen #personality-result-copy .result-keywords span{font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 1.5px)!important}
+}
+/* 職業類別背景左右總寬度增加2px；依 JS 計算的等寬規則不變。 */
+#personality-result-screen #personality-result-copy .result-job-category-title{padding-left:5px!important;padding-right:5px!important}
+/* 「屬於（）的特質」確實往右1px；以最後一條規則覆蓋舊位移。 */
+#personality-result-screen #personality-result-copy .result-trait-heading{translate:8.3px 0!important}
+@media (max-width:768px){#personality-result-screen #personality-result-copy .result-trait-heading{translate:11.3px 0!important}}
+/* 「測驗結果只是參考」版本與其他提醒共用定位，不再額外偏移。 */
+#personality-result-screen #personality-result-copy .result-disclaimer-future{translate:0 0!important}
+/* 繼續遊戲以諾蘭紙可見區域中心定位，不額外向上偏移。 */
+#personality-result-screen #personality-result-copy .result-continue{margin:0!important}
 </style>
 </body>
 
