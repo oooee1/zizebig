@@ -3150,7 +3150,7 @@ img { max-width:100%; }
   </article>
   <button type="button" id="personality-result-save" onclick="event.stopPropagation();window.savePersonalityResultImage()">
     <img src="./最終結果/下載箭頭.webp" alt="" aria-hidden="true">
-    <span>保存結果</span>
+    <span>保存測驗結果</span>
   </button>
 </div>
 
@@ -13667,40 +13667,36 @@ function toggleBGM(btnEl) {
 /* 手機好奇星中文大標與英文標題各下移4px；不影響其他星球。 */
 @media (max-width:768px){
  #personality-result-screen #personality-result-copy > .result-name.result-name-curiosity,
- #personality-result-screen #personality-result-copy > .result-english.result-english-curiosity{
-  translate:0 4px!important;
- }
+ #personality-result-screen #personality-result-copy > .result-english.result-english-curiosity{translate:0 4px!important}
 }
-/* 電腦版英文標題在目前位置再下移5px；手機版位置由JS獨立控制。 */
-@media (min-width:769px){
- #personality-result-screen #personality-result-copy > .result-english{top:406px!important}
-}
+/* 電腦版英文標題再下移5px。 */
+@media (min-width:769px){#personality-result-screen #personality-result-copy > .result-english{top:406px!important}}
 /* 救援後回到對話時保留原場景背景，不套用失敗遮罩。 */
 #page1.mail-failure-mode::after{display:none!important;content:none!important;background:transparent!important}
-/* 固定於結果頁畫面底部的保存按鈕；黃色取自好奇星代表色。 */
-#personality-result-screen #personality-result-save{
- position:fixed!important;left:50%!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;
+/* 保存按鈕只在結果頁正式顯示後出現；載入前與離開結果頁後一律隱藏。 */
+#personality-result-screen #personality-result-save{display:none!important}
+#personality-result-screen.show:not(.result-loading) #personality-result-save{
+ position:fixed!important;left:50%!important;bottom:calc(52px + env(safe-area-inset-bottom))!important;
  transform:translateX(-50%)!important;z-index:2147483005!important;
  display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
- align-items:center!important;justify-content:center!important;gap:10px!important;
- min-width:174px!important;min-height:48px!important;padding:8px 22px!important;
- border:3px solid #202020!important;border-radius:14px!important;
- background:#EAB744!important;color:#202020!important;
- box-shadow:0 4px 0 rgba(0,0,0,.24)!important;
- font-family:'Dela Gothic One',sans-serif!important;font-size:19px!important;font-weight:400!important;
+ align-items:center!important;justify-content:center!important;gap:9px!important;
+ width:max-content!important;min-width:0!important;max-width:calc(100vw - 32px)!important;
+ min-height:0!important;padding:5px 12px!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ background:#EAB744!important;color:#FFFFFF!important;box-shadow:none!important;
+ font-family:'Dela Gothic One',sans-serif!important;font-size:30px!important;font-weight:400!important;
  line-height:1.2!important;cursor:pointer!important;touch-action:manipulation!important;
 }
-#personality-result-screen #personality-result-save img{
- display:block!important;width:25px!important;height:25px!important;object-fit:contain!important;
+#personality-result-screen.show:not(.result-loading) #personality-result-save img{
+ display:block!important;width:34px!important;height:34px!important;object-fit:contain!important;
  flex:none!important;filter:none!important;
 }
-#personality-result-screen #personality-result-save span{
- display:block!important;font-family:'Dela Gothic One',sans-serif!important;font-weight:400!important;
+#personality-result-screen.show:not(.result-loading) #personality-result-save span{
+ display:block!important;font-family:'Dela Gothic One',sans-serif!important;font-size:30px!important;
+ font-weight:400!important;color:#FFFFFF!important;white-space:nowrap!important;
 }
-#personality-result-screen #personality-result-save:active{transform:translate(-50%,2px)!important;box-shadow:0 2px 0 rgba(0,0,0,.24)!important}
-@media(max-width:768px){
- #personality-result-screen #personality-result-save{min-width:158px!important;min-height:44px!important;padding:7px 18px!important;font-size:17px!important;gap:8px!important}
- #personality-result-screen #personality-result-save img{width:22px!important;height:22px!important}
+#personality-result-screen.show:not(.result-loading) #personality-result-save:active{
+ transform:translate(-50%,1px)!important;box-shadow:none!important
 }
 </style>
 <script id="personality-result-save-image-20261113">
