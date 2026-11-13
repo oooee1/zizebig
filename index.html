@@ -10775,11 +10775,27 @@ function openPersonalityResultCore(first,second){
  d.work=sourceData.work;
  let mainTraits=resultTextHtml(d.traits,replace,emphasize,first,primaryColor);
  if(first==="熱情星")mainTraits=mainTraits.replace(/<br\s*\/?\s*>/g," ");
- const mainWork=resultTextHtml(d.work,replace,emphasize,first,primaryColor);
- if(first==="同情星"){
-  // 同情星主結果（包含同情星&同情星）沿用同情星&好奇星的段落節奏。
-  mainTraits=mainTraits.replace(/關懷。/g,"關懷。<br>").replace(/嗚嗚嗚嗚嗚嗚！/g,"嗚嗚嗚嗚嗚嗚！<br>");
-  mainWork=mainWork.replace(/能力。/g,"能力。<br>").replace(/需求。/g,"需求。<br>").replace(/責任。/g,"責任。<br>");
+ let mainWork=resultTextHtml(d.work,replace,emphasize,first,primaryColor);
+ // 第一高分星球決定主結果的重點字與換行格式，完全不依賴第二高分是誰。
+ // 因此同一顆主星球的四種第二高分組合，都會共用相同的星格特質／職場優劣勢排版。
+ const primaryResultFormatting={
+  "同情星":{
+   traitBreaks:[["關懷。","關懷。<br>"],["嗚嗚嗚嗚嗚嗚！","嗚嗚嗚嗚嗚嗚！<br>"]],
+   workBreaks:[["能力。","能力。<br>"],["需求。","需求。<br>"],["責任。","責任。<br>"]]
+  },
+  "爽快星":{
+   traitBreaks:[["方法。","方法。<br>"],["腳步。","腳步。<br>"]],
+   workBreaks:[["困難，","困難，<br>"],["成果！","成果！<br>"]]
+  },
+  "熱情星":{
+   traitBreaks:[["實現。","實現。<br>"],["前進。","前進。<br>"]],
+   workBreaks:[["正向影響。","正向影響。<br>"],["責任。","責任。<br>"]]
+  }
+ };
+ const primaryFormat=primaryResultFormatting[first];
+ if(primaryFormat){
+  (primaryFormat.traitBreaks||[]).forEach(([from,to])=>{mainTraits=mainTraits.replaceAll(from,to);});
+  (primaryFormat.workBreaks||[]).forEach(([from,to])=>{mainWork=mainWork.replaceAll(from,to);});
  }
  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+mainTraits+'</p></section>';
  html+='<section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+mainWork+'</p></section>';
