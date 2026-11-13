@@ -10366,8 +10366,10 @@ function positionResultTextElements(layers,copy){
     const scaleX=imageRect.width/textPaper.naturalWidth;
     const scaleY=imageRect.height/textPaper.naturalHeight;
     career.style.position="absolute";
-    career.style.setProperty("left",((imageRect.left-copyRect.left+textBounds.x*scaleX)/responsiveScale)+"px","important");
-    career.style.setProperty("width",(textBounds.width*scaleX/responsiveScale)+"px","important");
+    const careerWidth=textBounds.width*scaleX/responsiveScale;
+    const careerLeft=window.matchMedia&&window.matchMedia("(max-width:768px)").matches?(copy.clientWidth-careerWidth)/2:(imageRect.left-copyRect.left+textBounds.x*scaleX)/responsiveScale;
+    career.style.setProperty("left",careerLeft+"px","important");
+    career.style.setProperty("width",careerWidth+"px","important");
     career.style.top=((imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale)+"px";
    }
   }
@@ -13852,45 +13854,61 @@ window.savePersonalityResultImage=async function(){
 
 
 <style id="mobile-career-centering-and-intro-size-fix-20261113">
-/* 手機版：職業區整體置中，避免上次恢復文件流後標題、介紹與分類各自偏移。 */
+/* 手機版：由 JS 將整個職業區依 copy 容器寬度計算置中；區內各項也以自身區塊置中。 */
 @media (max-width:768px){
  #personality-result-screen #personality-result-copy > .result-secondary{
+  box-sizing:border-box!important;
   text-align:center!important;
-  margin-left:auto!important;
-  margin-right:auto!important;
+  padding-left:0!important;
+  padding-right:0!important;
  }
  #personality-result-screen #personality-result-copy > .result-secondary .result-career-heading{
+  display:block!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  margin:10px auto!important;
+  text-align:center!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary .result-career-intro{
+  display:block!important;
+  position:static!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  margin:7px auto!important;
+  left:auto!important;
+  right:auto!important;
+  translate:none!important;
+  text-align:center!important;
+  /* 以原本手機版 16–20px 的基準放大 5px。 */
+  font-size:calc(clamp(16px,calc(4.2cqw + 3px),20px) + 5px)!important;
+  line-height:1.45!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary .result-job-category{
+  display:block!important;
+  box-sizing:border-box!important;
   width:100%!important;
   margin-left:auto!important;
   margin-right:auto!important;
   text-align:center!important;
  }
- #personality-result-screen #personality-result-copy > .result-secondary .result-career-intro{
-  display:block!important;
-  box-sizing:border-box!important;
-  width:calc(100% - 36px)!important;
+ #personality-result-screen #personality-result-copy > .result-secondary .result-job-category-title{
   margin-left:auto!important;
   margin-right:auto!important;
-  text-align:center!important;
-  translate:none!important;
-  /* 以原本手機版 16–20px 的基準縮小 7px。 */
-  font-size:calc(clamp(16px,calc(4.2cqw + 3px),20px) - 7px)!important;
-  line-height:1.45!important;
- }
- #personality-result-screen #personality-result-copy > .result-secondary .result-job-category{
-  margin-left:auto!important;
-  margin-right:auto!important;
-  text-align:center!important;
  }
  #personality-result-screen #personality-result-copy > .result-secondary .result-trait-heading{
-  margin-left:auto!important;
-  margin-right:auto!important;
+  display:table!important;
+  width:max-content!important;
+  max-width:100%!important;
+  position:static!important;
+  margin:8px auto 10px!important;
   left:auto!important;
+  right:auto!important;
   translate:none!important;
   text-align:center!important;
  }
  #personality-result-screen #personality-result-copy > .result-secondary .result-trait-heading + p,
  #personality-result-screen #personality-result-copy > .result-secondary .result-trait-heading + p + p{
+  width:100%!important;
   margin-left:auto!important;
   margin-right:auto!important;
   text-align:center!important;
