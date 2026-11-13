@@ -13873,6 +13873,41 @@ window.savePersonalityResultImage=async function(){
 #page1 #熱情星尷尬{translate:0 17px!important;}
 </style>
 
+
+<style id="user-adjustments-20261113-followup">
+/* 電腦版保存結果按鈕縮小一半；手機版維持原樣。 */
+@media (min-width:769px){
+  #personality-result-screen #personality-result-save{
+    font-size:clamp(15px,calc((100vw - 24px)/14.2),60px)!important;
+  }
+}
+/* 全家福直接放大圖片本身的尺寸，避免只縮放外層而視覺沒有變化。 */
+#星辰全家福{overflow:visible!important;}
+#星辰全家福 img{
+  position:absolute!important;
+  left:50%!important;top:50%!important;
+  right:auto!important;bottom:auto!important;
+  width:150%!important;height:150%!important;
+  max-width:none!important;max-height:none!important;
+  object-fit:contain!important;
+  transform:translate(-50%,-50%)!important;
+  transform-origin:center center!important;
+}
+/* 熱情星思考立繪上移7px。 */
+#page1 #熱情星思考{translate:0 13px!important;}
+/* 電腦版爽快星規則教學：泡泡上移20px並加大圓角；角色放大1.5倍、右移20px、下移10px。 */
+@media (min-width:769px){
+  #page1.mail-tutorial-mode #對話框{
+    top:calc(22% + 1px)!important;
+    border-radius:60px!important;
+  }
+  #page1.mail-tutorial-mode #爽快星害怕{
+    translate:20px 28px!important;
+    scale:1.695!important;
+    transform-origin:bottom center!important;
+  }
+}
+</style>
 </html>
 
 
