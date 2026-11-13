@@ -15305,21 +15305,27 @@ window.savePersonalityResultImage=async function(){
 #personality-result-screen #personality-result-save:active{
   transform:translate(-50%,1px) scale(1.6)!important;
 }
-/* 漸層直接掛在固定的保存結果按鈕上，捲動結果內容時會與按鈕保持同一位置。 */
+/* 漸層固定跟隨保存按鈕；用獨立底色層確保漸層永遠在按鈕底色與文字後方。 */
 #personality-result-screen::after{content:none!important;display:none!important}
-#personality-result-screen #personality-result-save{isolation:isolate!important;overflow:visible!important}
+#personality-result-screen #personality-result-save{
+  isolation:isolate!important;overflow:visible!important;
+  background:transparent!important;pointer-events:auto!important;
+}
 #personality-result-screen #personality-result-save::before{
-  content:""!important;
-  position:absolute!important;
+  content:""!important;position:absolute!important;
   left:50%!important;bottom:-35px!important;
-  width:min(62.5vw,625px)!important;height:100px!important;
+  width:min(40vw,400px)!important;height:100px!important;
   transform:translateX(-50%)!important;
   background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.82) 30%,rgba(255,255,255,.42) 65%,rgba(255,255,255,0) 100%)!important;
   z-index:0!important;pointer-events:none!important;
 }
+#personality-result-screen #personality-result-save::after{
+  content:""!important;position:absolute!important;inset:0!important;
+  background:#F6B800!important;z-index:1!important;pointer-events:none!important;
+}
 #personality-result-screen #personality-result-save span,
 #personality-result-screen #personality-result-save img{
-  position:relative!important;z-index:1!important;
+  position:relative!important;z-index:2!important;
 }
 /* 手機版：不同第一、第二高分的職業介紹只比原字級稍大，不再額外暴增18px。 */
 @media (max-width:768px){
@@ -15420,12 +15426,15 @@ window.savePersonalityResultImage=async function(){
  window.savePersonalityResultImage=openPreview;
  const saveButton=document.getElementById("personality-result-save");
  if(saveButton){
-  saveButton.onclick=function(event){
+  /* 移除舊的 inline onclick，避免舊版保存流程與預覽流程互相覆蓋。 */
+  saveButton.removeAttribute("onclick");
+  saveButton.onclick=null;
+  saveButton.addEventListener("click",function(event){
    event.preventDefault();
    event.stopPropagation();
    try{openPreview();}
    catch(error){console.error("[結果預覽] 開啟失敗：",error);alert("目前無法開啟保存結果，請重新整理後再試一次。");}
-  };
+  },true);
  }
 })();
 </script>
