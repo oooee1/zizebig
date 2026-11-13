@@ -10869,12 +10869,12 @@ function openPersonalityResultCore(first,second){
   // 手機版中文星球大標與英文標題實際定位上移14px：直接改 inline !important 的 top，避免被後續 CSS 覆蓋。
   copy.querySelectorAll(":scope > .result-name").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top",first==="好奇星"?"394px":"390px","important");
+   el.style.setProperty("top",first==="好奇星"?"404px":"400px","important");
    el.style.setProperty("translate","none","important");
   });
   copy.querySelectorAll(":scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top",first==="好奇星"?"390px":"386px","important");
+   el.style.setProperty("top",first==="好奇星"?"400px":"396px","important");
    el.style.setProperty("translate","none","important");
   });
  }
@@ -15082,7 +15082,7 @@ window.savePersonalityResultImage=async function(){
 <style id="result-requested-adjustments-20261113">
 /* 桌面版英文標題在上一版基礎上再下移9px：392px → 401px。 */
 @media (min-width:769px){
- #personality-result-screen #personality-result-copy > .result-english{top:401px!important}
+ #personality-result-screen #personality-result-copy > .result-english{top:409px!important}
  /* 「適合職業」以上的主要文字整體下移4px。 */
  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-name):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:408px!important}
 }
@@ -15128,5 +15128,27 @@ window.savePersonalityResultImage=async function(){
 #personality-result-screen #personality-result-poster{
  clip-path:inset(0 0 30px 0)!important;
  margin-bottom:-30px!important;
+}
+</style>
+
+
+<style id="mail-tutorial-desktop-adjustments-20261113">
+/* 電腦版爽快星教學立繪下移14px、放大3%；手機版不變。 */
+@media (min-width:769px){
+ #page1.mail-tutorial-mode #爽快星害怕{
+  translate:0 14px!important;
+  scale:1.03!important;
+  transform-origin:bottom center!important;
+ }
+ /* 說明泡泡更圓，並上移4px。 */
+ #page1.mail-tutorial-mode #對話框{
+  border-radius:38px!important;
+  top:calc(22% + 28px)!important;
+ }
+ /* 推進小箭頭往右移12px，並靠近對話框下緣4px。 */
+ #page1.mail-tutorial-mode #dialogue-next-arrow{
+  right:40px!important;
+  bottom:26px!important;
+ }
 }
 </style>
