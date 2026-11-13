@@ -3148,7 +3148,7 @@ img { max-width:100%; }
     <div id="personality-result-layers" aria-hidden="true"></div>
     <div id="personality-result-copy"></div>
   </article>
-  <button type="button" id="personality-result-save" onclick="event.stopPropagation();window.savePersonalityResultImage()">
+  <button type="button" id="personality-result-save" hidden onclick="event.stopPropagation();window.savePersonalityResultImage()">
     <img src="./最終結果/下載箭頭.webp" alt="" aria-hidden="true">
     <span>保存測驗結果</span>
   </button>
@@ -10223,7 +10223,7 @@ function jumpToPersonalityResult(first,second,event){
  const p=document.getElementById("developer-tools-panel");if(p)p.classList.remove("open");
  openPersonalityResult(first,second||first);
 }
-function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");}}
+function closePersonalityResult(){const s=document.getElementById("personality-result-screen");if(s){s.classList.remove("show");s.setAttribute("aria-hidden","true");const save=s.querySelector("#personality-result-save");if(save)save.hidden=true;}}
 const resultAlphaBoundsCache=new WeakMap();
 function getResultImageAlphaBounds(img){
  if(resultAlphaBoundsCache.has(img))return resultAlphaBoundsCache.get(img);
@@ -10597,6 +10597,7 @@ function updateResultLoadingProgress(progress){
  if(bar)bar.style.width=value+"%";
 }
 function openPersonalityResultCore(first,second){
+ const saveButton=document.getElementById("personality-result-save");if(saveButton)saveButton.hidden=true;
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
  const poster=layers&&layers.closest("#personality-result-poster");
@@ -10873,12 +10874,12 @@ function openPersonalityResultCore(first,second){
   // 手機版中文星球大標與英文標題實際定位上移14px：直接改 inline !important 的 top，避免被後續 CSS 覆蓋。
   copy.querySelectorAll(":scope > .result-name").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top",first==="好奇星"?"385px":"381px","important");
+   el.style.setProperty("top",first==="好奇星"?"394px":"390px","important");
    el.style.setProperty("translate","none","important");
   });
   copy.querySelectorAll(":scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top",first==="好奇星"?"381px":"377px","important");
+   el.style.setProperty("top",first==="好奇星"?"390px":"386px","important");
    el.style.setProperty("translate","none","important");
   });
  }
@@ -11015,6 +11016,7 @@ function openPersonalityResultCore(first,second){
     if(screen){
      screen.scrollTop=0;
      screen.classList.remove("result-loading");
+     const saveButton=screen.querySelector("#personality-result-save");if(saveButton)saveButton.hidden=false;
      const loadingUI=screen.querySelector(".result-loading-ui");
      if(loadingUI)loadingUI.remove();
     }
@@ -11030,6 +11032,7 @@ function openPersonalityResult(first,second){
  if(screen){
   screen.classList.add("show","result-loading");
   screen.setAttribute("aria-hidden","false");
+  const saveButton=screen.querySelector("#personality-result-save");if(saveButton)saveButton.hidden=true;
   let ui=screen.querySelector(".result-loading-ui");
   if(!ui){
    ui=document.createElement("div");
@@ -13664,40 +13667,36 @@ function toggleBGM(btnEl) {
 </style>
 
 <style id="result-save-button-and-final-position-20261113">
-/* 手機好奇星中文大標與英文標題各下移4px；不影響其他星球。 */
+/* 手機星球中文大標與英文標題都下移9px。 */
 @media (max-width:768px){
- #personality-result-screen #personality-result-copy > .result-name.result-name-curiosity,
- #personality-result-screen #personality-result-copy > .result-english.result-english-curiosity{translate:0 4px!important}
+ #personality-result-screen #personality-result-copy > .result-name{translate:0 9px!important}
+ #personality-result-screen #personality-result-copy > .result-english{translate:0 9px!important}
 }
-/* 電腦版英文標題再下移5px。 */
-@media (min-width:769px){#personality-result-screen #personality-result-copy > .result-english{top:406px!important}}
+/* 電腦版英文標題在原位置下移4px。 */
+@media (min-width:769px){#personality-result-screen #personality-result-copy > .result-english{top:405px!important}}
 /* 救援後回到對話時保留原場景背景，不套用失敗遮罩。 */
 #page1.mail-failure-mode::after{display:none!important;content:none!important;background:transparent!important}
-/* 保存按鈕只在結果頁正式顯示後出現；載入前與離開結果頁後一律隱藏。 */
-#personality-result-screen #personality-result-save{display:none!important}
-#personality-result-screen.show:not(.result-loading) #personality-result-save{
+/* 以 hidden 屬性作為唯一顯示開關：只有結果建構完成後由JS解除。 */
+#personality-result-save[hidden]{display:none!important}
+#personality-result-screen #personality-result-save{
  position:fixed!important;left:50%!important;bottom:calc(52px + env(safe-area-inset-bottom))!important;
  transform:translateX(-50%)!important;z-index:2147483005!important;
- display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
- align-items:center!important;justify-content:center!important;gap:9px!important;
- width:max-content!important;min-width:0!important;max-width:calc(100vw - 32px)!important;
- min-height:0!important;padding:5px 12px!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;
+ width:max-content!important;min-width:0!important;max-width:calc(100vw - 24px)!important;
+ min-height:0!important;padding:4px 8px!important;
  border:0!important;border-radius:0!important;outline:0!important;
- background:#EAB744!important;color:#FFFFFF!important;box-shadow:none!important;
+ background:#F6B800!important;color:#FFFFFF!important;box-shadow:none!important;
  font-family:'Dela Gothic One',sans-serif!important;font-size:30px!important;font-weight:400!important;
  line-height:1.2!important;cursor:pointer!important;touch-action:manipulation!important;
 }
-#personality-result-screen.show:not(.result-loading) #personality-result-save img{
- display:block!important;width:34px!important;height:34px!important;object-fit:contain!important;
- flex:none!important;filter:none!important;
+#personality-result-screen #personality-result-save img{
+ display:block!important;width:38px!important;height:38px!important;object-fit:contain!important;flex:none!important;
 }
-#personality-result-screen.show:not(.result-loading) #personality-result-save span{
+#personality-result-screen #personality-result-save span{
  display:block!important;font-family:'Dela Gothic One',sans-serif!important;font-size:30px!important;
  font-weight:400!important;color:#FFFFFF!important;white-space:nowrap!important;
 }
-#personality-result-screen.show:not(.result-loading) #personality-result-save:active{
- transform:translate(-50%,1px)!important;box-shadow:none!important
-}
+#personality-result-screen #personality-result-save:active{transform:translate(-50%,1px)!important;box-shadow:none!important}
 </style>
 <script id="personality-result-save-image-20261113">
 window.savePersonalityResultImage=async function(){
