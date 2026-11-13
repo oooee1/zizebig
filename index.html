@@ -13796,7 +13796,9 @@ window.savePersonalityResultImage=async function(){
   right:auto!important;bottom:auto!important;
   width:100%!important;box-sizing:border-box!important;
   translate:none!important;transform:none!important;
-  margin-top:18px!important;
+  /* 前面的主結果區以 top:440px 定位，職業區改回正常流時必須補回同等位移，
+     否則「適合職業」會回到文件流起點，撞上「職場優勢與劣勢」標題。 */
+  margin-top:436px!important;
  }
  #personality-result-screen #personality-result-copy > .result-disclaimer{
   position:relative!important;top:auto!important;left:auto!important;
