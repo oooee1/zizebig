@@ -10726,7 +10726,7 @@ function openPersonalityResultCore(first,second){
   "爽快星":["在行動中找到解決問題的方法","毫不退縮的精神","忽略他人的想法與感受","習慣以直接有效的方式解決問題"],
   "熱情星":["對自己認定的目標充滿幹勁","凝聚團隊","忽略實際限制","樂觀的態度帶動身邊的人","表達能力"]
  };
- const terms=[...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[]),...(first===second?(sameStarHighlights[first]||[]):[])].filter(Boolean).sort((a,b)=>b.length-a.length);
+ const terms=[...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[]),...(sameStarHighlights[first]||[])].filter(Boolean).sort((a,b)=>b.length-a.length);
   terms.forEach(term=>{
    const mark='<span class="result-highlight" style="--highlight-color:'+color+'">'+term+'</span>';
    out=out.split(term).join(mark);
@@ -14986,4 +14986,30 @@ function toggleBGM(btnEl) {
 #personality-result-screen #personality-result-copy .result-job-category-title{padding-left:8px!important;padding-right:8px!important}
 /* 最終結果底端再多回收12px透明尾差，內容與上方定位不變。 */
 #personality-result-screen #personality-result-poster{clip-path:inset(0 0 22px 0)!important;margin-bottom:-22px!important}
+</style>
+
+
+<style id="result-final-followup-fixes-20261113">
+/* 手機版「屬於……的星球是：」原本 top:-18px 被結果文字容器 overflow:hidden 裁掉，移回可見範圍。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-belongs-heading{
+  top:0!important;left:8px!important;display:block!important;
+  visibility:visible!important;opacity:1!important;z-index:30!important;
+ }
+}
+/* 職業類別背景左右再延長：在原本左右8px內距上各增加4px。 */
+#personality-result-screen #personality-result-copy .result-job-category-title{
+ padding-left:12px!important;padding-right:12px!important;
+}
+/* 星辰全家福放大1.5倍，以圖片中心為縮放基準，場景容器仍負責裁切。 */
+#星辰全家福{overflow:hidden!important;}
+#星辰全家福 img{
+ transform:scale(1.5)!important;
+ transform-origin:center center!important;
+}
+/* 原本底端裁切22px後仍有透明尾端，再增加8px；同步回收版面高度。 */
+#personality-result-screen #personality-result-poster{
+ clip-path:inset(0 0 30px 0)!important;
+ margin-bottom:-30px!important;
+}
 </style>
