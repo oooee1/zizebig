@@ -13677,7 +13677,7 @@ function toggleBGM(btnEl) {
 /* 救援後回到對話時保留原場景背景，不套用失敗遮罩。 */
 #page1.mail-failure-mode::after{display:none!important;content:none!important;background:transparent!important}
 /* 以 hidden 屬性作為唯一顯示開關：只有結果建構完成後由JS解除。 */
-#personality-result-save[hidden]{display:none!important}
+#personality-result-screen #personality-result-save[hidden]{display:none!important}
 #personality-result-screen #personality-result-save{
  position:fixed!important;left:50%!important;bottom:calc(52px + env(safe-area-inset-bottom))!important;
  transform:translateX(-50%)!important;z-index:2147483005!important;
