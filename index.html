@@ -10630,11 +10630,8 @@ function openPersonalityResultCore(first,second){
  if(screen&&!screen.dataset.inputGuard){
   /* 繼續遊戲只由 document capture 的單一入口處理，避免 screen 與 document 重複推進場景。 */
   ["pointerdown","touchstart"].forEach(type=>screen.addEventListener(type,event=>{
-   if(event.target&&event.target.closest&&event.target.closest(".result-continue-game")){
-    event.preventDefault();
-   }
    event.stopPropagation();
-  },{capture:true,passive:false}));
+  },{capture:true,passive:type==="touchstart"}));
   screen.addEventListener("click",event=>{
    if(!(event.target&&event.target.closest&&event.target.closest(".result-continue-game")))event.stopPropagation();
   },{capture:true});
