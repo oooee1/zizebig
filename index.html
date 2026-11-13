@@ -10802,6 +10802,16 @@ function openPersonalityResultCore(first,second){
   (primaryFormat.traitBreaks||[]).forEach(([from,to])=>{mainTraits=mainTraits.replaceAll(from,to);});
   (primaryFormat.workBreaks||[]).forEach(([from,to])=>{mainWork=mainWork.replaceAll(from,to);});
  }
+ // 熱情星＋熱情星：依指定位置換行，第三句直接接在「前進。」後面。
+ if(first==="熱情星"&&second==="熱情星"){
+  mainTraits=mainTraits
+   .replaceAll("面對生活，","面對生活，<br>")
+   .replaceAll("實現。<br>","實現。")
+   .replaceAll("前進。<br>熱忱不只是","前進。熱忱不只是");
+  mainWork=mainWork
+   .replaceAll("活力與積極性，","活力與積極性，<br>")
+   .replaceAll("承擔太多責任。<br>","承擔太多責任。");
+ }
  html+='<section class="result-section result-primary"><h2>星格特質<span class="result-heading-mark">！</span></h2><p>'+mainTraits+'</p></section>';
  html+='<section class="result-section result-primary"><h2>職場優勢與劣勢</h2><p>'+mainWork+'</p></section>';
  const career=sourceData.careers[second]||sourceData.careers[first]||Object.values(sourceData.careers)[0];
@@ -15276,30 +15286,33 @@ window.savePersonalityResultImage=async function(){
 <style id="result-save-preview-and-share-20261113">
 /* 保存結果按鈕：電腦、手機都縮小，字再縮小；背景左右收窄、箭頭靠近文字。 */
 #personality-result-screen #personality-result-save{
-  gap:4px!important;
+  gap:1px!important;
   padding:3px 4px!important;
-  transform:translateX(-50%) scale(.8)!important;
+  transform:translateX(-50%) scale(1.6)!important;
 }
 #personality-result-screen #personality-result-save img{
-  width:1.1em!important;height:1.1em!important;
+  width:1.45em!important;height:1.45em!important;
 }
 @media (max-width:768px){
   #personality-result-screen #personality-result-save{font-size:clamp(18px,calc((100vw - 24px)/11.83),72px)!important}
 }
 @media (min-width:769px){
-  #personality-result-screen #personality-result-save{font-size:clamp(9px,calc((100vw - 24px)/23.67),36px)!important}
+  #personality-result-screen #personality-result-save{
+    font-size:clamp(9px,calc((100vw - 24px)/23.67),36px)!important;
+    bottom:calc(92px + env(safe-area-inset-bottom))!important;
+  }
 }
 #personality-result-screen #personality-result-save:active{
-  transform:translate(-50%,1px) scale(.8)!important;
+  transform:translate(-50%,1px) scale(1.6)!important;
 }
 /* 保存按鈕後方的白色底部漸層：下方約三分之二維持純白，再向上淡出。 */
 #personality-result-screen::after{
   content:""!important;
   display:block!important;
-  position:fixed!important;
+  position:absolute!important;
   left:0!important;right:0!important;bottom:0!important;
-  width:100vw!important;height:clamp(118px,18vh,168px)!important;
-  background:linear-gradient(to top,#fff 0%,#fff 66%,rgba(255,255,255,0) 100%)!important;
+  width:100%!important;height:clamp(118px,18vh,168px)!important;
+  background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.82) 28%,rgba(255,255,255,.42) 62%,rgba(255,255,255,0) 100%)!important;
   z-index:2147483004!important;
   pointer-events:none!important;
 }
@@ -15398,7 +15411,17 @@ window.savePersonalityResultImage=async function(){
    }
   });
  }
+ window.openPersonalityResultPreview=openPreview;
  window.savePersonalityResultImage=openPreview;
+ const saveButton=document.getElementById("personality-result-save");
+ if(saveButton){
+  saveButton.onclick=function(event){
+   event.preventDefault();
+   event.stopPropagation();
+   try{openPreview();}
+   catch(error){console.error("[結果預覽] 開啟失敗：",error);alert("目前無法開啟保存結果，請重新整理後再試一次。");}
+  };
+ }
 })();
 </script>
 
