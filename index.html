@@ -3150,7 +3150,7 @@ img { max-width:100%; }
   </article>
   <button type="button" id="personality-result-save" hidden onclick="event.stopPropagation();window.savePersonalityResultImage()">
     <img src="./最終結果/下載箭頭.webp" alt="" aria-hidden="true">
-    <span>保存測驗結果</span>
+    <span>保存結果</span>
   </button>
 </div>
 
@@ -15169,14 +15169,14 @@ window.savePersonalityResultImage=async function(){
  left:50%!important;top:50%!important;
  right:auto!important;bottom:auto!important;
  width:100%!important;height:100%!important;
- object-fit:cover!important;
+ object-fit:contain!important;
  transform:translate(-50%,-50%) scale(.735)!important;
  transform-origin:center center!important;
 }
 /* 原本底端裁切22px後仍有透明尾端，再增加8px；同步回收版面高度。 */
 #personality-result-screen #personality-result-poster{
- clip-path:inset(0 0 100px 0)!important;
- margin-bottom:-100px!important;
+ clip-path:inset(0 0 22px 0)!important;
+ margin-bottom:-22px!important;
 }
 </style>
 
