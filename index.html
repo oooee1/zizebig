@@ -11014,7 +11014,14 @@ function openPersonalityResultCore(first,second){
     if(screen){
      screen.scrollTop=0;
      screen.classList.remove("result-loading");
-     const saveButton=screen.querySelector("#personality-result-save");if(saveButton)saveButton.hidden=false;
+     const saveButton=screen.querySelector("#personality-result-save");
+     if(saveButton){
+      saveButton.hidden=false;
+      saveButton.style.setProperty("display","flex","important");
+      saveButton.style.setProperty("visibility","visible","important");
+      saveButton.style.setProperty("opacity","1","important");
+      saveButton.style.setProperty("pointer-events","auto","important");
+     }
      const loadingUI=screen.querySelector(".result-loading-ui");
      if(loadingUI)loadingUI.remove();
     }
@@ -13766,7 +13773,7 @@ window.savePersonalityResultImage=async function(){
 <style id="result-career-intro-nontie-size-20261113">
 /* 只有第一、第二高分不同時，放大「結合……第二高分的星球是……」整段；同分的「還是……(?!)」不放大。 */
 #personality-result-copy .result-career-intro:not(.result-career-intro-tied){
- font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 8px)!important;
+ font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 18px)!important;
 }
 #personality-result-copy .result-career-intro .result-career-intro-star{
  font-size:1em!important;
@@ -13842,6 +13849,17 @@ window.savePersonalityResultImage=async function(){
  #personality-result-screen #personality-result-copy .result-trait-heading-label .result-player-name{
   color:#F07824!important;font:inherit!important;
  }
+}
+</style>
+
+
+<style id="result-save-button-visibility-20261113">
+/* 結果載入完成後，下載按鈕必須保持可見；hidden 仍可在載入期間正常隱藏。 */
+#personality-result-screen #personality-result-save:not([hidden]){
+ display:flex!important;
+ visibility:visible!important;
+ opacity:1!important;
+ pointer-events:auto!important;
 }
 </style>
 
@@ -15149,8 +15167,8 @@ window.savePersonalityResultImage=async function(){
 }
 /* 原本底端裁切22px後仍有透明尾端，再增加8px；同步回收版面高度。 */
 #personality-result-screen #personality-result-poster{
- clip-path:inset(0 0 50px 0)!important;
- margin-bottom:-50px!important;
+ clip-path:inset(0 0 100px 0)!important;
+ margin-bottom:-100px!important;
 }
 </style>
 
