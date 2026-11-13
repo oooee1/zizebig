@@ -13826,6 +13826,28 @@ window.savePersonalityResultImage=async function(){
  }
 }
 </style>
+
+<style id="result-belongs-heading-gray-line-mask-20261113">
+/* 只遮掉「屬於…的特質」上緣那條灰色橫線；不改標籤文字、底色、尺寸或位置，也不碰下方重疊文字。 */
+#personality-result-screen #personality-result-copy .result-belongs-heading{
+ position:absolute!important;
+}
+#personality-result-screen #personality-result-copy .result-belongs-heading::before{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ left:-24px!important;
+ top:-4px!important;
+ width:calc(100vw + 48px)!important;
+ height:4px!important;
+ background:#fff!important;
+ border:0!important;
+ box-shadow:none!important;
+ pointer-events:none!important;
+ z-index:-1!important;
+}
+</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
