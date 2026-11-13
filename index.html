@@ -13691,14 +13691,16 @@ function toggleBGM(btnEl) {
  min-height:0!important;padding:4px 8px!important;
  border:0!important;border-radius:0!important;outline:0!important;
  background:#F6B800!important;color:#FFFFFF!important;box-shadow:none!important;
- font-family:'Dela Gothic One',sans-serif!important;font-size:30px!important;font-weight:400!important;
+ font-family:'Dela Gothic One',sans-serif!important;
+ /* 以原本30px為基準放大4倍；窄螢幕依可用寬度自動縮小，避免按鈕超出畫面。 */
+ font-size:clamp(30px,calc((100vw - 24px)/7.1),120px)!important;font-weight:400!important;
  line-height:1.2!important;cursor:pointer!important;touch-action:manipulation!important;
 }
 #personality-result-screen #personality-result-save img{
- display:block!important;width:38px!important;height:38px!important;object-fit:contain!important;flex:none!important;
+ display:block!important;width:1.27em!important;height:1.27em!important;object-fit:contain!important;flex:none!important;
 }
 #personality-result-screen #personality-result-save span{
- display:block!important;font-family:'Dela Gothic One',sans-serif!important;font-size:30px!important;
+ display:block!important;font-family:'Dela Gothic One',sans-serif!important;font-size:1em!important;
  font-weight:400!important;color:#FFFFFF!important;white-space:nowrap!important;
 }
 #personality-result-screen #personality-result-save:active{transform:translate(-50%,1px)!important;box-shadow:none!important}
