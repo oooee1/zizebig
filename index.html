@@ -13850,6 +13850,53 @@ window.savePersonalityResultImage=async function(){
 }
 </style>
 
+
+<style id="mobile-career-centering-and-intro-size-fix-20261113">
+/* 手機版：職業區整體置中，避免上次恢復文件流後標題、介紹與分類各自偏移。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-secondary{
+  text-align:center!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary .result-career-heading{
+  width:100%!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:center!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary .result-career-intro{
+  display:block!important;
+  box-sizing:border-box!important;
+  width:calc(100% - 36px)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:center!important;
+  translate:none!important;
+  /* 以原本手機版 16–20px 的基準縮小 7px。 */
+  font-size:calc(clamp(16px,calc(4.2cqw + 3px),20px) - 7px)!important;
+  line-height:1.45!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary .result-job-category{
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:center!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary .result-trait-heading{
+  margin-left:auto!important;
+  margin-right:auto!important;
+  left:auto!important;
+  translate:none!important;
+  text-align:center!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary .result-trait-heading + p,
+ #personality-result-screen #personality-result-copy > .result-secondary .result-trait-heading + p + p{
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:center!important;
+ }
+}
+</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
