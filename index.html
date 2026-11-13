@@ -10595,6 +10595,8 @@ function updateResultLoadingProgress(progress){
  if(bar)bar.style.width=value+"%";
 }
 function openPersonalityResultCore(first,second){
+ window.__personalityResultFirst=first;
+ window.__personalityResultSecond=second||first;
  const saveButton=document.getElementById("personality-result-save");if(saveButton)saveButton.hidden=true;
  const d=RESULT_STARS[first]||RESULT_STARS["好奇星"],sd=RESULT_STARS[second]||d,code=d.code,code2=sd.code;
  const layers=document.getElementById("personality-result-layers"),copy=document.getElementById("personality-result-copy"),screen=document.getElementById("personality-result-screen");
@@ -15267,5 +15269,208 @@ window.savePersonalityResultImage=async function(){
  #page1.mail-game-mode #mail-game-feedback::before{
   left:-17px!important;
  }
+}
+</style>
+
+
+<style id="result-save-preview-and-share-20261113">
+/* 保存結果按鈕：電腦、手機都縮小，字再縮小；背景左右收窄、箭頭靠近文字。 */
+#personality-result-screen #personality-result-save{
+  gap:4px!important;
+  padding:3px 4px!important;
+  transform:translateX(-50%) scale(.8)!important;
+}
+#personality-result-screen #personality-result-save img{
+  width:1.1em!important;height:1.1em!important;
+}
+@media (max-width:768px){
+  #personality-result-screen #personality-result-save{font-size:clamp(18px,calc((100vw - 24px)/11.83),72px)!important}
+}
+@media (min-width:769px){
+  #personality-result-screen #personality-result-save{font-size:clamp(9px,calc((100vw - 24px)/23.67),36px)!important}
+}
+#personality-result-screen #personality-result-save:active{
+  transform:translate(-50%,1px) scale(.8)!important;
+}
+/* 保存按鈕後方的白色底部漸層：下方約三分之二維持純白，再向上淡出。 */
+#personality-result-screen::after{
+  content:""!important;
+  display:block!important;
+  position:fixed!important;
+  left:0!important;right:0!important;bottom:0!important;
+  width:100vw!important;height:clamp(118px,18vh,168px)!important;
+  background:linear-gradient(to top,#fff 0%,#fff 66%,rgba(255,255,255,0) 100%)!important;
+  z-index:2147483004!important;
+  pointer-events:none!important;
+}
+/* 手機版：不同第一、第二高分的職業介紹只比原字級稍大，不再額外暴增18px。 */
+@media (max-width:768px){
+  #personality-result-copy .result-career-intro:not(.result-career-intro-tied){
+    font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 5px)!important;
+  }
+  #personality-result-copy .result-career-intro .result-career-intro-star{
+    font-size:1em!important;
+  }
+}
+/* 星辰全家福由1.5倍微調為1.3倍。 */
+#星辰全家福 img{
+  transform:translate(-50%,-50%) scale(1.3)!important;
+}
+</style>
+
+<script id="result-save-preview-and-share-20261113">
+(function(){
+ const resultFiles={
+  "好奇星":{"好奇星":"好 好.png","同情星":"好 同.png","爽快星":"好 爽.png","熱情星":"好 熱.png"},
+  "同情星":{"好奇星":"同好.png","同情星":"同同.png","爽快星":"同爽.png","熱情星":"同熱.png"},
+  "爽快星":{"好奇星":"T好.png","同情星":"T同.png","爽快星":"T T.png","熱情星":"T熱.png"},
+  "熱情星":{"好奇星":"熱好.png","同情星":"熱同.png","爽快星":"熱爽.png","熱情星":"熱熱熱熱熱.png"}
+ };
+ let activeFile="";
+ function fileURL(){return "./最終結果/"+encodeURIComponent(activeFile);}
+ function downloadResultPreview(){
+  if(!activeFile)return;
+  const link=document.createElement("a");
+  link.href=fileURL();link.download=activeFile;
+  document.body.appendChild(link);link.click();link.remove();
+ }
+ function closePreview(){
+  const overlay=document.getElementById("result-preview-share-overlay");
+  if(overlay)overlay.remove();
+ }
+ function openPreview(){
+  const first=window.__personalityResultFirst||"好奇星";
+  const second=window.__personalityResultSecond||first;
+  activeFile=(resultFiles[first]&&resultFiles[first][second])||"好 好.png";
+  closePreview();
+  const overlay=document.createElement("div");
+  overlay.id="result-preview-share-overlay";
+  overlay.setAttribute("role","dialog");
+  overlay.setAttribute("aria-modal","true");
+  overlay.setAttribute("aria-label","保存與分享測驗結果");
+  overlay.innerHTML=
+   '<div class="result-preview-modal">'+
+    '<button type="button" class="result-preview-close" aria-label="關閉">×</button>'+
+    '<div class="result-preview-download-zone" role="button" tabindex="0" aria-label="點擊保存圖片">'+
+     '<img class="result-preview-image" src="'+fileURL()+'" alt="測驗結果圖片">'+
+     '<div class="result-preview-download-label">點擊保存圖片</div>'+
+    '</div>'+
+    '<div class="result-preview-share-row">'+
+     '<button type="button" class="result-preview-share result-preview-line">Line</button>'+
+     '<button type="button" class="result-preview-share result-preview-instagram">IG</button>'+
+     '<button type="button" class="result-preview-share result-preview-facebook">FB</button>'+
+    '</div>'+
+    '<div class="result-preview-share-title">分享到…</div>'+
+   '</div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector(".result-preview-close").addEventListener("click",closePreview);
+  const downloadZone=overlay.querySelector(".result-preview-download-zone");
+  downloadZone.addEventListener("click",downloadResultPreview);
+  downloadZone.addEventListener("keydown",event=>{
+   if(event.key==="Enter"||event.key===" "){event.preventDefault();downloadResultPreview();}
+  });
+  overlay.querySelector(".result-preview-line").addEventListener("click",()=>{
+   const url="https://social-plugins.line.me/lineit/share?url="+encodeURIComponent(location.href);
+   window.open(url,"_blank","noopener,noreferrer");
+  });
+  overlay.querySelector(".result-preview-facebook").addEventListener("click",()=>{
+   const url="https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(location.href);
+   window.open(url,"_blank","noopener,noreferrer");
+  });
+  overlay.querySelector(".result-preview-instagram").addEventListener("click",async()=>{
+   try{
+    const response=await fetch(fileURL());
+    if(!response.ok)throw new Error("無法讀取結果圖片");
+    const blob=await response.blob();
+    const file=new File([blob],activeFile,{type:"image/png"});
+    if(navigator.canShare&&navigator.share&&navigator.canShare({files:[file]})){
+     await navigator.share({files:[file],title:"星辰之路測驗結果",text:"我的星辰之路測驗結果"});
+    }else{
+     downloadResultPreview();
+     alert("圖片已下載。請在 Instagram 建立貼文或限時動態，選取這張圖片分享。");
+     window.open("https://www.instagram.com/","_blank","noopener,noreferrer");
+    }
+   }catch(error){
+    if(error&&error.name==="AbortError")return;
+    console.error("[結果分享] Instagram 分享失敗：",error);
+    downloadResultPreview();
+    alert("圖片已下載，請在 Instagram 選取圖片分享。");
+   }
+  });
+ }
+ window.savePersonalityResultImage=openPreview;
+})();
+</script>
+
+<style id="result-preview-share-overlay-style-20261113">
+#result-preview-share-overlay{
+ position:fixed!important;inset:0!important;
+ z-index:2147483600!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ padding:22px 16px max(22px,env(safe-area-inset-bottom))!important;
+ background:rgba(0,0,0,.78)!important;
+ box-sizing:border-box!important;
+}
+#result-preview-share-overlay .result-preview-modal{
+ position:relative!important;
+ width:min(100%,520px)!important;
+ max-height:100%!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:clamp(10px,2.2vh,18px)!important;
+ overflow:visible!important;
+}
+#result-preview-share-overlay .result-preview-close{
+ position:absolute!important;right:-7px!important;top:-12px!important;
+ z-index:3!important;width:42px!important;height:42px!important;
+ border:0!important;background:transparent!important;
+ color:#fff!important;font-family:Arial,sans-serif!important;
+ font-size:43px!important;font-weight:700!important;line-height:1!important;
+ -webkit-text-stroke:1.5px #111!important;
+ text-shadow:1px 1px 0 #111,-1px -1px 0 #111,1px -1px 0 #111,-1px 1px 0 #111!important;
+ cursor:pointer!important;
+}
+#result-preview-share-overlay .result-preview-download-zone{
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;gap:9px!important;
+ width:100%!important;max-height:72vh!important;
+ cursor:pointer!important;touch-action:manipulation!important;
+}
+#result-preview-share-overlay .result-preview-image{
+ display:block!important;width:auto!important;height:auto!important;
+ max-width:min(82vw,430px)!important;max-height:58vh!important;
+ object-fit:contain!important;box-shadow:0 5px 24px rgba(0,0,0,.28)!important;
+ -webkit-user-drag:none!important;
+}
+#result-preview-share-overlay .result-preview-download-label{
+ color:#fff!important;font-family:'CPTrans',sans-serif!important;
+ font-size:clamp(17px,4.8vw,22px)!important;font-weight:400!important;
+ line-height:1.35!important;text-align:center!important;
+}
+#result-preview-share-overlay .result-preview-share-row{
+ width:100%!important;display:flex!important;align-items:center!important;
+ justify-content:center!important;gap:clamp(20px,7vw,38px)!important;
+ margin-top:2px!important;
+}
+#result-preview-share-overlay .result-preview-share{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:clamp(58px,16vw,76px)!important;height:clamp(58px,16vw,76px)!important;
+ padding:0!important;border:0!important;border-radius:43% 57% 51% 49% / 54% 45% 55% 46%!important;
+ background:#fff!important;color:#111!important;
+ font-family:'CPTrans',sans-serif!important;font-size:clamp(15px,4vw,19px)!important;
+ font-weight:400!important;line-height:1!important;cursor:pointer!important;
+ box-shadow:none!important;
+}
+#result-preview-share-overlay .result-preview-line{transform:rotate(-5deg)!important}
+#result-preview-share-overlay .result-preview-instagram{transform:rotate(4deg)!important}
+#result-preview-share-overlay .result-preview-facebook{transform:rotate(-2deg)!important}
+#result-preview-share-overlay .result-preview-share-title{
+ color:#fff!important;font-family:'CPTrans',sans-serif!important;
+ font-size:clamp(17px,4.8vw,22px)!important;line-height:1.3!important;
+ text-align:center!important;margin-top:0!important;
+}
+@media (min-width:769px){
+ #result-preview-share-overlay .result-preview-image{max-height:55vh!important;max-width:min(52vw,430px)!important}
+ #result-preview-share-overlay .result-preview-close{right:calc(50% - min(26vw,215px) - 17px)!important;top:-12px!important}
 }
 </style>
