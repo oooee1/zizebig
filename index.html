@@ -15167,35 +15167,31 @@ window.savePersonalityResultImage=async function(){
 
 
 <style id="user-result-layout-fixes-20261113">
-/* 電腦版所有熱情星立繪統一沿用出場火焰的定位；保留各表情原有縮放比例。 */
-@media (min-width:769px){
- #page1 .角色圖.全熱情星{
-  left:-12%!important;
-  bottom:190px!important;
-  width:90%!important;
-  transform-origin:top left!important;
- }
- #page1 #熱情星,
- #page1 #熱情星正常,
- #page1 #熱情星出場火焰,
- #page1 #熱情星閃亮亮,
- #page1 #熱情星戴王冠思考{
-  transform:translate(5px,12px)!important;
- }
- #page1 #熱情星思考,
- #page1 #熱情星噴,
- #page1 #熱情星崩潰,
- #page1 #熱情星尷尬{
-  transform:translate(5px,12px) scale(.78)!important;
- }
- #page1 #熱情星戴上王冠{
-  transform:translate(5px,12px) scale(.82)!important;
- }
-}
 /* 手機：適合職業區以上的內容再整體上移3px；不動適合職業區。 */
 @media (max-width:768px){
  #personality-result-screen #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
   translate:0 -70px!important;
+ }
+}
+</style>
+
+
+<style id="mail-tutorial-desktop-adjustments-20261113-v2">
+/* 電腦版爽快星教學立繪：在目前基礎上再下移4px、放大至原設定的1.13倍。 */
+@media (min-width:769px){
+ #page1.mail-tutorial-mode #爽快星害怕{
+  translate:0 18px!important;
+  scale:1.13!important;
+  transform-origin:bottom center!important;
+ }
+ /* 說明對話框上移7px，圓角再加大。 */
+ #page1.mail-tutorial-mode #對話框{
+  top:calc(22% + 21px)!important;
+  border-radius:46px!important;
+ }
+ /* 正式遊戲提示框左側箭頭向右靠近提示框4px。 */
+ #page1.mail-game-mode #mail-game-feedback::before{
+  left:-17px!important;
  }
 }
 </style>
