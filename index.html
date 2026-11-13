@@ -10873,12 +10873,12 @@ function openPersonalityResultCore(first,second){
   // 手機版中文星球大標與英文標題實際定位上移14px：直接改 inline !important 的 top，避免被後續 CSS 覆蓋。
   copy.querySelectorAll(":scope > .result-name").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","385px","important");
+   el.style.setProperty("top",first==="好奇星"?"385px":"381px","important");
    el.style.setProperty("translate","none","important");
   });
   copy.querySelectorAll(":scope > .result-english").forEach(el=>{
    el.style.setProperty("position","relative","important");
-   el.style.setProperty("top","381px","important");
+   el.style.setProperty("top",first==="好奇星"?"381px":"377px","important");
    el.style.setProperty("translate","none","important");
   });
  }
