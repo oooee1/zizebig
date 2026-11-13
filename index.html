@@ -10787,7 +10787,7 @@ function openPersonalityResultCore(first,second){
    workBreaks:[]
   },
   "爽快星":{
-   traitBreaks:[["親自嘗試，","親自嘗試，<br><br>"],["現實。","現實。<br>"]],
+   traitBreaks:[["親自嘗試，","親自嘗試，<br>"],["現實。","現實。<br>"]],
    workBreaks:[["困難，","困難，<br>"],["成果！","成果！<br>"]]
   },
   "熱情星":{
@@ -13762,6 +13762,17 @@ window.savePersonalityResultImage=async function(){
  }
 };
 </script>
+
+<style id="result-career-intro-nontie-size-20261113">
+/* 只有第一、第二高分不同時，放大「結合……第二高分的星球是……」整段；同分的「還是……(?!)」不放大。 */
+#personality-result-copy .result-career-intro:not(.result-career-intro-tied){
+ font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 8px)!important;
+}
+#personality-result-copy .result-career-intro .result-career-intro-star{
+ font-size:1em!important;
+}
+</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
@@ -15133,13 +15144,13 @@ window.savePersonalityResultImage=async function(){
  right:auto!important;bottom:auto!important;
  width:100%!important;height:100%!important;
  object-fit:cover!important;
- transform:translate(-50%,-50%) scale(1.5)!important;
+ transform:translate(-50%,-50%) scale(1.05)!important;
  transform-origin:center center!important;
 }
 /* 原本底端裁切22px後仍有透明尾端，再增加8px；同步回收版面高度。 */
 #personality-result-screen #personality-result-poster{
- clip-path:inset(0 0 30px 0)!important;
- margin-bottom:-30px!important;
+ clip-path:inset(0 0 50px 0)!important;
+ margin-bottom:-50px!important;
 }
 </style>
 
