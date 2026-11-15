@@ -8588,10 +8588,9 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     }
     let shownPaths = [];
     try { shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]"); if (!Array.isArray(shownPaths)) shownPaths = []; } catch (_) { shownPaths = []; }
-    const isSplitBackgroundAndRole = comicPaths.length >= 2 &&
-        comicPaths.some(path => /背景\.(webp|png|jpe?g)$/i.test(path)) &&
-        comicPaths.some(path => /角色\.(webp|png|jpe?g)$/i.test(path));
-    const backgroundMaskPath = isSplitBackgroundAndRole ? comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path)) : "";
+    const backgroundMaskPath = comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path)) || "";
+    const rolePath = options.rolePath || comicPaths.find(path => /角色\.(webp|png|jpe?g)$/i.test(path)) || "";
+    const isSplitBackgroundAndRole = Boolean(backgroundMaskPath && rolePath && comicPaths.includes(rolePath));
     comicBox.style.display = "block";
     comicBox.classList.remove("comic-slide-up");
     if (enteringComicMode && options.animateEntry !== false) { void comicBox.offsetWidth; comicBox.classList.add("comic-slide-up"); }
@@ -8614,7 +8613,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
                     if (!bg) return;
                     const bgRect = bg.getBoundingClientRect(), boxRect = comicBox.getBoundingClientRect();
                     clip.style.cssText = ["position:absolute","display:block","left:"+(bgRect.left-boxRect.left)+"px","top:"+(bgRect.top-boxRect.top)+"px","width:"+bgRect.width+"px","height:"+bgRect.height+"px","overflow:hidden","clip-path:inset(0)","-webkit-clip-path:inset(0)","contain:strict","isolation:isolate","pointer-events:none"].join(";");
-                    layer.style.setProperty("left","0","important"); layer.style.setProperty("top","60px","important");
+                    layer.style.setProperty("left","0","important"); layer.style.setProperty("top","0","important");
                     layer.style.setProperty("transform","none","important"); layer.style.setProperty("width",bgRect.width+"px","important");
                     layer.style.setProperty("height",bgRect.height+"px","important"); layer.style.setProperty("max-width","none","important");
                     layer.style.setProperty("max-height","none","important"); layer.style.setProperty("object-fit","contain","important");
@@ -11956,15 +11955,16 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
+                // 每一格開場漫畫都是獨立單位：背景與同格原圖一起載入、一起顯示、一起切換。
                 const openingComicFrames = [
-                    { group: 1, paths: ["./pct/漫畫背景.webp", "./pct/11.webp"] },
-                    { group: 1, paths: ["./pct/12.webp"] },
-                    { group: 1, paths: ["./pct/13.webp"] },
-                    { group: 1, paths: ["./pct/14.webp"] },
-                    { group: 2, paths: ["./1漫畫/星辰房間.webp", "./1漫畫/1.webp"] },
-                    { group: 2, paths: ["./1漫畫/2.webp"] },
-                    { group: 2, paths: ["./1漫畫/3.webp"] },
-                    { group: 2, paths: ["./1漫畫/4.webp"] }
+                    { group: "opening-11", paths: ["./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-12", paths: ["./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-13", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"], rolePath: "./pct/13.webp" },
+                    { group: "opening-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"], rolePath: "./pct/14.webp" },
+                    { group: "opening-1", paths: ["./pct/漫畫背景.webp", "./pct/1.webp"], rolePath: "./pct/1.webp" },
+                    { group: "opening-2", paths: ["./pct/漫畫背景.webp", "./pct/2.webp"], rolePath: "./pct/2.webp" },
+                    { group: "opening-3", paths: ["./pct/漫畫背景.webp", "./pct/3.webp"], rolePath: "./pct/3.webp" },
+                    { group: "opening-4", paths: ["./pct/漫畫背景.webp", "./pct/4.webp"], rolePath: "./pct/4.webp" }
                 ];
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
@@ -12045,7 +12045,7 @@ function openPersonalityResult(first,second){
                     const frame = openingComicFrames[index];
                     const groupChanged = openingComicGroup !== frame.group;
                     if (groupChanged) { clearComicLayers(comicBox, comicImg); openingComicGroup = frame.group; }
-                    renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:groupChanged });
+                    renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:true, rolePath:frame.rolePath });
                     window.__zizebigStartupStage = "播放開場漫畫 " + (index + 1) + "/" + openingComicFrames.length;
                 }
 
