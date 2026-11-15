@@ -10375,7 +10375,7 @@ function positionResultTextElements(layers,copy){
     const isMobileResultLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機／平板職業區大幅上移；電腦版維持原位。
-    const careerShiftY=isMobileResultLayout?-1280:0;
+    const careerShiftY=isMobileResultLayout?-1440:0;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
     // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
@@ -10437,6 +10437,8 @@ function compactResultPosterToVisibleBottom(layers,copy){
  });
  if(copy){
   Array.from(copy.children).forEach(el=>{
+   // 職業區獨立移動，不參與海報底部高度計算，避免連帶改變繼續遊戲的位置。
+   if(el.classList.contains("result-secondary"))return;
    const r=el.getBoundingClientRect();
    if(r.width>0&&r.height>0)visibleBottom=Math.max(visibleBottom,r.bottom-rect.top);
   });
