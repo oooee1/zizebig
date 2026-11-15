@@ -8600,10 +8600,10 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         const extraClass = (path.includes("貝殼信") ? " comic-shell-letter" : "") + (openingBg ? " intro-comic-background" : "");
         if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
             comicImg.src = path; comicImg.alt = "漫畫圖";
-            comicImg.className = "comic-layer" + (options.opening ? "" : " anim-fade-in-up") + extraClass;
+            comicImg.className = "comic-layer anim-fade-in-up" + extraClass;
         } else {
             const layer = document.createElement("img"); layer.src = path; layer.alt = "";
-            layer.className = "comic-layer comic-layer-extra" + (options.opening ? "" : " anim-fade-in-up") + extraClass;
+            layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + extraClass;
             if (isSplitBackgroundAndRole && path === rolePath) {
                 layer.classList.add("comic-layer-mask-role");
                 const clip = document.createElement("div"); clip.className = "comic-role-clip";
@@ -11964,16 +11964,16 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
-                // 每一格開場漫畫都是獨立單位：背景與同格原圖一起載入、一起顯示、一起切換。
+                // 所有開場分鏡屬於同一段連續漫畫：每次只追加新的一組背景＋角色，舊分鏡保留。
                 const openingComicFrames = [
-                    { group: "opening-11", paths: ["./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-12", paths: ["./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
-                    { group: "opening-13", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"], rolePath: "./pct/13.webp" },
-                    { group: "opening-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"], rolePath: "./pct/14.webp" },
-                    { group: "opening-1", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"], rolePath: "./1漫畫/1.webp" },
-                    { group: "opening-2", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"], rolePath: "./1漫畫/2.webp" },
-                    { group: "opening-3", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"], rolePath: "./1漫畫/3.webp" },
-                    { group: "opening-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"], rolePath: "./1漫畫/4.webp" }
+                    { group: "opening-sequence", paths: ["./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-sequence", paths: ["./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"], rolePath: "./pct/13.webp" },
+                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"], rolePath: "./pct/14.webp" },
+                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"], rolePath: "./1漫畫/1.webp" },
+                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"], rolePath: "./1漫畫/2.webp" },
+                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"], rolePath: "./1漫畫/3.webp" },
+                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"], rolePath: "./1漫畫/4.webp" }
                 ];
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
