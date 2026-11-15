@@ -12109,11 +12109,6 @@ function openPersonalityResult(first,second){
                 const startButton = document.getElementById("intro-start-button");
                 if (startButton) {
                     startButton.onclick = beginOpeningComics;
-                    startButton.addEventListener("pointerup", function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        beginOpeningComics(event);
-                    }, { passive: false });
                 }
                 const comicScreen = document.getElementById("intro-comic-box");
                 if (comicScreen) comicScreen.addEventListener("click", advanceOpeningComic);
