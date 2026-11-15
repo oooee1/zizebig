@@ -10373,7 +10373,7 @@ function positionResultTextElements(layers,copy){
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機保留目前已接近正確的位置；電腦恢復透明尾端裁切前的舊定位基準。
     if(isMobileResultLayout){
-     const careerShiftX=-5;
+     const careerShiftX=-4.5;
      const careerShiftY=-1503;
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
@@ -10416,7 +10416,7 @@ function positionResultTextElements(layers,copy){
     note.style.width="100%";
     const isMobileNoteLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
-    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?20:0)/responsiveScale)+"px";
+    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?40:0)/responsiveScale)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
