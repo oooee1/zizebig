@@ -10371,14 +10371,19 @@ function positionResultTextElements(layers,copy){
     // 先判斷裝置版型，再計算職業區位移；不可在宣告前讀取 const，否則會觸發暫時性死區錯誤。
     const isMobileResultLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
-    // 電腦與手機的「適合職業」區塊使用各自既有位移；繼續遊戲按鈕仍由下方獨立定位。
-    const careerShiftX=isMobileResultLayout?-5:-1;
-    const careerShiftY=isMobileResultLayout?-1503:0;
-    const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
-    const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
-    // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
-    career.style.setProperty("left",(careerBaseLeft+careerShiftX)+"px","important");
-    career.style.setProperty("top",(careerBaseTop+careerShiftY)+"px","important");
+    // 手機保留目前已接近正確的位置；電腦恢復透明尾端裁切前的舊定位基準。
+    if(isMobileResultLayout){
+     const careerShiftX=-5;
+     const careerShiftY=-1503;
+     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
+     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
+     career.style.setProperty("left",(careerBaseLeft+careerShiftX)+"px","important");
+     career.style.setProperty("top",(careerBaseTop+careerShiftY)+"px","important");
+    }else{
+     // 舊版電腦定位：直接對齊文字紙張的實際可見範圍，不使用後來新增的置中與 +40px 偏移。
+     career.style.setProperty("left",((imageRect.left-copyRect.left+textBounds.x*scaleX)/responsiveScale)+"px","important");
+     career.style.setProperty("top",((imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale)+"px","important");
+    }
     career.style.setProperty("translate","none","important");
    }
   }
