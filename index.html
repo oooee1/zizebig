@@ -10504,9 +10504,9 @@ function layoutResult(){
  if(decoration&&decoration.dataset.resultStar)alignStarDecorationToHolePaper(decoration,layers,decoration.dataset.resultStar);
  const role=layers.querySelector('img[data-result-role="true"]');
  if(role)alignResultRoleToTextArtwork(role,layers);
- positionResultTextElements(layers,copy);
+ // 先完成海報透明邊界壓縮，再依最終圖片座標定位文字；不可在壓縮前先定位一次，
+ // 否則第二次計算會沿用已改變的圖片座標，造成職業區在不同裝置上大幅跳位。
  compactResultPosterToVisibleBottom(layers,copy);
- // 圖層縮放與重新定位後，再依最終圖片座標計算職業區；否則第一次計算會被後續海報壓縮抵銷。
  positionResultTextElements(layers,copy);
  applyResponsiveResultCopyScale(layers,copy);
  // 收掉海報最底端的透明尾差：縮短海報本身的版面高度，而不只用 clip-path 遮住。
