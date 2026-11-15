@@ -16356,3 +16356,35 @@ body.opening-comic-controls #skip-btn{
   translate:0 200px!important;
 }
 </style>
+
+<style id="opening-comic-scale-and-layer-order-fix-20261116">
+/* 全部開場漫畫圖層一起縮小，統一置中、統一比例，不再讓背景單獨鋪滿螢幕。 */
+#comic-box.opening-comic-active .comic-layer,
+#comic-box.opening-comic-active .intro-comic-background,
+#comic-box.opening-comic-active .intro-comic-role{
+  position:absolute!important;
+  top:50%!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:92vw!important;
+  height:92dvh!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:92vw!important;
+  max-height:92dvh!important;
+  margin:0!important;
+  transform:translate(-50%,-50%)!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+}
+/* 背景永遠在最底層；其他漫畫圖與角色都必須疊在背景上方。 */
+#comic-box.opening-comic-active .intro-comic-background{z-index:0!important}
+#comic-box.opening-comic-active .comic-layer:not(.intro-comic-background){z-index:2!important}
+#comic-box.opening-comic-active .intro-comic-role{
+  z-index:3!important;
+  clip-path:inset(0)!important;
+  -webkit-clip-path:inset(0)!important;
+  pointer-events:none!important;
+}
+</style>
