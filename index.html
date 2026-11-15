@@ -10367,9 +10367,16 @@ function positionResultTextElements(layers,copy){
     const scaleY=imageRect.height/textPaper.naturalHeight;
     career.style.position="absolute";
     const careerWidth=textBounds.width*scaleX/responsiveScale;
-    career.style.setProperty("left",((copy.clientWidth-careerWidth)/2)+"px","important");
     career.style.setProperty("width",careerWidth+"px","important");
-    career.style.top=((imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40)+"px";
+    const mobileCareerShift=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;
+    const careerShiftX=mobileCareerShift?-3:1;
+    const careerShiftY=mobileCareerShift?10:-10;
+    const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
+    const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
+    // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
+    career.style.setProperty("left",(careerBaseLeft+careerShiftX)+"px","important");
+    career.style.setProperty("top",(careerBaseTop+careerShiftY)+"px","important");
+    career.style.setProperty("translate","none","important");
    }
   }
   if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
@@ -15850,16 +15857,7 @@ window.addEventListener("click",function(event){
 </style>
 
 
-<style id="result-final-gradient-and-desktop-career-position-20261115">
-/* 漸層只保留保存結果按鈕的 ::before；關閉海報底部的第二層，避免跟著整個測驗跑到最下方。 */
-#personality-result-screen #personality-result-poster::after{
- content:none!important;
- display:none!important;
-}
-/* 電腦版：只移動「適合職業」區塊，從目前位置上移10px、右移1px；不帶動繼續遊戲。 */
-@media (min-width:769px){
- #personality-result-screen #personality-result-copy > .result-secondary{
-  translate:1px -10px!important;
- }
-}
+<style id="result-final-gradient-and-career-position-20261115">
+/* 漸層只保留保存結果按鈕後方的漸層，關閉海報底部重複的第二層。 */
+#personality-result-screen #personality-result-poster::after{content:none!important;display:none!important}
 </style>
