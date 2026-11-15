@@ -10380,9 +10380,11 @@ function positionResultTextElements(layers,copy){
      career.style.setProperty("left",(careerBaseLeft+careerShiftX)+"px","important");
      career.style.setProperty("top",(careerBaseTop+careerShiftY)+"px","important");
     }else{
-     // 舊版電腦定位：直接對齊文字紙張的實際可見範圍，不使用後來新增的置中與 +40px 偏移。
-     career.style.setProperty("left",((imageRect.left-copyRect.left+textBounds.x*scaleX)/responsiveScale)+"px","important");
-     career.style.setProperty("top",((imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale)+"px","important");
+     // 電腦版恢復透明尾端裁切前的正常定位：沿用原本置中基準與 +40px，再保留原先 -8px 微調。
+     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
+     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
+     career.style.setProperty("left",(careerBaseLeft-1)+"px","important");
+     career.style.setProperty("top",(careerBaseTop-8)+"px","important");
     }
     career.style.setProperty("translate","none","important");
    }
