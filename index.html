@@ -14280,70 +14280,7 @@ window.savePersonalityResultImage=async function(){
  z-index:2!important;
 }
 </style>
-<style id="opening-comic-controls-and-result-responsive-fix-20261116">
-/* 開場漫畫放大，沿用同一套漫畫圖層，但提高可視面積。 */
-#comic-box.opening-comic-active .comic-layer{
- width:92vw!important;height:92dvh!important;
- max-width:92vw!important;max-height:92dvh!important;
- object-fit:contain!important;
-}
-#comic-box.opening-comic-active .intro-comic-background{
- position:absolute!important;inset:0!important;
- width:100vw!important;height:100dvh!important;
- max-width:none!important;max-height:none!important;
- object-fit:cover!important;transform:none!important;
-}
-/* 漫畫期間選單、音量與跳過鍵固定於視窗頂層，不受 430px 舞台裁切。 */
-body.opening-comic-controls .menu-container{
- position:fixed!important;top:max(12px,env(safe-area-inset-top))!important;
- left:max(12px,env(safe-area-inset-left))!important;right:auto!important;
- z-index:2147483647!important;visibility:visible!important;opacity:1!important;
-}
-body.opening-comic-controls #menu-items-wrapper{
- display:flex!important;visibility:visible!important;opacity:1!important;
- pointer-events:auto!important;max-width:180px!important;
-}
-body.opening-comic-controls #skip-btn{
- position:fixed!important;top:max(12px,env(safe-area-inset-top))!important;
- right:max(12px,env(safe-area-inset-right))!important;left:auto!important;
- z-index:2147483647!important;visibility:visible!important;opacity:1!important;
- pointer-events:auto!important;
-}
-/* 漸層直接以結果頁視窗寬度定位，左右邊緣精準貼齊螢幕，並提高白色濃度。 */
-#personality-result-screen::after{
- content:""!important;display:block!important;position:fixed!important;
- left:0!important;right:0!important;bottom:0!important;
- width:100vw!important;height:46vh!important;max-height:520px!important;
- margin:0!important;transform:none!important;
- pointer-events:none!important;z-index:13!important;
- background:linear-gradient(to bottom,
-  rgba(255,255,255,0) 0%,
-  rgba(255,255,255,.48) 35%,
-  rgba(255,255,255,.88) 68%,
-  #fff 100%)!important;
-}
-#personality-result-screen #personality-result-save::before{content:none!important;display:none!important}
-#personality-result-screen #personality-result-save{z-index:2147483005!important}
-/* iPad／窄平板也沿用手機結果排版，避免 769px 斷點誤套用電腦版定位。 */
-@media (min-width:901px) and (max-width:900px), (pointer:coarse) and (max-width:1200px){
- #personality-result-screen #personality-result-copy{
-  font-family:'CPTrans',sans-serif!important;
- }
- #personality-result-screen #personality-result-copy > .result-name,
- #personality-result-screen #personality-result-copy > .result-english{
-  top:428px!important;
- }
- #personality-result-screen #personality-result-copy > .result-belongs-heading{
-  position:absolute!important;top:8px!important;left:8px!important;
- }
- #personality-result-screen #personality-result-copy .result-career-heading{
-  translate:0 0!important;
- }
- #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-name):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
-  top:auto!important;
- }
-}
-</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
@@ -14468,6 +14405,70 @@ body.opening-comic-controls #skip-btn{
     scale:1.695!important;
     transform-origin:bottom center!important;
   }
+}
+</style>
+<style id="opening-comic-controls-and-result-responsive-fix-20261116">
+/* 開場漫畫放大，沿用同一套漫畫圖層，但提高可視面積。 */
+#comic-box.opening-comic-active .comic-layer{
+ width:92vw!important;height:92dvh!important;
+ max-width:92vw!important;max-height:92dvh!important;
+ object-fit:contain!important;
+}
+#comic-box.opening-comic-active .intro-comic-background{
+ position:absolute!important;inset:0!important;
+ width:100vw!important;height:100dvh!important;
+ max-width:none!important;max-height:none!important;
+ object-fit:cover!important;transform:none!important;
+}
+/* 漫畫期間選單、音量與跳過鍵固定於視窗頂層，不受 430px 舞台裁切。 */
+body.opening-comic-controls .menu-container{
+ position:fixed!important;top:max(12px,env(safe-area-inset-top))!important;
+ left:max(12px,env(safe-area-inset-left))!important;right:auto!important;
+ z-index:2147483647!important;visibility:visible!important;opacity:1!important;
+}
+body.opening-comic-controls #menu-items-wrapper{
+ display:flex!important;visibility:visible!important;opacity:1!important;
+ pointer-events:auto!important;max-width:180px!important;
+}
+body.opening-comic-controls #skip-btn{
+ position:fixed!important;top:max(12px,env(safe-area-inset-top))!important;
+ right:max(12px,env(safe-area-inset-right))!important;left:auto!important;
+ z-index:2147483647!important;visibility:visible!important;opacity:1!important;
+ pointer-events:auto!important;
+}
+/* 漸層直接以結果頁視窗寬度定位，左右邊緣精準貼齊螢幕，並提高白色濃度。 */
+#personality-result-screen::after{
+ content:""!important;display:block!important;position:fixed!important;
+ left:0!important;right:0!important;bottom:0!important;
+ width:100vw!important;height:46vh!important;max-height:520px!important;
+ margin:0!important;transform:none!important;
+ pointer-events:none!important;z-index:13!important;
+ background:linear-gradient(to bottom,
+  rgba(255,255,255,0) 0%,
+  rgba(255,255,255,.48) 35%,
+  rgba(255,255,255,.88) 68%,
+  #fff 100%)!important;
+}
+#personality-result-screen #personality-result-save::before{content:none!important;display:none!important}
+#personality-result-screen #personality-result-save{z-index:2147483005!important}
+/* iPad／窄平板也沿用手機結果排版，避免 769px 斷點誤套用電腦版定位。 */
+@media (min-width:901px) and (max-width:900px), (pointer:coarse) and (max-width:1200px){
+ #personality-result-screen #personality-result-copy{
+  font-family:'CPTrans',sans-serif!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-name,
+ #personality-result-screen #personality-result-copy > .result-english{
+  top:428px!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-belongs-heading{
+  position:absolute!important;top:8px!important;left:8px!important;
+ }
+ #personality-result-screen #personality-result-copy .result-career-heading{
+  translate:0 0!important;
+ }
+ #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-name):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
+  top:auto!important;
+ }
 }
 </style>
 </html>
