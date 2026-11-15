@@ -10390,12 +10390,14 @@ function positionResultTextElements(layers,copy){
    if(b&&button){
     const imageRect=lowerNolan.getBoundingClientRect();
     const scale= imageRect.height/lowerNolan.naturalHeight;
-    button.style.position="absolute";
-    button.style.left="0";
-    button.style.width="100%";
-    button.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.5)*scale-22)/responsiveScale+20/responsiveScale)+"px";
-    button.style.transform="translateY(-50%)";
-    button.style.margin="0";
+    // 用 inline !important 覆蓋舊版桌面／手機 CSS 的 top:auto 與 translate，確保位移真的生效。
+    button.style.setProperty("position","absolute","important");
+    button.style.setProperty("left","0","important");
+    button.style.setProperty("width","100%","important");
+    button.style.setProperty("top",((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.5)*scale-22)/responsiveScale+6/responsiveScale)+"px","important");
+    button.style.setProperty("transform","translateY(-50%)","important");
+    button.style.setProperty("translate","none","important");
+    button.style.setProperty("margin","0","important");
    }
   }
   if(longStrip&&longStrip.complete&&longStrip.naturalWidth){
