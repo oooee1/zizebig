@@ -8596,7 +8596,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     if (enteringComicMode && options.animateEntry !== false) { void comicBox.offsetWidth; comicBox.classList.add("comic-slide-up"); }
     comicPaths.forEach(path => {
         if (shownPaths.includes(path)) return;
-        const openingBg = options.opening && (path.includes("漫畫背景") || path.includes("星辰房間"));
+        const openingBg = options.opening && /(?:背景|漫畫背景)\.(webp|png|jpe?g)$/i.test(path.split("/").pop());
         const extraClass = (path.includes("貝殼信") ? " comic-shell-letter" : "") + (openingBg ? " intro-comic-background" : "");
         if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
             comicImg.src = path; comicImg.alt = "漫畫圖";
@@ -8604,7 +8604,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         } else {
             const layer = document.createElement("img"); layer.src = path; layer.alt = "";
             layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + extraClass;
-            if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
+            if (isSplitBackgroundAndRole && path === rolePath) {
                 layer.classList.add("comic-layer-mask-role");
                 const clip = document.createElement("div"); clip.className = "comic-role-clip";
                 const backgroundFileName = backgroundMaskPath.split("/").pop();
