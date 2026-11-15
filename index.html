@@ -8631,6 +8631,16 @@ function clearComicLayers(comicBox, comicImg) {
     if (comicImg) { comicImg.className=""; comicImg.removeAttribute("src"); }
 }
 
+function restoreComicCanvasToGameStage() {
+    const box = document.getElementById("comic-box");
+    const image = document.getElementById("comic-img");
+    if (!box) return;
+    clearComicLayers(box, image);
+    ["position","inset","width","height","z-index"].forEach(property => box.style.removeProperty(property));
+    const gameContainer = document.getElementById("game-container");
+    if (gameContainer && box.parentElement !== gameContainer) gameContainer.appendChild(box);
+}
+
 function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
@@ -11843,11 +11853,7 @@ function openPersonalityResult(first,second){
                     const developerTools = document.getElementById("developer-tools");
                     if (developerTools && developerTools.parentElement !== document.body) document.body.appendChild(developerTools);
                     if (startScreen) startScreen.style.display = "none";
-                    if (comicScreen) {
-                        clearComicLayers(comicScreen, comicImage);
-                        const gameContainer = document.getElementById("game-container");
-                        if (gameContainer && comicScreen.parentElement !== gameContainer) gameContainer.appendChild(comicScreen);
-                    }
+                    if (comicScreen) restoreComicCanvasToGameStage();
                     if (page) {
                         page.style.visibility = "visible";
                         page.style.pointerEvents = "auto";
@@ -11994,9 +12000,7 @@ function openPersonalityResult(first,second){
                     const comicImg = document.getElementById("comic-img");
                     if (!comicBox || !comicImg) { loadInitialAssets(); return; }
                     if (index >= openingComicFrames.length) {
-                        clearComicLayers(comicBox, comicImg);
-                        const gameContainer = document.getElementById("game-container");
-                        if (gameContainer && comicBox.parentElement !== gameContainer) gameContainer.appendChild(comicBox);
+                        restoreComicCanvasToGameStage();
                         loadInitialAssets(); return;
                     }
                     const frame = openingComicFrames[index];
@@ -12151,7 +12155,7 @@ function prepareDeveloperJump() {
     const developerTools = document.getElementById('developer-tools');
     if (developerTools && developerTools.parentElement !== document.body) document.body.appendChild(developerTools);
     if (startScreen) startScreen.style.display = 'none';
-    if (comicScreen) { comicScreen.style.display = 'none'; comicScreen.innerHTML = ''; }
+    if (comicScreen) restoreComicCanvasToGameStage();
     if (loadingScreen) loadingScreen.style.display = 'none';
     if (page) { page.style.visibility = 'visible'; page.style.pointerEvents = 'auto'; }
 }
