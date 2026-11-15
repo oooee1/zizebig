@@ -8593,7 +8593,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     }
     let shownPaths = [];
     try { shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]"); if (!Array.isArray(shownPaths)) shownPaths = []; } catch (_) { shownPaths = []; }
-    const backgroundMaskPath = comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path)) || "";
+    const backgroundMaskPath = comicPaths.find(path => /(?:^|\/)[^/]*背景\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\.(webp|png|jpe?g)$/i.test(path)) || comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path)) || "";
     const rolePath = options.rolePath || comicPaths.find(path => /角色\.(webp|png|jpe?g)$/i.test(path)) || "";
     const isSplitBackgroundAndRole = Boolean(backgroundMaskPath && rolePath && comicPaths.includes(rolePath));
     comicBox.style.display = "block";
