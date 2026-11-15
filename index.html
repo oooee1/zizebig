@@ -10930,11 +10930,15 @@ function openPersonalityResultCore(first,second){
  if(traitHeading&&traitDescription){
   const traitStyle=getComputedStyle(traitDescription);
   traitHeading.style.setProperty("font-weight",traitStyle.fontWeight,"important");
-  traitHeading.style.setProperty("-webkit-text-stroke",traitStyle.webkitTextStroke,"important");
+  traitHeading.style.setProperty("-webkit-text-stroke","0px transparent","important");
+  traitHeading.style.setProperty("text-shadow","none","important");
+  traitHeading.style.setProperty("filter","none","important");
   traitHeading.style.setProperty("font-family",traitStyle.fontFamily,"important");
   traitHeading.querySelectorAll("*").forEach(el=>{
    el.style.setProperty("font-weight",traitStyle.fontWeight,"important");
-   el.style.setProperty("-webkit-text-stroke",traitStyle.webkitTextStroke,"important");
+   el.style.setProperty("-webkit-text-stroke","0px transparent","important");
+   el.style.setProperty("text-shadow","none","important");
+   el.style.setProperty("filter","none","important");
   });
  }
  // 兩個職業分類標籤共用較長標題的實際寬度；字型載入完成後再量一次，避免量到替代字型
@@ -15766,6 +15770,32 @@ window.addEventListener("click",function(event){
 (function(){const remove=()=>document.getElementById("result-save-gradient-viewport")?.remove();if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",remove,{once:true});else remove();})();
 </script>
 
+<style id="result-desktop-trait-label-mobile-fix-20261115">
+/* 電腦版「屬於…的特質」標籤沿用手機版的純文字處理：取消複製自段落的描邊／陰影，只保留原本電腦版字級、背景、內距與位置。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy .result-trait-heading,
+ #personality-result-screen #personality-result-copy .result-trait-heading-label,
+ #personality-result-screen #personality-result-copy .result-trait-heading-label *{
+  -webkit-text-stroke:0!important;
+  text-shadow:none!important;
+  filter:none!important;
+  text-decoration:none!important;
+  text-decoration-line:none!important;
+  text-decoration-color:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+ }
+ #personality-result-screen #personality-result-copy .result-trait-heading::before,
+ #personality-result-screen #personality-result-copy .result-trait-heading::after,
+ #personality-result-screen #personality-result-copy .result-trait-heading-label::before,
+ #personality-result-screen #personality-result-copy .result-trait-heading-label::after,
+ #personality-result-screen #personality-result-copy .result-trait-heading-label *::before,
+ #personality-result-screen #personality-result-copy .result-trait-heading-label *::after{
+  content:none!important;display:none!important;
+ }
+}
+</style>
 <style id="result-preview-share-fixes-20261115">
 /* 漸層是結果海報的絕對定位子層：跟著海報內容捲動，而非黏在視窗或落在整頁最後。 */
 #personality-result-screen #personality-result-poster{
