@@ -11228,6 +11228,8 @@ function openPersonalityResult(first,second){
                 }
                 return;
             }
+            // 結果頁的保存按鈕與分享預覽必須優先放行，否則「我的選擇」畫面會攔截點擊。
+            if (e.target && e.target.closest && e.target.closest("#personality-result-save, #result-preview-share-overlay")) return;
             const myChoiceButton = document.getElementById("my-choice-result-button");
             if (!myChoiceButton || myChoiceButton.style.display === "none") return;
             if (e.target && e.target.closest && e.target.closest("#my-choice-result-button")) return;
@@ -15577,5 +15579,47 @@ window.savePersonalityResultImage=async function(){
 @media (min-width:769px){
  #result-preview-share-overlay .result-preview-image{max-height:55vh!important;max-width:min(52vw,430px)!important}
  #result-preview-share-overlay .result-preview-close{right:calc(50% - min(26vw,215px) - 17px)!important;top:-12px!important}
+}
+</style>
+
+<style id="result-followup-fixes-20261115">
+/* 「我的選擇」：電腦字級縮小10px、手機字級放大10px；按鈕不使用圓角。 */
+#my-choice-result-button{border-radius:0!important}
+@media (min-width:769px){
+ #my-choice-result-button{font-size:clamp(51px,calc(12vw - 29px),101px)!important}
+}
+@media (min-width:601px) and (max-width:768px){
+ #my-choice-result-button{font-size:clamp(11px,calc(6.2vw - 29px),47px)!important}
+}
+@media (max-width:600px){
+ #my-choice-result-button{font-size:clamp(11px,calc(9vw - 29px),27px)!important}
+}
+
+/* 移除「屬於（）的星球是：」上方造成白線的遮罩偽元素。 */
+#personality-result-screen #personality-result-copy .result-belongs-heading::before{
+ content:none!important;display:none!important;
+}
+
+/* 手機版明確將「屬於（）的星球是：」放在結果海報左上方可視範圍。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy > .result-belongs-heading{
+  position:absolute!important;top:8px!important;left:8px!important;
+  display:block!important;visibility:visible!important;opacity:1!important;
+  width:max-content!important;max-width:calc(100% - 16px)!important;
+  white-space:normal!important;text-align:left!important;
+  font-size:clamp(18px,5vw,25px)!important;line-height:1.4!important;
+  z-index:50!important;transform:none!important;translate:none!important;
+ }
+}
+
+/* 漸層寬度補足手機畫面，並避免經過按鈕1.6倍縮放後超出電腦螢幕。 */
+#personality-result-screen #personality-result-save::before{
+ width:60vw!important;
+}
+
+/* 再回收海報底部透明空白，連同版面高度一起縮短。 */
+#personality-result-screen #personality-result-poster{
+ clip-path:inset(0 0 64px 0)!important;
+ margin-bottom:-64px!important;
 }
 </style>
