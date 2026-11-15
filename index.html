@@ -15767,42 +15767,53 @@ window.addEventListener("click",function(event){
 </script>
 
 <style id="result-preview-share-fixes-20261115">
-/* 漸層改成結果捲動視窗內的 sticky 底部遮罩：左右貼齊可視寬度，底邊不超出螢幕，捲動時維持在視窗下緣。 */
-#personality-result-screen::after{
- content:""!important;display:block!important;position:sticky!important;
+/* 漸層是結果海報的絕對定位子層：跟著海報內容捲動，而非黏在視窗或落在整頁最後。 */
+#personality-result-screen #personality-result-poster{
+ position:relative!important;
+}
+#personality-result-screen #personality-result-screen-gradient{
+ display:block!important;
+}
+#personality-result-screen #personality-result-poster::after{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
  left:0!important;right:0!important;bottom:0!important;
- width:100%!important;height:clamp(210px,34vh,320px)!important;
- margin-top:clamp(-320px,-34vh,-210px)!important;
- z-index:2147483002!important;pointer-events:none!important;
- background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.34) 34%,rgba(255,255,255,.78) 72%,#fff 100%)!important;
+ width:100%!important;height:300px!important;
+ margin:0!important;
+ z-index:2147483002!important;
+ pointer-events:none!important;
+ background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.3) 34%,rgba(255,255,255,.78) 72%,#fff 100%)!important;
 }
 @media (max-width:768px){
- #personality-result-screen::after{
+ #personality-result-screen #personality-result-poster::after{
   height:clamp(230px,40vh,420px)!important;
-  margin-top:clamp(-420px,-40vh,-230px)!important;
  }
 }
-/* 手機「結合……是……」職業介紹整句縮小3px。 */
+/* 手機「結合……是……」維持上次要求的縮小3px。 */
 @media (max-width:768px){
  #personality-result-screen #personality-result-copy .result-career-intro{
-  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 2px)!important;
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 3px)!important;
  }
 }
-/* 職業區由實際紙張定位公式計算寬度，再以容器中心計算 left；不再沿用偏右的紙張左緣。 */
-#personality-result-screen #personality-result-copy .result-secondary{
- box-sizing:border-box!important;
-}
-/* 電腦版灰線來自結果 section 的底線，連同前一個區塊一併取消。 */
+#personality-result-screen #personality-result-copy .result-secondary{box-sizing:border-box!important}
+/* 電腦版清除特質標題及其前後區塊可能產生的分隔線。 */
 @media (min-width:769px){
  #personality-result-screen #personality-result-copy .result-section,
- #personality-result-screen #personality-result-copy .result-section *{
-  border-bottom:0!important;
-  background-image:none!important;
+ #personality-result-screen #personality-result-copy .result-section *,
+ #personality-result-screen #personality-result-copy .result-trait-heading,
+ #personality-result-screen #personality-result-copy .result-trait-heading *{
+  border:0!important;outline:0!important;box-shadow:none!important;
+  background-image:none!important;text-decoration:none!important;
  }
  #personality-result-screen #personality-result-copy .result-section::before,
  #personality-result-screen #personality-result-copy .result-section::after,
  #personality-result-screen #personality-result-copy .result-section *::before,
- #personality-result-screen #personality-result-copy .result-section *::after{
+ #personality-result-screen #personality-result-copy .result-section *::after,
+ #personality-result-screen #personality-result-copy .result-trait-heading::before,
+ #personality-result-screen #personality-result-copy .result-trait-heading::after,
+ #personality-result-screen #personality-result-copy .result-trait-heading *::before,
+ #personality-result-screen #personality-result-copy .result-trait-heading *::after{
   content:none!important;display:none!important;
  }
 }
