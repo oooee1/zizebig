@@ -1293,11 +1293,6 @@
   z-index:2147482500!important;pointer-events:auto!important;background:#000;overflow:hidden;touch-action:manipulation;
 }
 #comic-box.opening-comic-active .comic-layer { pointer-events:none!important; }
-#comic-box.opening-comic-active .comic-layer:not(.intro-comic-background) {
-  width:94vw!important;height:94dvh!important;max-width:94vw!important;max-height:94dvh!important;
-  object-fit:contain!important;
-}
-
 #comic-box.opening-comic-active .intro-comic-background {
   position:absolute!important;top:0!important;left:0!important;width:100vw!important;height:100dvh!important;
   max-width:none!important;max-height:none!important;transform:none!important;object-fit:cover!important;
@@ -2910,20 +2905,15 @@ img { max-width:100%; }
 #developer-tools-toggle,#developer-tools-panel,#developer-tools-panel button{
  pointer-events:auto!important;position:relative;z-index:2147483647!important;
 }
-body > .menu-container, body > #skip-btn {
- position:fixed!important;z-index:2147483647!important;pointer-events:auto!important;
-}
-body.menu-collapsed #menu-items-wrapper, body.menu-collapsed #skip-btn {
- opacity:0!important;pointer-events:none!important;visibility:hidden!important;
-}
-body:not(.menu-collapsed) #menu-items-wrapper, body:not(.menu-collapsed) #skip-btn {
- opacity:1;visibility:visible;
-}
-
 #intro-start-content{pointer-events:none}
 #intro-start-content>*{pointer-events:auto}
 #intro-start-screen::before{pointer-events:none}
-
+@media(max-width:500px){
+ #intro-start-content{gap:clamp(10px,2.5vh,20px)}
+ #intro-start-logo{width:clamp(70px,25%,100px)}
+ #intro-start-title{width:min(84%,340px)}
+ #intro-start-button{width:72%;min-height:52px}
+}
 </style>
 </head>
 
@@ -8534,10 +8524,7 @@ function enterGameAnimation() {
         function toggleMenu(e) {
             if (e) e.stopPropagation();
             const gameContainer = document.getElementById("game-container");
-            if (gameContainer) {
-                gameContainer.classList.toggle("menu-collapsed");
-                document.body.classList.toggle("menu-collapsed", gameContainer.classList.contains("menu-collapsed"));
-            }
+            if (gameContainer) gameContainer.classList.toggle("menu-collapsed");
         }
 
         function startTypingEffect(text, callback) {
@@ -8589,7 +8576,7 @@ function enterGameAnimation() {
         }
 
 
-// 劇情漫畫與開場漫畫共用的圖層渲染器。
+// 劇情漫畫與開場漫畫共用同一個畫布、圖層 class、累積規則及淡入動畫。
 function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options = {}) {
     if (!comicBox || !comicImg) return;
     const enteringComicMode = comicBox.style.display !== "block";
@@ -8648,7 +8635,6 @@ function clearComicLayers(comicBox, comicImg) {
     if (comicBox) { comicBox.style.display="none"; comicBox.className=""; comicBox.removeAttribute("data-comic-paths"); comicBox.removeAttribute("data-comic-group"); comicBox.querySelectorAll(".comic-layer-extra,.comic-role-clip").forEach(layer=>layer.remove()); }
     if (comicImg) { comicImg.className=""; comicImg.removeAttribute("src"); }
 }
-
 function restoreComicCanvasToGameStage() {
     const box = document.getElementById("comic-box");
     const image = document.getElementById("comic-img");
@@ -9014,105 +9000,133 @@ if (!hasScoredOptions) {
                         note.textContent = noteMatch[2];
                         npcName.appendChild(note);
                     } else {
-                        n    // 劇情漫畫與開場漫畫使用同一套漫畫圖層渲染器。
+                        npcName.textContent = nameText;
+                    }
+                }
+            }
+        }
+    }
+
+    // 4. 輸入框顯示控制
+    if (currentSceneId === 8) showInputBox();
+    else hideInputBox();
+
+    // 5. 隱藏選項框
+    const optBox = document.getElementById('選項框');
+    if (optBox) optBox.style.display = 'none';
+
+
+    // 在 renderScene(stepIndex) 內部加入：
+if (window.currentSceneBGM !== scene.bgm) {
+    window.currentSceneBGM = scene.bgm;
+    if (typeof scene.bgm === "string" && scene.bgm) {
+        playBGM(scene.bgm);
+    } else if (scene.bgm === null) {
+        fadeOutBGM(); // 只有從有音樂切換到靜音時才淡出
+    }
+}
+    
+    // 6. 每次渲染場景都先清掉上一幕的角色立繪。
+    // 計分問題會由 renderOptions() 另外顯示「星辰苦惱-選項用」；
+    // 不可保留上一幕的「星辰嚇死」等角色，否則會疊在題目最上方。
+    hideAllCharacters();
+
+    if (!hasScoredOptions && !isComicMode && scene.characters && Array.isArray(scene.characters)) {
+        scene.characters.forEach(charName => {
+            // 熱情星劇情中的「居民們」不顯示任何群體立繪。
+            if (hideHotPassionResidentsGroup && charName === "居民們") return;
+            // 「居民們」使用獨立群體立繪；居民A/B、居民甲/乙才沿用「居民」立繪。
+            // 熱情星居民及其他有情緒／表情差異的居民一律保留原本立繪。
+            const isHotPassionVillagerScene = currentSceneId >= 221 && currentSceneId <= 236;
+            const sharedResidentAliases = ["居民A", "居民B", "居民甲", "居民乙"];
+            const displayCharName = !isHotPassionVillagerScene && sharedResidentAliases.includes(charName)
+                ? "居民"
+                : charName;
+            const charEl = document.getElementById(displayCharName);
+            if (charEl) {
+                activateImages(charEl);
+                charEl.style.display = 'block';
+                updateCharacterAnimation(displayCharName);
+
+                // 只在「能不能幫我們解決星球上的棉花！」這句登場時，讓一群好奇星由小放大彈出。
+                if (Number(currentSceneId) === 25 && displayCharName === "一群好奇星") {
+                    charEl.classList.remove('cotton-group-pop-in');
+                    void charEl.offsetWidth;
+                    charEl.classList.add('cotton-group-pop-in');
+                } else {
+                    charEl.classList.remove('cotton-group-pop-in');
+                }
+            }
+        });
+    }
+
+    // 依照本句實際顯示的爽快星表情播放專屬動畫。
+    // 教學句子由 characters 決定表情；正式遊戲開始時使用慌張立繪。
+    if (scene.mailTutorial || scene.mailGame) {
+        const visibleMailSprite = scene.mailGame
+            ? "爽快星慌張"
+            : (scene.characters || []).find(name =>
+                ["爽快星開心", "爽快星害怕", "爽快星慌張"].includes(name)
+              );
+        ["爽快星開心", "爽快星害怕", "爽快星慌張"].forEach(id => {
+            const sprite = document.getElementById(id);
+            if (!sprite) return;
+            sprite.classList.remove("mail-sprite-motion", "mail-motion-happy", "mail-motion-scared", "mail-motion-panicked");
+            if (id !== visibleMailSprite) return;
+            void sprite.offsetWidth;
+            sprite.classList.add("mail-sprite-motion");
+            if (id === "爽快星開心") sprite.classList.add("mail-motion-happy");
+            else if (id === "爽快星害怕") sprite.classList.add("mail-motion-scared");
+            else sprite.classList.add("mail-motion-panicked");
+        });
+    }
+
+    // 角色登場動畫判斷
+    if (scene.characters && Array.isArray(scene.characters)) {
+        scene.characters.forEach(charName => {
+            if (charName === "星辰害怕") playScaredAnim("星辰害怕");
+            else if (charName === "星辰嚇死") playScaredAnim("星辰嚇死");
+            else if (charName === "星辰") playCuriousAnim("星辰", "curious-bounce");
+            else if (charName === "星辰驕傲") playNodAnim("星辰驕傲");
+            else if (charName === "星辰點頭") playNodAnim("星辰點頭");
+            else if (charName === "一群好奇星") playHappyJumpAnim("一群好奇星");
+            else if (charName === "好奇星") playCuriousAnim("好奇星", "curious-bounce");
+            else if (charName === "好奇星開心") playCuriousAnim("好奇星開心", "curious-wiggle");
+            else if (charName === "好奇星會跳") playCuriousAnim("好奇星會跳", "curious-pop");
+            else if (charName === "好奇星有尾巴") playCuriousAnim("好奇星有尾巴", "curious-bounce");
+            else if (charName === "好奇星開心有尾巴") playCuriousAnim("好奇星開心有尾巴", "curious-wiggle");
+        });
+    }
+
+    // 信件插圖獨立顯示，不啟動漫畫模式，也不遮掉一般對話框。
+    const letterOverlayPage = document.getElementById("page1");
+    let letterOverlay = document.getElementById("story-letter-overlay");
+    if (letterOverlayPage && !letterOverlay) {
+        letterOverlay = document.createElement("div");
+        letterOverlay.id = "story-letter-overlay";
+        letterOverlayPage.appendChild(letterOverlay);
+    }
+    if (letterOverlay) {
+        letterOverlay.replaceChildren();
+        if (scene.letterImage) {
+            const letterImg = document.createElement("img");
+            letterImg.src = scene.letterImage;
+            letterImg.alt = "信件";
+            letterImg.className = scene.letterImage.includes("貝殼信") ? "shell-letter-image" : "parent-letter-image";
+            letterOverlay.appendChild(letterImg);
+            letterOverlay.style.display = "block";
+        } else {
+            letterOverlay.style.display = "none";
+        }
+    }
+
+    // 劇情漫畫使用共用圖層渲染器。
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
     if (comicBox && comicImg && (sceneComicPaths.length > 0 || isContinuingComic)) {
         renderComicLayers(comicBox, comicImg, sceneComicPaths, currentComicGroup);
     } else {
         clearComicLayers(comicBox, comicImg);
-    }
-
-if (enteringComicMode) {
-            void comicBox.offsetWidth;
-            comicBox.classList.add("comic-slide-up");
-        }
-
-        comicPaths.forEach(path => {
-            // 已經出現過的漫畫圖保留，不重複新增；新的圖層才接續疊上來。
-            if (shownPaths.includes(path)) return;
-
-            if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
-                comicImg.src = path;
-                comicImg.alt = "漫畫圖";
-                comicImg.className = "comic-layer anim-fade-in-up" + (path.includes("貝殼信") ? " comic-shell-letter" : "");
-            } else {
-                const layer = document.createElement("img");
-                layer.src = path;
-                layer.alt = "";
-                layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + (path.includes("貝殼信") ? " comic-shell-letter" : "");
-
-                // 角色放進與背景漫畫實際顯示範圍相同大小的裁切視窗。
-                if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
-                    layer.classList.add("comic-layer-mask-role");
-                    const clip = document.createElement("div");
-                    clip.className = "comic-role-clip";
-                    const backgroundFileName = backgroundMaskPath.split("/").pop();
-                    const placeClipOnBackground = () => {
-                        // 必須對齊「第二張背景」本身，不能抓到前一格的第一張漫畫圖。
-                        const bg = Array.from(comicBox.querySelectorAll("img.comic-layer"))
-                            .find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
-                        if (!bg) return;
-                        const bgRect = bg.getBoundingClientRect();
-                        const boxRect = comicBox.getBoundingClientRect();
-                        // 裁切框直接鎖定背景圖片實際顯示的矩形，不依賴角色圖自己的定位。
-                        clip.style.cssText = [
-                            "position:absolute",
-                            "display:block",
-                            "left:" + (bgRect.left - boxRect.left) + "px",
-                            "top:" + (bgRect.top - boxRect.top) + "px",
-                            "width:" + bgRect.width + "px",
-                            "height:" + bgRect.height + "px",
-                            "overflow:hidden",
-                            "clip-path:inset(0)",
-                            "-webkit-clip-path:inset(0)",
-                            "contain:strict",
-                            "isolation:isolate",
-                            "pointer-events:none"
-                        ].join(";");
-                        // 角色圖以裁切框左上角為原點，下移 60px；超出框外的像素必須被裁掉。
-                        layer.style.setProperty("left", "0", "important");
-                        layer.style.setProperty("top", "60px", "important");
-                        layer.style.setProperty("transform", "none", "important");
-                        layer.style.setProperty("width", bgRect.width + "px", "important");
-                        layer.style.setProperty("height", bgRect.height + "px", "important");
-                        layer.style.setProperty("max-width", "none", "important");
-                        layer.style.setProperty("max-height", "none", "important");
-                        layer.style.setProperty("object-fit", "contain", "important");
-                    };
-                    const bgForClip = Array.from(comicBox.querySelectorAll("img.comic-layer"))
-                        .find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
-                    if (bgForClip) {
-                        if (bgForClip.complete && bgForClip.naturalWidth > 0) placeClipOnBackground();
-                        else bgForClip.addEventListener("load", placeClipOnBackground, { once: true });
-                    }
-                    window.addEventListener("resize", placeClipOnBackground);
-                    clip.appendChild(layer);
-                    comicBox.appendChild(clip);
-                } else {
-                    comicBox.appendChild(layer);
-                }
-            }
-            shownPaths.push(path);
-        });
-
-        comicBox.setAttribute("data-comic-paths", JSON.stringify(shownPaths));
-        if (currentComicGroup !== null) comicBox.setAttribute("data-comic-group", String(currentComicGroup));
-        const firstFileName = shownPaths[0] ? shownPaths[0].split('/').pop().replace(/\.[^/.]+$/, "") : "comic";
-        comicBox.className = `comic-style-${firstFileName}`;
-    } else {
-        // 下一幕沒有漫畫圖片，代表漫畫模式結束：清除本段累積的所有漫畫。
-        if (comicBox) {
-            comicBox.style.display = "none";
-            comicBox.className = "";
-            comicBox.removeAttribute("data-comic-paths");
-            comicBox.removeAttribute("data-comic-group");
-            comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
-        }
-        if (comicImg) {
-            comicImg.className = "";
-            comicImg.removeAttribute("src");
-        }
     }
 
     // 8. 問題介面直接顯示選項，不覆蓋上一幕的對話文字。
@@ -11482,7 +11496,7 @@ function openPersonalityResult(first,second){
 
         const overlay = document.createElement("div");
         overlay.id = "skip-confirm-overlay";
-        overlay.style.cssText = "position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;";
+        overlay.style.cssText = "position:absolute;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;";
         overlay.innerHTML = `
           <style>
             #skip-confirm-overlay .skip-card{position:relative;width:min(390px,100%);box-sizing:border-box;padding:28px 24px 23px;background:#000;border:2px solid #ffb30f;border-radius:18px 22px 17px 21px;color:#fff;text-align:center;font-family:Arial,sans-serif;font-weight:bold;box-shadow:none;overflow:hidden;}
@@ -11643,7 +11657,8 @@ function openPersonalityResult(first,second){
               <button type="button" id="skip-confirm-yes">確定</button>
             </div>
           </div>`;
-        document.body.appendChild(overlay);
+        const game = document.getElementById("game-container") || document.body;
+        game.appendChild(overlay);
 
         const close = () => overlay.remove();
         overlay.querySelector("#skip-confirm-no").addEventListener("click", (event) => {
@@ -11865,21 +11880,11 @@ function openPersonalityResult(first,second){
                     if (gameAssetFallbackTimer) clearTimeout(gameAssetFallbackTimer);
                     const startScreen = document.getElementById("intro-start-screen");
                     const comicScreen = document.getElementById("comic-box");
-                    const comicImage = document.getElementById("comic-img");
                     const page = document.getElementById("page1");
                     const developerTools = document.getElementById("developer-tools");
                     if (developerTools && developerTools.parentElement !== document.body) document.body.appendChild(developerTools);
                     if (startScreen) startScreen.style.display = "none";
-                    if (loadingScreen) loadingScreen.style.display = "none";
                     if (comicScreen) restoreComicCanvasToGameStage();
-                    const gameContainer = document.getElementById("game-container");
-                    const menu = document.querySelector(".menu-container");
-                    const skip = document.getElementById("skip-btn");
-                    [menu, skip].forEach(control => {
-                        if (control && gameContainer && control.parentElement !== gameContainer) gameContainer.appendChild(control);
-                        if (control) ["position","z-index","top","left","right"].forEach(prop => control.style.removeProperty(prop));
-                    });
-                    document.body.classList.remove("menu-collapsed");
                     if (page) {
                         page.style.visibility = "visible";
                         page.style.pointerEvents = "auto";
@@ -11891,14 +11896,13 @@ function openPersonalityResult(first,second){
                     // 最終結果素材改為進入結果頁後才載入，避免遊戲期間背景預載、縮圖大量圖片造成手機／平板記憶體暴增。
                 }
 
-                function loadInitialAssets(onComplete) {
+                function loadInitialAssets() {
                     window.__zizebigStartupStage = '開始載入第一幕素材';
                     if (gameAssetFallbackTimer) clearTimeout(gameAssetFallbackTimer);
                     gameAssetFallbackTimer = setTimeout(() => {
                         if (!firstSceneStarted) {
                             console.error("[zizebig 啟動保險] 第一幕素材載入回呼逾時，先進入遊戲。");
-                            if (typeof onComplete === "function") onComplete();
-                            else startFirstScene();
+                            startFirstScene();
                         }
                     }, 25000);
                     if (loadingScreen) {
@@ -11929,20 +11933,18 @@ function openPersonalityResult(first,second){
                                 if (loadingPercent) {
                                     loadingPercent.textContent = '載入稍慢，正在重試（' + retryCount + '/' + maxInitialAssetRetries + '）';
                                 }
-                                setTimeout(() => loadInitialAssets(onComplete), 800);
+                                setTimeout(loadInitialAssets, 800);
                                 return;
                             }
 
                             // 不讓單張圖片的網路／解碼問題永久鎖死整個遊戲。
                             console.error("第一幕素材重試仍未完成，先繼續進入遊戲。");
                             if (loadingPercent) loadingPercent.textContent = '素材載入不完整，正在進入遊戲...';
-                            if (typeof onComplete === "function") onComplete();
-                            else startFirstScene();
+                            startFirstScene();
                             return;
                         }
 
-                        if (typeof onComplete === "function") onComplete();
-                        else startFirstScene();
+                        startFirstScene();
                     }, true);
                 }
 
@@ -11980,7 +11982,7 @@ function openPersonalityResult(first,second){
                         page.style.pointerEvents = "none";
                     }
                     const startScreen = document.getElementById("intro-start-screen");
-                    const comicScreen = document.getElementById("comic-box");
+                    const comicScreen = document.getElementById("intro-comic-box");
                     const loadingLayer = document.getElementById("loading-screen");
                     // 所有開場覆蓋層移到 body，脫離 430px 的遊戲舞台尺寸與 stacking context。
                     [loadingLayer, startScreen, comicScreen].forEach(layer => {
@@ -12027,10 +12029,10 @@ function openPersonalityResult(first,second){
                 function renderOpeningComicFrame(index) {
                     const comicBox = document.getElementById("comic-box");
                     const comicImg = document.getElementById("comic-img");
-                    if (!comicBox || !comicImg) { startFirstScene(); return; }
+                    if (!comicBox || !comicImg) { loadInitialAssets(); return; }
                     if (index >= openingComicFrames.length) {
-                        startFirstScene();
-                        return;
+                        restoreComicCanvasToGameStage();
+                        loadInitialAssets(); return;
                     }
                     const frame = openingComicFrames[index];
                     const groupChanged = openingComicGroup !== frame.group;
@@ -12061,44 +12063,15 @@ function openPersonalityResult(first,second){
                         comicBox.style.setProperty("z-index","2147482500","important");
                     }
                     if (startScreen) startScreen.style.display = "none";
-
-                    // 將控制列移出遊戲舞台，固定在全螢幕漫畫上方。
-                    const menu = document.querySelector(".menu-container");
-                    const skip = document.getElementById("skip-btn");
-                    [menu, skip].forEach(control => {
-                        if (control && control.parentElement !== document.body) document.body.appendChild(control);
-                        if (control) control.style.setProperty("position", "fixed", "important");
-                        if (control) control.style.setProperty("z-index", "2147483647", "important");
-                    });
-                    if (menu) {
-                        menu.style.setProperty("top", "max(12px, env(safe-area-inset-top))", "important");
-                        menu.style.setProperty("left", "max(12px, env(safe-area-inset-left))", "important");
-                    }
-                    if (skip) {
-                        skip.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
-                        skip.style.setProperty("right", "max(14px, env(safe-area-inset-right))", "important");
-                    }
-                    const developerTools = document.getElementById("developer-tools");
-                    if (developerTools) developerTools.style.setProperty("top", "max(76px, calc(env(safe-area-inset-top) + 62px))", "important");
-
-                    // 第一幕與開場漫畫素材都先備妥，再開始播放漫畫。
-                    showStartupLoading("正在載入遊戲素材...");
-                    window.__zizebigStartupStage = "載入遊戲與開場漫畫素材";
-                    let openingStarted = false;
-                    const startComicAfterAssets = () => {
-                        if (openingStarted) return;
-                        openingStarted = true;
-                        showStartupLoading("正在載入開場漫畫素材...");
-                        window.__zizebigStartupStage = "載入開場漫畫素材";
-                        preloadImages(openingComicAssets, error => {
-                            if (error) console.warn("[開場漫畫] 素材載入不完整，仍繼續播放：", error);
-                            openingComicIndex = 0;
-                            openingComicGroup = null;
-                            if (loadingScreen) loadingScreen.style.display = "none";
-                            renderOpeningComicFrame(0);
-                        }, true);
-                    };
-                    loadInitialAssets(startComicAfterAssets);
+                    showStartupLoading("正在載入開場漫畫...");
+                    window.__zizebigStartupStage = "載入開場漫畫素材";
+                    preloadImages(openingComicAssets, error => {
+                        if (error) console.warn("[開場漫畫] 素材載入不完整，仍繼續播放：", error);
+                        openingComicIndex = 0;
+                        openingComicGroup = null;
+                        if (loadingScreen) loadingScreen.style.display = "none";
+                        renderOpeningComicFrame(0);
+                    }, true);
                 }
 
                 function loadStartInterface() {
