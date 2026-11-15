@@ -15442,60 +15442,72 @@ window.savePersonalityResultImage=async function(){
  window.preloadPersonalityResultShareImage=preloadShareImage;
  function getShareFile(blob){return new File([blob],activeFile,{type:blob.type||"image/png",lastModified:Date.now()});}
  async function getActiveBlob(){return await preloadShareImage(window.__personalityResultFirst||"好奇星",window.__personalityResultSecond||window.__personalityResultFirst||"好奇星");}
- async function downloadResultPreview(){
+ function downloadWithBlob(blob,label){
+  const file=getShareFile(blob);
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+   navigator.share({files:[file],title:"星辰之路測驗結果",text:"我的星辰之路測驗結果"}).then(()=>{
+    if(label)label.textContent="下載成功！";
+   }).catch(error=>{
+    if(error&&error.name==="AbortError")return;
+    console.error("[結果保存] 失敗：",error);
+    if(label)label.textContent="保存失敗，請再試一次";
+   });
+  }else{
+   const url=URL.createObjectURL(blob),link=document.createElement("a");
+   link.href=url;link.download=activeFile;link.style.display="none";
+   document.body.appendChild(link);link.click();link.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),30000);
+   if(label)label.textContent="下載成功！";
+  }
+ }
+ function downloadResultPreview(){
   if(!activeFile)return;
   const label=document.querySelector("#result-preview-share-overlay .result-preview-download-label");
-  try{
-   const blob=await getActiveBlob(),file=getShareFile(blob);
-   if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-    await navigator.share({files:[file],title:"星辰之路測驗結果",text:"我的星辰之路測驗結果"});
-    if(label)label.textContent="下載成功！";
-   }else{
-    const url=URL.createObjectURL(blob),link=document.createElement("a");
-    link.href=url;link.download=activeFile;link.style.display="none";
-    document.body.appendChild(link);link.click();link.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),30000);
-    if(label)label.textContent="下載成功！";
-   }
-  }catch(error){
-   if(error&&error.name==="AbortError")return;
-   console.error("[結果保存] 失敗：",error);
-   if(label)label.textContent="保存失敗，請再試一次";
-  }
+  const cached=shareBlobCache.get(activeFile);
+  if(cached){downloadWithBlob(cached,label);return;}
+  preloadShareImage(window.__personalityResultFirst||"好奇星",window.__personalityResultSecond||"好奇星")
+   .then(blob=>downloadWithBlob(blob,label))
+   .catch(error=>{console.error("[結果保存] 失敗：",error);if(label)label.textContent="保存失敗，請再試一次";});
  }
  function closePreview(){
   const overlay=document.getElementById("result-preview-share-overlay");
   if(overlay)overlay.remove();
   if(activePreviewURL){URL.revokeObjectURL(activePreviewURL);activePreviewURL="";}
  }
- async function shareResult(platform){
-  const label=document.querySelector("#result-preview-share-overlay .result-preview-download-label");
-  try{
-   const blob=await getActiveBlob(),file=getShareFile(blob);
-   const message="我的星辰之路測驗結果："+location.href;
-   if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-    await navigator.share({files:[file],title:"星辰之路測驗結果",text:message,url:location.href});
+ function shareWithBlob(platform,blob,label){
+  const file=getShareFile(blob);
+  const message="我的星辰之路測驗結果："+location.href;
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+   navigator.share({files:[file],title:"星辰之路測驗結果",text:message,url:location.href}).then(()=>{
     if(label)label.textContent="分享完成！";
-    return;
-   }
-   if(platform==="line"){
-    window.open("https://line.me/R/msg/text/?"+encodeURIComponent(message),"_blank","noopener,noreferrer");
-    if(label)label.textContent="已開啟 LINE，請選擇分享對象";
-   }else if(platform==="facebook"){
-    window.open("https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(location.href),"_blank","noopener,noreferrer");
-    if(label)label.textContent="已開啟 Facebook；此方式僅附上遊戲連結";
-   }else{
-    const url=URL.createObjectURL(blob),link=document.createElement("a");
-    link.href=url;link.download=activeFile;document.body.appendChild(link);link.click();link.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),30000);
-    window.open("https://www.instagram.com/","_blank","noopener,noreferrer");
-    if(label)label.textContent="圖片已準備，請在 Instagram 選取";
-   }
-  }catch(error){
-   if(error&&error.name==="AbortError")return;
-   console.error("[結果分享] "+platform+" 分享失敗：",error);
-   if(label)label.textContent="分享未完成，請再試一次";
+   }).catch(error=>{
+    if(error&&error.name==="AbortError")return;
+    console.error("[結果分享] "+platform+" 分享失敗：",error);
+    if(label)label.textContent="分享未完成，請再試一次";
+   });
+   return;
   }
+  if(platform==="line"){
+   window.open("https://line.me/R/msg/text/?"+encodeURIComponent(message),"_blank","noopener,noreferrer");
+   if(label)label.textContent="已開啟 LINE，請選擇分享對象";
+  }else if(platform==="facebook"){
+   window.open("https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(location.href),"_blank","noopener,noreferrer");
+   if(label)label.textContent="已開啟 Facebook；此方式僅附上遊戲連結";
+  }else{
+   const url=URL.createObjectURL(blob),link=document.createElement("a");
+   link.href=url;link.download=activeFile;document.body.appendChild(link);link.click();link.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),30000);
+   window.open("https://www.instagram.com/","_blank","noopener,noreferrer");
+   if(label)label.textContent="圖片已準備，請在 Instagram 選取";
+  }
+ }
+ function shareResult(platform){
+  const label=document.querySelector("#result-preview-share-overlay .result-preview-download-label");
+  const cached=shareBlobCache.get(activeFile);
+  if(cached){shareWithBlob(platform,cached,label);return;}
+  preloadShareImage(window.__personalityResultFirst||"好奇星",window.__personalityResultSecond||"好奇星")
+   .then(blob=>shareWithBlob(platform,blob,label))
+   .catch(error=>{console.error("[結果分享] "+platform+" 分享失敗：",error);if(label)label.textContent="分享未完成，請再試一次";});
  }
  async function openPreview(){
   const first=window.__personalityResultFirst||"好奇星",second=window.__personalityResultSecond||first;
