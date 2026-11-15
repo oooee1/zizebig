@@ -15592,7 +15592,7 @@ window.savePersonalityResultImage=async function(){
  #my-choice-result-button{font-size:clamp(11px,calc(6.2vw - 29px),47px)!important}
 }
 @media (max-width:600px){
- #my-choice-result-button{font-size:clamp(11px,calc(9vw - 29px),27px)!important}
+ #my-choice-result-button{font-size:clamp(40px,calc(9vw + 14px),54px)!important}
 }
 
 /* 移除「屬於（）的星球是：」上方造成白線的遮罩偽元素。 */
@@ -15612,9 +15612,16 @@ window.savePersonalityResultImage=async function(){
  }
 }
 
-/* 漸層寬度補足手機畫面，並避免經過按鈕1.6倍縮放後超出電腦螢幕。 */
+/* 漸層直接以螢幕寬度定位，不再跟著保存按鈕的1.6倍縮放而超出畫面。 */
+#personality-result-screen::before{
+ content:""!important;
+ position:fixed!important;left:0!important;right:auto!important;bottom:0!important;
+ width:100vw!important;height:38vh!important;
+ background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.82) 30%,rgba(255,255,255,.42) 65%,rgba(255,255,255,0) 100%)!important;
+ z-index:2147483004!important;pointer-events:none!important;
+}
 #personality-result-screen #personality-result-save::before{
- width:60vw!important;
+ content:none!important;display:none!important;
 }
 
 /* 再回收海報底部透明空白，連同版面高度一起縮短。 */
@@ -15623,3 +15630,26 @@ window.savePersonalityResultImage=async function(){
  margin-bottom:-64px!important;
 }
 </style>
+
+<script id="result-save-click-recovery-20261115">
+/* 在 window 捕獲階段直接開啟預覽，避開劇情與確認畫面的 document 捕獲攔截器。 */
+window.addEventListener("click",function(event){
+ const button=event.target&&event.target.closest&&event.target.closest("#personality-result-save");
+ if(!button)return;
+ event.preventDefault();
+ event.stopPropagation();
+ event.stopImmediatePropagation();
+ try{
+  if(typeof window.openPersonalityResultPreview==="function"){
+   window.openPersonalityResultPreview();
+  }else if(typeof window.savePersonalityResultImage==="function"){
+   window.savePersonalityResultImage();
+  }else{
+   console.error("[結果預覽] 預覽功能尚未載入。");
+  }
+ }catch(error){
+  console.error("[結果預覽] 開啟失敗：",error);
+  alert("目前無法開啟保存結果，請重新整理後再試一次。");
+ }
+},true);
+</script>
