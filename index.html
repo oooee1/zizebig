@@ -15660,3 +15660,78 @@ window.addEventListener("click",function(event){
  }
 },true);
 </script>
+
+
+<style id="result-request-20261115-followup">
+/* 手機：「結合……是……」整句縮小3px，桌面不變。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy .result-career-intro{
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 2px)!important;
+ }
+}
+/* 電腦：「適合職業」標題向右0.5px。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy .result-career-heading{
+  translate:.5px 3px!important;
+ }
+}
+/* 手機：適合職業區（標題與下方內容）整組左移2px、下移8px。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy .result-career-heading,
+ #personality-result-screen #personality-result-copy .result-career-intro,
+ #personality-result-screen #personality-result-copy .result-job-category,
+ #personality-result-screen #personality-result-copy .result-career-detail,
+ #personality-result-screen #personality-result-copy .result-career-list{
+  translate:-2px 8px!important;
+ }
+ /* 繼續遊戲：在目前位置下移10px。 */
+ #personality-result-screen #personality-result-copy > .result-continue{
+  translate:0 10px!important;
+ }
+}
+/* 透明尾端改用海報實際高度裁切，不再用固定64px clip-path與負外距，
+   避免不同星球圖片比例不同時裁切失準。 */
+#personality-result-screen #personality-result-poster{
+ clip-path:none!important;
+ margin-bottom:0!important;
+ padding-bottom:0!important;
+ overflow:hidden!important;
+}
+/* 漸層獨立固定在視窗底部，避免被保存按鈕的 transform 縮放或裁出畫面。 */
+#result-save-gradient-viewport{
+ position:fixed!important;left:0!important;right:0!important;bottom:0!important;
+ width:100vw!important;height:38vh!important;max-height:360px!important;
+ z-index:2147483000!important;pointer-events:none!important;
+ background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.42) 42%,rgba(255,255,255,.84) 72%,#fff 100%)!important;
+}
+@media (max-width:768px){
+ #result-save-gradient-viewport{
+  height:52vh!important;max-height:none!important;
+ }
+}
+#personality-result-screen #personality-result-save{
+ position:relative!important;z-index:2147483001!important;
+}
+</style>
+<script id="result-save-gradient-viewport-20261115">
+(function(){
+ function sync(){
+  const screen=document.getElementById("personality-result-screen");
+  if(!screen)return;
+  let gradient=document.getElementById("result-save-gradient-viewport");
+  if(!gradient){
+   gradient=document.createElement("div");
+   gradient.id="result-save-gradient-viewport";
+   gradient.setAttribute("aria-hidden","true");
+   document.body.appendChild(gradient);
+  }
+  const style=getComputedStyle(screen);
+  const visible=style.display!=="none"&&style.visibility!=="hidden"&&screen.getBoundingClientRect().width>0;
+  gradient.style.display=visible?"block":"none";
+ }
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",sync,{once:true});else sync();
+ const observer=new MutationObserver(sync);
+ observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:["style","class","hidden"]});
+ window.addEventListener("resize",sync,{passive:true});
+})();
+</script>
