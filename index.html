@@ -10493,6 +10493,8 @@ function layoutResult(){
  if(role)alignResultRoleToTextArtwork(role,layers);
  positionResultTextElements(layers,copy);
  compactResultPosterToVisibleBottom(layers,copy);
+ // 圖層縮放與重新定位後，再依最終圖片座標計算職業區；否則第一次計算會被後續海報壓縮抵銷。
+ positionResultTextElements(layers,copy);
  applyResponsiveResultCopyScale(layers,copy);
  // 收掉海報最底端的透明尾差：縮短海報本身的版面高度，而不只用 clip-path 遮住。
  const finalPoster=layers.closest("#personality-result-poster");
@@ -13873,11 +13875,9 @@ window.savePersonalityResultImage=async function(){
 
 
 <style id="result-career-section-global-shift-20261113">
-/* 從「適合職業」標題開始，職業內容、下方提醒與繼續遊戲一起左移3px、下移10px；手機與電腦一致。 */
-#personality-result-screen #personality-result-copy > .result-secondary,
-#personality-result-screen #personality-result-copy > .result-disclaimer,
-#personality-result-screen #personality-result-copy > .result-continue{
- translate:-3px 10px!important;
+/* 下方測驗提醒跟隨職業區右移1px、上移10px；繼續遊戲不套用這組位移。職業區本身由 JS 最終座標定位。 */
+#personality-result-screen #personality-result-copy > .result-disclaimer{
+ translate:1px -10px!important;
 }
 </style>
 
