@@ -10375,7 +10375,7 @@ function positionResultTextElements(layers,copy){
     const isMobileResultLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機／平板職業區大幅上移；電腦版維持原位。
-    const careerShiftY=isMobileResultLayout?-1508:-8;
+    const careerShiftY=isMobileResultLayout?-1508:0;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
     // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
@@ -10394,7 +10394,9 @@ function positionResultTextElements(layers,copy){
     button.style.setProperty("position","absolute","important");
     button.style.setProperty("left","0","important");
     button.style.setProperty("width","100%","important");
-    button.style.setProperty("top",((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.5)*scale-22)/responsiveScale+6/responsiveScale)+"px","important");
+    const isMobileButtonLayout=window.matchMedia("(max-width:900px)").matches ||
+      (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
+    button.style.setProperty("top",((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.5)*scale-22)/responsiveScale+(isMobileButtonLayout?6:0)/responsiveScale)+"px","important");
     button.style.setProperty("transform","translateY(-50%)","important");
     button.style.setProperty("translate","none","important");
     button.style.setProperty("margin","0","important");
@@ -10409,7 +10411,9 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+20/responsiveScale)+"px";
+    const isMobileNoteLayout=window.matchMedia("(max-width:900px)").matches ||
+      (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
+    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?20:0)/responsiveScale)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
