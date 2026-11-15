@@ -16368,13 +16368,12 @@ body.opening-comic-controls #skip-btn{
   mask-repeat:no-repeat!important;
   pointer-events:none!important;
 }
-/* 每張分鏡都重新播放進場動畫，不只第一張。 */
-#comic-box.opening-comic-active.comic-slide-up .comic-layer{
-  animation:openingComicLayerIn .58s cubic-bezier(.2,.75,.25,1) both!important;
+/* 開場漫畫不做整個畫布滑入；只讓漫畫內容圖片本身沿用原本的 fadeInUp 出場動畫。 */
+#comic-box.opening-comic-active.comic-slide-up{
+  animation:none!important;
 }
-@keyframes openingComicLayerIn{
-  from{opacity:0;transform:translate(-50%,-50%) scale(.94)}
-  to{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#comic-box.opening-comic-active .comic-layer:not(.intro-comic-background){
+  animation:fadeInUp .6s ease-out both!important;
 }
 /* 適合職業區塊位置由 positionResultTextElements 的圖片透明邊界計算；
    不再使用 -1503px 的錯誤位移，也不額外疊加 translate。 */
