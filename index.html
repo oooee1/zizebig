@@ -2843,6 +2843,50 @@ img { max-width:100%; }
 }
 </style>
 
+<style id="opening-flow-style-20261116">
+/* 開場首頁：玩法影片、黑幕、Logo／標準字與開始按鈕。 */
+#intro-start-screen{
+ position:absolute;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;
+ overflow:hidden;background:#000;color:#fff;
+}
+#intro-start-screen video{
+ position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
+#intro-start-screen::before{
+ content:"";position:absolute;inset:0;background:rgba(0,0,0,.62);z-index:1;
+}
+#intro-start-content{
+ position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:clamp(12px,3vh,26px);padding:8% 7%;
+}
+#intro-start-logo{display:block;width:clamp(76px,23%,112px);max-height:18vh;object-fit:contain}
+#intro-start-title{display:block;width:min(78%,340px);max-height:30vh;object-fit:contain}
+#intro-start-button{
+ display:flex;align-items:center;justify-content:center;width:min(66%,270px);min-height:54px;
+ margin-top:clamp(12px,3vh,26px);padding:12px 22px;border:3px solid #fff;border-radius:14px;
+ background:#F6B800;color:#211900;font-family:"Dela Gothic One","CPTrans",sans-serif;
+ font-size:clamp(19px,5vw,25px);line-height:1.2;letter-spacing:.04em;cursor:pointer;
+ box-shadow:0 5px 0 rgba(0,0,0,.35);touch-action:manipulation;
+}
+#intro-start-button:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+#intro-comic-box{
+ position:absolute;inset:0;z-index:1000001;display:block;overflow:hidden;
+ background:#000;pointer-events:auto;cursor:pointer;touch-action:manipulation;
+}
+#intro-comic-box.comic-slide-up{animation:comicSlideUp .65s cubic-bezier(.2,.75,.25,1) both}
+#intro-comic-box .comic-layer{
+ position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+ width:78%;height:78%;max-width:78%;max-height:78%;object-fit:contain;
+}
+#intro-comic-box .intro-comic-background{filter:brightness(.45)}
+#intro-comic-box .anim-fade-in-up{animation:fadeInUp .6s ease-out forwards}
+@media(max-width:500px){
+ #intro-start-content{gap:clamp(10px,2.5vh,20px)}
+ #intro-start-logo{width:clamp(70px,25%,100px)}
+ #intro-start-title{width:min(84%,340px)}
+ #intro-start-button{width:72%;min-height:52px}
+}
+</style>
 </head>
 
 <body>
@@ -2908,7 +2952,7 @@ img { max-width:100%; }
 
         <!-- 載入畫面 -->
         <div id="loading-screen" style="font-family: 'CPTrans', sans-serif;">
-            <div class="loading-message" style="font-weight:400;">正在連結...</div>
+            <div class="loading-message" style="font-weight:400;">正在載入開始介面...</div>
             <div class="progress-container">
                 <img src="./pct/跳跳跳.gif" alt="Loading..." style="width: 120px; height: 120px; left: -50px; margin-bottom: 5px;">
                 <div id="progress-bar"></div>
@@ -2916,8 +2960,20 @@ img { max-width:100%; }
             <div id="loading-percent" style="font-family: 'CPTrans', sans-serif;">0%</div>
         </div>
 
+        <!-- 開始介面：影片在後方，黑幕與 Logo／標準字在前方。 -->
+        <section id="intro-start-screen" style="display:none" aria-label="星辰之路開始畫面">
+            <video id="intro-start-video" src="./玩法介紹影片.webm" autoplay muted loop playsinline preload="auto"></video>
+            <div id="intro-start-content">
+                <img id="intro-start-logo" src="./pct/logo.webp" alt="星辰之路 Logo">
+                <img id="intro-start-title" src="./pct/標準字.webp" alt="星辰之路">
+                <button id="intro-start-button" type="button">開始遊戲</button>
+            </div>
+        </section>
+        <!-- 開場漫畫沿用既有漫畫的置中、淡入與滑入動畫，分成兩組依序播放。 -->
+        <div id="intro-comic-box" style="display:none" aria-label="開場漫畫"></div>
+
         <!-- 主舞台 -->
-        <div id="page1">
+        <div id="page1" style="visibility:hidden;pointer-events:none">
             <!-- 337.1：揭曉性格前的「我的選擇」入口；最終結果頁完成後再接上跳轉目標。 -->
             <button id="my-choice-result-button" type="button" aria-label="我的選擇"
                 onclick="event.preventDefault(); event.stopPropagation(); openPersonalityResultFromScores();">
@@ -10365,7 +10421,7 @@ function positionResultTextElements(layers,copy){
     const copyRect=copy.getBoundingClientRect();
     const scaleX=imageRect.width/textPaper.naturalWidth;
     const scaleY=imageRect.height/textPaper.naturalHeight;
-    career.style.position="absolute";
+    career.style.setProperty("position","absolute","important");
     const careerWidth=textBounds.width*scaleX/responsiveScale;
     career.style.setProperty("width",careerWidth+"px","important");
     // 先判斷裝置版型，再計算職業區位移；不可在宣告前讀取 const，否則會觸發暫時性死區錯誤。
@@ -11836,9 +11892,21 @@ function openPersonalityResult(first,second){
                 const maxInitialAssetRetries = 1;
                 let firstSceneStarted = false;
 
+                let gameAssetFallbackTimer = null;
+
                 function startFirstScene() {
                     if (firstSceneStarted) return;
                     firstSceneStarted = true;
+                    if (gameAssetFallbackTimer) clearTimeout(gameAssetFallbackTimer);
+                    const startScreen = document.getElementById("intro-start-screen");
+                    const comicScreen = document.getElementById("intro-comic-box");
+                    const page = document.getElementById("page1");
+                    if (startScreen) startScreen.style.display = "none";
+                    if (comicScreen) comicScreen.style.display = "none";
+                    if (page) {
+                        page.style.visibility = "visible";
+                        page.style.pointerEvents = "auto";
+                    }
                     readySceneIndexes.add(0);
                     enterGameAnimation();
                     renderScene(0);
@@ -11848,6 +11916,18 @@ function openPersonalityResult(first,second){
 
                 function loadInitialAssets() {
                     window.__zizebigStartupStage = '開始載入第一幕素材';
+                    if (gameAssetFallbackTimer) clearTimeout(gameAssetFallbackTimer);
+                    gameAssetFallbackTimer = setTimeout(() => {
+                        if (!firstSceneStarted) {
+                            console.error("[zizebig 啟動保險] 第一幕素材載入回呼逾時，先進入遊戲。");
+                            startFirstScene();
+                        }
+                    }, 25000);
+                    if (loadingScreen) {
+                        loadingScreen.style.display = "flex";
+                        loadingScreen.style.opacity = "1";
+                        loadingScreen.style.transition = "none";
+                    }
                     if (loadingMessage) {
                         loadingMessage.classList.add('loading-message');
                         loadingMessage.textContent = retryCount === 0
@@ -11886,15 +11966,132 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
-                loadInitialAssets();
+                const openingComicFrames = [
+                    { group: 1, paths: ["./pct/漫畫背景.webp", "./pct/11.webp"] },
+                    { group: 1, paths: ["./pct/12.webp"] },
+                    { group: 1, paths: ["./pct/13.webp"] },
+                    { group: 1, paths: ["./pct/14.webp"] },
+                    { group: 2, paths: ["./1漫畫/1.webp"] },
+                    { group: 2, paths: ["./1漫畫/2.webp"] },
+                    { group: 2, paths: ["./1漫畫/3.webp"] },
+                    { group: 2, paths: ["./1漫畫/4.webp"] }
+                ];
+                const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
+                let openingComicIndex = 0;
+                let openingComicGroup = null;
 
-                // 最後一道啟動保險：若素材回呼在網路異常時沒有返回，最多等待25秒就先進入第一幕。
-                setTimeout(() => {
-                    if (!firstSceneStarted) {
-                        console.error("[zizebig 啟動保險] 第一幕素材載入回呼逾時，先進入遊戲。");
-                        startFirstScene();
+                function showStartupLoading(message) {
+                    if (loadingScreen) {
+                        loadingScreen.style.display = "flex";
+                        loadingScreen.style.opacity = "1";
+                        loadingScreen.style.transition = "none";
                     }
-                }, 25000);
+                    if (loadingMessage) loadingMessage.textContent = message;
+                    if (loadingPercent) loadingPercent.textContent = "0%";
+                    const bar = document.getElementById("progress-bar");
+                    if (bar) bar.style.width = "0%";
+                }
+
+                function showStartInterface() {
+                    if (loadingScreen) loadingScreen.style.display = "none";
+                    const page = document.getElementById("page1");
+                    if (page) {
+                        page.style.visibility = "hidden";
+                        page.style.pointerEvents = "none";
+                    }
+                    const startScreen = document.getElementById("intro-start-screen");
+                    if (startScreen) startScreen.style.display = "flex";
+                    const video = document.getElementById("intro-start-video");
+                    if (video && typeof video.play === "function") video.play().catch(() => {});
+                    window.__zizebigStartupStage = "開始介面已顯示，等待玩家開始";
+                }
+
+                function renderOpeningComicFrame(index) {
+                    if (index >= openingComicFrames.length) {
+                        const comicScreen = document.getElementById("intro-comic-box");
+                        if (comicScreen) {
+                            comicScreen.style.display = "none";
+                            comicScreen.innerHTML = "";
+                        }
+                        openingComicGroup = null;
+                        loadInitialAssets();
+                        return;
+                    }
+                    const frame = openingComicFrames[index];
+                    const comicScreen = document.getElementById("intro-comic-box");
+                    if (!comicScreen) {
+                        loadInitialAssets();
+                        return;
+                    }
+                    const groupChanged = openingComicGroup !== frame.group;
+                    if (groupChanged) {
+                        comicScreen.innerHTML = "";
+                        openingComicGroup = frame.group;
+                    }
+                    comicScreen.style.display = "block";
+                    comicScreen.classList.remove("comic-slide-up");
+                    if (groupChanged) {
+                        void comicScreen.offsetWidth;
+                        comicScreen.classList.add("comic-slide-up");
+                    }
+                    frame.paths.forEach(path => {
+                        if (comicScreen.querySelector('[data-intro-comic-path="' + path.replace(/"/g, '&quot;') + '"]')) return;
+                        const image = document.createElement("img");
+                        image.src = path;
+                        image.alt = "";
+                        image.dataset.introComicPath = path;
+                        image.className = "comic-layer anim-fade-in-up";
+                        if (path.includes("漫畫背景")) image.classList.add("intro-comic-background");
+                        comicScreen.appendChild(image);
+                    });
+                    window.__zizebigStartupStage = "播放開場漫畫 " + (index + 1) + "/" + openingComicFrames.length;
+                }
+
+                function advanceOpeningComic(event) {
+                    if (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    openingComicIndex++;
+                    renderOpeningComicFrame(openingComicIndex);
+                }
+
+                function beginOpeningComics(event) {
+                    if (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    const startScreen = document.getElementById("intro-start-screen");
+                    if (startScreen) startScreen.style.display = "none";
+                    showStartupLoading("正在載入開場漫畫...");
+                    window.__zizebigStartupStage = "載入開場漫畫素材";
+                    preloadImages(openingComicAssets, error => {
+                        if (error) console.warn("[開場漫畫] 素材載入不完整，仍繼續播放：", error);
+                        openingComicIndex = 0;
+                        openingComicGroup = null;
+                        if (loadingScreen) loadingScreen.style.display = "none";
+                        renderOpeningComicFrame(0);
+                    }, true);
+                }
+
+                function loadStartInterface() {
+                    showStartupLoading("正在載入開始介面...");
+                    window.__zizebigStartupStage = "載入開始介面素材";
+                    preloadImages(["./pct/logo.webp", "./pct/標準字.webp"], error => {
+                        if (error) console.warn("[開始介面] Logo 或標準字載入不完整：", error);
+                        if (loadingPercent) loadingPercent.textContent = "100%";
+                        const bar = document.getElementById("progress-bar");
+                        if (bar) bar.style.width = "100%";
+                        showStartInterface();
+                    }, true);
+                }
+
+                const startButton = document.getElementById("intro-start-button");
+                if (startButton) startButton.addEventListener("click", beginOpeningComics);
+                const comicScreen = document.getElementById("intro-comic-box");
+                if (comicScreen) comicScreen.addEventListener("click", advanceOpeningComic);
+
+                loadStartInterface();
             }
             } catch (startupError) {
                 window.__zizebigStartupStage = '啟動同步錯誤：' + (startupError && startupError.message ? startupError.message : String(startupError));
