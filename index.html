@@ -10368,9 +10368,9 @@ function positionResultTextElements(layers,copy){
     career.style.position="absolute";
     const careerWidth=textBounds.width*scaleX/responsiveScale;
     career.style.setProperty("width",careerWidth+"px","important");
-    const mobileCareerShift=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;
-    const careerShiftX=mobileCareerShift?-3:1;
-    const careerShiftY=mobileCareerShift?-30:-10;
+    // 電腦與手機的「適合職業」區塊使用相同位移；繼續遊戲按鈕仍由下方獨立定位。
+    const careerShiftX=1;
+    const careerShiftY=-10;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
     // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
@@ -13918,6 +13918,15 @@ window.savePersonalityResultImage=async function(){
  #personality-result-screen #personality-result-save img{
   position:relative!important;
   z-index:2!important;
+ }
+}
+</style>
+
+<style id="result-career-same-position-desktop-mobile-20261115">
+/* 電腦版只有「適合職業」標題額外左移0.5px。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy .result-career-heading{
+  translate:-.5px 0!important;
  }
 }
 </style>
