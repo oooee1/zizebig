@@ -11884,6 +11884,7 @@ function openPersonalityResult(first,second){
                     const developerTools = document.getElementById("developer-tools");
                     if (developerTools && developerTools.parentElement !== document.body) document.body.appendChild(developerTools);
                     if (startScreen) startScreen.style.display = "none";
+                    if (loadingScreen) loadingScreen.style.display = "none";
                     if (comicScreen) restoreComicCanvasToGameStage();
                     if (page) {
                         page.style.visibility = "visible";
@@ -12031,8 +12032,8 @@ function openPersonalityResult(first,second){
                     const comicImg = document.getElementById("comic-img");
                     if (!comicBox || !comicImg) { loadInitialAssets(); return; }
                     if (index >= openingComicFrames.length) {
-                        restoreComicCanvasToGameStage();
-                        loadInitialAssets(); return;
+                        // 第一幕素材已在漫畫開始前預載，漫畫結束後直接進入劇情，不再顯示第二次載入畫面。
+                        startFirstScene(); return;
                     }
                     const frame = openingComicFrames[index];
                     const groupChanged = openingComicGroup !== frame.group;
@@ -12063,15 +12064,17 @@ function openPersonalityResult(first,second){
                         comicBox.style.setProperty("z-index","2147482500","important");
                     }
                     if (startScreen) startScreen.style.display = "none";
-                    showStartupLoading("正在載入開場漫畫...");
-                    window.__zizebigStartupStage = "載入開場漫畫素材";
-                    preloadImages(openingComicAssets, error => {
-                        if (error) console.warn("[開場漫畫] 素材載入不完整，仍繼續播放：", error);
+                    showStartupLoading("正在載入素材...");
+                    window.__zizebigStartupStage = "預載開場漫畫與第一幕素材";
+                    // 漫畫和第一幕一起載入；使用可容錯模式，單張圖片逾時／失敗不會讓啟動畫面卡死。
+                    const startupAssets = [...new Set([...openingComicAssets, ...initialAssets])];
+                    preloadImages(startupAssets, error => {
+                        if (error) console.warn("[開場載入] 部分素材未能預載，仍繼續：", error);
                         openingComicIndex = 0;
                         openingComicGroup = null;
                         if (loadingScreen) loadingScreen.style.display = "none";
                         renderOpeningComicFrame(0);
-                    }, true);
+                    });
                 }
 
                 function loadStartInterface() {
