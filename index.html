@@ -1293,10 +1293,14 @@
   z-index:2147482500!important;pointer-events:auto!important;background:#000;overflow:hidden;touch-action:manipulation;
 }
 #comic-box.opening-comic-active .comic-layer { pointer-events:none!important; }
-#comic-box.opening-comic-active .intro-comic-background {
-  position:absolute!important;top:0!important;left:0!important;width:100vw!important;height:100dvh!important;
-  max-width:none!important;max-height:none!important;transform:none!important;object-fit:cover!important;
-}
+/* 11、12 的背景與角色共用完整視窗畫布，兩層同尺寸、同縮放、同座標。 */
+ #comic-box.opening-comic-active .intro-comic-background,
+ #comic-box.opening-comic-active .intro-comic-role{
+  position:absolute!important;left:0!important;top:0!important;
+  width:100vw!important;height:100dvh!important;
+  max-width:none!important;max-height:none!important;
+  transform:none!important;object-fit:cover!important;
+ }
 
 @keyframes comicSlideUp {
   from { transform: translateY(100%); }
@@ -8604,26 +8608,12 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         } else {
             const layer = document.createElement("img"); layer.src = path; layer.alt = "";
             layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + extraClass;
-            if (isSplitBackgroundAndRole && path === rolePath) {
-                layer.classList.add("comic-layer-mask-role");
-                const clip = document.createElement("div"); clip.className = "comic-role-clip";
-                const backgroundFileName = backgroundMaskPath.split("/").pop();
-                const placeClipOnBackground = () => {
-                    const bg = Array.from(comicBox.querySelectorAll("img.comic-layer")).find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
-                    if (!bg) return;
-                    const bgRect = bg.getBoundingClientRect(), boxRect = comicBox.getBoundingClientRect();
-                    clip.style.cssText = ["position:absolute","display:block","left:"+(bgRect.left-boxRect.left)+"px","top:"+(bgRect.top-boxRect.top)+"px","width:"+bgRect.width+"px","height:"+bgRect.height+"px","overflow:hidden","clip-path:inset(0)","-webkit-clip-path:inset(0)","contain:strict","isolation:isolate","pointer-events:none"].join(";");
-                    layer.style.setProperty("left","0","important"); layer.style.setProperty("top","0","important");
-                    layer.style.setProperty("transform","none","important"); layer.style.setProperty("width",bgRect.width+"px","important");
-                    layer.style.setProperty("height",bgRect.height+"px","important"); layer.style.setProperty("max-width","none","important");
-                    layer.style.setProperty("max-height","none","important"); layer.style.setProperty("object-fit","contain","important");
-                    if (options.opening) layer.style.setProperty("animation","none","important");
-                };
-                const bg = Array.from(comicBox.querySelectorAll("img.comic-layer")).find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
-                if (bg) { if (bg.complete && bg.naturalWidth > 0) placeClipOnBackground(); else bg.addEventListener("load",placeClipOnBackground,{once:true}); }
-                if (window.__comicRoleClipResizeHandler) window.removeEventListener("resize",window.__comicRoleClipResizeHandler);
-                window.__comicRoleClipResizeHandler = placeClipOnBackground;
-                window.addEventListener("resize",placeClipOnBackground,{passive:true}); clip.appendChild(layer); comicBox.appendChild(clip);
+            if (isSplitBackgroundAndRole && path === rolePath && options.opening) {
+                // 分離素材是同一張透明畫布：角色與背景必須共用完整畫布座標。
+                layer.classList.add("intro-comic-role");
+                comicBox.appendChild(layer);
+            } else if (isSplitBackgroundAndRole && path === rolePath) {
+                comicBox.appendChild(layer);
             } else comicBox.appendChild(layer);
         }
         shownPaths.push(path);
@@ -11964,16 +11954,16 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
-                // 所有開場分鏡屬於同一段連續漫畫：每次只追加新的一組背景＋角色，舊分鏡保留。
+                // 第一組 11～14 累積顯示；第二組 1～4 開始前由 groupChanged 清空第一組。
                 const openingComicFrames = [
-                    { group: "opening-sequence", paths: ["./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-sequence", paths: ["./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
-                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"], rolePath: "./pct/13.webp" },
-                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"], rolePath: "./pct/14.webp" },
-                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"], rolePath: "./1漫畫/1.webp" },
-                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"], rolePath: "./1漫畫/2.webp" },
-                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"], rolePath: "./1漫畫/3.webp" },
-                    { group: "opening-sequence", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"], rolePath: "./1漫畫/4.webp" }
+                    { group: "opening-11-14", paths: ["./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-11-14", paths: ["./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-11-14", paths: ["./pct/13.webp"] },
+                    { group: "opening-11-14", paths: ["./pct/14.webp"] },
+                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"], rolePath: "./1漫畫/1.webp" },
+                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"], rolePath: "./1漫畫/2.webp" },
+                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"], rolePath: "./1漫畫/3.webp" },
+                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"], rolePath: "./1漫畫/4.webp" }
                 ];
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
@@ -16308,7 +16298,7 @@ body.opening-comic-controls #skip-btn{
 #personality-result-screen::after{
  content:""!important;display:block!important;position:fixed!important;
  left:0!important;right:0!important;bottom:0!important;
- width:100vw!important;height:46vh!important;max-height:520px!important;
+ width:100vw!important;height:25vh!important;max-height:280px!important;
  margin:0!important;transform:none!important;
  pointer-events:none!important;z-index:13!important;
  background:linear-gradient(to bottom,
@@ -16318,6 +16308,15 @@ body.opening-comic-controls #skip-btn{
   #fff 100%)!important;
 }
 #personality-result-screen #personality-result-save::before{content:none!important;display:none!important}
+ @media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+  #personality-result-screen::after{height:24vh!important;max-height:240px!important}
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary{
+  display:block!important;box-sizing:border-box!important;max-width:100%!important;white-space:normal!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary .result-job-category{
+  box-sizing:border-box!important;max-width:100%!important;
+ }
 #personality-result-screen #personality-result-save{z-index:2147483005!important}
 
 </style>
