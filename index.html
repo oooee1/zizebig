@@ -13568,7 +13568,7 @@ function toggleBGM(btnEl) {
 #personality-result-save,
 .personality-result-download{display:none!important;visibility:hidden!important;pointer-events:none!important}
 
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  /* 好奇星主標題手機版由 130px 縮小 10px；桌面版完全不變。 */
  #personality-result-copy .result-name.result-name-curiosity{font-size:120px!important}
 }
@@ -13682,7 +13682,7 @@ function toggleBGM(btnEl) {
 </style>
 <style id="result-mobile-position-and-scroll-guard-20261108">
 /* 手機版：適合職業以前的所有文字區塊明顯上移20px；用獨立 translate 避免覆蓋各自原有定位與動畫。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
   translate:0 -26px!important;
  }
@@ -13730,7 +13730,7 @@ function toggleBGM(btnEl) {
 
 <style id="result-user-adjustments-20261108h">
 /* 電腦版說明文字放大 5px；不改動手機版字級與其他標題。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-copy .result-primary > p,
  #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
  #personality-result-copy .result-job-category-description{
@@ -13787,7 +13787,7 @@ function toggleBGM(btnEl) {
 /* 好奇星中文名稱與英文標題之間增加6px距離。 */
 #personality-result-copy .result-name.result-name-curiosity{margin-top:6px!important}
 /* 電腦版適合職業以前的內容下移6px；手機版沿用上移設定。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
   translate:0 6px!important;
  }
@@ -13812,7 +13812,7 @@ function toggleBGM(btnEl) {
  font-size:calc(1em + 12px)!important;
 }
 /* 手機版：適合職業標題以上的內容，在原本位置上再整體上移10px；不影響適合職業區塊及電腦版。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
   translate:0 -60px!important;
  }
@@ -13822,7 +13822,7 @@ function toggleBGM(btnEl) {
 
 <style id="result-mobile-and-precareer-spacing-20261111">
 /* 手機：測驗提醒在原本字級（含先前縮小設定）上放大3px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-copy .result-disclaimer{
   /* JS 會在手機全域縮字後將指定提醒調整為原字級-1px，較先前-4px放大3px。 */
  }
@@ -13845,7 +13845,7 @@ function toggleBGM(btnEl) {
  }
 }
 /* 電腦與手機：適合職業以上的文字整體再往上7px；電腦版原本下移12px改為下移5px。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
   translate:0 5px!important;
  }
@@ -13863,7 +13863,7 @@ function toggleBGM(btnEl) {
 #personality-result-screen #personality-result-copy .result-trait-heading{
  translate:8.3px 0!important;
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy .result-trait-heading{
   translate:11.3px 0!important;
  }
@@ -13885,12 +13885,12 @@ function toggleBGM(btnEl) {
 @keyframes resultPassionSway{0%,100%{transform:rotate(0) translateY(0)}25%{transform:rotate(-3deg) translateY(-5px)}50%{transform:rotate(0) translateY(-10px)}75%{transform:rotate(3deg) translateY(-5px)}}
 
 /* 桌面、手機都明確把星球中文大標與英文往上移，取消舊 top/translate 疊加。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy > .result-name{top:394px!important;translate:none!important}
  #personality-result-screen #personality-result-copy > .result-english{top:398px!important;translate:none!important}
  #personality-result-screen #personality-result-copy .result-keywords span{font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 15px)!important}
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{top:443px!important;translate:none!important}
  #personality-result-screen #personality-result-copy .result-keywords span{font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 1.5px)!important}
@@ -13899,7 +13899,7 @@ function toggleBGM(btnEl) {
 #personality-result-screen #personality-result-copy .result-job-category-title{padding-left:5px!important;padding-right:5px!important}
 /* 「屬於（）的特質」確實往右1px；以最後一條規則覆蓋舊位移。 */
 #personality-result-screen #personality-result-copy .result-trait-heading{translate:8.3px 0!important}
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){#personality-result-screen #personality-result-copy .result-trait-heading{translate:11.3px 0!important}}
+@media (max-width:900px){#personality-result-screen #personality-result-copy .result-trait-heading{translate:11.3px 0!important}}
 /* 「測驗結果只是參考」版本與其他提醒共用定位，不再額外偏移。 */
 #personality-result-screen #personality-result-copy .result-disclaimer-future{translate:0 0!important}
 /* 繼續遊戲以諾蘭紙可見區域中心定位，不額外向上偏移。 */
@@ -13917,11 +13917,11 @@ function toggleBGM(btnEl) {
  font-size:calc(1em - 2px)!important;
 }
 /* 桌面與手機星球中文大標、英文都從實際定位再往上6px。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy > .result-name{top:393px!important}
  #personality-result-screen #personality-result-copy > .result-english{top:397px!important}
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{top:442px!important}
 }
@@ -13950,7 +13950,7 @@ function toggleBGM(btnEl) {
 
 <style id="result-mobile-title-up-six-and-category-padding-20261112">
 /* 手機版星球中文大標與英文標題直接以 top 定位，從目前 448px 再上移 6px；不依賴 translate 疊加。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{
   top:442px!important;
@@ -14010,12 +14010,12 @@ function toggleBGM(btnEl) {
 
 <style id="result-save-button-and-final-position-20261113">
 /* 手機星球中文大標與英文標題都下移9px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name{translate:0 9px!important}
  #personality-result-screen #personality-result-copy > .result-english{translate:0 9px!important}
 }
 /* 電腦版英文標題在原位置下移4px。 */
-@media (min-width:901px) and (pointer:fine){#personality-result-screen #personality-result-copy > .result-english{top:405px!important}}
+@media (min-width:901px){#personality-result-screen #personality-result-copy > .result-english{top:405px!important}}
 /* 救援後回到對話時保留原場景背景，不套用失敗遮罩。 */
 #page1.mail-failure-mode::after{display:none!important;content:none!important;background:transparent!important}
 /* 以 hidden 屬性作為唯一顯示開關：只有結果建構完成後由JS解除。 */
@@ -14121,7 +14121,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-mobile-flow-and-heading-repair-20261113">
 /* 手機版職業區、提醒與「繼續遊戲」改回正常文件流，避免絕對定位互相重疊或按鈕漂移。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-secondary{
   position:relative!important;top:auto!important;left:auto!important;
   right:auto!important;bottom:auto!important;
@@ -14193,7 +14193,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-mobile-career-and-save-gradient-final-20261115">
 /* 手機：職業區在 JS 計算基準上再上移30px；繼續遊戲按鈕不受影響。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-secondary{
   translate:none!important;
  }
@@ -14203,7 +14203,7 @@ window.savePersonalityResultImage=async function(){
  content:none!important;
  display:none!important;
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-save{
   isolation:isolate!important;
   overflow:visible!important;
@@ -14234,7 +14234,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-career-same-position-desktop-mobile-20261115">
 /* 電腦版只有「適合職業」標題額外左移0.5px。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy .result-career-heading{
   translate:-.5px 0!important;
  }
@@ -14243,7 +14243,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-final-small-adjustments-20261115">
 /* 手機／平板：適合職業再上移一點；繼續遊戲獨立下移，不跟隨職業區。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-continue{
   translate:0 16px!important;
  }
@@ -14287,7 +14287,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-user-final-adjustments-20261108i">
 /* 手機：好奇星中文主標縮小10px，並讓中文名稱再靠近英文4px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-copy .result-name.result-name-curiosity{
   font-size:110px!important;
   margin-top:-32px!important;
@@ -14298,7 +14298,7 @@ window.savePersonalityResultImage=async function(){
  }
 }
 /* 電腦：說明文字在目前基礎上再放大2px，英文往下4px。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-copy .result-primary > p,
  #personality-result-copy .result-secondary > p:not(.result-career-heading):not(.result-career-intro),
  #personality-result-copy .result-job-category-description{
@@ -14339,7 +14339,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-mobile-trait-and-typography-unify-20261109">
 /* 手機「屬於（）的特質」標籤完全沿用電腦版：字體、字級、底色與內距一致。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy .result-trait-heading-label{
   all:initial!important;display:inline-block!important;box-sizing:border-box!important;
   max-width:100%!important;padding:5px 3px!important;margin:0!important;position:relative!important;left:5px!important;
@@ -14377,7 +14377,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="user-adjustments-20261113-followup">
 /* 電腦版保存結果按鈕縮小一半；手機版維持原樣。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
   #personality-result-screen #personality-result-save{
     font-size:clamp(15px,calc((100vw - 24px)/14.2),60px)!important;
   }
@@ -15054,7 +15054,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-desktop-final-controlled-20261108">
 /* 僅控制電腦版結果頁；直接使用 position:relative + top，避免 translate 被舊規則或瀏覽器排版抵銷。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
   /* 「屬於星辰的星球是」位於最前方，原本在正常流；獨立向下20px。 */
   #personality-result-screen #personality-result-copy > .result-belongs-heading{
     position:relative!important;
@@ -15123,7 +15123,7 @@ window.savePersonalityResultImage=async function(){
     display:none!important;
   }
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
   #personality-result-screen #personality-result-copy .result-name.result-name-curiosity{
     font-size:120px!important;
   }
@@ -15131,7 +15131,7 @@ window.savePersonalityResultImage=async function(){
 </style>
 
 <style id="result-desktop-adjustments-20261109">
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
   /* Curiosity title: +5px, with a 6px gap from the English label. */
   #personality-result-screen #personality-result-copy .result-name.result-name-curiosity{
     font-size:135px!important;
@@ -15163,7 +15163,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="desktop-story-portrait-and-result-spacing-20261109">
 /* 電腦版劇情立繪微調：在既有位置上獨立調整，不影響手機版。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
   #page1 .角色圖.全好奇星{
     translate:0 -14px!important;
   }
@@ -15205,7 +15205,7 @@ window.savePersonalityResultImage=async function(){
 #my-choice-result-button {
   font-size: clamp(1px, calc(6.2vw - 39px), 37px) !important;
 }
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
   #my-choice-result-button {
     font-size: clamp(61px, calc(12vw - 39px), 111px) !important;
   }
@@ -15239,7 +15239,7 @@ window.savePersonalityResultImage=async function(){
   font-size:130px!important;
   color:var(--result-primary-color)!important;
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
   #personality-result-screen #personality-result-copy .result-name {
     font-size:120px!important;
   }
@@ -15261,7 +15261,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-pre-career-group-up8-20261110">
 /* 適合職業之前的整個內容區一起上移8px；職業區、繼續遊戲與備註不動。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
   #personality-result-screen #personality-result-copy > .result-belongs-heading{
     top:-14px!important;
   }
@@ -15291,7 +15291,7 @@ window.savePersonalityResultImage=async function(){
 @media (max-width:600px){#my-choice-result-button{font-size:clamp(30px,calc(9vw + 4px),44px)!important;padding:12px 26px 15px!important;}}
 
 #personality-result-screen #personality-result-copy .result-trait-heading{translate:6px 0!important;}
-@media (min-width:901px) and (pointer:fine){#personality-result-screen #personality-result-copy .result-career-intro{font-size:calc(clamp(16px,calc(4.2cqw + 3px),20px) + 4px)!important;}}
+@media (min-width:901px){#personality-result-screen #personality-result-copy .result-career-intro{font-size:calc(clamp(16px,calc(4.2cqw + 3px),20px) + 4px)!important;}}
 #personality-result-screen #personality-result-copy .result-job-category{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;margin-left:auto!important;margin-right:auto!important;text-align:center!important;}
 #personality-result-screen #personality-result-copy .result-job-category-title{display:block!important;box-sizing:border-box!important;width:max-content!important;max-width:100%!important;margin-left:auto!important;margin-right:auto!important;white-space:normal!important;overflow-wrap:anywhere!important;text-align:center!important;}
 #personality-result-screen #personality-result-copy .result-job-category-description{display:block!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;margin-left:auto!important;margin-right:auto!important;text-align:center!important;overflow-wrap:anywhere!important;}
@@ -15300,7 +15300,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-requested-adjustments-20261111b">
 /* 「未來的人生是屬於…」提醒手機版置中，避免文字偏右。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy .result-disclaimer-future{
   width:100%!important;box-sizing:border-box!important;
   margin-left:auto!important;margin-right:auto!important;
@@ -15315,7 +15315,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="mobile-result-title-unified-minus-2px-20261111">
 /* 手機版四種星球中文大標在原本統一尺寸上再縮小2px；英文標題尺寸、所有位置及桌面版維持不變。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
   #personality-result-screen #personality-result-copy .result-name{
     font-size:117px!important;
   }
@@ -15349,7 +15349,7 @@ window.savePersonalityResultImage=async function(){
  translate:0 -8px!important;
 }
 /* 手機前面已要求上移兩次各8px，累計16px；桌面版這次同步上移8px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy .result-name,
  #personality-result-screen #personality-result-copy .result-english{
   translate:0 -16px!important;
@@ -15410,13 +15410,13 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-position-and-category-height-fix-20261112">
 /* 電腦版：英文仍在中文星球名稱上方，兩者與其餘「適合職業」前內容一起上移3px。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy > .result-belongs-heading{top:-17px!important}
  #personality-result-screen #personality-result-copy > .result-english{top:414px!important}
  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:410px!important}
 }
 /* 手機版：中文星球名稱與英文一起由目前位置下移13px，維持英文在上、中文在下。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{
   translate:0 -3px!important;
@@ -15443,7 +15443,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="desktop-result-and-disclaimer-adjustments-20261112">
 /* 電腦版：適合職業之前的整組內容再上移3px。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy > .result-belongs-heading{top:-20px!important}
  #personality-result-screen #personality-result-copy > .result-english{top:411px!important}
  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:407px!important}
@@ -15469,7 +15469,7 @@ window.savePersonalityResultImage=async function(){
 #personality-result-screen #personality-result-copy .result-trait-heading{
  translate:7.3px 0!important;
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy .result-trait-heading{
   translate:10.3px 0!important;
  }
@@ -15478,7 +15478,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-keyword-and-category-final-adjustments-20261112">
 /* 電腦版：所有星球組合的「創意／態度」標籤字級統一比照好奇星&好奇星，不再因星球組合不同而有大小差異。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy .result-keywords span{
   font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) - .8px)!important;
  }
@@ -15488,7 +15488,7 @@ window.savePersonalityResultImage=async function(){
  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:404px!important}
 }
 /* 手機版：星球簡介（創意／態度）標籤文字放大1px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy .result-keywords span{
   font-size:calc(clamp(14px,calc(4.2cqw + 1px),18px) + 1px)!important;
  }
@@ -15502,7 +15502,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-mobile-title-down-and-english-initial-20261112">
 /* 手機版：中文星球大標與英文一起從目前位置再下移13px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{
   translate:0 10px!important;
@@ -15529,7 +15529,7 @@ window.savePersonalityResultImage=async function(){
  padding-right:4px!important;
 }
 /* 手機標題不再依賴 translate 疊加；直接將原本 top:440px 的定位改為453px，確實下移13px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{
   position:relative!important;
@@ -15542,12 +15542,12 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-title-up-five-px-20261112">
 /* 桌面版：中文星球名稱與英文標題各自依原定位上移15px（本次再上移10px）。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy > .result-name{top:389px!important}
  #personality-result-screen #personality-result-copy > .result-english{top:393px!important}
 }
 /* 手機版：中文星球名稱與英文標題從目前位置再上移10px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{
   top:438px!important;
@@ -15613,11 +15613,11 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-latest-requested-adjustments-20261112">
 /* 星球中文大標與英文各自再往上10px；直接覆蓋前面重複的 top 設定。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy > .result-name{top:379px!important}
  #personality-result-screen #personality-result-copy > .result-english{top:383px!important}
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{
   top:428px!important;
@@ -15640,7 +15640,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-mobile-title-final-position-20261112">
 /* 標題位置由 JS inline top 控制；手機版只上移10px，桌面版完全不動。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-name,
  #personality-result-screen #personality-result-copy > .result-english{
   translate:none!important;
@@ -15651,7 +15651,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-desktop-english-down-9-20261113">
 /* 電腦版英文星球標題往下9px；手機版完全不變。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy > .result-english{top:392px!important}
 }
 </style>
@@ -15660,13 +15660,13 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-requested-adjustments-20261113">
 /* 桌面版英文標題在上一版基礎上再下移9px：392px → 401px。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy > .result-english{top:409px!important}
  /* 「適合職業」以上的主要文字整體下移4px。 */
  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-name):not(.result-secondary):not(.result-continue):not(.result-disclaimer){top:408px!important}
 }
 /* 手機版英文獨立上移4px；中文星球名稱保持原位。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-english{top:377px!important}
  /* 「適合職業」以上的內文下移4px，不帶動星球中英文標題。 */
  #personality-result-screen #personality-result-copy > :not(.result-belongs-heading):not(.result-english):not(.result-name):not(.result-secondary):not(.result-continue):not(.result-disclaimer){
@@ -15687,7 +15687,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="result-final-followup-fixes-20261113">
 /* 手機版「屬於……的星球是：」原本 top:-18px 被結果文字容器 overflow:hidden 裁掉，移回可見範圍。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-belongs-heading{
   top:0!important;left:8px!important;display:block!important;
   visibility:visible!important;opacity:1!important;z-index:30!important;
@@ -15744,7 +15744,7 @@ window.savePersonalityResultImage=async function(){
 
 <style id="user-result-layout-fixes-20261113">
 /* 手機：適合職業區以上的內容再整體上移3px；不動適合職業區。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > :not(.result-secondary):not(.result-continue):not(.result-disclaimer){
   translate:0 -70px!important;
  }
@@ -15783,10 +15783,10 @@ window.savePersonalityResultImage=async function(){
 #personality-result-screen #personality-result-save img{
   width:1.45em!important;height:1.45em!important;
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
   #personality-result-screen #personality-result-save{font-size:clamp(18px,calc((100vw - 24px)/11.83),72px)!important}
 }
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
   #personality-result-screen #personality-result-save{
     font-size:clamp(9px,calc((100vw - 24px)/23.67),36px)!important;
     bottom:calc(92px + env(safe-area-inset-bottom))!important;
@@ -15818,7 +15818,7 @@ window.savePersonalityResultImage=async function(){
   position:relative!important;z-index:2!important;
 }
 /* 手機版：不同第一、第二高分的職業介紹只比原字級稍大，不再額外暴增18px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
   #personality-result-copy .result-career-intro:not(.result-career-intro-tied){
     font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 5px)!important;
   }
@@ -16049,7 +16049,7 @@ window.savePersonalityResultImage=async function(){
 <style id="result-followup-fixes-20261115">
 /* 「我的選擇」：電腦字級縮小10px、手機字級放大10px；按鈕不使用圓角。 */
 #my-choice-result-button{border-radius:0!important}
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #my-choice-result-button{font-size:clamp(51px,calc(12vw - 29px),101px)!important}
 }
 @media (min-width:601px) and (max-width:768px){
@@ -16065,7 +16065,7 @@ window.savePersonalityResultImage=async function(){
 }
 
 /* 手機版明確將「屬於（）的星球是：」放在結果海報左上方可視範圍。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-belongs-heading{
   position:absolute!important;top:8px!important;left:8px!important;
   display:block!important;visibility:visible!important;opacity:1!important;
@@ -16087,7 +16087,7 @@ window.savePersonalityResultImage=async function(){
  background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.82) 30%,rgba(255,255,255,.42) 65%,rgba(255,255,255,0) 100%)!important;
  z-index:0!important;pointer-events:none!important;
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-save::before{
   width:calc(62.5vw - 15px)!important;
   height:calc(100vh - 24px)!important;
@@ -16132,13 +16132,13 @@ window.addEventListener("click",function(event){
  font-size:calc(1em - 3px)!important;
 }
 /* 電腦：「適合職業」標題向右0.5px。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy .result-career-heading{
   translate:.5px 3px!important;
  }
 }
 /* 手機：適合職業區（標題與下方內容）整組左移2px、下移8px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy > .result-secondary{
   position:relative!important;
   left:-2px!important;
@@ -16183,7 +16183,7 @@ window.addEventListener("click",function(event){
 
 <style id="result-desktop-trait-label-mobile-fix-20261115">
 /* 電腦版「屬於…的特質」標籤沿用手機版的純文字處理：取消複製自段落的描邊／陰影，只保留原本電腦版字級、背景、內距與位置。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy .result-trait-heading,
  #personality-result-screen #personality-result-copy .result-trait-heading-label,
  #personality-result-screen #personality-result-copy .result-trait-heading-label *{
@@ -16226,20 +16226,20 @@ window.addEventListener("click",function(event){
  pointer-events:none!important;
  background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.3) 34%,rgba(255,255,255,.78) 72%,#fff 100%)!important;
 }
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-poster::after{
   height:clamp(230px,40vh,420px)!important;
  }
 }
 /* 手機「結合……是……」維持上次要求的縮小3px。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+@media (max-width:900px){
  #personality-result-screen #personality-result-copy .result-career-intro{
   font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 3px)!important;
  }
 }
 #personality-result-screen #personality-result-copy .result-secondary{box-sizing:border-box!important}
 /* 電腦版清除特質標題及其前後區塊可能產生的分隔線。 */
-@media (min-width:901px) and (pointer:fine){
+@media (min-width:901px){
  #personality-result-screen #personality-result-copy .result-section,
  #personality-result-screen #personality-result-copy .result-section *,
  #personality-result-screen #personality-result-copy .result-trait-heading,
