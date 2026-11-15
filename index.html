@@ -10356,7 +10356,7 @@ function positionResultTextElements(layers,copy){
   if(!textPaper||!textPaper.naturalWidth||!copy.clientWidth)return;
   const responsiveScale=Math.min(1,layers.clientWidth/390)||1;
   // 標題位置統一由結果建立時的 top 值控制；此函式只負責紙張與職業區定位，不再額外疊加 translate。
-  const textBounds=getResultImageAlphaBounds(textPaper);
+  const textBounds=getResultImageAlphaBounds(textPaper)||{x:0,y:0,width:textPaper.naturalWidth,height:textPaper.naturalHeight};
   if(textBounds){
    const career=copy.querySelector(".result-secondary");
    if(career){
