@@ -2863,12 +2863,23 @@ img { max-width:100%; }
 #intro-start-title{display:block;width:min(78%,340px);max-height:30vh;object-fit:contain}
 #intro-start-button{
  display:flex;align-items:center;justify-content:center;width:min(66%,270px);min-height:54px;
- margin-top:clamp(12px,3vh,26px);padding:12px 22px;border:3px solid #fff;border-radius:14px;
- background:#F6B800;color:#211900;font-family:"Dela Gothic One","CPTrans",sans-serif;
+ margin-top:clamp(12px,3vh,26px);padding:12px 22px;border:2px solid #fff;border-radius:0;
+ background:#000;color:#fff;font-family:"Dela Gothic One","CPTrans",sans-serif;
  font-size:clamp(19px,5vw,25px);line-height:1.2;letter-spacing:.04em;cursor:pointer;
- box-shadow:0 5px 0 rgba(0,0,0,.35);touch-action:manipulation;
+ box-shadow:none;filter:none;touch-action:manipulation;position:relative;z-index:3;
+ pointer-events:auto;-webkit-tap-highlight-color:transparent;
 }
-#intro-start-button:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+#intro-start-button .start-button-orange{color:#D7763D}
+#intro-start-button:active{transform:none;box-shadow:none}
+#intro-start-video{pointer-events:none}
+#intro-start-screen,#intro-start-content{pointer-events:auto}
+#developer-tools{
+ position:fixed!important;top:14px!important;right:14px!important;
+ z-index:2147483647!important;pointer-events:auto!important;
+}
+#developer-tools-toggle,#developer-tools-panel,#developer-tools-panel button{
+ pointer-events:auto!important;
+}
 #intro-comic-box{
  position:absolute;inset:0;z-index:1000001;display:block;overflow:hidden;
  background:#000;pointer-events:auto;cursor:pointer;touch-action:manipulation;
@@ -2966,7 +2977,7 @@ img { max-width:100%; }
             <div id="intro-start-content">
                 <img id="intro-start-logo" src="./pct/logo.webp" alt="星辰之路 Logo">
                 <img id="intro-start-title" src="./pct/標準字.webp" alt="星辰之路">
-                <button id="intro-start-button" type="button">開始遊戲</button>
+                <button id="intro-start-button" type="button"><span>開始</span><span class="start-button-orange">遊</span><span>戲</span></button>
             </div>
         </section>
         <!-- 開場漫畫沿用既有漫畫的置中、淡入與滑入動畫，分成兩組依序播放。 -->
@@ -12000,7 +12011,16 @@ function openPersonalityResult(first,second){
                         page.style.pointerEvents = "none";
                     }
                     const startScreen = document.getElementById("intro-start-screen");
-                    if (startScreen) startScreen.style.display = "flex";
+                    if (startScreen) {
+                        startScreen.style.display = "flex";
+                        startScreen.style.pointerEvents = "auto";
+                    }
+                    const developerTools = document.getElementById("developer-tools");
+                    if (developerTools) {
+                        developerTools.style.position = "fixed";
+                        developerTools.style.zIndex = "2147483647";
+                        developerTools.style.pointerEvents = "auto";
+                    }
                     const video = document.getElementById("intro-start-video");
                     if (video && typeof video.play === "function") video.play().catch(() => {});
                     window.__zizebigStartupStage = "開始介面已顯示，等待玩家開始";
@@ -12087,7 +12107,14 @@ function openPersonalityResult(first,second){
                 }
 
                 const startButton = document.getElementById("intro-start-button");
-                if (startButton) startButton.addEventListener("click", beginOpeningComics);
+                if (startButton) {
+                    startButton.onclick = beginOpeningComics;
+                    startButton.addEventListener("pointerup", function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        beginOpeningComics(event);
+                    }, { passive: false });
+                }
                 const comicScreen = document.getElementById("intro-comic-box");
                 if (comicScreen) comicScreen.addEventListener("click", advanceOpeningComic);
 
