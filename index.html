@@ -10374,7 +10374,8 @@ function positionResultTextElements(layers,copy){
     // 手機／平板依視窗寬度或觸控裝置判斷，避免 iPad 桌面網站模式漏判；電腦版不額外位移。
     const isMobileResultLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
-    const careerShiftY=isMobileResultLayout?-80:0;
+    // 手機／平板職業區大幅上移；電腦版維持原位。
+    const careerShiftY=isMobileResultLayout?-160:0;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
     // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
