@@ -11954,16 +11954,16 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
-                // 第一組 11～14 累積顯示；第二組 1～4 開始前由 groupChanged 清空第一組。
+                // 第一組 11～14：共用漫畫紙背景，逐張追加且保留前一張；第二組 1～4 開始時清空第一組。
                 const openingComicFrames = [
-                    { group: "opening-11-14", paths: ["./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-11-14", paths: ["./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
-                    { group: "opening-11-14", paths: ["./pct/13.webp"] },
-                    { group: "opening-11-14", paths: ["./pct/14.webp"] },
-                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"], rolePath: "./1漫畫/1.webp" },
-                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"], rolePath: "./1漫畫/2.webp" },
-                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"], rolePath: "./1漫畫/3.webp" },
-                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"], rolePath: "./1漫畫/4.webp" }
+                    { group: "opening-11-14", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-11-14", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-11-14", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
+                    { group: "opening-11-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
+                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
+                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
+                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
+                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
                 ];
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
@@ -16272,12 +16272,15 @@ window.addEventListener("click",function(event){
  max-width:92vw!important;max-height:92dvh!important;
  object-fit:contain!important;
 }
-#comic-box.opening-comic-active .intro-comic-background{
- position:absolute!important;inset:0!important;
- width:100vw!important;height:100dvh!important;
- max-width:none!important;max-height:none!important;
- object-fit:cover!important;transform:none!important;
-}
+/* 紙背景、分離背景、角色圖全部使用相同的 92vw × 92dvh contain 畫布；避免 cover/contain 混用造成錯位。 */
+ #comic-box.opening-comic-active .intro-comic-background,
+ #comic-box.opening-comic-active .intro-comic-role{
+  position:absolute!important;top:50%!important;left:50%!important;
+  width:92vw!important;height:92dvh!important;
+  max-width:92vw!important;max-height:92dvh!important;
+  transform:translate(-50%,-50%)!important;
+  object-fit:contain!important;
+ }
 /* 漫畫期間選單、音量與跳過鍵固定於視窗頂層，不受 430px 舞台裁切。 */
 body.opening-comic-controls .menu-container{
  position:fixed!important;top:max(12px,env(safe-area-inset-top))!important;
@@ -16298,7 +16301,7 @@ body.opening-comic-controls #skip-btn{
 #personality-result-screen::after{
  content:""!important;display:block!important;position:fixed!important;
  left:0!important;right:0!important;bottom:0!important;
- width:100vw!important;height:25vh!important;max-height:280px!important;
+ width:100vw!important;height:16vh!important;max-height:180px!important;
  margin:0!important;transform:none!important;
  pointer-events:none!important;z-index:13!important;
  background:linear-gradient(to bottom,
@@ -16309,7 +16312,7 @@ body.opening-comic-controls #skip-btn{
 }
 #personality-result-screen #personality-result-save::before{content:none!important;display:none!important}
  @media (max-width:900px), (pointer:coarse) and (max-width:1200px){
-  #personality-result-screen::after{height:24vh!important;max-height:240px!important}
+  #personality-result-screen::after{height:16vh!important;max-height:180px!important}
  }
  #personality-result-screen #personality-result-copy > .result-secondary{
   display:block!important;box-sizing:border-box!important;max-width:100%!important;white-space:normal!important;
