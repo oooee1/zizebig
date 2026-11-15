@@ -16323,3 +16323,36 @@ body.opening-comic-controls #skip-btn{
 #personality-result-screen #personality-result-save{z-index:2147483005!important}
 
 </style>
+
+<style id="opening-comic-fullscreen-mask-and-career-down-20261116">
+/* 開場漫畫所有畫面圖層都填滿整個螢幕；背景與角色使用完全相同的裁切與座標。 */
+#comic-box.opening-comic-active .comic-layer,
+#comic-box.opening-comic-active .intro-comic-background,
+#comic-box.opening-comic-active .intro-comic-role{
+  position:absolute!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-width:100vw!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  transform:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+/* 角色層放在漫畫背景上方，並限制在同一個全螢幕畫布內，避免角色浮出背景範圍。 */
+#comic-box.opening-comic-active .intro-comic-background{z-index:1!important}
+#comic-box.opening-comic-active .intro-comic-role{
+  z-index:2!important;
+  overflow:hidden!important;
+  clip-path:inset(0)!important;
+  -webkit-clip-path:inset(0)!important;
+  pointer-events:none!important;
+}
+/* 適合職業區塊整組下移200px，繼續遊戲按鈕不包含在內。 */
+#personality-result-screen #personality-result-copy > .result-secondary{
+  translate:0 200px!important;
+}
+</style>
