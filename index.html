@@ -10924,7 +10924,7 @@ function openPersonalityResultCore(first,second){
  }
  // 職業介紹「結合……是……」整體縮小3px；說明文字在目前計算字級上增加1px。
  const careerIntro=copy.querySelector(".result-career-intro");
- if(careerIntro){const size=parseFloat(getComputedStyle(careerIntro).fontSize);if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size-3)+"px","important");}
+ if(careerIntro){const size=parseFloat(getComputedStyle(careerIntro).fontSize);const mobileCareerIntro=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size+(mobileCareerIntro?0:-3))+"px","important");}
  // 玩家名字在介紹句中必須跟隨句子字級；避免前面的手機全域縮字與這裡縮小整句造成相對字級偏大。
  copy.querySelectorAll(".result-player-name,.result-belongs-player-char").forEach(el=>el.style.setProperty("font-size","1em","important"));
  if(careerIntro)careerIntro.querySelectorAll(".result-player-name").forEach(el=>el.style.setProperty("font-size","1em","important"));
