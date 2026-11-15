@@ -10375,7 +10375,7 @@ function positionResultTextElements(layers,copy){
     const isMobileResultLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機／平板職業區大幅上移；電腦版維持原位。
-    const careerShiftY=isMobileResultLayout?-1440:0;
+    const careerShiftY=isMobileResultLayout?-1500:0;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
     // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
@@ -13935,6 +13935,48 @@ window.savePersonalityResultImage=async function(){
  #personality-result-screen #personality-result-copy .result-career-heading{
   translate:-.5px 0!important;
  }
+}
+</style>
+
+<style id="result-final-small-adjustments-20261115">
+/* 手機／平板：適合職業再上移一點；繼續遊戲獨立下移，不跟隨職業區。 */
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+ #personality-result-screen #personality-result-copy > .result-continue{
+  translate:0 16px!important;
+ }
+}
+/* 恢復保存結果後方的白色漸層：由上方透明漸變至按鈕附近白色。 */
+#personality-result-screen #personality-result-save{
+ position:fixed!important;
+ isolation:isolate!important;
+ overflow:visible!important;
+ background:transparent!important;
+}
+#personality-result-screen #personality-result-save::before{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ left:50%!important;
+ bottom:calc(100% - 8px)!important;
+ width:100vw!important;
+ height:55vh!important;
+ transform:translateX(-50%)!important;
+ background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.38) 55%,rgba(255,255,255,.88) 82%,#fff 100%)!important;
+ z-index:0!important;
+ pointer-events:none!important;
+}
+#personality-result-screen #personality-result-save::after{
+ content:""!important;
+ position:absolute!important;
+ inset:0!important;
+ background:#F6B800!important;
+ z-index:1!important;
+ pointer-events:none!important;
+}
+#personality-result-screen #personality-result-save span,
+#personality-result-screen #personality-result-save img{
+ position:relative!important;
+ z-index:2!important;
 }
 </style>
 </body>
