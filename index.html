@@ -10371,7 +10371,8 @@ function positionResultTextElements(layers,copy){
     // 電腦與手機的「適合職業」區塊使用相同位移；繼續遊戲按鈕仍由下方獨立定位。
     const careerShiftX=1;
     // 手機版職業區額外上移30px；電腦版維持原本上移10px。
-    const careerShiftY=layers.clientWidth<=768?-40:-10;
+    // iPad 等寬度較大的觸控裝置也歸入手機版定位，避免 769–900px 誤走電腦版。
+    const careerShiftY=layers.clientWidth<=900?-40:-10;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
     // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
