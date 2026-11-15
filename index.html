@@ -10372,7 +10372,7 @@ function positionResultTextElements(layers,copy){
     const isMobileResultLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 電腦與手機的「適合職業」區塊使用各自既有位移；繼續遊戲按鈕仍由下方獨立定位。
-    const careerShiftX=isMobileResultLayout?-6:-1;
+    const careerShiftX=isMobileResultLayout?-5:-1;
     const careerShiftY=isMobileResultLayout?-1503:0;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
