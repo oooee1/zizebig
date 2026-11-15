@@ -10367,9 +10367,9 @@ function positionResultTextElements(layers,copy){
     const scaleY=imageRect.height/textPaper.naturalHeight;
     career.style.position="absolute";
     const careerWidth=textBounds.width*scaleX/responsiveScale;
-    career.style.setProperty("left",((imageRect.left-copyRect.left+textBounds.x*scaleX)/responsiveScale)+"px","important");
+    career.style.setProperty("left",((copy.clientWidth-careerWidth)/2)+"px","important");
     career.style.setProperty("width",careerWidth+"px","important");
-    career.style.top=((imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale)+"px";
+    career.style.top=((imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40)+"px";
    }
   }
   if(lowerNolan&&lowerNolan.complete&&lowerNolan.naturalWidth){
@@ -15767,25 +15767,43 @@ window.addEventListener("click",function(event){
 </script>
 
 <style id="result-preview-share-fixes-20261115">
-/* 漸層直接屬於結果海報本身，隨海報內容捲動；不依賴獨立節點的定位同步。 */
-#personality-result-screen #personality-result-poster::after{
- content:""!important;display:block!important;position:absolute!important;
- left:0!important;right:0!important;bottom:0!important;width:100%!important;
- height:300px!important;z-index:20!important;pointer-events:none!important;
- background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.28) 28%,rgba(255,255,255,.72) 68%,#fff 100%)!important;
+/* 漸層改成結果捲動視窗內的 sticky 底部遮罩：左右貼齊可視寬度，底邊不超出螢幕，捲動時維持在視窗下緣。 */
+#personality-result-screen::after{
+ content:""!important;display:block!important;position:sticky!important;
+ left:0!important;right:0!important;bottom:0!important;
+ width:100%!important;height:clamp(210px,34vh,320px)!important;
+ margin-top:clamp(-320px,-34vh,-210px)!important;
+ z-index:2147483002!important;pointer-events:none!important;
+ background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.34) 34%,rgba(255,255,255,.78) 72%,#fff 100%)!important;
 }
 @media (max-width:768px){
- #personality-result-screen #personality-result-poster::after{height:clamp(220px,42vh,460px)!important}
+ #personality-result-screen::after{
+  height:clamp(230px,40vh,420px)!important;
+  margin-top:clamp(-420px,-40vh,-230px)!important;
+ }
 }
-/* 預覽圖片縮小為原本顯示尺寸的一半。 */
-#result-preview-share-overlay .result-preview-image{max-width:min(41vw,215px)!important;max-height:29vh!important}
-/* 分享按鈕水平排列，取消各自旋轉。 */
-#result-preview-share-overlay .result-preview-share-row{flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:clamp(14px,4vw,28px)!important}
-#result-preview-share-overlay .result-preview-share,
-#result-preview-share-overlay .result-preview-line,
-#result-preview-share-overlay .result-preview-instagram,
-#result-preview-share-overlay .result-preview-facebook{transform:none!important;rotate:none!important;writing-mode:horizontal-tb!important}
-#result-preview-share-overlay .result-preview-close{
- right:calc((100% - min(41vw,215px))/2 - 18px)!important;top:-12px!important;
+/* 手機「結合……是……」職業介紹整句縮小3px。 */
+@media (max-width:768px){
+ #personality-result-screen #personality-result-copy .result-career-intro{
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 2px)!important;
+ }
+}
+/* 職業區由實際紙張定位公式計算寬度，再以容器中心計算 left；不再沿用偏右的紙張左緣。 */
+#personality-result-screen #personality-result-copy .result-secondary{
+ box-sizing:border-box!important;
+}
+/* 電腦版灰線來自結果 section 的底線，連同前一個區塊一併取消。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy .result-section,
+ #personality-result-screen #personality-result-copy .result-section *{
+  border-bottom:0!important;
+  background-image:none!important;
+ }
+ #personality-result-screen #personality-result-copy .result-section::before,
+ #personality-result-screen #personality-result-copy .result-section::after,
+ #personality-result-screen #personality-result-copy .result-section *::before,
+ #personality-result-screen #personality-result-copy .result-section *::after{
+  content:none!important;display:none!important;
+ }
 }
 </style>
