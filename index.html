@@ -10369,13 +10369,13 @@ function positionResultTextElements(layers,copy){
     const careerWidth=textBounds.width*scaleX/responsiveScale;
     career.style.setProperty("width",careerWidth+"px","important");
     // 電腦與手機的「適合職業」區塊使用相同位移；繼續遊戲按鈕仍由下方獨立定位。
-    const careerShiftX=1;
+    const careerShiftX=-1;
     // 手機版職業區額外上移30px；電腦版維持原本上移10px。
     // 手機／平板依視窗寬度或觸控裝置判斷，避免 iPad 桌面網站模式漏判；電腦版不額外位移。
     const isMobileResultLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機／平板職業區大幅上移；電腦版維持原位。
-    const careerShiftY=isMobileResultLayout?-1500:0;
+    const careerShiftY=isMobileResultLayout?-1508:-8;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
     // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
@@ -10393,7 +10393,7 @@ function positionResultTextElements(layers,copy){
     button.style.position="absolute";
     button.style.left="0";
     button.style.width="100%";
-    button.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.5)*scale-22)/responsiveScale)+"px";
+    button.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height*.5)*scale-22)/responsiveScale+20/responsiveScale)+"px";
     button.style.transform="translateY(-50%)";
     button.style.margin="0";
    }
@@ -10407,7 +10407,7 @@ function positionResultTextElements(layers,copy){
     note.style.position="absolute";
     note.style.left="0";
     note.style.width="100%";
-    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale)+"px";
+    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+20/responsiveScale)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
