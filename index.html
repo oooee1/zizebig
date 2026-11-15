@@ -8640,6 +8640,7 @@ function restoreComicCanvasToGameStage() {
     const image = document.getElementById("comic-img");
     if (!box) return;
     clearComicLayers(box, image);
+    box.classList.remove("opening-comic-active");
     ["position","inset","width","height","z-index"].forEach(property => box.style.removeProperty(property));
     const gameContainer = document.getElementById("game-container");
     if (gameContainer && box.parentElement !== gameContainer) gameContainer.appendChild(box);
@@ -12069,6 +12070,7 @@ function openPersonalityResult(first,second){
                     document.body.classList.add("opening-comic-controls");
                     if (comicBox && comicBox.parentElement !== document.body) document.body.appendChild(comicBox);
                     if (comicBox) {
+                        comicBox.classList.add("opening-comic-active");
                         comicBox.style.setProperty("position","fixed","important");
                         comicBox.style.setProperty("inset","0","important");
                         comicBox.style.setProperty("width","100vw","important");
