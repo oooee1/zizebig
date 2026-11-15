@@ -10370,7 +10370,7 @@ function positionResultTextElements(layers,copy){
     career.style.setProperty("width",careerWidth+"px","important");
     const mobileCareerShift=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;
     const careerShiftX=mobileCareerShift?-3:1;
-    const careerShiftY=mobileCareerShift?10:-10;
+    const careerShiftY=mobileCareerShift?-30:-10;
     const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
     const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
     // 直接修正 JS 計算後的最終座標，避免後續 CSS translate/top 規則蓋掉手機下移。
