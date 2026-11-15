@@ -8584,7 +8584,7 @@ function enterGameAnimation() {
 function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options = {}) {
     if (!comicBox || !comicImg) return;
     const enteringComicMode = comicBox.style.display !== "block";
-    const shouldAnimateComicEntry = enteringComicMode && options.animateEntry !== false;
+    const shouldAnimateComicEntry = options.animateEntry !== false && (enteringComicMode || options.opening);
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
     if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
         comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
@@ -8611,6 +8611,9 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             if (isSplitBackgroundAndRole && path === rolePath && options.opening) {
                 // 分離素材是同一張透明畫布：角色與背景必須共用完整畫布座標。
                 layer.classList.add("intro-comic-role");
+                if (backgroundMaskPath) {
+                    layer.style.setProperty("--comic-role-mask", `url("${backgroundMaskPath}")`);
+                }
                 comicBox.appendChild(layer);
             } else if (isSplitBackgroundAndRole && path === rolePath) {
                 comicBox.appendChild(layer);
@@ -10409,7 +10412,7 @@ function positionResultTextElements(layers,copy){
     // 手機保留目前已接近正確的位置；電腦恢復透明尾端裁切前的舊定位基準。
     if(isMobileResultLayout){
      const careerShiftX=-4.5;
-     const careerShiftY=-1503;
+     const careerShiftY=200;
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
      career.style.setProperty("left",(careerBaseLeft+careerShiftX)+"px","important");
@@ -10419,7 +10422,7 @@ function positionResultTextElements(layers,copy){
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
      career.style.setProperty("left",(careerBaseLeft-1)+"px","important");
-     career.style.setProperty("top",(careerBaseTop-8)+"px","important");
+     career.style.setProperty("top",(careerBaseTop+200)+"px","important");
     }
     career.style.setProperty("translate","none","important");
    }
@@ -16324,41 +16327,8 @@ body.opening-comic-controls #skip-btn{
 
 </style>
 
-<style id="opening-comic-fullscreen-mask-and-career-down-20261116">
-/* 開場漫畫所有畫面圖層都填滿整個螢幕；背景與角色使用完全相同的裁切與座標。 */
-#comic-box.opening-comic-active .comic-layer,
-#comic-box.opening-comic-active .intro-comic-background,
-#comic-box.opening-comic-active .intro-comic-role{
-  position:absolute!important;
-  inset:0!important;
-  width:100vw!important;
-  height:100dvh!important;
-  min-width:100vw!important;
-  min-height:100dvh!important;
-  max-width:none!important;
-  max-height:none!important;
-  margin:0!important;
-  transform:none!important;
-  object-fit:cover!important;
-  object-position:center center!important;
-}
-/* 角色層放在漫畫背景上方，並限制在同一個全螢幕畫布內，避免角色浮出背景範圍。 */
-#comic-box.opening-comic-active .intro-comic-background{z-index:1!important}
-#comic-box.opening-comic-active .intro-comic-role{
-  z-index:2!important;
-  overflow:hidden!important;
-  clip-path:inset(0)!important;
-  -webkit-clip-path:inset(0)!important;
-  pointer-events:none!important;
-}
-/* 適合職業區塊整組下移200px，繼續遊戲按鈕不包含在內。 */
-#personality-result-screen #personality-result-copy > .result-secondary{
-  translate:0 200px!important;
-}
-</style>
-
-<style id="opening-comic-scale-and-layer-order-fix-20261116">
-/* 全部開場漫畫圖層一起縮小，統一置中、統一比例，不再讓背景單獨鋪滿螢幕。 */
+<style id="opening-comic-layout-animation-and-result-career-root-fix-20261116">
+/* 開場漫畫：只有共用底圖鋪滿螢幕，分鏡內容縮小並維持同一座標。 */
 #comic-box.opening-comic-active .comic-layer,
 #comic-box.opening-comic-active .intro-comic-background,
 #comic-box.opening-comic-active .intro-comic-role{
@@ -16367,24 +16337,48 @@ body.opening-comic-controls #skip-btn{
   left:50%!important;
   right:auto!important;
   bottom:auto!important;
-  width:92vw!important;
-  height:92dvh!important;
-  min-width:0!important;
-  min-height:0!important;
-  max-width:92vw!important;
-  max-height:92dvh!important;
   margin:0!important;
   transform:translate(-50%,-50%)!important;
-  object-fit:contain!important;
   object-position:center center!important;
 }
-/* 背景永遠在最底層；其他漫畫圖與角色都必須疊在背景上方。 */
-#comic-box.opening-comic-active .intro-comic-background{z-index:0!important}
-#comic-box.opening-comic-active .comic-layer:not(.intro-comic-background){z-index:2!important}
+#comic-box.opening-comic-active .intro-comic-background[src*="漫畫背景"]{
+  width:100vw!important;height:100dvh!important;
+  min-width:100vw!important;min-height:100dvh!important;
+  max-width:none!important;max-height:none!important;
+  object-fit:cover!important;
+  z-index:0!important;
+}
+#comic-box.opening-comic-active .comic-layer:not([src*="漫畫背景"]){
+  width:86vw!important;height:86dvh!important;
+  min-width:0!important;min-height:0!important;
+  max-width:86vw!important;max-height:86dvh!important;
+  object-fit:contain!important;
+  z-index:2!important;
+}
+/* 11／12 分鏡：角色使用對應背景的透明度遮罩，避免角色越出該張背景。 */
 #comic-box.opening-comic-active .intro-comic-role{
   z-index:3!important;
-  clip-path:inset(0)!important;
-  -webkit-clip-path:inset(0)!important;
+  -webkit-mask-image:var(--comic-role-mask)!important;
+  mask-image:var(--comic-role-mask)!important;
+  -webkit-mask-size:86vw 86dvh!important;
+  mask-size:86vw 86dvh!important;
+  -webkit-mask-position:center!important;
+  mask-position:center!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
   pointer-events:none!important;
+}
+/* 每張分鏡都重新播放進場動畫，不只第一張。 */
+#comic-box.opening-comic-active.comic-slide-up .comic-layer{
+  animation:openingComicLayerIn .58s cubic-bezier(.2,.75,.25,1) both!important;
+}
+@keyframes openingComicLayerIn{
+  from{opacity:0;transform:translate(-50%,-50%) scale(.94)}
+  to{opacity:1;transform:translate(-50%,-50%) scale(1)}
+}
+/* 適合職業區塊位置由 positionResultTextElements 的圖片透明邊界計算；
+   不再使用 -1503px 的錯誤位移，也不額外疊加 translate。 */
+#personality-result-screen #personality-result-copy > .result-secondary{
+  translate:none!important;
 }
 </style>
