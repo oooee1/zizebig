@@ -8584,9 +8584,9 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     let shownPaths = [];
     try { shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]"); if (!Array.isArray(shownPaths)) shownPaths = []; } catch (_) { shownPaths = []; }
     const isSplitBackgroundAndRole = comicPaths.length >= 2 &&
-        comicPaths.some(path => /背景\\.(webp|png|jpe?g)$/i.test(path)) &&
-        comicPaths.some(path => /角色\\.(webp|png|jpe?g)$/i.test(path));
-    const backgroundMaskPath = isSplitBackgroundAndRole ? comicPaths.find(path => /背景\\.(webp|png|jpe?g)$/i.test(path)) : "";
+        comicPaths.some(path => /背景\.(webp|png|jpe?g)$/i.test(path)) &&
+        comicPaths.some(path => /角色\.(webp|png|jpe?g)$/i.test(path));
+    const backgroundMaskPath = isSplitBackgroundAndRole ? comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path)) : "";
     comicBox.style.display = "block";
     comicBox.classList.remove("comic-slide-up");
     if (enteringComicMode && options.animateEntry !== false) { void comicBox.offsetWidth; comicBox.classList.add("comic-slide-up"); }
@@ -8600,7 +8600,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         } else {
             const layer = document.createElement("img"); layer.src = path; layer.alt = "";
             layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + extraClass;
-            if (backgroundMaskPath && /角色\\.(webp|png|jpe?g)$/i.test(path)) {
+            if (backgroundMaskPath && /角色\.(webp|png|jpe?g)$/i.test(path)) {
                 layer.classList.add("comic-layer-mask-role");
                 const clip = document.createElement("div"); clip.className = "comic-role-clip";
                 const backgroundFileName = backgroundMaskPath.split("/").pop();
@@ -8623,7 +8623,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     });
     comicBox.setAttribute("data-comic-paths",JSON.stringify(shownPaths));
     if (comicGroup !== null) comicBox.setAttribute("data-comic-group",String(comicGroup));
-    const firstFileName = shownPaths[0] ? shownPaths[0].split("/").pop().replace(/\\.[^/.]+$/,"") : "comic";
+    const firstFileName = shownPaths[0] ? shownPaths[0].split("/").pop().replace(/\.[^/.]+$/,"") : "comic";
     comicBox.className = "comic-style-" + firstFileName + (options.opening ? " opening-comic-active" : "");
 }
 function clearComicLayers(comicBox, comicImg) {
