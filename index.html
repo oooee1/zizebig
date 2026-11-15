@@ -15663,11 +15663,9 @@ window.addEventListener("click",function(event){
 
 
 <style id="result-request-20261115-followup">
-/* 手機：「結合……是……」整句縮小3px，桌面不變。 */
-@media (max-width:768px){
- #personality-result-screen #personality-result-copy .result-career-intro{
-  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 2px)!important;
- }
+/* 只有「同情星」這個星球名稱縮小3px；介紹句其他文字維持原尺寸。 */
+#personality-result-screen #personality-result-copy .result-career-intro-star-sympathy{
+ font-size:calc(1em - 3px)!important;
 }
 /* 電腦：「適合職業」標題向右0.5px。 */
 @media (min-width:769px){
@@ -15678,7 +15676,9 @@ window.addEventListener("click",function(event){
 /* 手機：適合職業區（標題與下方內容）整組左移2px、下移8px。 */
 @media (max-width:768px){
  #personality-result-screen #personality-result-copy > .result-secondary{
-  translate:-2px 8px!important;
+  position:relative!important;
+  left:-2px!important;
+  top:8px!important;
  }
  /* 繼續遊戲：在目前位置下移10px。 */
  #personality-result-screen #personality-result-copy > .result-continue{
@@ -15697,7 +15697,7 @@ window.addEventListener("click",function(event){
 #result-save-gradient-viewport{
  position:absolute!important;left:0!important;right:0!important;bottom:0!important;
  width:100%!important;height:38vh!important;max-height:360px!important;
- z-index:1!important;pointer-events:none!important;
+ z-index:13!important;pointer-events:none!important;
  background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.42) 42%,rgba(255,255,255,.84) 72%,#fff 100%)!important;
 }
 @media (max-width:768px){
@@ -15706,7 +15706,10 @@ window.addEventListener("click",function(event){
  }
 }
 #personality-result-screen #personality-result-save{
- position:relative!important;z-index:2!important;
+ position:fixed!important;left:50%!important;
+ bottom:calc(92px + env(safe-area-inset-bottom))!important;
+ transform:translateX(-50%) scale(1.6)!important;
+ z-index:2147483005!important;
 }
 </style>
 <script id="result-save-gradient-viewport-20261115">
@@ -15724,7 +15727,8 @@ window.addEventListener("click",function(event){
   const style=getComputedStyle(screen);
   const visible=style.display!=="none"&&style.visibility!=="hidden"&&screen.getBoundingClientRect().width>0;
   gradient.style.display=visible?"block":"none";
-  if(gradient.parentElement!==screen)screen.appendChild(gradient);
+  const poster=document.getElementById("personality-result-poster");
+  if(poster&&gradient.parentElement!==poster)poster.appendChild(gradient);
  }
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",sync,{once:true});else sync();
  const observer=new MutationObserver(sync);
