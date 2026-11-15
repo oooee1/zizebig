@@ -15848,3 +15848,18 @@ window.addEventListener("click",function(event){
  }
 }
 </style>
+
+
+<style id="result-final-gradient-and-desktop-career-position-20261115">
+/* 漸層只保留保存結果按鈕的 ::before；關閉海報底部的第二層，避免跟著整個測驗跑到最下方。 */
+#personality-result-screen #personality-result-poster::after{
+ content:none!important;
+ display:none!important;
+}
+/* 電腦版：只移動「適合職業」區塊，從目前位置上移10px、右移1px；不帶動繼續遊戲。 */
+@media (min-width:769px){
+ #personality-result-screen #personality-result-copy > .result-secondary{
+  translate:-2px 0!important;
+ }
+}
+</style>
