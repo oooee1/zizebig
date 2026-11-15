@@ -1288,6 +1288,16 @@
 #comic-box.comic-slide-up {
   animation: comicSlideUp 0.65s cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
+#comic-box.opening-comic-active {
+  position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+  z-index:2147482500!important;pointer-events:auto!important;background:#000;overflow:hidden;touch-action:manipulation;
+}
+#comic-box.opening-comic-active .comic-layer { pointer-events:none!important; }
+#comic-box.opening-comic-active .intro-comic-background {
+  position:absolute!important;top:0!important;left:0!important;width:100vw!important;height:100dvh!important;
+  max-width:none!important;max-height:none!important;transform:none!important;object-fit:cover!important;
+}
+
 @keyframes comicSlideUp {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
@@ -3010,9 +3020,6 @@ img { max-width:100%; }
                 <button id="intro-start-button" type="button"><span>開始</span><span class="start-button-orange">遊</span><span>戲</span></button>
             </div>
         </section>
-        <!-- 開場漫畫沿用既有漫畫的置中、淡入與滑入動畫，分成兩組依序播放。 -->
-        <div id="intro-comic-box" style="display:none" aria-label="開場漫畫"></div>
-
         <!-- 主舞台 -->
         <div id="page1" style="visibility:hidden;pointer-events:none">
             <!-- 337.1：揭曉性格前的「我的選擇」入口；最終結果頁完成後再接上跳轉目標。 -->
@@ -8592,6 +8599,66 @@ function enterGameAnimation() {
         }
 
 
+// 劇情漫畫與開場漫畫共用的圖層渲染器。
+function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options = {}) {
+    if (!comicBox || !comicImg) return;
+    const enteringComicMode = comicBox.style.display !== "block";
+    const previousGroup = comicBox.getAttribute("data-comic-group") || null;
+    if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
+        comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
+        comicImg.removeAttribute("src"); comicImg.className = "";
+        comicBox.removeAttribute("data-comic-paths");
+    }
+    let shownPaths = [];
+    try { shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]"); if (!Array.isArray(shownPaths)) shownPaths = []; } catch (_) { shownPaths = []; }
+    const isSplitBackgroundAndRole = comicPaths.length >= 2 &&
+        comicPaths.some(path => /背景\\.(webp|png|jpe?g)$/i.test(path)) &&
+        comicPaths.some(path => /角色\\.(webp|png|jpe?g)$/i.test(path));
+    const backgroundMaskPath = isSplitBackgroundAndRole ? comicPaths.find(path => /背景\\.(webp|png|jpe?g)$/i.test(path)) : "";
+    comicBox.style.display = "block";
+    comicBox.classList.remove("comic-slide-up");
+    if (enteringComicMode && options.animateEntry !== false) { void comicBox.offsetWidth; comicBox.classList.add("comic-slide-up"); }
+    comicPaths.forEach(path => {
+        if (shownPaths.includes(path)) return;
+        const openingBg = options.opening && path.includes("漫畫背景");
+        const extraClass = (path.includes("貝殼信") ? " comic-shell-letter" : "") + (openingBg ? " intro-comic-background" : "");
+        if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
+            comicImg.src = path; comicImg.alt = "漫畫圖";
+            comicImg.className = "comic-layer anim-fade-in-up" + extraClass;
+        } else {
+            const layer = document.createElement("img"); layer.src = path; layer.alt = "";
+            layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + extraClass;
+            if (backgroundMaskPath && /角色\\.(webp|png|jpe?g)$/i.test(path)) {
+                layer.classList.add("comic-layer-mask-role");
+                const clip = document.createElement("div"); clip.className = "comic-role-clip";
+                const backgroundFileName = backgroundMaskPath.split("/").pop();
+                const placeClipOnBackground = () => {
+                    const bg = Array.from(comicBox.querySelectorAll("img.comic-layer")).find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
+                    if (!bg) return;
+                    const bgRect = bg.getBoundingClientRect(), boxRect = comicBox.getBoundingClientRect();
+                    clip.style.cssText = ["position:absolute","display:block","left:"+(bgRect.left-boxRect.left)+"px","top:"+(bgRect.top-boxRect.top)+"px","width:"+bgRect.width+"px","height:"+bgRect.height+"px","overflow:hidden","clip-path:inset(0)","-webkit-clip-path:inset(0)","contain:strict","isolation:isolate","pointer-events:none"].join(";");
+                    layer.style.setProperty("left","0","important"); layer.style.setProperty("top","60px","important");
+                    layer.style.setProperty("transform","none","important"); layer.style.setProperty("width",bgRect.width+"px","important");
+                    layer.style.setProperty("height",bgRect.height+"px","important"); layer.style.setProperty("max-width","none","important");
+                    layer.style.setProperty("max-height","none","important"); layer.style.setProperty("object-fit","contain","important");
+                };
+                const bg = Array.from(comicBox.querySelectorAll("img.comic-layer")).find(img => img.getAttribute("src") && img.getAttribute("src").split("/").pop() === backgroundFileName);
+                if (bg) { if (bg.complete && bg.naturalWidth > 0) placeClipOnBackground(); else bg.addEventListener("load",placeClipOnBackground,{once:true}); }
+                window.addEventListener("resize",placeClipOnBackground); clip.appendChild(layer); comicBox.appendChild(clip);
+            } else comicBox.appendChild(layer);
+        }
+        shownPaths.push(path);
+    });
+    comicBox.setAttribute("data-comic-paths",JSON.stringify(shownPaths));
+    if (comicGroup !== null) comicBox.setAttribute("data-comic-group",String(comicGroup));
+    const firstFileName = shownPaths[0] ? shownPaths[0].split("/").pop().replace(/\\.[^/.]+$/,"") : "comic";
+    comicBox.className = "comic-style-" + firstFileName + (options.opening ? " opening-comic-active" : "");
+}
+function clearComicLayers(comicBox, comicImg) {
+    if (comicBox) { comicBox.style.display="none"; comicBox.className=""; comicBox.removeAttribute("data-comic-paths"); comicBox.removeAttribute("data-comic-group"); comicBox.querySelectorAll(".comic-layer-extra,.comic-role-clip").forEach(layer=>layer.remove()); }
+    if (comicImg) { comicImg.className=""; comicImg.removeAttribute("src"); }
+}
+
 function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
@@ -8947,159 +9014,16 @@ if (!hasScoredOptions) {
                         note.textContent = noteMatch[2];
                         npcName.appendChild(note);
                     } else {
-                        npcName.textContent = nameText;
-                    }
-                }
-            }
-        }
-    }
-
-    // 4. 輸入框顯示控制
-    if (currentSceneId === 8) showInputBox();
-    else hideInputBox();
-
-    // 5. 隱藏選項框
-    const optBox = document.getElementById('選項框');
-    if (optBox) optBox.style.display = 'none';
-
-
-    // 在 renderScene(stepIndex) 內部加入：
-if (window.currentSceneBGM !== scene.bgm) {
-    window.currentSceneBGM = scene.bgm;
-    if (typeof scene.bgm === "string" && scene.bgm) {
-        playBGM(scene.bgm);
-    } else if (scene.bgm === null) {
-        fadeOutBGM(); // 只有從有音樂切換到靜音時才淡出
-    }
-}
-    
-    // 6. 每次渲染場景都先清掉上一幕的角色立繪。
-    // 計分問題會由 renderOptions() 另外顯示「星辰苦惱-選項用」；
-    // 不可保留上一幕的「星辰嚇死」等角色，否則會疊在題目最上方。
-    hideAllCharacters();
-
-    if (!hasScoredOptions && !isComicMode && scene.characters && Array.isArray(scene.characters)) {
-        scene.characters.forEach(charName => {
-            // 熱情星劇情中的「居民們」不顯示任何群體立繪。
-            if (hideHotPassionResidentsGroup && charName === "居民們") return;
-            // 「居民們」使用獨立群體立繪；居民A/B、居民甲/乙才沿用「居民」立繪。
-            // 熱情星居民及其他有情緒／表情差異的居民一律保留原本立繪。
-            const isHotPassionVillagerScene = currentSceneId >= 221 && currentSceneId <= 236;
-            const sharedResidentAliases = ["居民A", "居民B", "居民甲", "居民乙"];
-            const displayCharName = !isHotPassionVillagerScene && sharedResidentAliases.includes(charName)
-                ? "居民"
-                : charName;
-            const charEl = document.getElementById(displayCharName);
-            if (charEl) {
-                activateImages(charEl);
-                charEl.style.display = 'block';
-                updateCharacterAnimation(displayCharName);
-
-                // 只在「能不能幫我們解決星球上的棉花！」這句登場時，讓一群好奇星由小放大彈出。
-                if (Number(currentSceneId) === 25 && displayCharName === "一群好奇星") {
-                    charEl.classList.remove('cotton-group-pop-in');
-                    void charEl.offsetWidth;
-                    charEl.classList.add('cotton-group-pop-in');
-                } else {
-                    charEl.classList.remove('cotton-group-pop-in');
-                }
-            }
-        });
-    }
-
-    // 依照本句實際顯示的爽快星表情播放專屬動畫。
-    // 教學句子由 characters 決定表情；正式遊戲開始時使用慌張立繪。
-    if (scene.mailTutorial || scene.mailGame) {
-        const visibleMailSprite = scene.mailGame
-            ? "爽快星慌張"
-            : (scene.characters || []).find(name =>
-                ["爽快星開心", "爽快星害怕", "爽快星慌張"].includes(name)
-              );
-        ["爽快星開心", "爽快星害怕", "爽快星慌張"].forEach(id => {
-            const sprite = document.getElementById(id);
-            if (!sprite) return;
-            sprite.classList.remove("mail-sprite-motion", "mail-motion-happy", "mail-motion-scared", "mail-motion-panicked");
-            if (id !== visibleMailSprite) return;
-            void sprite.offsetWidth;
-            sprite.classList.add("mail-sprite-motion");
-            if (id === "爽快星開心") sprite.classList.add("mail-motion-happy");
-            else if (id === "爽快星害怕") sprite.classList.add("mail-motion-scared");
-            else sprite.classList.add("mail-motion-panicked");
-        });
-    }
-
-    // 角色登場動畫判斷
-    if (scene.characters && Array.isArray(scene.characters)) {
-        scene.characters.forEach(charName => {
-            if (charName === "星辰害怕") playScaredAnim("星辰害怕");
-            else if (charName === "星辰嚇死") playScaredAnim("星辰嚇死");
-            else if (charName === "星辰") playCuriousAnim("星辰", "curious-bounce");
-            else if (charName === "星辰驕傲") playNodAnim("星辰驕傲");
-            else if (charName === "星辰點頭") playNodAnim("星辰點頭");
-            else if (charName === "一群好奇星") playHappyJumpAnim("一群好奇星");
-            else if (charName === "好奇星") playCuriousAnim("好奇星", "curious-bounce");
-            else if (charName === "好奇星開心") playCuriousAnim("好奇星開心", "curious-wiggle");
-            else if (charName === "好奇星會跳") playCuriousAnim("好奇星會跳", "curious-pop");
-            else if (charName === "好奇星有尾巴") playCuriousAnim("好奇星有尾巴", "curious-bounce");
-            else if (charName === "好奇星開心有尾巴") playCuriousAnim("好奇星開心有尾巴", "curious-wiggle");
-        });
-    }
-
-    // 信件插圖獨立顯示，不啟動漫畫模式，也不遮掉一般對話框。
-    const letterOverlayPage = document.getElementById("page1");
-    let letterOverlay = document.getElementById("story-letter-overlay");
-    if (letterOverlayPage && !letterOverlay) {
-        letterOverlay = document.createElement("div");
-        letterOverlay.id = "story-letter-overlay";
-        letterOverlayPage.appendChild(letterOverlay);
-    }
-    if (letterOverlay) {
-        letterOverlay.replaceChildren();
-        if (scene.letterImage) {
-            const letterImg = document.createElement("img");
-            letterImg.src = scene.letterImage;
-            letterImg.alt = "信件";
-            letterImg.className = scene.letterImage.includes("貝殼信") ? "shell-letter-image" : "parent-letter-image";
-            letterOverlay.appendChild(letterImg);
-            letterOverlay.style.display = "block";
-        } else {
-            letterOverlay.style.display = "none";
-        }
-    }
-
-    // 7. 累積顯示漫畫圖層：後續分鏡疊加在畫面上，不取代前一張；
-    // 只有離開漫畫模式時才一次清除全部漫畫圖層。
+                        n    // 劇情漫畫與開場漫畫使用同一套漫畫圖層渲染器。
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
-    const comicPaths = sceneComicPaths;
+    if (comicBox && comicImg && (sceneComicPaths.length > 0 || isContinuingComic)) {
+        renderComicLayers(comicBox, comicImg, sceneComicPaths, currentComicGroup);
+    } else {
+        clearComicLayers(comicBox, comicImg);
+    }
 
-    if (comicBox && comicImg && (comicPaths.length > 0 || isContinuingComic)) {
-        const enteringComicMode = comicBox.style.display !== "block";
-        if (currentComicGroup !== null && previousComicGroup &&
-            previousComicGroup !== String(currentComicGroup)) {
-            comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
-            comicImg.removeAttribute("src");
-            comicImg.className = "";
-            comicBox.removeAttribute("data-comic-paths");
-        }
-        let shownPaths = [];
-        try {
-            shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]");
-            if (!Array.isArray(shownPaths)) shownPaths = [];
-        } catch (_) {
-            shownPaths = [];
-        }
-
-        const isSplitBackgroundAndRole = comicPaths.length >= 2 &&
-            comicPaths.some(path => /背景\.(webp|png|jpe?g)$/i.test(path)) &&
-            comicPaths.some(path => /角色\.(webp|png|jpe?g)$/i.test(path));
-        const backgroundMaskPath = isSplitBackgroundAndRole
-            ? comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path))
-            : "";
-
-        comicBox.style.display = "block";
-        comicBox.classList.remove("comic-slide-up");
-        if (enteringComicMode) {
+if (enteringComicMode) {
             void comicBox.offsetWidth;
             comicBox.classList.add("comic-slide-up");
         }
@@ -11941,12 +11865,17 @@ function openPersonalityResult(first,second){
                     firstSceneStarted = true;
                     if (gameAssetFallbackTimer) clearTimeout(gameAssetFallbackTimer);
                     const startScreen = document.getElementById("intro-start-screen");
-                    const comicScreen = document.getElementById("intro-comic-box");
+                    const comicScreen = document.getElementById("comic-box");
+                    const comicImage = document.getElementById("comic-img");
                     const page = document.getElementById("page1");
                     const developerTools = document.getElementById("developer-tools");
                     if (developerTools && developerTools.parentElement !== document.body) document.body.appendChild(developerTools);
                     if (startScreen) startScreen.style.display = "none";
-                    if (comicScreen) comicScreen.style.display = "none";
+                    if (comicScreen) {
+                        clearComicLayers(comicScreen, comicImage);
+                        const gameContainer = document.getElementById("game-container");
+                        if (gameContainer && comicScreen.parentElement !== gameContainer) gameContainer.appendChild(comicScreen);
+                    }
                     if (page) {
                         page.style.visibility = "visible";
                         page.style.pointerEvents = "auto";
@@ -12089,51 +12018,24 @@ function openPersonalityResult(first,second){
                 }
 
                 function renderOpeningComicFrame(index) {
+                    const comicBox = document.getElementById("comic-box");
+                    const comicImg = document.getElementById("comic-img");
+                    if (!comicBox || !comicImg) { loadInitialAssets(); return; }
                     if (index >= openingComicFrames.length) {
-                        const comicScreen = document.getElementById("intro-comic-box");
-                        if (comicScreen) {
-                            comicScreen.style.display = "none";
-                            comicScreen.innerHTML = "";
-                        }
-                        openingComicGroup = null;
-                        loadInitialAssets();
-                        return;
+                        clearComicLayers(comicBox, comicImg);
+                        const gameContainer = document.getElementById("game-container");
+                        if (gameContainer && comicBox.parentElement !== gameContainer) gameContainer.appendChild(comicBox);
+                        loadInitialAssets(); return;
                     }
                     const frame = openingComicFrames[index];
-                    const comicScreen = document.getElementById("intro-comic-box");
-                    if (!comicScreen) {
-                        loadInitialAssets();
-                        return;
-                    }
                     const groupChanged = openingComicGroup !== frame.group;
-                    if (groupChanged) {
-                        comicScreen.innerHTML = "";
-                        openingComicGroup = frame.group;
-                    }
-                    comicScreen.style.display = "block";
-                    comicScreen.classList.remove("comic-slide-up");
-                    if (groupChanged) {
-                        void comicScreen.offsetWidth;
-                        comicScreen.classList.add("comic-slide-up");
-                    }
-                    frame.paths.forEach(path => {
-                        if (comicScreen.querySelector('[data-intro-comic-path="' + path.replace(/"/g, '&quot;') + '"]')) return;
-                        const image = document.createElement("img");
-                        image.src = path;
-                        image.alt = "";
-                        image.dataset.introComicPath = path;
-                        image.className = "comic-layer anim-fade-in-up";
-                        if (path.includes("漫畫背景")) image.classList.add("intro-comic-background");
-                        comicScreen.appendChild(image);
-                    });
+                    if (groupChanged) { clearComicLayers(comicBox, comicImg); openingComicGroup = frame.group; }
+                    renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:groupChanged });
                     window.__zizebigStartupStage = "播放開場漫畫 " + (index + 1) + "/" + openingComicFrames.length;
                 }
 
                 function advanceOpeningComic(event) {
-                    if (event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
+                    if (event) { event.preventDefault(); event.stopPropagation(); if (event.stopImmediatePropagation) event.stopImmediatePropagation(); }
                     openingComicIndex++;
                     renderOpeningComicFrame(openingComicIndex);
                 }
@@ -12144,6 +12046,15 @@ function openPersonalityResult(first,second){
                         event.stopPropagation();
                     }
                     const startScreen = document.getElementById("intro-start-screen");
+                    const comicBox = document.getElementById("comic-box");
+                    if (comicBox && comicBox.parentElement !== document.body) document.body.appendChild(comicBox);
+                    if (comicBox) {
+                        comicBox.style.setProperty("position","fixed","important");
+                        comicBox.style.setProperty("inset","0","important");
+                        comicBox.style.setProperty("width","100vw","important");
+                        comicBox.style.setProperty("height","100dvh","important");
+                        comicBox.style.setProperty("z-index","2147482500","important");
+                    }
                     if (startScreen) startScreen.style.display = "none";
                     showStartupLoading("正在載入開場漫畫...");
                     window.__zizebigStartupStage = "載入開場漫畫素材";
@@ -12190,15 +12101,17 @@ function openPersonalityResult(first,second){
                 };
                 document.addEventListener("pointerup", handleStartActivation, true);
                 document.addEventListener("click", handleStartActivation, true);
-                const comicScreen = document.getElementById("intro-comic-box");
+                const comicScreen = document.getElementById("comic-box");
                 if (comicScreen) {
-                    // 觸控抬起時直接前進；只綁一種事件，避免 pointerup + click 連跳兩格。
                     comicScreen.addEventListener("pointerup", function(event) {
+                        if (!comicScreen.classList.contains("opening-comic-active")) return;
                         if (event.pointerType === "mouse" && event.button !== 0) return;
                         advanceOpeningComic(event);
-                    }, { capture: true, passive: false });
+                    }, {capture:true,passive:false});
                     comicScreen.addEventListener("click", function(event) {
-                        // 滑鼠／鍵盤輔助 click；觸控 click 已由 pointerup 處理。
+                        if (!comicScreen.classList.contains("opening-comic-active")) return;
+                        event.preventDefault(); event.stopPropagation();
+                        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
                         if (event.detail === 0) advanceOpeningComic(event);
                     }, true);
                 }
