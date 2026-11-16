@@ -12845,20 +12845,9 @@ function openPersonalityResult(first,second){
 
                 // 11～14 為第一段；切換到 1～5 時必須清空第一段，再累積第二段。
                 // 同一段內逐格保留，只有跨段時才清空上一段。
-                const openingComicFrames = [
-                    { group: "opening-sequence-11-14", sceneId: -14, paths: ["./1漫畫/11.webp"] },
-                    { group: "opening-sequence-11-14", sceneId: -13, paths: ["./1漫畫/12.webp"] },
-                    { group: "opening-sequence-11-14", sceneId: -12, paths: ["./1漫畫/13.webp"] },
-                    { group: "opening-sequence-11-14", sceneId: -11, paths: ["./1漫畫/14.webp"] },
-                    { group: "opening-sequence-1-5", sceneId: -10, paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
-                    { group: "opening-sequence-1-5", sceneId: -9, paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
-                    { group: "opening-sequence-1-5", sceneId: -8, paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
-                    { group: "opening-sequence-1-5", sceneId: -7, paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
-                ];
-                const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
-                let openingComicIndex = 0;
-                let openingComicGroup = null;
-                let lastOpeningComicAdvanceAt = 0;
+                const openingComicAssets = [...new Set(storyScript.slice(0, 8).flatMap(scene =>
+                    Array.isArray(scene.comicImages) ? scene.comicImages : []
+                ))];
 
                 function showStartupLoading(message) {
                     if (loadingScreen) {
@@ -12976,76 +12965,13 @@ function openPersonalityResult(first,second){
                     window.__zizebigStartupStage = "開始介面已顯示，等待玩家開始";
                 }
 
-                function renderOpeningComicFrame(index) {
-                    const comicBox = document.getElementById("comic-box");
-                    const comicImg = document.getElementById("comic-img");
-                    if (!comicBox || !comicImg) { loadInitialAssets(); return; }
-                    if (index >= openingComicFrames.length) {
-                        // 第一幕素材已在漫畫開始前預載，漫畫結束後直接進入劇情，不再顯示第二次載入畫面。
-                        startFirstScene(); return;
-                    }
-                    const frame = openingComicFrames[index];
-                    const groupChanged = openingComicGroup !== frame.group;
-                    // 同一組開場漫畫逐格累積：11 保留到 12，11+12 保留到 13，依此類推。
-                    // 只有從 11～14 切換到 1～5（或重新開始另一組）時才清除整個畫布。
-                    if (groupChanged) {
-                        clearComicLayers(comicBox, comicImg);
-                        openingComicGroup = frame.group;
-                    }
-                    // 畫布不重播整體滑入；每張新圖層由 renderComicLayers 在解碼後各自同步淡入上移。
-                    renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:false });
-                    // 開場漫畫走獨立的逐格播放流程，不會經過 renderScene；
-                    // 因此必須在這裡同步建立該格的對話泡泡，沿用 storyScript 原文與位置。
-                    const dialogueScene = storyScript.find(scene => Number(scene.id) === Number(frame.sceneId));
-                    if (dialogueScene && typeof dialogueScene.text === "string" && dialogueScene.text.trim()) {
-                        const dialogueTarget = createComicDialogueBubble(comicBox, dialogueScene);
-                        if (dialogueTarget) {
-                            dialogueTarget.textContent = dialogueScene.text;
-                            highlightPlayerNameInDialogue(dialogueTarget);
-                        }
-                    }
-                    let comicHint=document.getElementById("opening-comic-next-hint");
-                    if(!comicHint){
-                        comicHint=document.createElement("div");
-                        comicHint.id="opening-comic-next-hint";
-                        comicHint.textContent="點一下繼續";
-                        comicBox.appendChild(comicHint);
-                    }
-                    comicHint.style.display="block";
-                    window.__zizebigStartupStage = "播放開場漫畫 " + (index + 1) + "/" + openingComicFrames.length;
-                }
-
-                function advanceOpeningComic(event) {
-                    if (event) { event.preventDefault(); event.stopPropagation(); if (event.stopImmediatePropagation) event.stopImmediatePropagation(); }
-                    // 防止同一次觸控／點擊被觸控層與合成 click 重複計算，導致 11～14 被瞬間跳過而直接跳到 1.webp。
-                    const now = Date.now();
-                    if (now - lastOpeningComicAdvanceAt < 450) return;
-                    lastOpeningComicAdvanceAt = now;
-                    openingComicIndex = Math.min(openingComicIndex + 1, openingComicFrames.length);
-                    renderOpeningComicFrame(openingComicIndex);
-                }
-                // 漫畫圖片本身不攔截點擊；在漫畫畫布捕捉點擊，確保提示與推進功能都在最上層。
-                function bindOpeningComicAdvance(comicBox){
-                    if(!comicBox||comicBox.dataset.advanceBound==="1")return;
-                    comicBox.dataset.advanceBound="1";
-                    comicBox.addEventListener("click",event=>{
-                        if(!comicBox.classList.contains("opening-comic-active"))return;
-                        // 選單、跳過鍵與開發者工具的點擊不可被漫畫翻頁攔截。
-                        if (event.target && event.target.closest &&
-                            event.target.closest(".menu-container,#skip-btn,#developer-tools")) return;
-                        advanceOpeningComic(event);
-                    },true);
-                }
-
                 function beginOpeningComics(event) {
                     if (event) {
                         event.preventDefault();
                         event.stopPropagation();
                     }
                     // 每次從開始介面進入都從 11 的第一格重新播放，避免沿用上次結束時的索引而直接跳到 1.webp。
-                    openingComicIndex = 0;
-                    openingComicGroup = null;
-                    lastOpeningComicAdvanceAt = 0;
+                    // 開場漫畫由 storyScript 的 currentStep 統一推進，不另設第二個索引。
                     // 開場漫畫沿用使用者點擊「開始」的手勢啟動音樂，避免非同步預載後被瀏覽器擋下。
                     const openingMusic = document.getElementById("bgm-player");
                     if (openingMusic) {
