@@ -10398,9 +10398,7 @@ function alignResultRoleToTextArtwork(role,layers){
  }
 }
 function positionResultTextElements(layers,copy){
- // 標語位移專用 CSS 變數：避免舊 CSS top 被 JS inline !important 覆蓋後無法調整。
- if(!copy.style.getPropertyValue("--result-disclaimer-shift-x"))copy.style.setProperty("--result-disclaimer-shift-x","0px");
- if(!copy.style.getPropertyValue("--result-disclaimer-shift-y"))copy.style.setProperty("--result-disclaimer-shift-y","0px");
+ // 標語位移值由 CSS 自訂變數提供；不可在此寫入 inline 預設值，否則會蓋掉外部調整。
  const findImage=name=>Array.from(layers.querySelectorAll("img")).find(img=>(img.dataset.resultSrc||decodeURIComponent(img.src)).includes(name));
  const textPaper=findImage("背景 文字.webp");
  const lowerNolan=findImage("下面那張諾蘭紙.webp")||layers.querySelector("img");
@@ -10431,7 +10429,7 @@ function positionResultTextElements(layers,copy){
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
      career.style.setProperty("left",(careerBaseLeft+careerShiftX)+"px","important");
-     career.style.setProperty("top",(careerBaseTop+careerShiftY-165)+"px","important");
+     career.style.setProperty("top",(careerBaseTop+careerShiftY-161)+"px","important");
     }else{
      // 電腦版職業區上移150px：直接修正 JS 計算出的 top，避免被 inline !important 蓋掉。
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
@@ -10471,11 +10469,12 @@ function positionResultTextElements(layers,copy){
     note.style.width="100%";
     const isMobileNoteLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
-    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?1820:1150)/responsiveScale)+"px";
+    const noteBaseTop=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?1820:1150)/responsiveScale;
     const noteShiftX=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-x"))||0;
     const noteShiftY=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-y"))||0;
-    note.style.left=noteShiftX+"px";
-    note.style.transform="translateY(calc(-100% + "+noteShiftY+"px))";
+    note.style.setProperty("left",noteShiftX+"px","important");
+    note.style.setProperty("top",(noteBaseTop+noteShiftY)+"px","important");
+    note.style.setProperty("transform","translateY(-100%)","important");
     note.style.margin="0";
    }
   }
@@ -11197,19 +11196,31 @@ function openPersonalityResult(first,second){
                 speedHint.textContent="長按二倍速";
                 credits.appendChild(speedHint);
             }
-            // 長按約 450ms 啟動二倍速；放開即恢復原速。
-            let holdTimer=null;
-            const startHold=()=>{
-                if(holdTimer)clearTimeout(holdTimer);
-                holdTimer=setTimeout(()=>credits.classList.add("is-double-speed"),450);
-            };
-            const endHold=()=>{
-                if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
-                credits.classList.remove("is-double-speed");
-            };
-            credits.addEventListener("pointerdown",startHold,{passive:true});
-            document.addEventListener("pointerup",endHold);
-            document.addEventListener("pointercancel",endHold);
+            // 長按只調整動畫 playbackRate，不改 duration，放開時保留當下播放進度。
+            if(credits.dataset.holdSpeedBound!=="1"){
+                credits.dataset.holdSpeedBound="1";
+                let holdTimer=null;
+                const setCreditsRate=rate=>{
+                    const roll=credits.querySelector(".credits-roll");
+                    if(roll)roll.getAnimations().forEach(animation=>{animation.playbackRate=rate;});
+                };
+                const startHold=()=>{
+                    if(holdTimer)clearTimeout(holdTimer);
+                    holdTimer=setTimeout(()=>{
+                        setCreditsRate(2);
+                        credits.classList.add("is-double-speed");
+                    },450);
+                };
+                const endHold=()=>{
+                    if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
+                    setCreditsRate(1);
+                    credits.classList.remove("is-double-speed");
+                };
+                credits.addEventListener("pointerdown",startHold,{passive:true});
+                document.addEventListener("pointerup",endHold);
+                document.addEventListener("pointercancel",endHold);
+                window.addEventListener("blur",endHold);
+            }
         }
 
         function nextStep() {
@@ -14511,6 +14522,13 @@ body.opening-comic-controls #skip-btn{
   }
 }
 </style>
+<style id="result-disclaimer-position-controls-20261116">
+/* 測驗標語的調整入口：改這兩個值即可移動，JS 不再用 inline 預設值蓋掉。 */
+#personality-result-screen #personality-result-copy{
+ --result-disclaimer-shift-x:0px;
+ --result-disclaimer-shift-y:0px;
+}
+</style>
 <style id="opening-comic-and-ending-hints-20261116">
 #opening-comic-next-hint{
  position:fixed!important;right:22px!important;bottom:20px!important;
@@ -14562,7 +14580,7 @@ body.opening-comic-controls #skip-btn{
  white-space:nowrap;pointer-events:none;
 }
 #end-credits .credits-roll{will-change:transform}
-#end-credits.is-double-speed .credits-roll{animation-duration:120s!important}
+/* 二倍速由 playbackRate 控制；不可改 animation-duration，以免動畫進度被重算。 */
 #end-credits.is-double-speed .credits-speed-hint{color:#ffb30f}
 
 #end-credits .credits-title {
@@ -16173,7 +16191,7 @@ body.opening-comic-controls #skip-btn{
  overflow:visible!important;
 }
 #result-preview-share-overlay .result-preview-close{
- position:absolute!important;right:-7px!important;top:-12px!important;
+ position:absolute!important;right:3px!important;top:0!important;
  z-index:3!important;width:42px!important;height:42px!important;
  border:0!important;background:transparent!important;
  color:#fff!important;font-family:Arial,sans-serif!important;
@@ -16217,15 +16235,19 @@ body.opening-comic-controls #skip-btn{
 #result-preview-share-overlay .result-preview-instagram{transform:rotate(4deg)!important}
 #result-preview-share-overlay .result-preview-facebook{transform:rotate(-2deg)!important}
 #result-preview-share-overlay .result-preview-share-title{
- color:#fff!important;font-family:'CPTrans',sans-serif!important;
+ display:block!important;visibility:visible!important;opacity:1!important;
+ flex:0 0 auto!important;flex-shrink:0!important;min-height:1.4em!important;
+ width:100%!important;box-sizing:border-box!important;
+ color:#fff!important;font-family:Arial,"Noto Sans TC",sans-serif!important;
  font-size:clamp(17px,4.8vw,22px)!important;line-height:1.3!important;
- text-align:center!important;margin-top:0!important;
+ font-style:normal!important;text-align:center!important;margin:0!important;
+ position:relative!important;z-index:5!important;
 }
 @media (min-width:901px){
  /* 分享視窗由 openPreview() 直接填滿 #game-container；不再另套 viewport 定位。 */
  #result-preview-share-overlay .result-preview-modal{width:100%!important;max-width:100%!important}
  #result-preview-share-overlay .result-preview-image{max-height:33vh!important;max-width:min(31.2vw,258px)!important}
- #result-preview-share-overlay .result-preview-close{right:0!important;top:-8px!important}
+ #result-preview-share-overlay .result-preview-close{right:10px!important;top:0!important}
 }
 </style>
 
@@ -16414,10 +16436,13 @@ window.addEventListener("click",function(event){
   height:clamp(230px,40vh,420px)!important;
  }
 }
-/* 手機「結合……是……」維持上次要求的縮小3px。 */
+/* 手機「結合……是……」在目前各自的字級基礎上再縮小1px。 */
 @media (max-width:900px), (pointer:coarse) and (max-width:1200px){
- #personality-result-screen #personality-result-copy .result-career-intro{
-  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 3px)!important;
+ #personality-result-screen #personality-result-copy .result-career-intro:not(.result-career-intro-tied){
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 4px)!important;
+ }
+ #personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 4px)!important;
  }
 }
 #personality-result-screen #personality-result-copy .result-secondary{box-sizing:border-box!important}
