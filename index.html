@@ -14911,54 +14911,7 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 #intro-start-video::-webkit-media-controls-overflow-button{display:none!important;visibility:hidden!important;opacity:0!important}
 </style>
 
-<style id="final-opening-comic-logo-controls-career-fix-20261116">
-/* Logo 與標準字使用完全相同、比上一版更明顯的白色泛光；保留標準字左移與縮小。 */
-#intro-start-logo,
-#intro-start-title{
-  filter:
-    drop-shadow(0 0 9px rgba(255,255,255,.96))
-    drop-shadow(0 0 22px rgba(255,255,255,.76))
-    drop-shadow(0 0 38px rgba(255,255,255,.52))!important;
-}
-#intro-start-title{
-  width:min(52%,230px)!important;
-  max-height:18vh!important;
-  margin-top:-8px!important;
-  margin-left:-8px!important;
-}
-@media(max-width:500px){
-  #intro-start-title{
-    width:min(56%,220px)!important;
-    max-height:17vh!important;
-    margin-top:-7px!important;
-    margin-left:-6px!important;
-  }
-}
-/* 開場漫畫控制列：選單／音量留左側，跳過鍵移到右側開發者按鈕左邊，同一水平線。 */
-body.opening-comic-controls #game-container #skip-btn{
-  position:fixed!important;
-  top:max(14px,env(safe-area-inset-top))!important;
-  right:max(112px,calc(env(safe-area-inset-right) + 104px))!important;
-  left:auto!important;
-  z-index:2147483646!important;
-  display:flex!important;
-  visibility:visible!important;
-  opacity:1!important;
-  pointer-events:auto!important;
-}
-/* 漫畫紙背景一定填滿遊戲舞台，不套用暗化或半透明；圖層尺寸由 renderer 設為 100%。 */
-#game-container #comic-box .comic-layer[src*="漫畫背景"]{
-  opacity:1!important;
-  filter:none!important;
-  object-fit:cover!important;
-  object-position:center center!important;
-}
-/* 一般雙高分與同星高分的「結合……是……」完全同字級，統一比原本縮小 4px。 */
-#personality-result-screen #personality-result-copy .result-career-intro,
-#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
-  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 1px)!important;
-}
-</style>
+
 
 </body>
 
@@ -17731,3 +17684,52 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
   #result-preview-share-overlay .result-preview-close{right:66px!important;top:-13px!important}
 }
 </style>
+<style id="final-opening-comic-logo-controls-career-fix-20261116">
+/* Logo 與標準字使用完全相同、比上一版更明顯的白色泛光；保留標準字左移與縮小。 */
+#intro-start-logo,
+#intro-start-title{
+  filter:
+    drop-shadow(0 0 9px rgba(255,255,255,.96))
+    drop-shadow(0 0 22px rgba(255,255,255,.76))
+    drop-shadow(0 0 38px rgba(255,255,255,.52))!important;
+}
+#intro-start-title{
+  width:min(52%,230px)!important;
+  max-height:18vh!important;
+  margin-top:-8px!important;
+  margin-left:-8px!important;
+}
+@media(max-width:500px){
+  #intro-start-title{
+    width:min(56%,220px)!important;
+    max-height:17vh!important;
+    margin-top:-7px!important;
+    margin-left:-6px!important;
+  }
+}
+/* 開場漫畫控制列：選單／音量留左側，跳過鍵移到右側開發者按鈕左邊，同一水平線。 */
+body.opening-comic-controls #game-container #skip-btn{
+  position:fixed!important;
+  top:max(14px,env(safe-area-inset-top))!important;
+  right:max(112px,calc(env(safe-area-inset-right) + 104px))!important;
+  left:auto!important;
+  z-index:2147483646!important;
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+/* 漫畫紙背景一定填滿遊戲舞台，不套用暗化或半透明；圖層尺寸由 renderer 設為 100%。 */
+#game-container #comic-box .comic-layer[src*="漫畫背景"]{
+  opacity:1!important;
+  filter:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+/* 一般雙高分與同星高分的「結合……是……」完全同字級，統一比原本縮小 4px。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 3px)!important;
+}
+</style>
+
