@@ -3054,6 +3054,18 @@ img { max-width:100%; }
 #intro-start-logo{-webkit-filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 8px rgba(0,0,0,.95))!important;filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 8px rgba(0,0,0,.95))!important;}
 #intro-start-title{-webkit-filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.95))!important;filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.95))!important;}
 </style>
+
+<style id="20261117-start-screen-controls-final">
+/* 開始介面標準字限制在原本視覺比例內，避免被 flex 拉成過大。 */
+#intro-start-logo{width:min(38vw,180px)!important;height:auto!important;max-width:42%!important;max-height:24vh!important;object-fit:contain!important;flex:0 1 auto!important;}
+#intro-start-title{width:min(68vw,320px)!important;height:auto!important;max-width:76%!important;max-height:16vh!important;object-fit:contain!important;flex:0 1 auto!important;}
+@media(min-width:769px){#intro-start-logo{width:min(20vw,220px)!important;max-height:25vh!important}#intro-start-title{width:min(38vw,420px)!important;max-height:18vh!important}}
+/* 跳過鍵只往上微調，保留原本尺寸、水平位置與點擊層級。 */
+#game-container > #skip-btn,#game-container #skip-btn{top:max(14px,calc(env(safe-area-inset-top) + 4px))!important;}
+/* 開發者工具預設完全隱藏，只有連續點擊遊戲內音量圖示 10 次才顯示。 */
+#developer-tools.dev-tools-hidden{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
+#developer-tools.dev-tools-revealed{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;}
+</style>
 </head>
 
 <body>
@@ -12057,7 +12069,7 @@ function openPersonalityResult(first,second){
                         if (finished) return;
                         [...images].reverse().forEach((img,index) => {
                             const sourceIndex = images.indexOf(img);
-                            const target = "translateX(" + (sourceIndex % 2 === 0 ? "115%" : "-115%") + ") scale(1.05,1.12)";
+                            const target = "translateX(0) scale(1.05,1.12)";
                             const delay = index * 90;
                             img.style.setProperty("transition","opacity 620ms ease-in "+delay+"ms, transform 620ms ease-in "+delay+"ms");
                             img.style.setProperty("opacity","0");
@@ -12956,7 +12968,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         });
                         const dev = document.getElementById("developer-tools");
                         if (dev) {
-                            dev.style.setProperty("visibility", "visible", "important");
+                            dev.style.setProperty("visibility", "hidden", "important");
                             dev.style.setProperty("opacity", "1", "important");
                             dev.style.setProperty("pointer-events", "auto", "important");
                             dev.style.setProperty("z-index", "2147483647", "important");
@@ -13021,7 +13033,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         developerTools.style.setProperty("position", "fixed", "important");
                         developerTools.style.setProperty("z-index", "2147483000", "important");
                         developerTools.style.setProperty("pointer-events", "auto", "important");
-                        developerTools.style.setProperty("visibility", "visible", "important");
+                        developerTools.style.setProperty("visibility", "hidden", "important");
                         developerTools.style.setProperty("opacity", "1", "important");
                         developerTools.style.setProperty("display", "block", "important");
                         developerTools.style.top = "max(14px, env(safe-area-inset-top))";
@@ -15812,6 +15824,51 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 
 
 
+
+<script id="20261117-dev-tools-volume-unlock">
+(function(){
+  const dev=document.getElementById("developer-tools");
+  const volume=document.getElementById("volume-btn");
+  const start=document.getElementById("intro-start-screen");
+  const video=document.getElementById("intro-start-video");
+  if(dev){dev.classList.remove("dev-tools-revealed");dev.classList.add("dev-tools-hidden");dev.style.setProperty("display","none","important");dev.style.setProperty("visibility","hidden","important");dev.style.setProperty("opacity","0","important");dev.style.setProperty("pointer-events","none","important");}
+  let taps=0,resetTimer=null;
+  function toggleDevTools(){
+    if(!dev)return;
+    const reveal=!dev.classList.contains("dev-tools-revealed");
+    dev.classList.toggle("dev-tools-revealed",reveal);
+    dev.classList.toggle("dev-tools-hidden",!reveal);
+    dev.style.setProperty("display",reveal?"block":"none","important");
+    dev.style.setProperty("visibility",reveal?"visible":"hidden","important");
+    dev.style.setProperty("opacity",reveal?"1":"0","important");
+    dev.style.setProperty("pointer-events",reveal?"auto":"none","important");
+    const panel=document.getElementById("developer-tools-panel");
+    if(!reveal&&panel)panel.classList.remove("open");
+    taps=0;
+  }
+  if(volume){volume.addEventListener("click",function(){
+    taps++;
+    clearTimeout(resetTimer);
+    if(taps>=10){toggleDevTools();return;}
+    resetTimer=setTimeout(()=>{taps=0;},1800);
+  },true);}
+  function tryPlayVideo(){
+    if(!video||!start)return;
+    const visible=getComputedStyle(start).display!=="none"&&start.getBoundingClientRect().width>0;
+    if(!visible)return;
+    video.muted=true;video.defaultMuted=true;video.autoplay=true;video.playsInline=true;
+    video.setAttribute("muted","");video.setAttribute("autoplay","");video.setAttribute("playsinline","");
+    const playPromise=video.play();
+    if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(()=>{});
+  }
+  if(video){video.addEventListener("loadeddata",tryPlayVideo);video.addEventListener("canplay",tryPlayVideo);video.addEventListener("playing",()=>{});}
+  if(start&&typeof MutationObserver!=="undefined"){
+    const observer=new MutationObserver(tryPlayVideo);
+    observer.observe(start,{attributes:true,attributeFilter:["style","class"]});
+  }
+  tryPlayVideo();
+})();
+</script>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
