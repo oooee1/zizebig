@@ -2994,7 +2994,7 @@ img { max-width:100%; }
 
         <!-- 開始介面：影片在後方，黑幕與 Logo／標準字在前方。 -->
         <section id="intro-start-screen" style="display:none" aria-label="星辰之路開始畫面">
-            <video id="intro-start-video" src="./玩法介紹影片.webm" autoplay muted loop playsinline preload="auto"></video>
+            <video id="intro-start-video" src="./玩法介紹影片.webm" autoplay muted loop playsinline preload="auto" disablepictureinpicture controlslist="nodownload noplaybackrate nofullscreen noremoteplayback"></video>
             <div id="intro-start-content">
                 <img id="intro-start-logo" src="./pct/logo.webp" alt="星辰之路 Logo">
                 <img id="intro-start-title" src="./pct/標準字.webp" alt="星辰之路">
@@ -8603,44 +8603,71 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     }
     let shownPaths = [];
     try { shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]"); if (!Array.isArray(shownPaths)) shownPaths = []; } catch (_) { shownPaths = []; }
-    const backgroundMaskPath = comicPaths.find(path => /(?:^|\/)[^/]*背景\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\.(webp|png|jpe?g)$/i.test(path)) || comicPaths.find(path => /背景\.(webp|png|jpe?g)$/i.test(path)) || "";
-    const rolePath = options.rolePath || comicPaths.find(path => /角色\.(webp|png|jpe?g)$/i.test(path)) || "";
+    const backgroundMaskPath = comicPaths.find(path => /(?:^|\\/)[^/]*背景\\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\\.(webp|png|jpe?g)$/i.test(path)) || "";
+    const rolePath = options.rolePath || comicPaths.find(path => /角色\\.(webp|png|jpe?g)$/i.test(path)) || "";
     const isSplitBackgroundAndRole = Boolean(backgroundMaskPath && rolePath && comicPaths.includes(rolePath));
+    const playLayerEntry = layer => {
+        if (!layer) return;
+        const play = () => {
+            layer.style.setProperty("animation", "none", "important");
+            void layer.offsetWidth;
+            layer.style.setProperty("animation", "fadeInUp .6s ease-out both", "important");
+        };
+        if (layer.complete && layer.naturalWidth > 0) play();
+        else {
+            layer.addEventListener("load", play, { once:true });
+            layer.addEventListener("error", play, { once:true });
+        }
+    };
     comicBox.style.display = "block";
     comicBox.classList.remove("comic-slide-up");
     comicPaths.forEach(path => {
         if (shownPaths.includes(path)) return;
-        const openingBg = options.opening && /(?:背景|漫畫背景)\.(webp|png|jpe?g)$/i.test(path.split("/").pop());
-        const extraClass = (path.includes("貝殼信") ? " comic-shell-letter" : "") + (openingBg ? " intro-comic-background" : "");
+        const fileName = path.split("/").pop();
+        const openingBg = options.opening && /(?:背景|漫畫背景)\\.(webp|png|jpe?g)$/i.test(fileName);
+        const isSplitBackground = isSplitBackgroundAndRole && path === backgroundMaskPath;
+        const isSplitRole = isSplitBackgroundAndRole && path === rolePath;
+        const extraClass =
+            (path.includes("貝殼信") ? " comic-shell-letter" : "") +
+            (openingBg ? " intro-comic-background" : "") +
+            (isSplitBackground ? " comic-split-background" : "") +
+            (isSplitRole ? " comic-split-role" : "");
+        let layer;
         if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
-            comicImg.src = path; comicImg.alt = "漫畫圖";
+            comicImg.src = path;
+            comicImg.alt = "漫畫圖";
             comicImg.className = "comic-layer anim-fade-in-up" + extraClass;
+            layer = comicImg;
         } else {
-            const layer = document.createElement("img"); layer.src = path; layer.alt = "";
+            layer = document.createElement("img");
+            layer.src = path;
+            layer.alt = "";
             layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + extraClass;
-            if (isSplitBackgroundAndRole && path === rolePath && options.opening) {
-                // 分離素材是同一張透明畫布：角色與背景必須共用完整畫布座標。
-                layer.classList.add("intro-comic-role");
-                // 11 角色以 11 背景作為 alpha 遮罩，裁掉背景畫布以外的部分；12 保持直接顯示。
-                if(/(?:^|\/)11\.webp$/i.test(path) && backgroundMaskPath){
-                    layer.dataset.comicMaskRole="11";
-                    layer.style.setProperty("--comic-role-mask",`url("${backgroundMaskPath}")`);
-                }else{
-                    layer.style.setProperty("-webkit-mask-image","none","important");
-                    layer.style.setProperty("mask-image","none","important");
-                }
-                comicBox.appendChild(layer);
-            } else if (isSplitBackgroundAndRole && path === rolePath) {
-                comicBox.appendChild(layer);
-            } else comicBox.appendChild(layer);
+            if (isSplitRole && options.opening) layer.classList.add("intro-comic-role");
+            comicBox.appendChild(layer);
         }
+        if (isSplitRole) {
+            layer.classList.add("comic-split-role");
+            if (options.opening) layer.classList.add("intro-comic-role");
+            layer.dataset.comicMaskRole = "split";
+            layer.style.setProperty("--comic-role-mask", `url("${backgroundMaskPath}")`);
+            layer.style.setProperty("-webkit-mask-image", "var(--comic-role-mask)", "important");
+            layer.style.setProperty("mask-image", "var(--comic-role-mask)", "important");
+            layer.style.setProperty("-webkit-mask-size", "100% 100%", "important");
+            layer.style.setProperty("mask-size", "100% 100%", "important");
+            layer.style.setProperty("-webkit-mask-position", "center", "important");
+            layer.style.setProperty("mask-position", "center", "important");
+            layer.style.setProperty("-webkit-mask-repeat", "no-repeat", "important");
+            layer.style.setProperty("mask-repeat", "no-repeat", "important");
+        }
+        if (isSplitBackground) layer.classList.add("comic-split-background");
+        playLayerEntry(layer);
         shownPaths.push(path);
     });
-    comicBox.setAttribute("data-comic-paths",JSON.stringify(shownPaths));
-    if (comicGroup !== null) comicBox.setAttribute("data-comic-group",String(comicGroup));
-    const firstFileName = shownPaths[0] ? shownPaths[0].split("/").pop().replace(/\.[^/.]+$/,"") : "comic";
+    comicBox.setAttribute("data-comic-paths", JSON.stringify(shownPaths));
+    if (comicGroup !== null) comicBox.setAttribute("data-comic-group", String(comicGroup));
+    const firstFileName = shownPaths[0] ? shownPaths[0].split("/").pop().replace(/\\.[^/.]+$/, "") : "comic";
     comicBox.className = "comic-style-" + firstFileName + (options.opening ? " opening-comic-active" : "");
-    // 開場漫畫整格一起進場：背景與角色不再各自跑不同的淡入動畫。
     if (shouldAnimateComicEntry) { void comicBox.offsetWidth; comicBox.classList.add("comic-slide-up"); }
 }
 function clearComicLayers(comicBox, comicImg) {
@@ -12069,14 +12096,17 @@ function openPersonalityResult(first,second){
 
                 function showStartupLoading(message) {
                     if (loadingScreen) {
-                        if (loadingScreen.parentElement !== document.body) document.body.appendChild(loadingScreen);
-                        loadingScreen.style.setProperty("position", "fixed", "important");
+                        const stage = document.getElementById("game-container");
+                        if (stage && loadingScreen.parentElement !== stage) stage.appendChild(loadingScreen);
+                        loadingScreen.style.setProperty("position", "absolute", "important");
                         loadingScreen.style.setProperty("inset", "0", "important");
-                        loadingScreen.style.setProperty("width", "100vw", "important");
-                        loadingScreen.style.setProperty("height", "100dvh", "important");
-                        loadingScreen.style.setProperty("max-width", "none", "important");
-                        loadingScreen.style.setProperty("max-height", "none", "important");
+                        loadingScreen.style.setProperty("width", "100%", "important");
+                        loadingScreen.style.setProperty("height", "100%", "important");
+                        loadingScreen.style.setProperty("max-width", "100%", "important");
+                        loadingScreen.style.setProperty("max-height", "100%", "important");
                         loadingScreen.style.setProperty("z-index", "2147483647", "important");
+                        const dev = document.getElementById("developer-tools");
+                        if (dev) { dev.style.setProperty("visibility", "hidden", "important"); dev.style.setProperty("pointer-events", "none", "important"); }
                         loadingScreen.style.display = "flex";
                         loadingScreen.style.opacity = "1";
                         loadingScreen.style.transition = "none";
@@ -12089,6 +12119,8 @@ function openPersonalityResult(first,second){
 
                 function showStartInterface() {
                     if (loadingScreen) loadingScreen.style.display = "none";
+                    const devAtStart = document.getElementById("developer-tools");
+                    if (devAtStart) { devAtStart.style.setProperty("visibility", "visible", "important"); devAtStart.style.setProperty("pointer-events", "auto", "important"); }
                     const page = document.getElementById("page1");
                     if (page) {
                         page.style.visibility = "hidden";
@@ -12209,6 +12241,8 @@ function openPersonalityResult(first,second){
                         openingComicIndex = 0;
                         openingComicGroup = null;
                         if (loadingScreen) loadingScreen.style.display = "none";
+                        const dev = document.getElementById("developer-tools");
+                        if (dev) { dev.style.setProperty("visibility", "visible", "important"); dev.style.setProperty("pointer-events", "auto", "important"); }
                         renderOpeningComicFrame(0);
                     });
                 }
@@ -16947,8 +16981,8 @@ body.opening-comic-controls #game-container #skip-btn{
 
 
 <style id="stage-comic-result-final-adjustments-20261116">
-/* 一般漫畫前景縮小；共用滿版底圖不套用這個尺寸。 */
-#game-container #comic-box .comic-layer:not(.intro-comic-background){
+/* 所有漫畫（11～14、1～4、好奇星劇情及後續分鏡）統一以遊戲舞台為基準，前景同為86%。 */
+#game-container #comic-box .comic-layer{
  position:absolute!important;top:50%!important;left:50%!important;
  right:auto!important;bottom:auto!important;
  width:86%!important;height:86%!important;
@@ -16958,59 +16992,47 @@ body.opening-comic-controls #game-container #skip-btn{
  transform:translate(-50%,-50%)!important;
  object-fit:contain!important;object-position:center center!important;
 }
-/* 最底層共用漫畫背景固定滿版，不縮小、不放大到溢出。 */
+/* 開場漫畫最底層共用底圖只填滿遊戲舞台，不使用 vw／dvh。 */
 #game-container #comic-box.opening-comic-active .intro-comic-background[src*="漫畫背景"]{
  position:absolute!important;inset:0!important;
- width:100vw!important;height:100dvh!important;
- min-width:100vw!important;min-height:100dvh!important;
- max-width:none!important;max-height:none!important;
+ width:100%!important;height:100%!important;
+ min-width:100%!important;min-height:100%!important;
+ max-width:100%!important;max-height:100%!important;
  margin:0!important;padding:0!important;transform:none!important;
- object-fit:cover!important;object-position:center center!important;
- z-index:0!important;
+ object-fit:cover!important;object-position:center center!important;z-index:0!important;
 }
-/* 11／12 的局部背景與角色必須使用完全相同的畫布尺寸及中心座標。 */
-#game-container #comic-box.opening-comic-active .intro-comic-background[src*="11背景"],
-#game-container #comic-box.opening-comic-active .intro-comic-background[src*="12背景"],
-#game-container #comic-box.opening-comic-active .intro-comic-role{
+/* 所有分離式背景與角色（包括11、12及好奇星第一組第二張）同尺寸、同中心、同拉伸方式。 */
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{
  position:absolute!important;top:50%!important;left:50%!important;
  right:auto!important;bottom:auto!important;
- width:86vw!important;height:86dvh!important;
+ width:86%!important;height:86%!important;
  min-width:0!important;min-height:0!important;
- max-width:86vw!important;max-height:86dvh!important;
+ max-width:86%!important;max-height:86%!important;
  margin:0!important;padding:0!important;
  transform:translate(-50%,-50%)!important;
  object-fit:fill!important;object-position:center center!important;
 }
-/* 11 的角色用 11背景 的透明遮罩裁切，確保角色只出現在背景內。 */
-#game-container #comic-box.opening-comic-active .intro-comic-role[data-comic-mask-role="11"]{
+/* 角色只在對應背景的有效範圍內顯示，遮罩和角色使用相同的86%畫布。 */
+#game-container #comic-box .comic-split-role[data-comic-mask-role="split"]{
  -webkit-mask-image:var(--comic-role-mask)!important;
  mask-image:var(--comic-role-mask)!important;
  -webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;
  -webkit-mask-position:center!important;mask-position:center!important;
  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
+ z-index:3!important;
 }
-/* 11、12 局部背景與角色各自淡入；角色不再被背景選擇器排除。 */
-@keyframes comicLayerEntry{
- from{opacity:0;translate:0 40px}
- to{opacity:1;translate:0 0}
-}
-#game-container #comic-box.opening-comic-active .intro-comic-background:not([src*="漫畫背景"]),
-#game-container #comic-box.opening-comic-active .intro-comic-role{
- animation:comicLayerEntry .6s ease-out both!important;
-}
-/* 開場其餘前景漫畫也使用單層淡入，不對容器和圖片疊加位移動畫。 */
+#game-container #comic-box .comic-split-background{z-index:2!important}
+#game-container #comic-box.opening-comic-active .intro-comic-role{z-index:3!important}
+/* 不讓容器位移動畫與每張漫畫圖片的淡入上移疊加。 */
 #game-container #comic-box.comic-slide-up{animation:none!important}
-#game-container #comic-box.opening-comic-active .comic-layer:not(.intro-comic-background){
- animation:comicLayerEntry .6s ease-out both!important;
-}
-/* 載入畫面固定在整個視窗最上層，任何遊戲 UI 都不能蓋住它。 */
-#loading-screen{
- position:fixed!important;inset:0!important;
- width:100vw!important;height:100vh!important;height:100dvh!important;
- min-width:100vw!important;min-height:100vh!important;min-height:100dvh!important;
- max-width:none!important;max-height:none!important;
+/* 載入畫面在遊戲舞台內滿版，且高於所有舞台 UI；桌機不超出遊戲框。 */
+#game-container > #loading-screen{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:100%!important;max-height:100%!important;
  z-index:2147483647!important;box-sizing:border-box!important;
- pointer-events:auto!important;
 }
 /* 片尾所有工作人員 IG 圖片統一放大，烏賊那一列文字再縮小。 */
 #end-credits .credits-person img{
@@ -17027,14 +17049,11 @@ body.opening-comic-controls #game-container #skip-btn{
  font-size:18px!important;line-height:1.5!important;
  -webkit-text-fill-color:#fff!important;color:#fff!important;
 }
-/* 只恢復手機版「結合……是……」字級；電腦版最終結果完全不碰。 */
+/* 只保留手機版「結合……是……」字級調整，桌機最終結果不套用。 */
 @media (max-width:900px), (pointer:coarse) and (max-width:1200px){
  #personality-result-screen #personality-result-copy .result-career-intro,
  #personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
   font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 5px)!important;
- }
- #personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star{
-  font-size:1em!important;
  }
 }
 </style>
