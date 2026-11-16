@@ -8987,19 +8987,11 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             const splitNumber = isSplitRole ? rolePath.match(/(?:^|\/)(11|12)\.webp$/i) : null;
             if (splitNumber) {
                 layer.setAttribute("data-comic-mask-role", splitNumber[1]);
-                if (splitNumber[1] === "11" && backgroundMaskPath) {
-                    const roleMaskUrl = 'url("' + backgroundMaskPath + '")';
-                    layer.style.setProperty("--comic-role-mask", roleMaskUrl, "important");
-                    layer.style.setProperty("-webkit-mask-image", roleMaskUrl, "important");
-                    layer.style.setProperty("mask-image", roleMaskUrl, "important");
-                    layer.style.setProperty("-webkit-mask-mode", "alpha", "important");
-                    layer.style.setProperty("mask-mode", "alpha", "important");
-                } else {
-                    // 12 與背景是同畫布分層，不用 12背景當遮罩，避免遮掉角色邊緣造成縫隙。
-                    layer.style.removeProperty("--comic-role-mask");
-                    layer.style.setProperty("-webkit-mask-image", "none", "important");
-                    layer.style.setProperty("mask-image", "none", "important");
-                }
+                // 11、12 都是與背景同畫布的透明分層；不可只對 11 套 Alpha 遮罩，
+                // 否則兩格的可見範圍與邊緣不同，進場效果也會不一致。
+                layer.style.removeProperty("--comic-role-mask");
+                layer.style.setProperty("-webkit-mask-image", "none", "important");
+                layer.style.setProperty("mask-image", "none", "important");
             } else {
                 layer.removeAttribute("data-comic-mask-role");
                 layer.style.removeProperty("--comic-role-mask");
@@ -15543,6 +15535,27 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 }
 /* 不讓圖片覆蓋整個舞台的點擊；點擊仍會傳到劇情的 document handler。 */
 #game-container #comic-box .comic-layer{pointer-events:none!important}
+</style>
+
+<style id="opening-comic-and-result-intro-final-sync-20261116">
+/* 開場 11、12 的角色與背景採同一套透明分層規則。 */
+#game-container #comic-box.opening-comic-active .comic-split-background,
+#game-container #comic-box.opening-comic-active .comic-split-role{
+  object-fit:contain!important;object-position:center center!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+}
+/* 「結合……是……」一般雙高分與同分版共用字級、行高及水平定位。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:clamp(16px,calc(3.4cqw + 6px),20px)!important;
+  line-height:1.35!important;left:0!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-next{
+  font-size:1em!important;line-height:inherit!important;
+}
 </style>
 </body>
 
