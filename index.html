@@ -8736,7 +8736,7 @@ function enterGameAnimation() {
 
         function startTypingEffect(text, callback, targetOverride = null) {
             const defaultTextTag = document.getElementById("對話文本");
-            if (!defaultTextTag) return;
+            if (!defaultTextTag && !targetOverride) return;
             const textTag = targetOverride || defaultTextTag;
 
             if (window.myTypingTimer) {
@@ -8753,7 +8753,7 @@ function enterGameAnimation() {
             window.currentTypingTarget = textTag;
             window.isTyping = true;
             textTag.innerHTML = "";
-            if (targetOverride) defaultTextTag.innerHTML = "";
+            if (targetOverride && defaultTextTag) defaultTextTag.innerHTML = "";
 
             let index = 0;
             const typeNextCharacter = () => {
@@ -8802,7 +8802,18 @@ function createComicDialogueBubble(comicBox, scene) {
         layer = document.createElement("div");
         layer.className = "comic-dialogue-layer";
         layer.setAttribute("aria-live", "polite");
+        Object.assign(layer.style, {
+            position: "absolute", inset: "4%", zIndex: "2147483646",
+            display: "block", visibility: "visible", opacity: "1",
+            pointerEvents: "none", overflow: "visible"
+        });
         comicBox.appendChild(layer);
+    } else {
+        Object.assign(layer.style, {
+            position: "absolute", inset: "4%", zIndex: "2147483646",
+            display: "block", visibility: "visible", opacity: "1",
+            pointerEvents: "none", overflow: "visible"
+        });
     }
     const sceneKey = String(scene.id ?? currentStep);
     const existing = Array.from(layer.querySelectorAll(".comic-speech-bubble"))
@@ -8818,6 +8829,17 @@ function createComicDialogueBubble(comicBox, scene) {
     const slot = scene.comicDialoguePosition || slots[layer.querySelectorAll(".comic-speech-bubble").length % slots.length];
     const bubble = document.createElement("div");
     bubble.className = "comic-speech-bubble";
+    Object.assign(bubble.style, {
+        position: "absolute", display: "block", boxSizing: "border-box",
+        width: "max-content", maxWidth: "min(82%, 680px)",
+        padding: "12px 28px", background: "#000", color: "#fff",
+        border: "2px solid #000", borderRadius: "17px",
+        fontFamily: '"Noto Sans TC","Microsoft JhengHei",sans-serif',
+        fontSize: "clamp(14px, 2.1cqw, 22px)", fontWeight: "600",
+        lineHeight: "1.45", whiteSpace: "pre-wrap", overflowWrap: "anywhere",
+        zIndex: "2147483647", visibility: "visible", opacity: "1",
+        pointerEvents: "none"
+    });
     bubble.dataset.sceneId = sceneKey;
     bubble.dataset.tail = slot.tail || scene.comicDialogueTail || "bottom-right";
     ["left","right","top","bottom"].forEach(key => {
@@ -8825,6 +8847,10 @@ function createComicDialogueBubble(comicBox, scene) {
     });
     const text = document.createElement("span");
     text.className = "comic-speech-text";
+    Object.assign(text.style, {
+        display: "block", color: "#fff", opacity: "1",
+        visibility: "visible", WebkitTextFillColor: "#fff"
+    });
     bubble.appendChild(text);
     layer.appendChild(bubble);
     return text;
@@ -9016,13 +9042,13 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         if (isSplitBackground || isSplitRole) {
             // 12 的背景與角色必須使用完全相同的定位座標、尺寸與拉伸方式。
             // 直接修正 inline !important 的定位，避免後加 CSS 無法覆蓋而造成「往右調沒反應」。
-            layer.style.setProperty("left", "46%", "important");
+            layer.style.setProperty("left", "50%", "important");
             layer.style.setProperty("top", "50%", "important");
             layer.style.setProperty("width", "86%", "important");
             layer.style.setProperty("height", "86%", "important");
             layer.style.setProperty("max-width", "86%", "important");
             layer.style.setProperty("max-height", "86%", "important");
-            layer.style.setProperty("object-fit", "contain", "important");
+            layer.style.setProperty("object-fit", "fill", "important");
             layer.style.setProperty("object-position", "center center", "important");
             layer.style.setProperty("opacity", "0", "important");
             layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
@@ -15432,6 +15458,39 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 <script id="disable-game-doubletap-and-gesture-zoom-20261116">
 (function(){const stage=document.getElementById("game-container");if(!stage||stage.dataset.noDoubleTapZoom==="1")return;stage.dataset.noDoubleTapZoom="1";stage.addEventListener("dblclick",e=>{e.preventDefault();e.stopPropagation();},{passive:false});stage.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});stage.addEventListener("gesturechange",e=>e.preventDefault(),{passive:false});stage.addEventListener("gestureend",e=>e.preventDefault(),{passive:false});})();
 </script>
+
+<style id="comic-dialogue-and-panel-visibility-repair-20261116">
+/* 11/12 與其他漫畫前景統一畫布大小；背景、人物同中心、同尺寸。 */
+#game-container #comic-box.opening-comic-active .comic-split-background,
+#game-container #comic-box.opening-comic-active .comic-split-role[data-comic-mask-role="11"],
+#game-container #comic-box.opening-comic-active .comic-split-role[data-comic-mask-role="12"]{
+ position:absolute!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+ width:86%!important;height:86%!important;min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:86%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;object-fit:fill!important;object-position:center center!important;
+}
+/* 進場動畫只交給 JS 的同步 WAAPI，避免 CSS fadeInUp 再播一次造成跳動、閃爍。 */
+#game-container #comic-box.opening-comic-active .comic-layer:not(.intro-comic-background){
+ animation:none!important;
+}
+/* 對話永遠在所有漫畫圖層上方，並強制可見。 */
+#game-container #comic-box .comic-dialogue-layer{
+ position:absolute!important;inset:4%!important;z-index:2147483646!important;
+ display:block!important;visibility:visible!important;opacity:1!important;
+ pointer-events:none!important;overflow:visible!important;
+}
+#game-container #comic-box .comic-speech-bubble{
+ display:block!important;z-index:2147483647!important;visibility:visible!important;opacity:1!important;
+ max-width:min(82%,680px)!important;padding:12px 28px!important;
+ background:#000!important;color:#fff!important;
+}
+#game-container #comic-box .comic-speech-text{
+ display:block!important;visibility:visible!important;opacity:1!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+/* 不讓圖片覆蓋整個舞台的點擊；點擊仍會傳到劇情的 document handler。 */
+#game-container #comic-box .comic-layer{pointer-events:none!important}
+</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
@@ -17135,30 +17194,41 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
   if(activePreviewURL){URL.revokeObjectURL(activePreviewURL);activePreviewURL="";}
  }
  function shareWithBlob(platform,blob,label){
-  const file=getShareFile(blob);
   const message="我的星辰之路測驗結果："+location.href;
-  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-   navigator.share({files:[file],title:"星辰之路測驗結果",text:message,url:location.href}).then(()=>{
-    if(label)label.textContent="分享完成！";
-   }).catch(error=>{
-    if(error&&error.name==="AbortError")return;
-    console.error("[結果分享] "+platform+" 分享失敗：",error);
-    if(label)label.textContent="分享未完成，請再試一次";
-   });
+  const shareURL=location.href;
+  const openFallback=(url)=>{
+   let fallbackTimer=setTimeout(()=>{
+    if(document.visibilityState==="visible") window.open(url,"_blank","noopener,noreferrer");
+   },900);
+   window.addEventListener("pagehide",()=>clearTimeout(fallbackTimer),{once:true});
+  };
+  if(platform==="line"){
+   const appURL="line://msg/text/"+encodeURIComponent(message);
+   window.location.href=appURL;
+   openFallback("https://line.me/R/msg/text/?"+encodeURIComponent(message));
+   if(label)label.textContent="正在開啟 LINE…";
    return;
   }
-  if(platform==="line"){
-   window.open("https://line.me/R/msg/text/?"+encodeURIComponent(message),"_blank","noopener,noreferrer");
-   if(label)label.textContent="已開啟 LINE，請選擇分享對象";
-  }else if(platform==="facebook"){
-   window.open("https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(location.href),"_blank","noopener,noreferrer");
-   if(label)label.textContent="已開啟 Facebook；此方式僅附上遊戲連結";
-  }else{
-   const url=URL.createObjectURL(blob),link=document.createElement("a");
-   link.href=url;link.download=activeFile;document.body.appendChild(link);link.click();link.remove();
-   setTimeout(()=>URL.revokeObjectURL(url),30000);
-   window.open("https://www.instagram.com/","_blank","noopener,noreferrer");
-   if(label)label.textContent="圖片已準備，請在 Instagram 選取";
+  if(platform==="facebook"){
+   const sharePage="https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(shareURL);
+   window.location.href="fb://facewebmodal/f?href="+encodeURIComponent(sharePage);
+   openFallback(sharePage);
+   if(label)label.textContent="正在開啟 Facebook…";
+   return;
+  }
+  if(platform==="instagram"){
+   // 網頁版無法寫入 iOS UIPasteboard 的 Instagram 專用貼紙資料；
+   // 先把結果圖交給使用者保存，再直接開啟 Instagram。
+   const file=getShareFile(blob);
+   const url=URL.createObjectURL(blob);
+   const link=document.createElement("a");
+   link.href=url;link.download=activeFile;link.style.display="none";
+   document.body.appendChild(link);link.click();link.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),60000);
+   window.location.href="instagram://app";
+   openFallback("https://www.instagram.com/");
+   if(label)label.textContent="正在開啟 Instagram；請選擇結果圖片並加入限動貼紙";
+   return;
   }
  }
  function shareResult(platform){
