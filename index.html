@@ -3421,27 +3421,27 @@ img { max-width:100%; }
 
             <div class="credits-gap"></div>
             <div class="credits-heading">星球背景音樂：</div>
-            <div>Chopin - Nocturne Op. 55 No. 1</div>
-            <div>Schumann: Kinderszenen Op.15 No.7, Träumerei (Horowitz)</div>
-            <div>Mozart : Allegro in B flat Major,K3</div>
-            <div>Plink, Plank, Plunk!</div>
-            <div>Federico Mompou, Musica callada - XV. Lento-plaintif (1962)</div>
-            <div>Gabriel Fauré - Op.24, Élégie (Gaisford, Melgar)</div>
-            <div>Louis Armstrong and his Hot Five - Cornet Chop Suey</div>
-            <div>Johann Sebastian Bach: Cello Suite No.1 VI-Gigue</div>
-            <div>Saint-Saens: Romance for Cello and Piano | Nicholas Canellakis &amp; Michael Stephen Brown</div>
-            <div>Fireworks</div>
-            <div>Sugar Foot Stomp</div>
-            <div>Louis Armstrong - Potato Head Blues (1927)[Digitally Remastered]</div>
-            <div>Kevin MacLeod ~ WaunKevin</div>
-            <div>MacLeod ~ Exciting Trailer</div>
-            <div>Rimsky Korsakov</div>
-            <div>Procession of the Nobles</div>
-            <div>Borodin - Polovtsian - Dance No 17 - Dance the Maidens</div>
-            <div>Handel March, trumpet and organ. (March from Rinaldo)</div>
-            <div>Scipio: March (feat. David Shead &amp; Paul Honey)</div>
-            <div>Scott Joplin - Palm Leaf Rag (1903)</div>
-            <div>Scottt Joplin | J Piano</div>
+            <div class="credits-music-track">Chopin - Nocturne Op. 55 No. 1</div>
+            <div class="credits-music-track">Schumann: Kinderszenen Op.15 No.7, Träumerei (Horowitz)</div>
+            <div class="credits-music-track">Mozart : Allegro in B flat Major,K3</div>
+            <div class="credits-music-track">Plink, Plank, Plunk!</div>
+            <div class="credits-music-track">Federico Mompou, Musica callada - XV. Lento-plaintif (1962)</div>
+            <div class="credits-music-track">Gabriel Fauré - Op.24, Élégie (Gaisford, Melgar)</div>
+            <div class="credits-music-track">Louis Armstrong and his Hot Five - Cornet Chop Suey</div>
+            <div class="credits-music-track">Johann Sebastian Bach: Cello Suite No.1 VI-Gigue</div>
+            <div class="credits-music-track">Saint-Saens: Romance for Cello and Piano | Nicholas Canellakis &amp; Michael Stephen Brown</div>
+            <div class="credits-music-track">Fireworks</div>
+            <div class="credits-music-track">Sugar Foot Stomp</div>
+            <div class="credits-music-track">Louis Armstrong - Potato Head Blues (1927)[Digitally Remastered]</div>
+            <div class="credits-music-track">Kevin MacLeod ~ WaunKevin</div>
+            <div class="credits-music-track">MacLeod ~ Exciting Trailer</div>
+            <div class="credits-music-track">Rimsky Korsakov</div>
+            <div class="credits-music-track">Procession of the Nobles</div>
+            <div class="credits-music-track">Borodin - Polovtsian - Dance No 17 - Dance the Maidens</div>
+            <div class="credits-music-track">Handel March, trumpet and organ. (March from Rinaldo)</div>
+            <div class="credits-music-track">Scipio: March (feat. David Shead &amp; Paul Honey)</div>
+            <div class="credits-music-track">Scott Joplin - Palm Leaf Rag (1903)</div>
+            <div class="credits-music-track">Scottt Joplin | J Piano</div>
 
             <div class="credits-gap"></div>
             <div class="credits-heading">使用軟體：</div>
@@ -8710,11 +8710,25 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.classList.add("comic-split-role");
             if (options.opening) layer.classList.add("intro-comic-role");
             layer.setAttribute("data-comic-layer-kind", "split-role");
-            // 背景與角色都是完整的 2160×3960 畫布；以同一個寬度、原始比例和中心點疊合，不裁切角色。
-            layer.removeAttribute("data-comic-mask-role");
-            layer.style.removeProperty("--comic-role-mask");
-            layer.style.setProperty("-webkit-mask-image", "none", "important");
-            layer.style.setProperty("mask-image", "none", "important");
+            // 11 的角色必須被 11背景的透明輪廓裁切，才能完整落在背景框內。
+            if (options.opening && /(?:^|\/)11\.webp$/i.test(rolePath) && backgroundMaskPath) {
+                layer.setAttribute("data-comic-mask-role", "11");
+                const roleMask = 'url("' + backgroundMaskPath + '")';
+                layer.style.setProperty("--comic-role-mask", roleMask, "important");
+                layer.style.setProperty("-webkit-mask-image", roleMask, "important");
+                layer.style.setProperty("mask-image", roleMask, "important");
+                layer.style.setProperty("-webkit-mask-size", "100% 100%", "important");
+                layer.style.setProperty("mask-size", "100% 100%", "important");
+                layer.style.setProperty("-webkit-mask-position", "center", "important");
+                layer.style.setProperty("mask-position", "center", "important");
+                layer.style.setProperty("-webkit-mask-repeat", "no-repeat", "important");
+                layer.style.setProperty("mask-repeat", "no-repeat", "important");
+            } else {
+                layer.removeAttribute("data-comic-mask-role");
+                layer.style.removeProperty("--comic-role-mask");
+                layer.style.setProperty("-webkit-mask-image", "none", "important");
+                layer.style.setProperty("mask-image", "none", "important");
+            }
         }
 
         const isForegroundComic = !isFullBleedOpeningBackdrop;
@@ -10536,7 +10550,7 @@ function positionResultTextElements(layers,copy){
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機保留目前已接近正確的位置；電腦恢復透明尾端裁切前的舊定位基準。
     if(isMobileResultLayout){
-     const careerShiftX=8.5;
+     const careerShiftX=7.5;
      const careerShiftY=35;
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
@@ -10546,7 +10560,7 @@ function positionResultTextElements(layers,copy){
      // 電腦版職業區上移150px：直接修正 JS 計算出的 top，避免被 inline !important 蓋掉。
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
-     career.style.setProperty("left",(careerBaseLeft+4)+"px","important");
+     career.style.setProperty("left",(careerBaseLeft+3)+"px","important");
      career.style.setProperty("top",(careerBaseTop+135)+"px","important");
     }
     career.style.setProperty("translate","none","important");
@@ -11322,25 +11336,30 @@ function openPersonalityResult(first,second){
                     roll.dataset.returnToStartBound="1";
                     roll.addEventListener("animationend",event=>{
                         if(event.target!==roll || event.animationName!=="end-credits-scroll") return;
-                        credits.classList.remove("show");
-                        const startScreen=document.getElementById("intro-start-screen");
-                        const container=document.getElementById("game-container");
-                        const page=document.getElementById("page1");
-                        if(page){page.style.display="";page.style.visibility="hidden";page.style.pointerEvents="none";}
-                        if(startScreen && container){
-                            container.classList.add("start-screen-active");
-                            if(startScreen.parentElement!==container) container.appendChild(startScreen);
-                            startScreen.style.setProperty("position","absolute","important");
-                            startScreen.style.setProperty("inset","0","important");
-                            startScreen.style.setProperty("width","100%","important");
-                            startScreen.style.setProperty("height","100%","important");
-                            startScreen.style.setProperty("display","flex","important");
-                            startScreen.style.setProperty("pointer-events","auto","important");
-                            const startButton=document.getElementById("intro-start-button");
-                            if(startButton)startButton.dataset.started="0";
-                            const video=document.getElementById("intro-start-video");
-                            if(video){try{video.currentTime=0;video.play().catch(()=>{});}catch(error){}}
-                        }
+                        // 最後的 Logo／標準字停留 2.5 秒，讓玩家看完片尾再回到開始介面。
+                        if(roll.dataset.endingHold==="1") return;
+                        roll.dataset.endingHold="1";
+                        setTimeout(()=>{
+                            credits.classList.remove("show");
+                            const startScreen=document.getElementById("intro-start-screen");
+                            const container=document.getElementById("game-container");
+                            const page=document.getElementById("page1");
+                            if(page){page.style.display="";page.style.visibility="hidden";page.style.pointerEvents="none";}
+                            if(startScreen && container){
+                                container.classList.add("start-screen-active");
+                                if(startScreen.parentElement!==container) container.appendChild(startScreen);
+                                startScreen.style.setProperty("position","absolute","important");
+                                startScreen.style.setProperty("inset","0","important");
+                                startScreen.style.setProperty("width","100%","important");
+                                startScreen.style.setProperty("height","100%","important");
+                                startScreen.style.setProperty("display","flex","important");
+                                startScreen.style.setProperty("pointer-events","auto","important");
+                                const startButton=document.getElementById("intro-start-button");
+                                if(startButton)startButton.dataset.started="0";
+                                const video=document.getElementById("intro-start-video");
+                                if(video){try{video.currentTime=0;video.play().catch(()=>{});}catch(error){}}
+                            }
+                        },2500);
                     });
                 }
             }
@@ -11348,7 +11367,7 @@ function openPersonalityResult(first,second){
             if(!speedHint){
                 speedHint=document.createElement("div");
                 speedHint.className="credits-speed-hint";
-                speedHint.textContent="長按三倍速";
+                speedHint.textContent="即將跳轉到開始介面";
                 credits.appendChild(speedHint);
             }
             // 長按只調整動畫 playbackRate，不改 duration，放開時保留當下播放進度。
@@ -16523,7 +16542,7 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
    shareTitle.style.setProperty("display","block","important");
    shareTitle.style.setProperty("visibility","visible","important");
    shareTitle.style.setProperty("opacity","1","important");
-   shareTitle.style.setProperty("font-family",'"PingFang TC","Microsoft JhengHei",Arial,sans-serif',"important");
+   shareTitle.style.setProperty("font-family",'"CPTrans",sans-serif',"important");
    shareTitle.style.setProperty("font-style","normal","important");
    shareTitle.style.setProperty("font-weight","600","important");
    shareTitle.style.setProperty("font-size","18px","important");
