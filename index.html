@@ -10398,6 +10398,9 @@ function alignResultRoleToTextArtwork(role,layers){
  }
 }
 function positionResultTextElements(layers,copy){
+ // 標語位移專用 CSS 變數：避免舊 CSS top 被 JS inline !important 覆蓋後無法調整。
+ if(!copy.style.getPropertyValue("--result-disclaimer-shift-x"))copy.style.setProperty("--result-disclaimer-shift-x","0px");
+ if(!copy.style.getPropertyValue("--result-disclaimer-shift-y"))copy.style.setProperty("--result-disclaimer-shift-y","0px");
  const findImage=name=>Array.from(layers.querySelectorAll("img")).find(img=>(img.dataset.resultSrc||decodeURIComponent(img.src)).includes(name));
  const textPaper=findImage("背景 文字.webp");
  const lowerNolan=findImage("下面那張諾蘭紙.webp")||layers.querySelector("img");
@@ -16107,6 +16110,11 @@ body.opening-comic-controls #skip-btn{
   stageForPreview.appendChild(overlay);
   overlay.style.setProperty("position","absolute","important");
   overlay.style.setProperty("inset","0","important");
+  overlay.style.setProperty("left","0","important");
+  overlay.style.setProperty("top","0","important");
+  overlay.style.setProperty("right","0","important");
+  overlay.style.setProperty("bottom","0","important");
+  overlay.style.setProperty("transform","none","important");
   overlay.style.setProperty("width","100%","important");
   overlay.style.setProperty("height","100%","important");
   overlay.style.setProperty("max-width","100%","important");
@@ -16214,12 +16222,7 @@ body.opening-comic-controls #skip-btn{
  text-align:center!important;margin-top:0!important;
 }
 @media (min-width:901px){
- /* 桌機預覽限制在中央 430px 遊戲舞台內，不得延伸到瀏覽器整個視窗。 */
- #result-preview-share-overlay{
-  left:50%!important;right:auto!important;top:0!important;bottom:0!important;
-  width:min(430px,100vw)!important;height:100dvh!important;
-  transform:translateX(-50%)!important;padding:12px 8px!important;
- }
+ /* 分享視窗由 openPreview() 直接填滿 #game-container；不再另套 viewport 定位。 */
  #result-preview-share-overlay .result-preview-modal{width:100%!important;max-width:100%!important}
  #result-preview-share-overlay .result-preview-image{max-height:33vh!important;max-width:min(31.2vw,258px)!important}
  #result-preview-share-overlay .result-preview-close{right:0!important;top:-8px!important}
