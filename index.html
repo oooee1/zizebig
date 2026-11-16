@@ -8799,7 +8799,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         const isSplitRole = isSplitBackgroundAndRole && path === rolePath;
         const extraClass =
             (path.includes("貝殼信") ? " comic-shell-letter" : "") +
-            (openingBg || (options.opening && /(?:11|12)背景\.(webp|png|jpe?g)$/i.test(fileName)) ? " intro-comic-background" : "") +
+            (openingBg ? " intro-comic-background" : "") +
             (isSplitBackground ? " comic-split-background" : "") +
             (isSplitRole ? " comic-split-role" : "");
         let layer;
@@ -8825,7 +8825,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.classList.add("comic-split-role");
             if (options.opening) layer.classList.add("intro-comic-role");
             layer.setAttribute("data-comic-layer-kind", "split-role");
-            // 11 的角色必須被 11背景的透明輪廓裁切，才能完整落在背景框內。
+            // 11 的背景與角色使用相同透明畫布，需保持原始座標直接疊合。
             if (options.opening && /(?:^|\/)11\.webp$/i.test(rolePath) && backgroundMaskPath) {
                 // 11背景與 11.webp 本來就是同座標的透明畫布，直接疊圖即可。
                 // 不可把背景圖當遮罩，否則只會保留背景不透明區域，反而裁掉角色。
@@ -15038,16 +15038,6 @@ body.opening-comic-controls #game-container #對話框那條線,
 body.opening-comic-controls #game-container .player-svg{z-index:2147482601!important}
 </style>
 
-<style id="opening-comic-11-and-dialogue-final-20261116">
-#game-container #comic-box.opening-comic-active .comic-split-background[src*="11背景"],
-#game-container #comic-box.opening-comic-active .comic-split-role[data-comic-mask-role="11"]{
- position:absolute!important;top:50%!important;left:50%!important;
- width:86%!important;height:86%!important;min-width:0!important;min-height:0!important;
- max-width:86%!important;max-height:86%!important;margin:0!important;padding:0!important;
- transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
- -webkit-mask-image:none!important;mask-image:none!important;
-}
-</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
@@ -17793,7 +17783,7 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
   }
 }
 /* 測驗標語再上移 8px。 */
-#personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:-68px!important}
+#personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:-110px!important}
 /* 桌機保存結果按鈕縮小；手機版尺寸不變。 */
 @media (min-width:901px) and (pointer:fine){
   #personality-result-screen #personality-result-save{
