@@ -11870,9 +11870,9 @@ function openPersonalityResult(first,second){
                 img.src = src; img.alt = ""; img.dataset.cloudIndex = String(index);
                 // 雲的位置直接寫在元素上，避免後面重複的全域 CSS 把三張圖覆蓋成同一位置。
                 const cloudLayout = [
-                    { left:"-12%", top:"-18%", width:"124%", height:"82%" },
-                    { left:"-2%", top:"12%", width:"112%", height:"80%" },
-                    { left:"-10%", top:"45%", width:"122%", height:"84%" }
+                    { left:"-18%", top:"-20%", width:"136%", height:"62%" },
+                    { left:"-12%", top:"22%", width:"124%", height:"62%" },
+                    { left:"-18%", top:"60%", width:"136%", height:"62%" }
                 ][index];
                 for (const [key,value] of Object.entries(cloudLayout)) img.style.setProperty(key,value,"important");
                 img.style.setProperty("position","absolute","important");
