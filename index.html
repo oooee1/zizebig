@@ -4529,7 +4529,7 @@ img { max-width:100%; }
         background: "好奇星棉花重災區",
         characters: ["好奇星有尾巴"],
         nextId: 41,
-        autoAdvanceAfterMs: 1150,
+        autoAdvanceAfterMs: 1450,
     },
     {
         id: 41,
@@ -8891,6 +8891,9 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.getAnimations?.().forEach(animation => animation.cancel());
             layer.classList.remove("anim-fade-in-up", "comic-layer-entry");
             layer.style.removeProperty("animation");
+            // 分層漫畫先前被設為 inline opacity:0!important，會壓住 Web Animations 的淡入；
+            // 動畫開始前移除這個殘留值，讓 11/12 的背景與角色能在同一幀一起顯示。
+            layer.style.removeProperty("opacity");
             if (typeof layer.animate === "function") {
                 const animation = layer.animate(
                     [
@@ -15704,6 +15707,69 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 #comic-box.opening-comic-active{cursor:pointer}
 #end-credits .credits-person img,#end-credits .credits-project-instagram img,
 #end-credits .credits-brand-row img{display:block}
+</style>
+
+
+<style id="user-fix-comic-animation-cloud-and-result-tweaks-20261116">
+/* 11／12：動畫由 JS 在圖片解碼後同步啟動；不讓 CSS 的 animation:none 阻斷 Web Animations。 */
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{
+  will-change:opacity,translate;
+}
+/* 雲朵分成明確的高、中、低三層，並各自錯開水平位置。 */
+#game-container .dream-cloud-transition img:nth-child(1){
+  left:-12%!important;top:-25%!important;right:auto!important;bottom:auto!important;
+  width:116%!important;height:78%!important;object-fit:contain!important;
+}
+#game-container .dream-cloud-transition img:nth-child(2){
+  left:5%!important;top:9%!important;right:auto!important;bottom:auto!important;
+  width:103%!important;height:76%!important;object-fit:contain!important;
+}
+#game-container .dream-cloud-transition img:nth-child(3){
+  left:-5%!important;top:47%!important;right:auto!important;bottom:auto!important;
+  width:112%!important;height:78%!important;object-fit:contain!important;
+}
+/* 漫畫對話泡泡再窄一些；不改變漫畫圖片或背景定位。 */
+#game-container #comic-box .comic-speech-bubble{
+  max-width:min(33%,270px)!important;
+  padding:8px 12px!important;
+}
+/* 40.1：好奇星先完整左右搖擺，再切換到下一個場景。 */
+@keyframes curiousSwayBeforeSceneChange{
+  0%,100%{transform:rotate(0deg)}
+  18%{transform:rotate(-9deg)}
+  38%{transform:rotate(5deg)}
+  58%{transform:rotate(-5deg)}
+  78%{transform:rotate(8deg)}
+}
+#page1 #好奇星有尾巴.curious-sway img{
+  animation:curiousSwayBeforeSceneChange 1.3s ease-in-out both!important;
+  transform-origin:bottom center!important;
+}
+/* 「結合……是……」整句縮小，包含星球名稱與第二高分提示。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:clamp(14px,calc(2.4cqw + 5px),17px)!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-next{
+  font-size:1em!important;
+}
+/* 保存結果後方漸層加重，範圍不變。 */
+#personality-result-screen #personality-result-save::before{
+  background:linear-gradient(to top,
+    #fff 0%,
+    rgba(255,255,255,.99) 28%,
+    rgba(255,255,255,.94) 62%,
+    rgba(255,255,255,.38) 86%,
+    rgba(255,255,255,0) 100%)!important;
+}
+/* 測驗標語只往下 5px。 */
+#personality-result-screen #personality-result-copy{
+  --result-disclaimer-shift-y:-150px!important;
+}
 </style>
 
 </html>
