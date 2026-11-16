@@ -9092,7 +9092,16 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         }
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
         // 先疊完 11、12 的兩張背景，再疊兩個角色；12 背景不可以蓋掉 11 角色。
-        const comicLayerZ = isFullBleedOpeningBackdrop ? 0 : isSplitBackground ? 10 : isSplitRole ? 20 : 10 + layerOrder;
+        // 11、12 各自成對堆疊：11背景→11角色→12背景→12角色。
+        // 不能把所有背景放在所有角色下面，否則 11角色會浮到12背景前面。
+        const splitPanelMatch = (isSplitBackground || isSplitRole)
+            ? path.match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i)
+            : null;
+        const splitPanelNumber = splitPanelMatch ? Number(splitPanelMatch[1]) : 0;
+        const comicLayerZ = isFullBleedOpeningBackdrop ? 0
+            : isSplitBackground ? (splitPanelNumber === 11 ? 10 : 30)
+            : isSplitRole ? (splitPanelNumber === 11 ? 20 : 40)
+            : 10 + layerOrder;
         layer.style.setProperty("z-index", String(comicLayerZ), "important");
         playLayerEntry(layer);
         shownPaths.push(path);
@@ -11871,9 +11880,9 @@ function openPersonalityResult(first,second){
                 // 雲圖本身是高比例透明畫布；寬高必須依原圖比例放大，才能讓實際雲體延伸到舞台邊緣。
                 // 只調整三張素材的擺放位置，不更動下方 WAAPI 的進退場方向與動畫。
                 const cloudLayout = [
-                    { left:"-18%", top:"-48%", width:"136%", height:"204%" },
-                    { left:"-10%", top:"-18%", width:"136%", height:"204%" },
-                    { left:"-24%", top:"-58%", width:"150%", height:"225%" }
+                    { left:"-18%", top:"-16%", width:"136%", height:"76%" },
+                    { left:"-10%", top:"31%", width:"124%", height:"76%" },
+                    { left:"-24%", top:"67%", width:"150%", height:"76%" }
                 ][index];
                 for (const [key,value] of Object.entries(cloudLayout)) img.style.setProperty(key,value,"important");
                 img.style.setProperty("position","absolute","important");
@@ -19033,15 +19042,20 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 /* 雲層的實際透明畫布放大到足以讓雲體抵達舞台邊緣；不覆寫動畫 transform。 */
 #game-container .dream-cloud-transition img:nth-child(1){
-  left:-18%!important;top:-48%!important;width:136%!important;height:204%!important;
+  left:-18%!important;top:-16%!important;width:136%!important;height:76%!important;
   object-fit:fill!important;object-position:center center!important;
 }
 #game-container .dream-cloud-transition img:nth-child(2){
-  left:-10%!important;top:-18%!important;width:136%!important;height:204%!important;
+  left:-10%!important;top:31%!important;width:124%!important;height:76%!important;
   object-fit:fill!important;object-position:center center!important;
 }
 #game-container .dream-cloud-transition img:nth-child(3){
-  left:-24%!important;top:-58%!important;width:150%!important;height:225%!important;
+  left:-24%!important;top:67%!important;width:150%!important;height:76%!important;
   object-fit:fill!important;object-position:center center!important;
+}
+/* 不同高分的結合句維持已縮小的字級，只放大句中的星球名稱。 */
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star{
+  font-size:calc(1em + 6px)!important;
+  line-height:1.2!important;
 }
 </style>
