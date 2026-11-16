@@ -9032,22 +9032,19 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.style.setProperty("object-position", "center center", "important");
         }
         if (isSplitBackground || isSplitRole) {
-            // 背景與角色先共用完全相同的座標；再依 11／12 分成左右兩個獨立漫畫格。
-            // 之前兩組都被設在 left:50% 且尺寸相同，12 疊上來後只是把 11 蓋住，
-            // 看起來就像 11 被刪掉；實際上圖層仍留在 DOM。
-            const panelMatch = (isSplitRole ? rolePath : backgroundMaskPath).match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i);
-            const openingPanelNumber = options.opening && panelMatch ? panelMatch[1] : null;
+            // 11／12 各自是一張完整漫畫：背景與角色沿用一般漫畫相同的中央畫布，
+            // 不做左右分欄、不縮成 46%，也不另外套用特殊裁切。
             layer.style.setProperty("top", "50%", "important");
-            layer.style.setProperty("left", openingPanelNumber === "11" ? "26%" : openingPanelNumber === "12" ? "74%" : "50%", "important");
-            layer.style.setProperty("width", openingPanelNumber ? "46%" : "90%", "important");
-            layer.style.setProperty("height", "86%", "important");
-            layer.style.setProperty("max-width", openingPanelNumber ? "46%" : "90%", "important");
-            layer.style.setProperty("max-height", "86%", "important");
+            layer.style.setProperty("left", "50%", "important");
+            layer.style.setProperty("width", "90%", "important");
+            layer.style.setProperty("height", "90%", "important");
+            layer.style.setProperty("max-width", "90%", "important");
+            layer.style.setProperty("max-height", "90%", "important");
             layer.style.setProperty("object-fit", "contain", "important");
             layer.style.setProperty("object-position", "center center", "important");
             layer.style.setProperty("opacity", "0", "important");
             layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
-            if (openingPanelNumber) layer.setAttribute("data-opening-panel", openingPanelNumber);
+            layer.removeAttribute("data-opening-panel");
         }
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
         layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : String(10 + layerOrder), "important");
@@ -15957,40 +15954,12 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 
 
 <style id="opening-comic-panel-position-authoritative-20261116">
-/* 11、12 是左右兩格，不可再被舊的 left:50% 規則疊在一起。背景與角色依同一格定位。 */
-#game-container #comic-box.opening-comic-active .comic-split-background[data-opening-panel="11"],
-#game-container #comic-box.opening-comic-active .comic-split-role[data-opening-panel="11"]{
- position:absolute!important;left:26%!important;top:50%!important;right:auto!important;bottom:auto!important;
- width:46%!important;height:86%!important;min-width:0!important;min-height:0!important;
- max-width:46%!important;max-height:86%!important;margin:0!important;padding:0!important;
- transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center!important;
-}
-#game-container #comic-box.opening-comic-active .comic-split-background[data-opening-panel="12"],
-#game-container #comic-box.opening-comic-active .comic-split-role[data-opening-panel="12"]{
- position:absolute!important;left:74%!important;top:50%!important;right:auto!important;bottom:auto!important;
- width:46%!important;height:86%!important;min-width:0!important;min-height:0!important;
- max-width:46%!important;max-height:86%!important;margin:0!important;padding:0!important;
- transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center!important;
-}
-#game-container #comic-box.opening-comic-active .comic-split-background{z-index:10!important}
-#game-container #comic-box.opening-comic-active .comic-split-role{z-index:11!important}
+/* 11、12 是依序播放的完整漫畫頁；背景與角色共用一般漫畫中央畫布。 */
+#game-container #comic-box.opening-comic-active .comic-split-background,
 #game-container #comic-box.opening-comic-active .comic-split-role{
- -webkit-mask-image:none!important;mask-image:none!important;
-}
-/* 其他漫畫格維持同一個 90% 畫布比例；不受 11、12 左右分格規則影響。 */
-#game-container #comic-box.opening-comic-active .comic-layer:not(.comic-split-background):not(.comic-split-role):not([src*="漫畫背景"]){
- left:50%!important;width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
- object-fit:contain!important;object-position:center!important;
-}
-/* 對話泡泡固定在漫畫畫布內，避免被遊戲底部舊對話層蓋住。 */
-#game-container #comic-box.opening-comic-active .comic-dialogue-layer{
- position:absolute!important;inset:4%!important;z-index:2147483646!important;
- display:block!important;visibility:visible!important;opacity:1!important;pointer-events:none!important;
-}
-#game-container #comic-box.opening-comic-active .comic-speech-bubble{
- display:block!important;visibility:visible!important;opacity:1!important;z-index:2147483647!important;
- width:max-content!important;max-width:min(7em,44%)!important;min-width:0!important;
- padding:8px 10px!important;white-space:normal!important;overflow-wrap:anywhere!important;
+  left:50%!important;top:50%!important;width:90%!important;height:90%!important;
+  max-width:90%!important;max-height:90%!important;object-fit:contain!important;
+  object-position:center center!important;transform:translate(-50%,-50%)!important;
 }
 </style>
 <style id="opening-comic-final-overrides-20261116">
