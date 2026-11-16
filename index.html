@@ -3828,7 +3828,7 @@ img { max-width:100%; }
         text: "親愛的日記：",
         comicDialoguePosition: { right: "-28%", top: "7%", tail: "bottom-left" },
         background: "漫畫背景",
-        comicGroup: "opening-11-14",
+        comicGroup: "opening-panel-11",
         comicImages: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"],
         comicRolePath: "./pct/11.webp",
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
@@ -3839,7 +3839,7 @@ img { max-width:100%; }
         text: "爸、媽，今年過得真快，就如往常一樣...",
         comicDialoguePosition: { left: "7%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
-        comicGroup: "opening-11-14",
+        comicGroup: "opening-panel-12",
         comicImages: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"],
         comicRolePath: "./pct/12.webp",
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
@@ -3850,7 +3850,7 @@ img { max-width:100%; }
         text: "但我已經要成年了，仍對未來感到迷茫。",
         comicDialoguePosition: { left: "7%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
-        comicGroup: "opening-11-14",
+        comicGroup: "opening-panel-13",
         comicImages: ["./pct/漫畫背景.webp", "./pct/13.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -11
@@ -3860,7 +3860,7 @@ img { max-width:100%; }
         text: "我究竟擅長什麼？想要什麼？我到底適合什麼？",
         comicDialoguePosition: { left: "33%", top: "40%", tail: "bottom-left" },
         background: "漫畫背景",
-        comicGroup: "opening-11-14",
+        comicGroup: "opening-panel-14",
         comicImages: ["./pct/14.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -10
@@ -3869,7 +3869,7 @@ img { max-width:100%; }
         id: -10,
         text: "",
         background: "漫畫背景",
-        comicGroup: "opening-1-4",
+        comicGroup: "opening-panel-1",
         comicImages: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -9
@@ -3879,7 +3879,7 @@ img { max-width:100%; }
         text: "真希望能收到你們的回覆。",
         comicDialoguePosition: { left: "5%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
-        comicGroup: "opening-1-4",
+        comicGroup: "opening-panel-2",
         comicImages: ["./1漫畫/2.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -8
@@ -3888,7 +3888,7 @@ img { max-width:100%; }
         id: -8,
         text: "",
         background: "漫畫背景",
-        comicGroup: "opening-1-4",
+        comicGroup: "opening-panel-3",
         comicImages: ["./1漫畫/3.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -7
@@ -3897,7 +3897,7 @@ img { max-width:100%; }
         id: -7,
         text: "",
         background: "漫畫背景",
-        comicGroup: "opening-1-4",
+        comicGroup: "opening-panel-4",
         comicImages: ["./1漫畫/4.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: 0
@@ -11773,29 +11773,42 @@ function openPersonalityResult(first,second){
                 creditsRoll.dataset.hintBound="1";
                 creditsRoll.addEventListener("animationend",()=>{speedHint.style.display="block";},{once:true});
             }
-            // 長按只調整動畫 playbackRate，不改 duration，放開時保留當下播放進度。
+            // 長按 450ms 將片尾滾動動畫加速為 3 倍；放開立即恢復正常速度。
             if(credits.dataset.holdSpeedBound!=="1"){
                 credits.dataset.holdSpeedBound="1";
                 let holdTimer=null;
+                let isHolding=false;
                 const setCreditsRate=rate=>{
                     const roll=credits.querySelector(".credits-roll");
-                    if(roll)roll.getAnimations().forEach(animation=>{animation.playbackRate=rate;});
+                    if(!roll)return;
+                    const animations=roll.getAnimations({subtree:false});
+                    animations.forEach(animation=>{
+                        if(typeof animation.updatePlaybackRate==="function") animation.updatePlaybackRate(rate);
+                        else animation.playbackRate=rate;
+                    });
                 };
-                const startHold=()=>{
+                const startHold=event=>{
+                    if(event && event.button!==undefined && event.button!==0)return;
                     if(holdTimer)clearTimeout(holdTimer);
+                    isHolding=true;
                     holdTimer=setTimeout(()=>{
+                        holdTimer=null;
+                        if(!isHolding || !credits.classList.contains("show"))return;
                         setCreditsRate(3);
                         credits.classList.add("is-triple-speed");
                     },450);
                 };
                 const endHold=()=>{
+                    isHolding=false;
                     if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
                     setCreditsRate(1);
                     credits.classList.remove("is-triple-speed");
                 };
-                credits.addEventListener("pointerdown",startHold,{passive:true});
+                credits.style.touchAction="none";
+                credits.addEventListener("pointerdown",startHold);
                 document.addEventListener("pointerup",endHold);
                 document.addEventListener("pointercancel",endHold);
+                credits.addEventListener("contextmenu",event=>event.preventDefault());
                 window.addEventListener("blur",endHold);
             }
         }
@@ -15769,6 +15782,33 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 /* 測驗標語只往下 5px。 */
 #personality-result-screen #personality-result-copy{
   --result-disclaimer-shift-y:-150px!important;
+}
+</style>
+
+
+<style id="user-fix-comic-panels-clouds-dialogue-credits-20261116">
+/* 開場漫畫每一格獨立清除上一格，避免 11/12/13/14 或 1/2 疊圖。 */
+#game-container #comic-box.opening-comic-active .comic-layer{
+  backface-visibility:hidden;
+}
+/* 對話泡泡以七個全形中文字為一行的寬度計算。 */
+#game-container #comic-box .comic-speech-bubble{
+  width:max-content!important;
+  max-width:7em!important;
+  padding:8px 10px!important;
+  overflow-wrap:anywhere!important;
+  line-height:1.4!important;
+}
+/* 雲 1、2 下移並放大，讓雲層能延伸到畫面左右邊緣。 */
+#game-container .dream-cloud-transition img:nth-child(1){
+  left:-19%!important;top:-10%!important;right:auto!important;bottom:auto!important;
+  width:138%!important;height:104%!important;max-width:none!important;
+  object-fit:fill!important;
+}
+#game-container .dream-cloud-transition img:nth-child(2){
+  left:-16%!important;top:24%!important;right:auto!important;bottom:auto!important;
+  width:132%!important;height:108%!important;max-width:none!important;
+  object-fit:fill!important;
 }
 </style>
 
