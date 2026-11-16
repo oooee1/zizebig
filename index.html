@@ -2989,6 +2989,50 @@ img { max-width:100%; }
 #game-container .dream-cloud-transition img:nth-child(3){left:-10%!important;top:38%!important;width:120%!important;height:86%!important;}
 </style>
 
+<style id="final-fix-panels-result-intro-cloud-edge-20261116">
+/* 開場 11、12 同時保留：11 在左、12 在右，各自背景與角色同框。 */
+#game-container #comic-box.opening-comic-active .comic-split-background[data-opening-panel="11"],
+#game-container #comic-box.opening-comic-active .comic-split-role[data-opening-panel="11"]{
+ left:26%!important;width:46%!important;height:86%!important;max-width:46%!important;max-height:86%!important;
+}
+#game-container #comic-box.opening-comic-active .comic-split-background[data-opening-panel="12"],
+#game-container #comic-box.opening-comic-active .comic-split-role[data-opening-panel="12"]{
+ left:74%!important;width:46%!important;height:86%!important;max-width:46%!important;max-height:86%!important;
+}
+#game-container #comic-box.opening-comic-active .comic-split-background,
+#game-container #comic-box.opening-comic-active .comic-split-role{
+ top:50%!important;object-fit:contain!important;object-position:center center!important;
+ transform:translate(-50%,-50%)!important;
+}
+/* 不同高分的介紹句與同分介紹句完全同字級；內部星球名、提示也繼承，不再額外放大。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+ font-size:clamp(16px,calc(3.4cqw + 6px),20px)!important;
+ line-height:1.45!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-next{
+ font-size:1em!important;line-height:inherit!important;
+}
+/* 雲朵分別貼齊畫面上、中、下邊緣，左右延伸出舞台，避免縮在中央。 */
+#game-container .dream-cloud-transition img:nth-child(1){
+ left:-18%!important;right:auto!important;top:-20%!important;bottom:auto!important;
+ width:136%!important;height:62%!important;max-width:none!important;max-height:none!important;
+ object-fit:fill!important;object-position:center top!important;
+}
+#game-container .dream-cloud-transition img:nth-child(2){
+ left:-12%!important;right:auto!important;top:22%!important;bottom:auto!important;
+ width:124%!important;height:62%!important;max-width:none!important;max-height:none!important;
+ object-fit:fill!important;object-position:center center!important;
+}
+#game-container .dream-cloud-transition img:nth-child(3){
+ left:-18%!important;right:auto!important;top:60%!important;bottom:auto!important;
+ width:136%!important;height:62%!important;max-width:none!important;max-height:none!important;
+ object-fit:fill!important;object-position:center bottom!important;
+}
+</style>
 </head>
 
 <body>
@@ -9032,19 +9076,22 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.style.setProperty("object-position", "center center", "important");
         }
         if (isSplitBackground || isSplitRole) {
-            // 11／12 各自是一張完整漫畫：背景與角色沿用一般漫畫相同的中央畫布，
-            // 不做左右分欄、不縮成 46%，也不另外套用特殊裁切。
+            // 11 與 12 是同一個開場畫面中的兩格：各自佔左右半幅，前一格不清除。
+            // 同一格的背景與角色共用完全相同的定位及尺寸。
+            const panelMatch = (isSplitRole ? rolePath : backgroundMaskPath).match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i);
+            const panelNumber = options.opening && panelMatch ? panelMatch[1] : null;
             layer.style.setProperty("top", "50%", "important");
-            layer.style.setProperty("left", "50%", "important");
-            layer.style.setProperty("width", "90%", "important");
-            layer.style.setProperty("height", "90%", "important");
-            layer.style.setProperty("max-width", "90%", "important");
-            layer.style.setProperty("max-height", "90%", "important");
+            layer.style.setProperty("left", panelNumber === "11" ? "26%" : panelNumber === "12" ? "74%" : "50%", "important");
+            layer.style.setProperty("width", panelNumber ? "46%" : "90%", "important");
+            layer.style.setProperty("height", panelNumber ? "86%" : "90%", "important");
+            layer.style.setProperty("max-width", panelNumber ? "46%" : "90%", "important");
+            layer.style.setProperty("max-height", panelNumber ? "86%" : "90%", "important");
             layer.style.setProperty("object-fit", "contain", "important");
             layer.style.setProperty("object-position", "center center", "important");
             layer.style.setProperty("opacity", "0", "important");
             layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
-            layer.removeAttribute("data-opening-panel");
+            if (panelNumber) layer.setAttribute("data-opening-panel", panelNumber);
+            else layer.removeAttribute("data-opening-panel");
         }
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
         layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : String(10 + layerOrder), "important");
