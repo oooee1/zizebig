@@ -8616,32 +8616,65 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || options.opening));
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
     if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
-        comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
-        comicImg.removeAttribute("src"); comicImg.className = "";
+        comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => {
+            layer.getAnimations?.().forEach(animation => animation.cancel());
+            layer.remove();
+        });
+        comicImg.getAnimations?.().forEach(animation => animation.cancel());
+        comicImg.removeAttribute("src");
+        comicImg.className = "";
+        ["opacity","translate","animation","width","height","min-width","min-height","max-width","max-height","object-fit","object-position","z-index"].forEach(property => comicImg.style.removeProperty(property));
         comicBox.removeAttribute("data-comic-paths");
     }
     let shownPaths = [];
-    try { shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]"); if (!Array.isArray(shownPaths)) shownPaths = []; } catch (_) { shownPaths = []; }
+    try {
+        shownPaths = JSON.parse(comicBox.getAttribute("data-comic-paths") || "[]");
+        if (!Array.isArray(shownPaths)) shownPaths = [];
+    } catch (_) { shownPaths = []; }
+
     const backgroundMaskPath = comicPaths.find(path => /(?:^|\\/)[^/]*背景\\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\\.(webp|png|jpe?g)$/i.test(path)) || "";
     const rolePath = options.rolePath || comicPaths.find(path => /角色\\.(webp|png|jpe?g)$/i.test(path)) || "";
     const isSplitBackgroundAndRole = Boolean(backgroundMaskPath && rolePath && comicPaths.includes(rolePath));
-    // 每張新圖層都用同一個 CSS 進場動畫；等圖片解碼完成才開始，避免預載快取讓動畫提前播完。
+
+    // 等每張圖片完成解碼後，直接對該圖層執行獨立動畫；不再依賴已經播放過的 CSS class。
     const playLayerEntry = layer => {
         if (!layer) return;
         const play = () => {
-            layer.classList.remove("comic-layer-entry");
+            layer.getAnimations?.().forEach(animation => animation.cancel());
+            layer.classList.remove("anim-fade-in-up", "comic-layer-entry");
             layer.style.removeProperty("animation");
-            void layer.offsetWidth;
-            layer.classList.add("comic-layer-entry");
+            if (typeof layer.animate === "function") {
+                const animation = layer.animate(
+                    [
+                        { opacity: 0, translate: "0 50px" },
+                        { opacity: 1, translate: "0 0" }
+                    ],
+                    { duration: 600, easing: "ease-out", fill: "both" }
+                );
+                animation.onfinish = () => {
+                    layer.style.setProperty("opacity", "1", "important");
+                    layer.style.setProperty("translate", "0 0", "important");
+                    animation.cancel();
+                };
+            } else {
+                layer.classList.add("comic-layer-entry");
+            }
         };
         if (layer.complete && layer.naturalWidth > 0) play();
         else {
-            layer.addEventListener("load", play, { once:true });
-            layer.addEventListener("error", play, { once:true });
+            layer.addEventListener("load", play, { once: true });
+            layer.addEventListener("error", play, { once: true });
         }
     };
+
     comicBox.style.display = "block";
     comicBox.classList.remove("comic-slide-up");
+    comicBox.style.setProperty("position", "absolute", "important");
+    comicBox.style.setProperty("inset", "0", "important");
+    comicBox.style.setProperty("width", "100%", "important");
+    comicBox.style.setProperty("height", "100%", "important");
+    comicBox.style.setProperty("overflow", "hidden", "important");
+
     comicPaths.forEach(path => {
         if (shownPaths.includes(path)) return;
         const fileName = path.split("/").pop();
@@ -8658,56 +8691,56 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
             comicImg.src = path;
             comicImg.alt = "漫畫圖";
-            comicImg.className = "comic-layer anim-fade-in-up" + extraClass;
+            comicImg.className = "comic-layer" + extraClass;
             layer = comicImg;
         } else {
             layer = document.createElement("img");
             layer.src = path;
             layer.alt = "";
-            layer.className = "comic-layer comic-layer-extra anim-fade-in-up" + extraClass;
+            layer.className = "comic-layer comic-layer-extra" + extraClass;
             if (isSplitRole && options.opening) layer.classList.add("intro-comic-role");
             comicBox.appendChild(layer);
+        }
+
+        if (isSplitBackground) {
+            layer.classList.add("comic-split-background");
+            layer.setAttribute("data-comic-layer-kind", "split-background");
         }
         if (isSplitRole) {
             layer.classList.add("comic-split-role");
             if (options.opening) layer.classList.add("intro-comic-role");
-            // 背景與角色原始畫布都是 2160×3960，透明像素本身已經決定相對位置。
-            // 不再把背景 alpha 當成角色遮罩，避免把角色裁掉或令其看起來不在背景內。
+            layer.setAttribute("data-comic-layer-kind", "split-role");
+            // 背景與角色都是完整的 2160×3960 畫布；以同一個寬度、原始比例和中心點疊合，不裁切角色。
             layer.removeAttribute("data-comic-mask-role");
             layer.style.removeProperty("--comic-role-mask");
             layer.style.setProperty("-webkit-mask-image", "none", "important");
             layer.style.setProperty("mask-image", "none", "important");
         }
-        if (isSplitBackground) layer.classList.add("comic-split-background");
 
-        // 開場漫畫與後續劇情漫畫一律使用同一個遊戲舞台；所有前景圖層共用 86% 畫布。
-        // 只有最底層「漫畫背景」鋪滿舞台；11／12 的局部背景和角色都屬於前景漫畫。
-        comicBox.style.setProperty("position", "absolute", "important");
-        comicBox.style.setProperty("inset", "0", "important");
-        comicBox.style.setProperty("width", "100%", "important");
-        comicBox.style.setProperty("height", "100%", "important");
-        comicBox.style.setProperty("overflow", "hidden", "important");
-        const layerSize = isFullBleedOpeningBackdrop ? "100%" : "86%";
+        const isForegroundComic = !isFullBleedOpeningBackdrop;
+        const layerOrder = shownPaths.length;
         layer.style.setProperty("position", "absolute", "important");
         layer.style.setProperty("top", "50%", "important");
         layer.style.setProperty("left", "50%", "important");
         layer.style.setProperty("right", "auto", "important");
         layer.style.setProperty("bottom", "auto", "important");
-        layer.style.setProperty("width", layerSize, "important");
-        layer.style.setProperty("height", layerSize, "important");
-        layer.style.setProperty("min-width", layerSize, "important");
-        layer.style.setProperty("min-height", layerSize, "important");
-        layer.style.setProperty("max-width", layerSize, "important");
-        layer.style.setProperty("max-height", layerSize, "important");
+        layer.style.setProperty("width", isForegroundComic ? "86%" : "100%", "important");
+        layer.style.setProperty("height", isForegroundComic ? "auto" : "100%", "important");
+        layer.style.setProperty("min-width", "0", "important");
+        layer.style.setProperty("min-height", "0", "important");
+        layer.style.setProperty("max-width", isForegroundComic ? "86%" : "100%", "important");
+        layer.style.setProperty("max-height", isForegroundComic ? "86%" : "100%", "important");
         layer.style.setProperty("margin", "0", "important");
         layer.style.setProperty("padding", "0", "important");
         layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
         layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : "contain", "important");
         layer.style.setProperty("object-position", "center center", "important");
-        layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : (isSplitBackground ? "2" : (isSplitRole ? "4" : "2")), "important");
+        // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
+        layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : String(10 + layerOrder), "important");
         playLayerEntry(layer);
         shownPaths.push(path);
     });
+
     comicBox.setAttribute("data-comic-paths", JSON.stringify(shownPaths));
     if (comicGroup !== null) comicBox.setAttribute("data-comic-group", String(comicGroup));
     const firstFileName = shownPaths[0] ? shownPaths[0].split("/").pop().replace(/\\.[^/.]+$/, "") : "comic";
@@ -8720,7 +8753,12 @@ function clearComicLayers(comicBox, comicImg) {
         window.__comicRoleClipResizeHandler = null;
     }
     if (comicBox) { comicBox.style.display="none"; comicBox.className=""; comicBox.removeAttribute("data-comic-paths"); comicBox.removeAttribute("data-comic-group"); comicBox.querySelectorAll(".comic-layer-extra,.comic-role-clip").forEach(layer=>layer.remove()); }
-    if (comicImg) { comicImg.className=""; comicImg.removeAttribute("src"); }
+    if (comicImg) {
+        comicImg.getAnimations?.().forEach(animation => animation.cancel());
+        comicImg.className="";
+        comicImg.removeAttribute("src");
+        ["opacity","translate","animation","width","height","min-width","min-height","max-width","max-height","object-fit","object-position","z-index"].forEach(property => comicImg.style.removeProperty(property));
+    }
 }
 function restoreComicCanvasToGameStage() {
     const box = document.getElementById("comic-box");
@@ -12143,8 +12181,10 @@ function openPersonalityResult(first,second){
                         const stage = document.getElementById("game-container");
                         if (stage) {
                             stage.style.setProperty("position", "relative", "important");
+                            stage.style.setProperty("overflow", "hidden", "important");
                             if (loadingScreen.parentElement !== stage) stage.appendChild(loadingScreen);
                         }
+                        // 載入畫面只覆蓋遊戲舞台本身，絕不使用 fixed／vw／dvh。
                         loadingScreen.style.setProperty("position", "absolute", "important");
                         loadingScreen.style.setProperty("inset", "0", "important");
                         loadingScreen.style.setProperty("width", "100%", "important");
@@ -12155,6 +12195,10 @@ function openPersonalityResult(first,second){
                         loadingScreen.style.setProperty("max-height", "100%", "important");
                         loadingScreen.style.setProperty("z-index", "2147483647", "important");
                         loadingScreen.style.setProperty("box-sizing", "border-box", "important");
+                        loadingScreen.style.setProperty("pointer-events", "auto", "important");
+                        [document.querySelector(".menu-container"), document.getElementById("skip-btn")].forEach(control => {
+                            if (control) control.style.setProperty("z-index", "2147483000", "important");
+                        });
                         const dev = document.getElementById("developer-tools");
                         if (dev) { dev.style.setProperty("visibility", "hidden", "important"); dev.style.setProperty("pointer-events", "none", "important"); }
                         loadingScreen.style.display = "flex";
@@ -12231,6 +12275,8 @@ function openPersonalityResult(first,second){
                         video.disableRemotePlayback = true;
                         video.setAttribute("disablepictureinpicture", "");
                         video.setAttribute("disableremoteplayback", "");
+                        video.setAttribute("controlslist", "nodownload noplaybackrate nofullscreen noremoteplayback");
+                        video.style.setProperty("pointer-events", "none", "important");
                         if (typeof video.play === "function") video.play().catch(() => {});
                     }
                     window.__zizebigStartupStage = "開始介面已顯示，等待玩家開始";
@@ -14639,6 +14685,56 @@ body > #developer-tools{
 #intro-start-video::-webkit-media-controls-overflow-button{
  display:none!important;opacity:0!important;visibility:hidden!important;
 }
+</style>
+<style id="comic-renderer-single-source-fix-20261116">
+/* 所有漫畫圖層共用 2160×3960 原始比例：只縮小漫畫本身，不拉伸、不改變背景比例。 */
+#game-container #comic-box{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;overflow:hidden!important}
+#game-container #comic-box .comic-layer:not([src*="漫畫背景"]){
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:86%!important;height:auto!important;min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:86%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+#game-container #comic-box .comic-layer[src*="漫畫背景"]{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-width:100%!important;min-height:100%!important;max-width:100%!important;max-height:100%!important;
+ margin:0!important;padding:0!important;transform:none!important;object-fit:cover!important;object-position:center center!important;z-index:0!important;
+}
+/* 11／12 與好奇星第一組第二張的背景、角色使用完全相同的畫布比例和中心。 */
+#game-container #comic-box .intro-comic-background:not([src*="漫畫背景"]),
+#game-container #comic-box .intro-comic-role,
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:86%!important;height:auto!important;min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:86%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+#game-container #comic-box .comic-split-background{z-index:10!important}
+#game-container #comic-box .comic-split-role{z-index:11!important;-webkit-mask-image:none!important;mask-image:none!important}
+/* 每張新漫畫圖層獨立進場；不再靠重複使用的 CSS class 判斷是否已播過動畫。 */
+#game-container #comic-box .comic-layer-entry{animation:comicLayerEntry .6s ease-out both!important}
+@keyframes comicLayerEntry{from{opacity:0;translate:0 50px}to{opacity:1;translate:0 0}}
+/* 載入畫面只在遊戲舞台內滿版，並高於所有遊戲操作 UI。 */
+#game-container{position:relative!important}
+#game-container > #loading-screen{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;max-width:100%!important;max-height:100%!important;
+ z-index:2147483647!important;box-sizing:border-box!important;pointer-events:auto!important;
+}
+#game-container .menu-container,#game-container #skip-btn{z-index:2147483000!important}
+body.opening-comic-controls #game-container .menu-container,
+body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!important}
+/* 開始影片不顯示瀏覽器原生畫中畫／媒體控制圖示。 */
+#intro-start-video{pointer-events:none!important;-webkit-appearance:none!important;appearance:none!important}
+#intro-start-video::-webkit-media-controls,
+#intro-start-video::-webkit-media-controls-enclosure,
+#intro-start-video::-webkit-media-controls-panel,
+#intro-start-video::-webkit-media-controls-picture-in-picture-button,
+#intro-start-video::-webkit-media-controls-overlay-play-button,
+#intro-start-video::-webkit-media-controls-fullscreen-button,
+#intro-start-video::-webkit-media-controls-toggle-closed-captions-button,
+#intro-start-video::-webkit-media-controls-overflow-button{display:none!important;visibility:hidden!important;opacity:0!important}
 </style>
 </body>
 
