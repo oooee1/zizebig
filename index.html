@@ -8923,8 +8923,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     const enteringComicMode = comicBox.style.display !== "block";
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
     const groupChanged = comicGroup !== null && previousGroup !== null && previousGroup !== String(comicGroup);
-    // 開場漫畫同一段內逐層累積；跨到 1～5 的清空由 renderOpeningComicFrame 明確執行。
-    // 不在 renderer 內重複清除，避免非同步呼叫時把前一格剛加入的圖層刪掉。
+    // 同一 comicGroup 逐格累積；只有 group 改變時才清除上一組圖層。
     const preserveOpeningLayers = options.opening === true;
     // opening 只負責啟用 11／12 雙圖層同步，不代表每一格都要讓整張漫畫畫布重新滑入。
     const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || (groupChanged && !preserveOpeningLayers)));
@@ -11993,7 +11992,7 @@ function openPersonalityResult(first,second){
             });
         }
 
-        // 漫畫畫布專用推進事件：不依賴底下已隱藏的舊對話框，點畫面任何位置都能推進。
+        // 所有漫畫場景都由同一套 storyScript / nextStep 推進。
         (function bindComicStageAdvance(){
             const comicStage = document.getElementById("comic-box");
             if (!comicStage || comicStage.dataset.comicAdvanceBound === "1") return;
@@ -12745,7 +12744,6 @@ function openPersonalityResult(first,second){
                     firstSceneStarted = true;
                     if (gameAssetFallbackTimer) clearTimeout(gameAssetFallbackTimer);
                     const startScreen = document.getElementById("intro-start-screen");
-                    const comicScreen = document.getElementById("comic-box");
                     const page = document.getElementById("page1");
                     const gameContainer = document.getElementById("game-container");
                     const developerTools = document.getElementById("developer-tools");
