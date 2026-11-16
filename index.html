@@ -8903,7 +8903,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : "contain", "important");
         layer.style.setProperty("object-position", "center center", "important");
         // 11／12 分離背景與角色採相同固定畫布比例，避免各自依原圖比例縮放而錯位。
-        if (options.opening && isAlignedSplitLayer && /(?:^|\/)(?:11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i.test(path)) {
+        if (isAlignedSplitLayer && /(?:^|\/)(?:11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i.test(path)) {
             layer.style.setProperty("width", "90%", "important");
             layer.style.setProperty("height", "90%", "important");
             layer.style.setProperty("max-width", "90%", "important");
