@@ -1122,9 +1122,9 @@
 /* 跳過鍵固定在最右上角，尺寸稍微縮小 */
 #skip-btn {
     position: absolute;
-    top: 14px;
-    right: 14px;
-    z-index: 200000;
+    top:max(22px,calc(env(safe-area-inset-top) + 8px));
+    right:128px;
+    z-index:2147483649;
     width: 52px;
     height: 52px;
     background: transparent !important;
@@ -2883,8 +2883,8 @@ img { max-width:100%; }
  position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;
  align-items:center;justify-content:center;gap:clamp(12px,3vh,26px);padding:8% 7%;
 }
-#intro-start-logo{display:block;width:clamp(76px,23%,112px);max-height:18vh;object-fit:contain;filter:drop-shadow(0 0 7px rgba(255,255,255,.9)) drop-shadow(0 0 18px rgba(255,220,150,.68))}
-#intro-start-title{display:block;width:min(78%,340px);max-height:30vh;object-fit:contain}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 #intro-start-button{
  display:flex!important;align-items:center;justify-content:center;
  width:min(90%,540px)!important;min-height:108px!important;
@@ -2923,8 +2923,8 @@ img { max-width:100%; }
 #intro-start-screen::before{pointer-events:none}
 @media(max-width:500px){
  #intro-start-content{gap:clamp(10px,2.5vh,20px)}
- #intro-start-logo{width:clamp(70px,25%,100px)}
- #intro-start-title{width:min(84%,340px)}
+ #intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+ #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
  #intro-start-button{width:72%;min-height:52px}
 }
 </style>
@@ -3039,21 +3039,14 @@ img { max-width:100%; }
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"]{position:absolute!important;left:26%!important;top:50%!important;width:46%!important;height:86%!important;max-width:46%!important;max-height:86%!important;transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center!important;}
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{position:absolute!important;left:74%!important;top:50%!important;width:46%!important;height:86%!important;max-width:46%!important;max-height:86%!important;transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center!important;}
 /* 標準字置於 Logo 上層，Logo 不再加光暈，避免泛光遮住標準字。 */
-#intro-start-content{isolation:isolate!important}#intro-start-logo{position:relative!important;z-index:1!important;filter:none!important}#intro-start-title{position:relative!important;z-index:3!important}
+#intro-start-content{isolation:isolate!important}#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 /* 雲朵轉場期間，頂部 UI 保持在雲層上方。 */
-#game-container .dream-cloud-transition{z-index:2147483647!important}#game-container .menu-container{z-index:2147483648!important;position:absolute!important}#game-container > #skip-btn{z-index:2147483649!important;position:absolute!important}#game-container > #developer-tools{z-index:2147483650!important;position:absolute!important}#game-container #developer-tools-toggle,#game-container #developer-tools-panel,#game-container #developer-tools-panel button{position:relative!important;z-index:2147483650!important}
+#game-container .dream-cloud-transition{z-index:2147483647!important}#game-container .menu-container{z-index:2147483648!important;position:absolute!important}#game-container > #skip-btn{z-index:2147483649;position:absolute!important}#game-container > #developer-tools{z-index:2147483650!important;position:absolute!important}#game-container #developer-tools-toggle,#game-container #developer-tools-panel,#game-container #developer-tools-panel button{position:relative!important;z-index:2147483650!important}
 </style>
 
 <style id="restore-black-logo-glow-and-vacuum-transition-20261117">
 /* 開始介面的 Logo 與標準字：明確使用黑色泛光，並放在實際頁面 head 的全域樣式中。 */
-#intro-start-logo,#intro-start-title{
-  -webkit-filter:drop-shadow(0 0 5px rgba(0,0,0,1))
-    drop-shadow(0 0 14px rgba(0,0,0,.96))
-    drop-shadow(0 0 28px rgba(0,0,0,.82))!important;
-  filter:drop-shadow(0 0 5px rgba(0,0,0,1))
-    drop-shadow(0 0 14px rgba(0,0,0,.96))
-    drop-shadow(0 0 28px rgba(0,0,0,.82))!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;} #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 /* 40.1 吸塵器成功轉場：同一隻好奇星保持原尺寸置中，外層彈入、角色本體左右連跳。 */
 #game-container #page1 .vacuum-curious-center{
   display:flex!important;visibility:visible!important;opacity:1!important;
@@ -15427,11 +15420,11 @@ window.savePersonalityResultImage=async function(){
 #loading-screen{z-index:2147483646!important}
 #game-container .menu-container,
 #game-container #skip-btn{
- z-index:2147483000!important;
+ z-index:2147483649;
 }
 body.opening-comic-controls .menu-container,
 body.opening-comic-controls #skip-btn{
- z-index:2147483000!important;
+ z-index:2147483649;
 }
 #developer-tools{z-index:2147483000!important}
 /* 開場漫畫背景整體壓暗，角色及文字圖層亮度不變。 */
@@ -15508,7 +15501,7 @@ body.opening-comic-controls #skip-btn{
 body.opening-comic-controls .menu-container,
 body.opening-comic-controls #skip-btn,
 body > #developer-tools{
- z-index:2147483000!important;
+ z-index:2147483649;
 }
 /* 載入畫面只覆蓋遊戲舞台，不會擴張到桌機整個瀏覽器視窗。 */
 #game-container > #loading-screen{
@@ -15567,9 +15560,9 @@ body > #developer-tools{
  min-width:0!important;min-height:0!important;max-width:100%!important;max-height:100%!important;
  z-index:2147483647!important;box-sizing:border-box!important;pointer-events:auto!important;
 }
-#game-container .menu-container,#game-container #skip-btn{z-index:2147483000!important}
+#game-container .menu-container,#game-container #skip-btn{z-index:2147483649}
 body.opening-comic-controls #game-container .menu-container,
-body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!important}
+body.opening-comic-controls #game-container #skip-btn{z-index:2147483649}
 /* 開始影片不顯示瀏覽器原生畫中畫／媒體控制圖示。 */
 #intro-start-video{pointer-events:none!important;-webkit-appearance:none!important;appearance:none!important}
 #intro-start-video::-webkit-media-controls,
@@ -15856,20 +15849,13 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 
 
 <style id="skip-button-alignment-fix-20261117">
-#game-container #skip-btn{position:absolute!important;top:14px!important;right:112px!important;left:auto!important;width:42px!important;height:42px!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:2147483649!important;pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation!important;}
+#game-container #skip-btn{position:absolute!important;top:max(22px,calc(env(safe-area-inset-top) + 8px));right:128px;left:auto!important;width:42px!important;height:42px!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:2147483649;pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation!important;}
 #game-container #skip-btn img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;}
 </style>
 
 <style id="restore-black-logo-glow-comic-transition-and-dialogue-20261117">
 /* 最終覆寫：Logo 必須保留黑色泛光；不要再被前面的 filter:none 覆蓋。 */
-#intro-start-logo{
-  -webkit-filter:drop-shadow(0 0 5px rgba(0,0,0,.98))
-    drop-shadow(0 0 14px rgba(0,0,0,.92))
-    drop-shadow(0 0 26px rgba(0,0,0,.78))!important;
-  filter:drop-shadow(0 0 5px rgba(0,0,0,.98))
-    drop-shadow(0 0 14px rgba(0,0,0,.92))
-    drop-shadow(0 0 26px rgba(0,0,0,.78))!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
 /* 恢復原本漫畫畫布由下往上滑入的轉場；前面錯誤的 animation:none 不再生效。 */
 #game-container #comic-box.comic-slide-up{
   animation:comicSlideUp .65s cubic-bezier(.2,.75,.25,1) both!important;
@@ -18176,9 +18162,9 @@ body.opening-comic-controls #menu-items-wrapper{
  pointer-events:auto!important;max-width:180px!important;
 }
 body.opening-comic-controls #skip-btn{
- position:fixed!important;top:max(12px,env(safe-area-inset-top))!important;
- right:max(12px,env(safe-area-inset-right))!important;left:auto!important;
- z-index:2147483647!important;visibility:visible!important;opacity:1!important;
+ position:fixed!important;top:max(22px,calc(env(safe-area-inset-top) + 8px));
+ right:128px;left:auto!important;
+ z-index:2147483649;visibility:visible!important;opacity:1!important;
  pointer-events:auto!important;
 }
 /* 漸層直接以結果頁視窗寬度定位，左右邊緣精準貼齊螢幕，並提高白色濃度。 */
@@ -18477,9 +18463,9 @@ body.opening-comic-controls #game-container .menu-container{
  z-index:2147483647!important;
 }
 body.opening-comic-controls #game-container #skip-btn{
- position:absolute!important;top:max(12px,env(safe-area-inset-top))!important;
- right:max(12px,env(safe-area-inset-right))!important;left:auto!important;
- z-index:2147483647!important;
+ position:absolute!important;top:max(22px,calc(env(safe-area-inset-top) + 8px));
+ right:128px;left:auto!important;
+ z-index:2147483649;
 }
 </style>
 
@@ -18639,7 +18625,7 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 #game-container .menu-container,#game-container #skip-btn,
 body.opening-comic-controls #game-container .menu-container,
-body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!important}
+body.opening-comic-controls #game-container #skip-btn{z-index:2147483649}
 #intro-start-video{pointer-events:none!important;appearance:none!important;-webkit-appearance:none!important}
 #intro-start-video::-webkit-media-controls,
 #intro-start-video::-webkit-media-controls-enclosure,
@@ -18674,43 +18660,28 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 #end-credits .credits-brand-row img:first-child{width:clamp(112px,22vw,205px)!important;height:auto!important}
 #end-credits .credits-brand-row img:last-child{width:clamp(170px,34vw,330px)!important;height:auto!important}
 /* 開始介面 Logo 放大、標準字縮小上移，兩者加泛光。 */
-#intro-start-logo{
- width:clamp(104px,30%,158px)!important;max-height:23vh!important;
- filter:drop-shadow(0 0 9px rgba(255,255,255,.72)) drop-shadow(0 0 22px rgba(255,255,255,.42))!important;
-}
-#intro-start-title{
- width:min(68%,292px)!important;max-height:24vh!important;margin-top:-10px!important;
- filter:drop-shadow(0 0 7px rgba(255,255,255,.66)) drop-shadow(0 0 17px rgba(255,255,255,.38))!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 #intro-start-button{font-size:clamp(54px,15vw,74px)!important;min-height:118px!important}
 #intro-start-button .start-button-orange{
  color:#FF8A00!important;-webkit-text-fill-color:#FF8A00!important;text-shadow:0 0 8px rgba(255,138,0,.52)!important;
 }
 @media(max-width:500px){
- #intro-start-logo{width:clamp(96px,34%,145px)!important}
- #intro-start-title{width:min(74%,292px)!important;margin-top:-9px!important}
+ #intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+ #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
  #intro-start-button{font-size:clamp(48px,14vw,66px)!important;min-height:78px!important}
 }
 
 
 /* 開始介面：Logo 放大一倍，標準字縮小；泛光改成明顯黑色，開始遊戲文字不發光。 */
-#intro-start-logo{
- width:clamp(208px,60%,316px)!important;
- max-height:35vh!important;
- filter:drop-shadow(0 0 8px rgba(0,0,0,.98)) drop-shadow(0 0 20px rgba(0,0,0,.94)) drop-shadow(0 0 34px rgba(0,0,0,.78))!important;
-}
-#intro-start-title{
- width:min(58%,250px)!important;
- max-height:20vh!important;
- margin-top:-14px!important;
- filter:drop-shadow(0 0 7px rgba(0,0,0,.98)) drop-shadow(0 0 18px rgba(0,0,0,.9)) drop-shadow(0 0 28px rgba(0,0,0,.72))!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 #intro-start-button .start-button-orange{
  text-shadow:none!important;
 }
 @media(max-width:500px){
- #intro-start-logo{width:clamp(190px,68%,290px)!important;max-height:32vh!important}
- #intro-start-title{width:min(62%,248px)!important;max-height:18vh!important;margin-top:-12px!important}
+ #intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+ #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 }
 /* 信件說話者名稱使用米色。 */
 #page1.speaker-letter .name-npc{fill:#D8B98A!important}
@@ -18719,18 +18690,10 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 
 <style id="user-adjustments-20261116-followup-final">
 /* 開始介面：Logo 泛光降低；標準字再縮小並左移，避免標準字光暈蓋住 Logo。 */
-#intro-start-logo{
-  filter:drop-shadow(0 0 4px rgba(0,0,0,.72)) drop-shadow(0 0 11px rgba(0,0,0,.48))!important;
-}
-#intro-start-title{
-  width:min(52%,230px)!important;
-  max-height:18vh!important;
-  margin-top:-12px!important;
-  margin-left:-8px!important;
-  filter:none!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 @media(max-width:500px){
-  #intro-start-title{width:min(56%,220px)!important;margin-left:-6px!important;max-height:17vh!important}
+  #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 }
 /* 漫畫統一稍微放大，保留原始長寬比與舞台中心定位。 */
 #game-container #comic-box .comic-layer:not([src*="漫畫背景"]){
@@ -18794,38 +18757,22 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 </style>
 <style id="final-opening-comic-logo-controls-career-fix-20261116">
 /* Logo 與標準字使用完全相同、比上一版更明顯的白色泛光；保留標準字左移與縮小。 */
-#intro-start-logo,
-#intro-start-title{
-  filter:
-    drop-shadow(0 0 9px rgba(255,255,255,.96))
-    drop-shadow(0 0 22px rgba(255,255,255,.76))
-    drop-shadow(0 0 38px rgba(255,255,255,.52))!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;} #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 /* 標準字泛光維持原強度並放在 Logo 後方；Logo 不加泛光，避免兩種光暈互相覆蓋。 */
 #intro-start-content{isolation:isolate!important}
-#intro-start-title{position:relative!important;z-index:1!important}
-#intro-start-logo{position:relative!important;z-index:2!important;filter:none!important}
-#intro-start-title{
-  width:min(52%,230px)!important;
-  max-height:18vh!important;
-  margin-top:-8px!important;
-  margin-left:-8px!important;
-}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 @media(max-width:500px){
-  #intro-start-title{
-    width:min(56%,220px)!important;
-    max-height:17vh!important;
-    margin-top:-7px!important;
-    margin-left:-6px!important;
-  }
+  #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 }
 /* 開場漫畫控制列：選單／音量留左側，跳過鍵移到右側開發者按鈕左邊，同一水平線。 */
 body.opening-comic-controls #game-container #skip-btn{
   position:absolute!important;
-  top:max(14px,env(safe-area-inset-top))!important;
-  right:112px!important;
+  top:max(22px,calc(env(safe-area-inset-top) + 8px));
+  right:128px;
   left:auto!important;
-  z-index:2147483646!important;
+  z-index:2147483649;
   display:flex!important;
   visibility:visible!important;
   opacity:1!important;
@@ -18887,8 +18834,8 @@ body.opening-comic-controls #game-container #skip-btn{
  width:max-content!important;height:auto!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
 }
 #game-container > #skip-btn{
- position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
- right:112px!important;left:auto!important;z-index:2147483647!important;
+ position:absolute!important;top:max(22px,calc(env(safe-area-inset-top) + 8px));
+ right:128px;left:auto!important;z-index:2147483649;
  display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
 }
 /* 11 的背景與角色使用完全相同的 90% 畫布，遮罩不再因兩張圖層尺寸不同而錯位。 */
@@ -18934,13 +18881,7 @@ body.opening-comic-controls #game-container #skip-btn{
   filter:brightness(.32)!important;
 }
 /* 開始畫面的 Logo 與標準字改回黑色泛光，不再套白色外光。 */
-#intro-start-logo,
-#intro-start-title {
-  filter:
-    drop-shadow(0 0 5px rgba(0,0,0,.98))
-    drop-shadow(0 0 14px rgba(0,0,0,.92))
-    drop-shadow(0 0 26px rgba(0,0,0,.78))!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;} #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 /* 兩個高分不同時，「結合……是……」與同分版採相同基礎字級；不再額外放大整句。 */
 #personality-result-screen #personality-result-copy .result-career-intro,
 #personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied {
@@ -19248,8 +19189,8 @@ body.opening-comic-controls #game-container #skip-btn{
 <style id="verified-opening-logo-and-comic-unification-20261116">
 /* Logo 不再產生會覆蓋標準字的外擴光暈；標準字獨立置於上層。 */
 #intro-start-content{isolation:isolate!important}
-#intro-start-logo{position:relative!important;z-index:1!important;filter:none!important;-webkit-filter:none!important}
-#intro-start-title{position:relative!important;z-index:2!important;filter:none!important;-webkit-filter:none!important}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 /* 11～14 是四張完整合成圖，全部沿用 1～4 漫畫的同一張置中畫布與進場方式。 */
 #game-container #comic-box.opening-comic-active .comic-layer{
  position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
@@ -19284,20 +19225,8 @@ body.opening-comic-controls #game-container #skip-btn{
   transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
 }
 /* Logo 與標準字都保留黑色泛光；標準字整個圖層置於 Logo 上方，避免 Logo 光暈覆蓋文字。 */
-#intro-start-logo{
-  position:relative!important;z-index:1!important;
-  -webkit-filter:drop-shadow(0 0 3px rgba(0,0,0,.98))
-    drop-shadow(0 0 8px rgba(0,0,0,.72))!important;
-  filter:drop-shadow(0 0 3px rgba(0,0,0,.98))
-    drop-shadow(0 0 8px rgba(0,0,0,.72))!important;
-}
-#intro-start-title{
-  position:relative!important;z-index:2!important;
-  -webkit-filter:drop-shadow(0 0 6px rgba(0,0,0,.98))
-    drop-shadow(0 0 15px rgba(0,0,0,.82))!important;
-  filter:drop-shadow(0 0 6px rgba(0,0,0,.98))
-    drop-shadow(0 0 15px rgba(0,0,0,.82))!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 /* 第一朵與最後一朵雲各自上移 6 個百分點，中間雲保持原位。 */
 #game-container .dream-cloud-transition img:nth-child(1){top:-46%!important}
 #game-container .dream-cloud-transition img:nth-child(3){top:42%!important}
@@ -19314,9 +19243,9 @@ body.opening-comic-controls #game-container #skip-btn{
 #game-container #burger-menu{position:relative!important;z-index:2147483647!important;cursor:pointer!important;touch-action:manipulation!important}
 /* 跳過鍵移到開發者按鈕左側，仍維持同一排，避免兩個透明點擊區互相遮擋。 */
 #game-container #skip-btn{
- position:absolute!important;top:14px!important;right:112px!important;left:auto!important;
+ position:absolute!important;top:max(22px,calc(env(safe-area-inset-top) + 8px));right:128px;left:auto!important;
  width:42px!important;height:42px!important;display:flex!important;align-items:center!important;justify-content:center!important;
- z-index:2147483649!important;pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation!important;
+ z-index:2147483649;pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation!important;
 }
 #game-container #skip-btn img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;}
 #game-container #comic-box,#game-container #comic-box .comic-layer,#game-container #comic-box .comic-layer-extra,#game-container #comic-box .comic-split-background,#game-container #comic-box .comic-split-role{pointer-events:none!important}
@@ -19345,8 +19274,8 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style><style id="comic-followup-timing-position-logo-vacuum-20261117">
 #intro-start-content{isolation:isolate!important}
-#intro-start-logo{position:relative!important;z-index:1!important;-webkit-filter:none!important;filter:none!important;}
-#intro-start-title{position:relative!important;z-index:9999!important;-webkit-filter:drop-shadow(0 0 5px rgba(0,0,0,.98)) drop-shadow(0 0 14px rgba(0,0,0,.92))!important;filter:drop-shadow(0 0 5px rgba(0,0,0,.98)) drop-shadow(0 0 14px rgba(0,0,0,.92))!important;}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 #game-container .dream-cloud-transition img:nth-child(3){top:calc(35% - 15px)!important}
 #page1.mail-game-mode #mail-game-envelope-row{bottom:2%!important}
 #page1.mail-game-mode .mail-game-envelope-slot.active{top:-20%!important}
@@ -19363,14 +19292,7 @@ body.opening-comic-controls #game-container #burger-menu{display:flex!important;
 
 <style id="final-black-glow-and-comic-transition-restore-20261117">
 /* 最終覆蓋所有舊版 filter:none：Logo 與標準字的泛光都必須是黑色。 */
-#intro-start-logo,#intro-start-title{
-  -webkit-filter:drop-shadow(0 0 5px rgba(0,0,0,.98))
-    drop-shadow(0 0 14px rgba(0,0,0,.92))
-    drop-shadow(0 0 26px rgba(0,0,0,.78))!important;
-  filter:drop-shadow(0 0 5px rgba(0,0,0,.98))
-    drop-shadow(0 0 14px rgba(0,0,0,.92))
-    drop-shadow(0 0 26px rgba(0,0,0,.78))!important;
-}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;} #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
 /* 舊版這條 animation:none!important 會吃掉原本的跳入轉場；在真正最後的樣式層恢復。 */
 #game-container #comic-box.comic-slide-up,
 #game-container #comic-box.opening-comic-active.comic-slide-up{
@@ -19385,8 +19307,8 @@ body.opening-comic-controls #game-container #burger-menu{display:flex!important;
 /* 控制列中心線對齊：選單按鈕 58px、跳過鍵 42px，故跳過鍵下移 8px 對齊中心。 */
 #game-container #skip-btn,
 body.opening-comic-controls #game-container #skip-btn{
-  top:22px!important;
-  right:112px!important;
+  top:max(22px,calc(env(safe-area-inset-top) + 8px));
+  right:128px;
   left:auto!important;
   width:42px!important;height:42px!important;
 }
@@ -19403,17 +19325,8 @@ body.opening-comic-controls #game-container #skip-btn{
 /* 標準字黑色泛光留在後層；Logo 完整置於泛光前方，避免彼此遮蓋。
    不再同時給兩張圖層套大型陰影，也不使用白色泛光。 */
 #intro-start-content{position:relative!important;isolation:isolate!important}
-#intro-start-title{
-  position:relative!important;z-index:1!important;
-  -webkit-filter:drop-shadow(0 0 4px rgba(0,0,0,1))
-    drop-shadow(0 0 10px rgba(0,0,0,.88))!important;
-  filter:drop-shadow(0 0 4px rgba(0,0,0,1))
-    drop-shadow(0 0 10px rgba(0,0,0,.88))!important;
-}
-#intro-start-logo{
-  position:relative!important;z-index:3!important;
-  -webkit-filter:none!important;filter:none!important;
-}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
 /* 雲轉場是舞台內獨立的最上層效果，避免被漫畫容器或場景背景壓在下面。 */
 #game-container>.dream-cloud-transition,
 #game-container .dream-cloud-transition{
@@ -19433,21 +19346,3 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style>
 
-<style id="20261117-root-fixes-controls-cloud-glow">
-/* 頂部控制同一水平中心線；跳過鍵固定在開發者按鈕左側，避免被覆蓋。 */
-#game-container .menu-container,body.opening-comic-controls #game-container .menu-container{top:max(14px,env(safe-area-inset-top))!important;}
-#game-container #skip-btn,body.opening-comic-controls #game-container #skip-btn{position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;right:112px!important;left:auto!important;width:42px!important;height:42px!important;z-index:2147483649!important;display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;pointer-events:auto!important;touch-action:manipulation!important;}
-body.opening-comic-controls #game-container #skip-btn{right:112px!important;top:max(14px,env(safe-area-inset-top))!important;}
-/* 標準字保留黑色小範圍泛光，但光暈不跨到上方 Logo；Logo 位於前層且不加光暈。 */
-#intro-start-content{isolation:isolate!important}
-#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
-#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
-/* opacity:0!important 會壓過 Web Animations API，讓三片雲永遠透明；改回一般 opacity。 */
-#game-container .dream-cloud-transition img{opacity:0;visibility:visible!important;display:block!important;}
-#skip-confirm-overlay{z-index:2147483647!important;pointer-events:auto!important}#skip-confirm-overlay *{pointer-events:auto}
-</style>
-<style id="20261117-controls-row-centering-final">
-/* 選單圖示本體 48px、跳過圖示 42px：以圖示中心對齊，不是只對齊外框頂端。 */
-#game-container #skip-btn,body.opening-comic-controls #game-container #skip-btn{top:max(22px,calc(env(safe-area-inset-top) + 8px))!important;right:128px!important;z-index:2147483649!important;}
-body.opening-comic-controls #game-container #skip-btn{top:max(22px,calc(env(safe-area-inset-top) + 8px))!important;right:128px!important;}
-</style>
