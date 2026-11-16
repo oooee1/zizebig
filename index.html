@@ -11289,17 +11289,10 @@ function openPersonalityResultCore(first,second){
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
   });
  }
- // 「結合……是……」不論兩個高分是否相同，一律採用同分版的字級。
- // 不同分版舊 CSS 手機多放大 8px、桌機多放大 18px；先扣回差值，再沿用原本桌機 -3px。
+ // 「結合……是……」的字級交由最後一層共用 CSS 控制。
+ // 不在這裡寫入 inline !important，避免舊計算值覆蓋兩種高分組合的共同字級。
  const careerIntro=copy.querySelector(".result-career-intro");
- if(careerIntro){
-  const size=parseFloat(getComputedStyle(careerIntro).fontSize);
-  const mobileCareerIntro=window.matchMedia&&window.matchMedia("(max-width:900px), (pointer:coarse) and (max-width:1200px)").matches;
-  const isTiedCareerIntro=careerIntro.classList.contains("result-career-intro-tied");
-  const normalizeDifferentScore=0;
-  if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size+normalizeDifferentScore)+"px","important");
- }
- // 玩家名字在介紹句中必須跟隨句子字級；避免前面的手機全域縮字與這裡縮小整句造成相對字級偏大。
+// 玩家名字在介紹句中必須跟隨句子字級；避免前面的手機全域縮字與這裡縮小整句造成相對字級偏大。
  copy.querySelectorAll(".result-player-name,.result-belongs-player-char").forEach(el=>el.style.setProperty("font-size","1em","important"));
  if(careerIntro)careerIntro.querySelectorAll(".result-player-name").forEach(el=>el.style.setProperty("font-size","1em","important"));
  const explanationTexts=Array.from(copy.querySelectorAll(".result-tagline, .result-primary > p, .result-secondary > p:not(.result-career-heading):not(.result-career-intro), .result-job-category-description"));
@@ -16885,7 +16878,7 @@ body.opening-comic-controls #game-container .player-svg{z-index:2147482601!impor
    modal.style.setProperty("max-height","100%","important");
    modal.style.setProperty("width","100%","important");
    modal.style.setProperty("min-height","0","important");
-   modal.style.setProperty("overflow","hidden","important");
+   modal.style.setProperty("overflow","visible","important");
    modal.style.setProperty("gap","clamp(5px,1.2vh,10px)","important");
   }
   const previewImage=overlay.querySelector(".result-preview-image");
@@ -18024,5 +18017,30 @@ body.opening-comic-controls #game-container #skip-btn{
 /* 測驗結果提醒文字再上移 40px；不移動其他結果內容。 */
 #personality-result-screen #personality-result-copy{
   --result-disclaimer-shift-y:-190px!important;
+}
+</style>
+
+<style id="user-fixes-close-tagline-career-size-20261116">
+/* 叉叉上移 6px；分享視窗允許按鈕超出視窗上緣，避免叉叉頂端被裁切。 */
+#result-preview-share-overlay .result-preview-close{
+  top:-12px!important;overflow:visible!important;
+}
+#result-preview-share-overlay .result-preview-modal{overflow:visible!important}
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+  #result-preview-share-overlay .result-preview-close{top:-19px!important}
+}
+/* 測驗標語從 -190px 回落 10px。 */
+#personality-result-screen #personality-result-copy{
+  --result-disclaimer-shift-y:-180px!important;
+}
+/* 兩個高分組合與同星高分的介紹句完全共用字級，星球名稱也只繼承句子尺寸。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 4px)!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark{
+  font-size:1em!important;
 }
 </style>
