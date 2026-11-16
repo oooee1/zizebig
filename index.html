@@ -15932,7 +15932,10 @@ body.opening-comic-controls #skip-btn{
  }
  function closePreview(){
   const overlay=document.getElementById("result-preview-share-overlay");
-  if(overlay)overlay.remove();
+  if(overlay){
+   window.removeEventListener("resize",overlay.__positionPreviewToStage);
+   overlay.remove();
+  }
   if(activePreviewURL){URL.revokeObjectURL(activePreviewURL);activePreviewURL="";}
  }
  function shareWithBlob(platform,blob,label){
@@ -15998,6 +16001,30 @@ body.opening-comic-controls #skip-btn{
     '<div class="result-preview-share-title">分享到…</div>'+
    '</div>';
   document.body.appendChild(overlay);
+  // 分享視窗必須以遊戲舞台的真實矩形定位；桌機舞台只有 430px × 90vh，並非整個瀏覽器視窗。
+  const positionPreviewToStage=()=>{
+   const stage=document.getElementById("game-container");
+   if(!stage||!overlay.isConnected)return;
+   const rect=stage.getBoundingClientRect();
+   overlay.style.setProperty("position","fixed","important");
+   overlay.style.setProperty("inset","auto","important");
+   overlay.style.setProperty("left",rect.left+"px","important");
+   overlay.style.setProperty("top",rect.top+"px","important");
+   overlay.style.setProperty("right","auto","important");
+   overlay.style.setProperty("bottom","auto","important");
+   overlay.style.setProperty("width",rect.width+"px","important");
+   overlay.style.setProperty("height",rect.height+"px","important");
+   overlay.style.setProperty("transform","none","important");
+   overlay.style.setProperty("padding","12px 8px","important");
+   const modal=overlay.querySelector(".result-preview-modal");
+   if(modal){
+    modal.style.setProperty("max-height","calc(100% - 24px)","important");
+    modal.style.setProperty("width","100%","important");
+   }
+  };
+  positionPreviewToStage();
+  window.addEventListener("resize",positionPreviewToStage);
+  overlay.__positionPreviewToStage=positionPreviewToStage;
   overlay.querySelector(".result-preview-close").addEventListener("click",closePreview);
   const zone=overlay.querySelector(".result-preview-download-zone");
   zone.addEventListener("click",downloadResultPreview);
@@ -16514,7 +16541,10 @@ body > #developer-tools-panel button{
 #result-preview-share-overlay .result-preview-share-title,
 #result-preview-share-overlay .result-preview-share-title *{
  font-style:normal!important;
+ font-family:Arial,"Noto Sans TC",sans-serif!important;
+ font-weight:400!important;
  transform:none!important;
  rotate:none!important;
+ skew:none!important;
 }
 </style>
