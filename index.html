@@ -11448,7 +11448,8 @@ function openPersonalityResultCore(first,second){
   originalSizes.forEach(([el,size])=>{
    // 好奇星主標由獨立的0.6倍規則控制，連同「奇」字一起跳過全頁文字縮小，避免三字大小不一致。
    if(el.closest&&el.closest(".result-name-curiosity"))return;
-   if(el.closest&&(el.closest(".result-career-intro-star")||el.closest(".result-career-intro-next")))return;
+   // 職業介紹整句交由最後生效的共用 CSS 控制；不可再由手機全頁縮字寫入 inline !important。
+   if(el.closest&&(el.closest(".result-career-intro")||el.closest(".result-career-intro-star")||el.closest(".result-career-intro-next")))return;
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1.5)+"px","important");
   });
   // 好奇星中文名稱不額外縮放；只有英文標題保留既有的 O／E 字級調整。
@@ -18919,15 +18920,3 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style>
 
-<style id="result-save-mobile-scale-repair-20261116">
-/* 手機保存結果按鈕沿用桌機已修正的比例，避免 1.6 倍放大後壓住職業介紹內容。 */
-@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
-  #personality-result-screen #personality-result-save{
-    transform:translateX(-50%) scale(.82)!important;
-    transform-origin:center bottom!important;
-  }
-  #personality-result-screen #personality-result-save:active{
-    transform:translate(-50%,1px) scale(.82)!important;
-  }
-}
-</style>
