@@ -9069,12 +9069,13 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         layer.style.setProperty("left", "50%", "important");
         layer.style.setProperty("right", "auto", "important");
         layer.style.setProperty("bottom", "auto", "important");
-        layer.style.setProperty("width", isForegroundComic ? "90%" : "100%", "important");
-        layer.style.setProperty("height", !isForegroundComic ? "100%" : "auto", "important");
+        // 漫畫前景使用完整舞台畫布；舊版 86%／90% 會讓所有漫畫縮在中央。
+        layer.style.setProperty("width", "100%", "important");
+        layer.style.setProperty("height", "100%", "important");
         layer.style.setProperty("min-width", "0", "important");
         layer.style.setProperty("min-height", "0", "important");
-        layer.style.setProperty("max-width", isForegroundComic ? "90%" : "100%", "important");
-        layer.style.setProperty("max-height", isForegroundComic ? "90%" : "100%", "important");
+        layer.style.setProperty("max-width", "100%", "important");
+        layer.style.setProperty("max-height", "100%", "important");
         layer.style.setProperty("margin", "0", "important");
         layer.style.setProperty("padding", "0", "important");
         layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
@@ -9082,12 +9083,12 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         layer.style.setProperty("object-position", "center center", "important");
         // 所有漫畫前景統一使用相同 90%×90% 畫布框，保留原始比例置中。
         if (isForegroundComic) {
-            layer.style.setProperty("width", "90%", "important");
-            layer.style.setProperty("height", "90%", "important");
+            layer.style.setProperty("width", "100%", "important");
+            layer.style.setProperty("height", "100%", "important");
             layer.style.setProperty("min-width", "0", "important");
             layer.style.setProperty("min-height", "0", "important");
-            layer.style.setProperty("max-width", "90%", "important");
-            layer.style.setProperty("max-height", "90%", "important");
+            layer.style.setProperty("max-width", "100%", "important");
+            layer.style.setProperty("max-height", "100%", "important");
             layer.style.setProperty("object-fit", "contain", "important");
             layer.style.setProperty("object-position", "center center", "important");
         }
@@ -9095,11 +9096,11 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             // 11／12 的相對位置已經畫在同尺寸透明素材內，四張圖必須共用同一張中央畫布。
             // 不再把整張透明畫布推到 26%／74%，避免角色與背景一起偏移。
             layer.style.setProperty("top", "50%", "important");
-            layer.style.setProperty("left", splitPanelNumber === 11 ? "26%" : "74%", "important");
-            layer.style.setProperty("width", "46%", "important");
-            layer.style.setProperty("height", "86%", "important");
-            layer.style.setProperty("max-width", "46%", "important");
-            layer.style.setProperty("max-height", "86%", "important");
+            layer.style.setProperty("left", splitPanelNumber === 11 ? "25%" : "75%", "important");
+            layer.style.setProperty("width", "50%", "important");
+            layer.style.setProperty("height", "100%", "important");
+            layer.style.setProperty("max-width", "50%", "important");
+            layer.style.setProperty("max-height", "100%", "important");
             layer.style.setProperty("object-fit", "contain", "important");
             layer.style.setProperty("object-position", "center center", "important");
             layer.style.setProperty("opacity", "0", "important");
@@ -11895,9 +11896,9 @@ function openPersonalityResult(first,second){
                 // 只調整三張素材的擺放位置，不更動下方 WAAPI 的進退場方向與動畫。
                 // 每張雲都維持整個舞台大小，只移動畫布的垂直位置；透明留白不再被裁成小圖。
                 const cloudLayout = [
-                    { left:"0%", top:"-28%", width:"100%", height:"100%" },
-                    { left:"0%", top:"8%", width:"100%", height:"100%" },
-                    { left:"0%", top:"44%", width:"100%", height:"100%" }
+                    { left:"-12%", top:"-28%", width:"124%", height:"120%" },
+                    { left:"-10%", top:"20%", width:"120%", height:"120%" },
+                    { left:"-14%", top:"55%", width:"128%", height:"120%" }
                 ][index];
                 for (const [key,value] of Object.entries(cloudLayout)) img.style.setProperty(key,value,"important");
                 img.style.setProperty("position","absolute","important");
@@ -11905,7 +11906,7 @@ function openPersonalityResult(first,second){
                 img.style.setProperty("bottom","auto","important");
                 img.style.setProperty("max-width","none","important");
                 img.style.setProperty("max-height","none","important");
-                img.style.setProperty("object-fit","contain","important");
+                img.style.setProperty("object-fit","fill","important");
                 img.style.setProperty("object-position","center center","important");
                 overlay.appendChild(img); return img;
             });
