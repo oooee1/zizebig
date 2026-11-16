@@ -28,7 +28,7 @@
         /* 載入玩家名字使用的 Dela Gothic One 字體（先用已確認可讀取的 WOFF） */
         @font-face {
             font-family: 'Dela Gothic One';
-            src: url('./font/DelaGothicOne-Regular.woff?v=4') format('woff');
+            src: url('./font/DelaGothicOne-Regular.woff?v=6') format('woff');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
@@ -957,8 +957,8 @@
         /* 1. 將 @font-face 移至 CSS 最上方宣告 */
     @font-face {
   font-family: 'CPTrans';
-  src: url('./font/CP--TRANS.woff2?v=4') format('woff2'),
-       url('./font/CP--TRANS.woff?v=4') format('woff');
+  src: url('./font/CP--TRANS.woff2?v=6') format('woff2'),
+       url('./font/CP--TRANS.woff?v=6') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -2891,7 +2891,7 @@ img { max-width:100%; }
  margin-top:clamp(12px,3vh,26px);padding:20px 12px!important;
  border:0!important;border-radius:0!important;
  background:#000!important;color:#fff!important;
- font-family:"Dela Gothic One","CPTrans",sans-serif;
+ font-family:"Dela Gothic One",sans-serif;
  font-size:clamp(48px,13vw,64px)!important;line-height:1.15;letter-spacing:.04em;cursor:pointer;
  box-shadow:none!important;filter:none!important;outline:0!important;
  touch-action:manipulation;position:relative;z-index:2147483000;
@@ -12943,6 +12943,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                     if (loadingScreen) {
                         const stage = document.getElementById("game-container");
                         if (stage) {
+                            stage.classList.add("startup-loading-active");
                             stage.style.setProperty("position", "relative", "important");
                             stage.style.setProperty("overflow", "hidden", "important");
                             if (loadingScreen.parentElement !== stage) stage.appendChild(loadingScreen);
@@ -12961,18 +12962,20 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         loadingScreen.style.setProperty("pointer-events", "auto", "important");
                         [document.querySelector(".menu-container"), document.getElementById("skip-btn")].forEach(control => {
                             if (control) {
-                                control.style.setProperty("z-index", "2147483647", "important");
-                                control.style.setProperty("visibility", "visible", "important");
-                                control.style.setProperty("opacity", "1", "important");
-                                control.style.setProperty("pointer-events", "auto", "important");
+                                control.style.setProperty("display", "none", "important");
+                                control.style.setProperty("visibility", "hidden", "important");
+                                control.style.setProperty("opacity", "0", "important");
+                                control.style.setProperty("pointer-events", "none", "important");
                             }
                         });
                         const dev = document.getElementById("developer-tools");
                         if (dev) {
+                            dev.classList.remove("dev-tools-revealed");
+                            dev.classList.add("dev-tools-hidden");
+                            dev.style.setProperty("display", "none", "important");
                             dev.style.setProperty("visibility", "hidden", "important");
-                            dev.style.setProperty("opacity", "1", "important");
-                            dev.style.setProperty("pointer-events", "auto", "important");
-                            dev.style.setProperty("z-index", "2147483647", "important");
+                            dev.style.setProperty("opacity", "0", "important");
+                            dev.style.setProperty("pointer-events", "none", "important");
                         }
                         loadingScreen.style.display = "flex";
                         loadingScreen.style.opacity = "1";
@@ -12986,6 +12989,16 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
 
                 function showStartInterface() {
                     if (loadingScreen) loadingScreen.style.display = "none";
+                    const gameContainerAtStart = document.getElementById("game-container");
+                    if (gameContainerAtStart) gameContainerAtStart.classList.remove("startup-loading-active");
+                    [document.querySelector(".menu-container"), document.getElementById("skip-btn")].forEach(control => {
+                        if (control) {
+                            control.style.removeProperty("display");
+                            control.style.setProperty("visibility", "visible", "important");
+                            control.style.setProperty("opacity", "1", "important");
+                            control.style.setProperty("pointer-events", "auto", "important");
+                        }
+                    });
                     const devAtStart = document.getElementById("developer-tools");
                     if (devAtStart) { devAtStart.style.setProperty("visibility", "hidden", "important"); devAtStart.style.setProperty("pointer-events", "auto", "important"); }
                     const page = document.getElementById("page1");
@@ -13033,10 +13046,12 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                     if (developerTools) {
                         developerTools.style.setProperty("position", "fixed", "important");
                         developerTools.style.setProperty("z-index", "2147483000", "important");
-                        developerTools.style.setProperty("pointer-events", "auto", "important");
-                        developerTools.style.setProperty("visibility", "hidden", "important");
-                        developerTools.style.setProperty("opacity", "1", "important");
-                        developerTools.style.setProperty("display", "block", "important");
+                        const devUnlocked = developerTools.classList.contains("dev-tools-revealed");
+                        developerTools.classList.toggle("dev-tools-hidden", !devUnlocked);
+                        developerTools.style.setProperty("pointer-events", devUnlocked ? "auto" : "none", "important");
+                        developerTools.style.setProperty("visibility", devUnlocked ? "visible" : "hidden", "important");
+                        developerTools.style.setProperty("opacity", devUnlocked ? "1" : "0", "important");
+                        developerTools.style.setProperty("display", devUnlocked ? "block" : "none", "important");
                         developerTools.style.top = "max(14px, env(safe-area-inset-top))";
                         developerTools.style.right = "max(14px, env(safe-area-inset-right))";
                     }
@@ -13139,6 +13154,23 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                     showStartupLoading("正在載入開始介面...");
                     window.__zizebigStartupStage = "載入開始介面 Logo、標準字與背景影片";
                     const video = document.getElementById("intro-start-video");
+                    // 優先載入 CPTrans 與 Dela；最多等 2.8 秒，避免字體網路慢時卡住開始介面。
+                    const fontReady = (async () => {
+                        if (!document.fonts || !document.fonts.load) return true;
+                        const fontLoads = Promise.all([
+                            document.fonts.load('400 16px "CPTrans"'),
+                            document.fonts.load('400 16px "Dela Gothic One"'),
+                            document.fonts.ready
+                        ]);
+                        await Promise.race([
+                            fontLoads,
+                            new Promise(resolve => setTimeout(resolve, 2800))
+                        ]);
+                        return true;
+                    })().catch(error => {
+                        console.warn("[開始介面] 字體載入略有延遲，先繼續顯示：", error);
+                        return true;
+                    });
                     const videoReady = new Promise(resolve => {
                         if (!video) { resolve(true); return; }
                         let finished = false;
@@ -13187,7 +13219,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         if (loadingPercent) loadingPercent.textContent = "背景影片載入中...";
                         const bar = document.getElementById("progress-bar");
                         if (bar) bar.style.width = "70%";
-                        videoReady.then(ok => {
+                        Promise.all([videoReady, fontReady]).then(([ok]) => {
                             if (!ok) {
                                 console.warn("[開始介面] 背景影片尚未取得可播放畫面，重新載入後再進入。");
                                 if (loadingPercent) loadingPercent.textContent = "影片載入中，請稍候…";
@@ -19433,5 +19465,24 @@ body.opening-comic-controls #game-container > #skip-btn{
 }
 #developer-tools.dev-tools-revealed{
   display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+}
+</style>
+
+
+<style id="20261117-loading-font-dev-final">
+/* 載入遮罩期間完全隱藏頂部選單、音量與跳過，不讓它們穿透載入畫面。 */
+#game-container.startup-loading-active .menu-container,
+#game-container.startup-loading-active #skip-btn{
+  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+}
+/* 開始遊戲只使用 Dela Gothic One；不再先以 CPTrans 顯示再跳字。 */
+#intro-start-button{font-family:"Dela Gothic One",sans-serif!important;}
+/* 跳過鍵在原位置基礎上小幅上移。 */
+#game-container > #skip-btn,#game-container #skip-btn{
+  top:max(10px,env(safe-area-inset-top))!important;
+}
+/* 開發者工具除非由音量圖示解鎖，否則包含 inline style 在內一律不顯示。 */
+#developer-tools:not(.dev-tools-revealed){
+  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
 }
 </style>
