@@ -11906,10 +11906,10 @@ function openPersonalityResult(first,second){
                 // 只調整三張素材的擺放位置，不更動下方 WAAPI 的進退場方向與動畫。
                 // 每張雲都維持整個舞台大小，只移動畫布的垂直位置；透明留白不再被裁成小圖。
                 const cloudLayout = [
+                    // 第一朵水平翻轉；第二、第三朵各自上移，不改變原本尺寸與圖層順序。
                     { left:"-6%", top:"-22%", width:"112%", height:"108%", zIndex:"1" },
-                    { left:"-5%", top:"20%", width:"110%", height:"108%", zIndex:"2" },
-                    // 最下面一朵縮小，並提高圖層順序，確保它最後疊在另外兩朵上方。
-                    { left:"-2%", top:"57%", width:"104%", height:"96%", zIndex:"3" }
+                    { left:"-5%", top:"14%", width:"110%", height:"108%", zIndex:"2" },
+                    { left:"-2%", top:"51%", width:"104%", height:"96%", zIndex:"3" }
                 ][index];
                 for (const [key,value] of Object.entries(cloudLayout)) {
                     if (key === "zIndex") img.style.setProperty("z-index",value,"important");
@@ -11950,19 +11950,26 @@ function openPersonalityResult(first,second){
             const fallback = setTimeout(finish, 5200);
             waitForImages.then(() => {
                 if (finished) return;
-                const covers = images.map((img,index) => img.animate(
-                    [{opacity:0,transform:index===1?"translateY(-7%) scale(1.05,1.12)":"translateY(7%) scale(1.05,1.12)"},{opacity:1,transform:index===1?"translateY(-4%) scale(1.05,1.12)":"translateY(4%) scale(1.05,1.12)"}],
-                    {duration:560,delay:index*130,easing:"cubic-bezier(.2,.75,.25,1)",fill:"forwards"}
-                ));
+                const covers = images.map((img,index) => {
+                    const flip = index === 0 ? " scaleX(-1)" : "";
+                    return img.animate(
+                        [{opacity:0,transform:(index===1?"translateY(-7%) scale(1.05,1.12)":"translateY(7%) scale(1.05,1.12)")+flip},{opacity:1,transform:(index===1?"translateY(-4%) scale(1.05,1.12)":"translateY(4%) scale(1.05,1.12)")+flip}],
+                        {duration:560,delay:index*130,easing:"cubic-bezier(.2,.75,.25,1)",fill:"forwards"}
+                    );
+                });
                 Promise.all(covers.map(a=>a.finished.catch(()=>null))).then(() => {
                     if (finished) return;
                     switchSceneUnderClouds();
                     setTimeout(() => {
                         if (finished) return;
-                        const reveals = [...images].reverse().map((img,index)=>img.animate(
-                            [{opacity:1,transform:index===1?"translateY(-4%) scale(1.05,1.12)":"translateY(4%) scale(1.05,1.12)"},{opacity:0,transform:index===1?"translateY(10%) scale(1.05,1.12)":"translateY(-10%) scale(1.05,1.12)"}],
-                            {duration:620,delay:index*90,easing:"ease-in",fill:"forwards"}
-                        ));
+                        const reveals = [...images].reverse().map((img,index)=>{
+                            const sourceIndex = images.indexOf(img);
+                            const flip = sourceIndex === 0 ? " scaleX(-1)" : "";
+                            return img.animate(
+                                [{opacity:1,transform:(sourceIndex===1?"translateY(-4%) scale(1.05,1.12)":"translateY(4%) scale(1.05,1.12)")+flip},{opacity:0,transform:(sourceIndex===1?"translateY(10%) scale(1.05,1.12)":"translateY(-10%) scale(1.05,1.12)")+flip}],
+                                {duration:620,delay:index*90,easing:"ease-in",fill:"forwards"}
+                            );
+                        });
                         Promise.all(reveals.map(a=>a.finished.catch(()=>null))).then(finish);
                     },420);
                 });
