@@ -17228,3 +17228,58 @@ body.opening-comic-controls #game-container #skip-btn{
  }
 }
 </style>
+
+
+<style id="comic-renderer-single-source-final-20261116">
+#game-container{position:relative!important}
+#game-container #comic-box,
+#game-container #comic-box.opening-comic-active{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;max-width:100%!important;max-height:100%!important;
+ overflow:hidden!important;pointer-events:auto!important;
+}
+/* 紙背景滿版；所有分鏡前景（含 11/12 背景與角色）共用同一個舞台比例與中心點。 */
+#game-container #comic-box .comic-layer[src*="漫畫背景"]{
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;
+ max-width:100%!important;max-height:100%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;object-fit:cover!important;object-position:center!important;z-index:0!important;
+}
+#game-container #comic-box .comic-layer:not([src*="漫畫背景"]),
+#game-container #comic-box .intro-comic-background:not([src*="漫畫背景"]),
+#game-container #comic-box .intro-comic-role,
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:86%!important;height:86%!important;min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:86%!important;margin:0!important;padding:0!important;box-sizing:border-box!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .intro-comic-background:not([src*="漫畫背景"]){z-index:2!important}
+#game-container #comic-box .comic-split-role,
+#game-container #comic-box .intro-comic-role{
+ z-index:4!important;-webkit-mask-image:none!important;mask-image:none!important;
+}
+/* 舊 fadeInUp 不再蓋過逐層動畫；背景、角色都等圖片解碼後播放同一個動畫。 */
+#game-container #comic-box .comic-layer{animation:none!important}
+#game-container #comic-box .comic-layer.comic-layer-entry{
+ animation:comicLayerEntry .6s cubic-bezier(.2,.75,.25,1) both!important;
+}
+@keyframes comicLayerEntry{from{opacity:0;translate:0 50px}to{opacity:1;translate:0 0}}
+#game-container #comic-box.comic-slide-up{animation:none!important}
+/* 開始畫面影片不提供原生控制、畫中畫或遠端播放入口。 */
+#intro-start-video{pointer-events:none!important}
+#intro-start-video::-webkit-media-controls,
+#intro-start-video::-webkit-media-controls-enclosure,
+#intro-start-video::-webkit-media-controls-panel,
+#intro-start-video::-webkit-media-controls-overlay-play-button,
+#intro-start-video::-webkit-media-controls-picture-in-picture-button,
+#intro-start-video::-webkit-media-controls-fullscreen-button,
+#intro-start-video::-webkit-media-controls-toggle-closed-captions-button,
+#intro-start-video::-webkit-media-controls-overflow-button,
+#intro-start-video::-webkit-media-controls-play-button{
+ display:none!important;opacity:0!important;visibility:hidden!important;
+}
+</style>
+
