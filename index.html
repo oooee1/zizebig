@@ -3362,9 +3362,9 @@ img { max-width:100%; }
 
             <div class="credits-gap"></div>
             <div class="credits-heading">工作人員哀居：</div>
-            <div>加烏賊加烏賊－@ouo3bbb－快點截圖加我</div>
-            <div>木鵝－@ooo.__ee</div>
-            <div>笑笑－@nana195207</div>
+            <div class="credits-person">加烏賊加烏賊－@ouo3bbb－快點截圖加我 <img src="./pct/0烏賊哀居.webp" alt="烏賊 Instagram"></div>
+            <div class="credits-person">木鵝－@ooo.__ee <img src="./pct/0木鵝哀居.webp" alt="木鵝 Instagram"></div>
+            <div class="credits-person">笑笑－@nana195207 <img src="./pct/0笑笑哀居.webp" alt="笑笑 Instagram"></div>
 
             <div class="credits-gap"></div>
             <div class="credits-heading">指導老師：</div>
@@ -3419,6 +3419,13 @@ img { max-width:100%; }
             <div class="credits-title">星辰之路</div>
             <div class="credits-gap"></div>
             <div class="credits-title">感謝遊玩！</div>
+            <div class="credits-gap"></div>
+            <div class="credits-title">星辰之路 Instagram</div>
+            <div class="credits-project-instagram"><img src="./pct/0星辰之路哀居.webp" alt="星辰之路 Instagram"></div>
+            <div class="credits-brand-row">
+                <img src="./pct/logo.webp" alt="星辰之路 Logo">
+                <img src="./pct/標準字.webp" alt="星辰之路標準字">
+            </div>
         </div>
     </div>
 
@@ -8611,9 +8618,14 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             if (isSplitBackgroundAndRole && path === rolePath && options.opening) {
                 // 分離素材是同一張透明畫布：角色與背景必須共用完整畫布座標。
                 layer.classList.add("intro-comic-role");
-                // 角色圖直接顯示；不再把背景圖當 CSS mask，避免 12 背景透明通道將角色整張遮掉。
-                layer.style.setProperty("-webkit-mask-image","none","important");
-                layer.style.setProperty("mask-image","none","important");
+                // 11 角色以 11 背景作為 alpha 遮罩，裁掉背景畫布以外的部分；12 保持直接顯示。
+                if(/(?:^|\/)11\.webp$/i.test(path) && backgroundMaskPath){
+                    layer.dataset.comicMaskRole="11";
+                    layer.style.setProperty("--comic-role-mask",`url("${backgroundMaskPath}")`);
+                }else{
+                    layer.style.setProperty("-webkit-mask-image","none","important");
+                    layer.style.setProperty("mask-image","none","important");
+                }
                 comicBox.appendChild(layer);
             } else if (isSplitBackgroundAndRole && path === rolePath) {
                 comicBox.appendChild(layer);
@@ -10411,18 +10423,18 @@ function positionResultTextElements(layers,copy){
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機保留目前已接近正確的位置；電腦恢復透明尾端裁切前的舊定位基準。
     if(isMobileResultLayout){
-     const careerShiftX=1.5;
-     const careerShiftY=50;
+     const careerShiftX=6.5;
+     const careerShiftY=35;
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
      career.style.setProperty("left",(careerBaseLeft+careerShiftX)+"px","important");
-     career.style.setProperty("top",(careerBaseTop+careerShiftY-150)+"px","important");
+     career.style.setProperty("top",(careerBaseTop+careerShiftY-165)+"px","important");
     }else{
      // 電腦版職業區上移150px：直接修正 JS 計算出的 top，避免被 inline !important 蓋掉。
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
-     career.style.setProperty("left",(careerBaseLeft-1)+"px","important");
-     career.style.setProperty("top",(careerBaseTop+150)+"px","important");
+     career.style.setProperty("left",(careerBaseLeft+4)+"px","important");
+     career.style.setProperty("top",(careerBaseTop+135)+"px","important");
     }
     career.style.setProperty("translate","none","important");
    }
@@ -10457,7 +10469,10 @@ function positionResultTextElements(layers,copy){
     const isMobileNoteLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?1820:1150)/responsiveScale)+"px";
-    note.style.transform="translateY(-100%)";
+    const noteShiftX=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-x"))||0;
+    const noteShiftY=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-y"))||0;
+    note.style.left=noteShiftX+"px";
+    note.style.transform="translateY(calc(-100% + "+noteShiftY+"px))";
     note.style.margin="0";
    }
   }
@@ -11172,6 +11187,26 @@ function openPersonalityResult(first,second){
             credits.innerHTML = credits.innerHTML.replace(/（玩家名稱）/g, window.playerName || "");
             playBGM("./audio/GG EZ(粤语版） (Cantonesem Version) - 森voice.mp3");
             credits.classList.add("show");
+            let speedHint=credits.querySelector(".credits-speed-hint");
+            if(!speedHint){
+                speedHint=document.createElement("div");
+                speedHint.className="credits-speed-hint";
+                speedHint.textContent="長按二倍速";
+                credits.appendChild(speedHint);
+            }
+            // 長按約 450ms 啟動二倍速；放開即恢復原速。
+            let holdTimer=null;
+            const startHold=()=>{
+                if(holdTimer)clearTimeout(holdTimer);
+                holdTimer=setTimeout(()=>credits.classList.add("is-double-speed"),450);
+            };
+            const endHold=()=>{
+                if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
+                credits.classList.remove("is-double-speed");
+            };
+            credits.addEventListener("pointerdown",startHold,{passive:true});
+            document.addEventListener("pointerup",endHold);
+            document.addEventListener("pointercancel",endHold);
         }
 
         function nextStep() {
@@ -12048,6 +12083,14 @@ function openPersonalityResult(first,second){
                     const groupChanged = openingComicGroup !== frame.group;
                     if (groupChanged) { clearComicLayers(comicBox, comicImg); openingComicGroup = frame.group; }
                     renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:true, rolePath:frame.rolePath });
+                    let comicHint=document.getElementById("opening-comic-next-hint");
+                    if(!comicHint){
+                        comicHint=document.createElement("div");
+                        comicHint.id="opening-comic-next-hint";
+                        comicHint.textContent="點一下繼續";
+                        comicBox.appendChild(comicHint);
+                    }
+                    comicHint.style.display="block";
                     window.__zizebigStartupStage = "播放開場漫畫 " + (index + 1) + "/" + openingComicFrames.length;
                 }
 
@@ -12055,6 +12098,15 @@ function openPersonalityResult(first,second){
                     if (event) { event.preventDefault(); event.stopPropagation(); if (event.stopImmediatePropagation) event.stopImmediatePropagation(); }
                     openingComicIndex++;
                     renderOpeningComicFrame(openingComicIndex);
+                }
+                // 漫畫圖片本身不攔截點擊；在漫畫畫布捕捉點擊，確保提示與推進功能都在最上層。
+                function bindOpeningComicAdvance(comicBox){
+                    if(!comicBox||comicBox.dataset.advanceBound==="1")return;
+                    comicBox.dataset.advanceBound="1";
+                    comicBox.addEventListener("click",event=>{
+                        if(!comicBox.classList.contains("opening-comic-active"))return;
+                        advanceOpeningComic(event);
+                    },true);
                 }
 
                 function beginOpeningComics(event) {
@@ -12072,6 +12124,7 @@ function openPersonalityResult(first,second){
                     document.body.classList.add("opening-comic-controls");
                     if (comicBox && comicBox.parentElement !== document.body) document.body.appendChild(comicBox);
                     if (comicBox) {
+                        bindOpeningComicAdvance(comicBox);
                         comicBox.classList.add("opening-comic-active");
                         comicBox.style.setProperty("position","fixed","important");
                         comicBox.style.setProperty("inset","0","important");
@@ -14455,11 +14508,60 @@ body.opening-comic-controls #skip-btn{
   }
 }
 </style>
+<style id="opening-comic-and-ending-hints-20261116">
+#opening-comic-next-hint{
+ position:fixed!important;right:22px!important;bottom:20px!important;
+ z-index:2147483646!important;padding:5px 9px!important;
+ border:1px solid #ffb30f!important;border-radius:5px!important;
+ background:rgba(15,15,15,.92)!important;color:#fff!important;
+ font-family:'CPTrans',sans-serif!important;font-size:13px!important;
+ line-height:1.4!important;white-space:nowrap!important;
+ pointer-events:none!important;
+}
+#comic-box.opening-comic-active{cursor:pointer}
+#end-credits .credits-person img,#end-credits .credits-project-instagram img,
+#end-credits .credits-brand-row img{display:block}
+</style>
 
 </html>
 
 
 <style id="credits-new-ending-layout-20261104">
+#end-credits .credits-person{
+ display:flex;align-items:center;justify-content:center;gap:12px;
+ width:100%;margin:8px auto;line-height:1.35;
+}
+#end-credits .credits-person img{
+ width:clamp(42px,8vw,76px);height:clamp(42px,8vw,76px);
+ object-fit:contain;flex:0 0 auto;
+}
+#end-credits .credits-project-instagram{
+ display:flex;justify-content:center;align-items:center;margin:10px auto 32px;
+}
+#end-credits .credits-project-instagram img{
+ width:clamp(140px,28vw,240px);height:auto;object-fit:contain;
+}
+#end-credits .credits-brand-row{
+ display:flex;align-items:center;justify-content:center;gap:22px;
+ width:min(88%,760px);margin:34px auto 70px;
+}
+#end-credits .credits-brand-row img:first-child{
+ width:clamp(76px,15vw,150px);height:auto;object-fit:contain;
+}
+#end-credits .credits-brand-row img:last-child{
+ width:clamp(150px,32vw,360px);height:auto;object-fit:contain;
+}
+#end-credits .credits-speed-hint{
+ position:fixed;right:22px;bottom:20px;z-index:5;
+ padding:5px 9px;border:1px solid #ffb30f;border-radius:5px;
+ background:rgba(15,15,15,.92);color:#fff;
+ font-family:'CPTrans',sans-serif;font-size:13px;line-height:1.4;
+ white-space:nowrap;pointer-events:none;
+}
+#end-credits .credits-roll{will-change:transform}
+#end-credits.is-double-speed .credits-roll{animation-duration:120s!important}
+#end-credits.is-double-speed .credits-speed-hint{color:#ffb30f}
+
 #end-credits .credits-title {
     font-size: clamp(2rem, 5vw, 3.2rem);
     font-weight: 400;
@@ -16434,10 +16536,26 @@ body.opening-comic-controls #skip-btn{
 /* 11／12 分鏡：角色使用對應背景的透明度遮罩，避免角色越出該張背景。 */
 #comic-box.opening-comic-active .intro-comic-role{
   z-index:3!important;
-  -webkit-mask-image:none!important;
-  mask-image:none!important;
   opacity:1!important;
   pointer-events:none!important;
+  object-fit:fill!important;
+}
+#comic-box.opening-comic-active .intro-comic-background[src*="11背景"],
+#comic-box.opening-comic-active .intro-comic-role[data-comic-mask-role="11"]{
+ width:86vw!important;height:86dvh!important;
+ min-width:0!important;min-height:0!important;
+ max-width:86vw!important;max-height:86dvh!important;
+ object-fit:fill!important;
+}
+#comic-box.opening-comic-active .intro-comic-role[data-comic-mask-role="11"]{
+ -webkit-mask-image:var(--comic-role-mask)!important;
+ mask-image:var(--comic-role-mask)!important;
+ -webkit-mask-size:86vw 86dvh!important;
+ mask-size:86vw 86dvh!important;
+ -webkit-mask-position:center!important;
+ mask-position:center!important;
+ -webkit-mask-repeat:no-repeat!important;
+ mask-repeat:no-repeat!important;
 }
 /* 開場漫畫不做整個畫布滑入；只讓漫畫內容圖片本身沿用原本的 fadeInUp 出場動畫。 */
 #comic-box.opening-comic-active.comic-slide-up{
