@@ -19178,10 +19178,20 @@ body.opening-comic-controls #game-container #skip-btn{
 </style>
 
 <style id="comic-dialogue-delay-controls-vacuum-final-20261117">
-#game-container .menu-container,#game-container #burger-menu,#game-container #menu-items-wrapper,#game-container #skip-btn{
- position:absolute!important;z-index:2147483646!important;pointer-events:auto!important;
+#game-container .menu-container{
+ position:absolute!important;top:14px!important;left:14px!important;right:auto!important;
+ z-index:2147483646!important;pointer-events:auto!important;
 }
-#game-container #burger-menu,#game-container #skip-btn,#game-container #menu-items-wrapper,#game-container #menu-items-wrapper *{pointer-events:auto!important}
+#game-container #burger-menu,#game-container #menu-items-wrapper,#game-container #menu-items-wrapper *{
+ pointer-events:auto!important;
+}
+#game-container #burger-menu{position:relative!important;z-index:2147483647!important;cursor:pointer!important;touch-action:manipulation!important}
+/* 跳過鍵移到開發者按鈕左側，仍維持同一排，避免兩個透明點擊區互相遮擋。 */
+#game-container #skip-btn{
+ position:absolute!important;top:14px!important;right:112px!important;
+ z-index:2147483646!important;pointer-events:auto!important;cursor:pointer!important;
+ touch-action:manipulation!important;
+}
 #game-container #comic-box,#game-container #comic-box .comic-layer,#game-container #comic-box .comic-layer-extra,#game-container #comic-box .comic-split-background,#game-container #comic-box .comic-split-role{pointer-events:none!important}
 #game-container .dream-cloud-transition img:nth-child(1){top:-53%!important}
 #game-container .dream-cloud-transition img:nth-child(3){top:35%!important}
