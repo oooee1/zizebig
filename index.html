@@ -8675,6 +8675,24 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
                 layer.style.setProperty("animation", "comicLayerEntry .6s ease-out both", "important");
             }
         };
+        // 12 的背景與角色是同一張分鏡的兩個圖層：等兩張都載入後同一幀啟動動畫。
+        const isOpening12Layer = options.opening &&
+            /(?:^|\/)(?:12背景|12)\.(?:webp|png|jpe?g)$/i.test(layer.src || "");
+        if (isOpening12Layer) {
+            if (comicBox.dataset.opening12EntryStarted === "1") return;
+            comicBox.dataset.opening12EntryStarted = "1";
+            Promise.resolve().then(() => {
+                const pair = Array.from(comicBox.querySelectorAll(".comic-layer")).filter(img =>
+                    /(?:^|\/)(?:12背景|12)\.(?:webp|png|jpe?g)$/i.test(img.src || "")
+                );
+                Promise.all(pair.map(img => new Promise(resolve => {
+                    if (img.complete) { resolve(); return; }
+                    img.addEventListener("load", resolve, { once: true });
+                    img.addEventListener("error", resolve, { once: true });
+                }))).then(() => pair.forEach(play));
+            });
+            return;
+        }
         if (layer.complete && layer.naturalWidth > 0) play();
         else {
             layer.addEventListener("load", play, { once: true });
