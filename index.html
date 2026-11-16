@@ -15774,17 +15774,7 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 #game-container .dream-cloud-transition img:nth-child(3){left:-9%!important;top:49%!important;width:114%!important;height:74%!important}
 </style>
 
-<style id="opening-comic-11-12-same-canvas-cloud-nudge-20261116">
-/* 11、12 是同尺寸透明畫布的兩個圖層，必須完全重合；不拆左右、不偏移。 */
-#game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"],
-#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{
- position:absolute!important;left:50%!important;top:50%!important;
- width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
- transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
-}
-/* 最上方第一朵雲再往上移一點，其餘兩朵不動。 */
-#game-container .dream-cloud-transition img:nth-child(1){top:-40%!important}
-</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
@@ -19168,4 +19158,16 @@ body.opening-comic-controls #game-container #skip-btn{
  left:50%!important;top:50%!important;width:90%!important;height:90%!important;
  max-width:90%!important;max-height:90%!important;
 }
+</style>
+
+<style id="opening-comic-11-12-same-canvas-cloud-nudge-20261116">
+/* 最終覆蓋舊版 11／12 左右偏移：兩張素材的透明畫布原本就包含各自位置，必須同尺寸、同座標疊合。 */
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"],
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{
+ position:absolute!important;left:50%!important;top:50%!important;
+ width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+/* 最上方第一朵雲上移 6 個百分點，其他雲不變。 */
+#game-container .dream-cloud-transition img:nth-child(1){top:-40%!important}
 </style>
