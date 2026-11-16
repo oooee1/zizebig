@@ -8855,7 +8855,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         layer.style.setProperty("right", "auto", "important");
         layer.style.setProperty("bottom", "auto", "important");
         layer.style.setProperty("width", isForegroundComic ? "90%" : "100%", "important");
-        layer.style.setProperty("height", !isForegroundComic ? "100%" : (isAlignedSplitLayer ? "90%" : "auto"), "important");
+        layer.style.setProperty("height", !isForegroundComic ? "100%" : "auto", "important");
         layer.style.setProperty("min-width", "0", "important");
         layer.style.setProperty("min-height", "0", "important");
         layer.style.setProperty("max-width", isForegroundComic ? "90%" : "100%", "important");
@@ -8863,7 +8863,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         layer.style.setProperty("margin", "0", "important");
         layer.style.setProperty("padding", "0", "important");
         layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
-        layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : (isAlignedSplitLayer ? "fill" : "contain"), "important");
+        layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : "contain", "important");
         layer.style.setProperty("object-position", "center center", "important");
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
         layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : String(10 + layerOrder), "important");
@@ -11241,8 +11241,8 @@ function openPersonalityResultCore(first,second){
   const size=parseFloat(getComputedStyle(careerIntro).fontSize);
   const mobileCareerIntro=window.matchMedia&&window.matchMedia("(max-width:900px), (pointer:coarse) and (max-width:1200px)").matches;
   const isTiedCareerIntro=careerIntro.classList.contains("result-career-intro-tied");
-  const normalizeDifferentScore=isTiedCareerIntro?0:(mobileCareerIntro?-8:-18);
-  if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size+normalizeDifferentScore+(mobileCareerIntro?0:-3))+"px","important");
+  const normalizeDifferentScore=0;
+  if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size+normalizeDifferentScore)+"px","important");
  }
  // 玩家名字在介紹句中必須跟隨句子字級；避免前面的手機全域縮字與這裡縮小整句造成相對字級偏大。
  copy.querySelectorAll(".result-player-name,.result-belongs-player-char").forEach(el=>el.style.setProperty("font-size","1em","important"));
@@ -17830,5 +17830,51 @@ body.opening-comic-controls #game-container #skip-btn{
 /* 漫畫紙底維持原本較深的黑度；Logo／標準字白色泛光獨立處理。 */
 #game-container #comic-box .comic-layer[src*="漫畫背景"]{
  filter:brightness(.45)!important;
+}
+</style>
+
+
+<style id="comic-and-career-final-repair-20261116">
+/* 11／12 分離背景與角色維持原始相同比例：高度由圖片比例自動計算，避免 90%×90% 把直幅圖拉變形。 */
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role,
+#game-container #comic-box .intro-comic-role {
+  width:90%!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:90%!important;
+  max-height:90%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+}
+/* 11 的角色遮罩與 11背景使用同一個原始比例畫布，角色必須留在背景輪廓內。 */
+#game-container #comic-box .comic-split-role[data-comic-mask-role="11"] {
+  -webkit-mask-size:100% 100%!important;
+  mask-size:100% 100%!important;
+  -webkit-mask-position:center center!important;
+  mask-position:center center!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+}
+/* 漫畫共用底紙恢復較深黑度，不改動前景漫畫與角色。 */
+#game-container #comic-box .comic-layer[src*="漫畫背景"] {
+  filter:brightness(.32)!important;
+}
+/* 開始畫面的 Logo 與標準字改回黑色泛光，不再套白色外光。 */
+#intro-start-logo,
+#intro-start-title {
+  filter:
+    drop-shadow(0 0 5px rgba(0,0,0,.98))
+    drop-shadow(0 0 14px rgba(0,0,0,.92))
+    drop-shadow(0 0 26px rgba(0,0,0,.78))!important;
+}
+/* 兩個高分不同時，「結合……是……」與同分版採相同基礎字級；不再額外放大整句。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied {
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 4px)!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star {
+  font-size:1em!important;
 }
 </style>
