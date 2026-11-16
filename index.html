@@ -12173,18 +12173,17 @@ function openPersonalityResult(first,second){
                     const comicBox = document.getElementById("comic-box");
                     const menuContainer = document.querySelector(".menu-container");
                     const skipButton = document.getElementById("skip-btn");
-                    // 漫畫播放時將互動控制移出遊戲舞台，固定在整個視窗最上層。
-                    if (menuContainer && menuContainer.parentElement !== document.body) document.body.appendChild(menuContainer);
-                    if (skipButton && skipButton.parentElement !== document.body) document.body.appendChild(skipButton);
+                    // 漫畫、選單與跳過鍵都留在遊戲舞台內，桌機不再脫離 430px 遊戲框。
                     document.body.classList.add("opening-comic-controls");
-                    if (comicBox && comicBox.parentElement !== document.body) document.body.appendChild(comicBox);
+                    const gameContainer=document.getElementById("game-container");
+                    if(gameContainer && comicBox && comicBox.parentElement!==gameContainer) gameContainer.appendChild(comicBox);
                     if (comicBox) {
                         bindOpeningComicAdvance(comicBox);
                         comicBox.classList.add("opening-comic-active");
-                        comicBox.style.setProperty("position","fixed","important");
+                        comicBox.style.setProperty("position","absolute","important");
                         comicBox.style.setProperty("inset","0","important");
-                        comicBox.style.setProperty("width","100vw","important");
-                        comicBox.style.setProperty("height","100dvh","important");
+                        comicBox.style.setProperty("width","100%","important");
+                        comicBox.style.setProperty("height","100%","important");
                         comicBox.style.setProperty("z-index","2147482500","important");
                     }
                     if (startScreen) startScreen.style.display = "none";
@@ -16849,4 +16848,39 @@ body > #developer-tools-panel button{
 #end-credits .credits-gap-thanks{height:8px!important;flex:none!important}
 #end-credits .credits-title-brand{margin-bottom:0!important}
 #end-credits .credits-title-thanks{margin-top:0!important}
+</style>
+
+<style id="opening-comic-game-stage-boundary-20261116">
+/* 開場漫畫的背景、角色與控制項都以遊戲舞台為定位基準，不使用視窗 vw/vh。 */
+#game-container #comic-box.opening-comic-active{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ overflow:hidden!important;z-index:2147482500!important;
+}
+#game-container #comic-box.opening-comic-active .comic-layer,
+#game-container #comic-box.opening-comic-active .intro-comic-background,
+#game-container #comic-box.opening-comic-active .intro-comic-role{
+ width:92%!important;height:92%!important;
+ max-width:92%!important;max-height:92%!important;
+}
+#game-container #comic-box.opening-comic-active .intro-comic-background,
+#game-container #comic-box.opening-comic-active .intro-comic-role{
+ position:absolute!important;top:50%!important;left:50%!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;
+}
+#game-container #comic-box.opening-comic-active [style*="mask-size"],
+#game-container #comic-box.opening-comic-active .comic-role-clip{
+ -webkit-mask-size:86% 86%!important;mask-size:86% 86%!important;
+}
+body.opening-comic-controls #game-container .menu-container{
+ position:absolute!important;top:max(12px,env(safe-area-inset-top))!important;
+ left:max(12px,env(safe-area-inset-left))!important;right:auto!important;
+ z-index:2147483647!important;
+}
+body.opening-comic-controls #game-container #skip-btn{
+ position:absolute!important;top:max(12px,env(safe-area-inset-top))!important;
+ right:max(12px,env(safe-area-inset-right))!important;left:auto!important;
+ z-index:2147483647!important;
+}
 </style>
