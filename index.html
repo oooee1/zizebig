@@ -8987,11 +8987,23 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             const splitNumber = isSplitRole ? rolePath.match(/(?:^|\/)(11|12)\.webp$/i) : null;
             if (splitNumber) {
                 layer.setAttribute("data-comic-mask-role", splitNumber[1]);
-                // 11、12 都是與背景同畫布的透明分層；不可只對 11 套 Alpha 遮罩，
-                // 否則兩格的可見範圍與邊緣不同，進場效果也會不一致。
+                // 11、12 的角色必須受同格背景 Alpha 限制；使用對應背景圖作遮罩，
+                // 不再把遮罩設成 none，避免角色透明畫布中的圖像跑出分鏡背景輪廓。
                 layer.style.removeProperty("--comic-role-mask");
-                layer.style.setProperty("-webkit-mask-image", "none", "important");
-                layer.style.setProperty("mask-image", "none", "important");
+                if (backgroundMaskPath) {
+                    const maskSource = 'url("' + backgroundMaskPath + '")';
+                    layer.style.setProperty("-webkit-mask-image", maskSource, "important");
+                    layer.style.setProperty("mask-image", maskSource, "important");
+                    layer.style.setProperty("-webkit-mask-size", "100% 100%", "important");
+                    layer.style.setProperty("mask-size", "100% 100%", "important");
+                    layer.style.setProperty("-webkit-mask-position", "center center", "important");
+                    layer.style.setProperty("mask-position", "center center", "important");
+                    layer.style.setProperty("-webkit-mask-repeat", "no-repeat", "important");
+                    layer.style.setProperty("mask-repeat", "no-repeat", "important");
+                } else {
+                    layer.style.setProperty("-webkit-mask-image", "none", "important");
+                    layer.style.setProperty("mask-image", "none", "important");
+                }
             } else {
                 layer.removeAttribute("data-comic-mask-role");
                 layer.style.removeProperty("--comic-role-mask");
