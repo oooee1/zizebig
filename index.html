@@ -3987,10 +3987,8 @@ img { max-width:100%; }
         text: "",
         background: "漫畫背景",
         comicGroup: "curious-1-second",
-        comicImages: [
-            "./1漫畫/1.webp",
-            "./1漫畫/1好奇星-1-第二張角色.webp"
-        ],
+        // 第二張只疊好奇星角色透明圖；底圖沿用場景「漫畫背景」，不再載入錯誤的 1.webp。
+        comicImages: ["./1漫畫/1好奇星-1-第二張角色.webp"],
         nextId: 5
     },
     {
@@ -8795,7 +8793,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     comicPaths.forEach(path => {
         if (shownPaths.includes(path)) return;
         const fileName = path.split("/").pop();
-        const openingBg = options.opening && /(?:背景|漫畫背景)\.(webp|png|jpe?g)$/i.test(fileName);
+        const openingBg = /(?:背景|漫畫背景)\.(webp|png|jpe?g)$/i.test(fileName);
         const isFullBleedOpeningBackdrop = /漫畫背景\.(webp|png|jpe?g)$/i.test(fileName);
         const isSplitBackground = isSplitBackgroundAndRole && path === backgroundMaskPath;
         const isSplitRole = isSplitBackgroundAndRole && path === rolePath;
@@ -17709,9 +17707,9 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 }
 /* 開場漫畫控制列：選單／音量留左側，跳過鍵移到右側開發者按鈕左邊，同一水平線。 */
 body.opening-comic-controls #game-container #skip-btn{
-  position:fixed!important;
+  position:absolute!important;
   top:max(14px,env(safe-area-inset-top))!important;
-  right:max(112px,calc(env(safe-area-inset-right) + 104px))!important;
+  right:max(12px,env(safe-area-inset-right))!important;
   left:auto!important;
   z-index:2147483646!important;
   display:flex!important;
@@ -17729,7 +17727,34 @@ body.opening-comic-controls #game-container #skip-btn{
 /* 一般雙高分與同星高分的「結合……是……」完全同字級，統一比原本縮小 4px。 */
 #personality-result-screen #personality-result-copy .result-career-intro,
 #personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
-  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 3px)!important;
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 4px)!important;
+}
+
+/* 背景圖在所有劇情漫畫中都是滿版底層，不受前景漫畫 90% 規則影響。 */
+#game-container #comic-box .comic-layer.intro-comic-background,
+#game-container #comic-box .comic-layer[src*="漫畫背景"]{
+  position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;
+  min-width:100%!important;min-height:100%!important;
+  max-width:100%!important;max-height:100%!important;
+  margin:0!important;padding:0!important;
+  transform:none!important;
+  object-fit:cover!important;object-position:center center!important;
+  opacity:1!important;filter:none!important;
+  z-index:0!important;
+}
+/* 「結合……是……」文字、星球名稱及同分標記全部繼承同一字級，避免雙高分版特別放大。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) - 4px)!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark{
+  font-size:1em!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star-sympathy{
+  font-size:1em!important;
 }
 </style>
 
