@@ -3043,6 +3043,46 @@ img { max-width:100%; }
 /* 雲朵轉場期間，頂部 UI 保持在雲層上方。 */
 #game-container .dream-cloud-transition{z-index:2147483647!important}#game-container .menu-container{z-index:2147483648!important;position:absolute!important}#game-container > #skip-btn{z-index:2147483649!important;position:absolute!important}#game-container > #developer-tools{z-index:2147483650!important;position:absolute!important}#game-container #developer-tools-toggle,#game-container #developer-tools-panel,#game-container #developer-tools-panel button{position:relative!important;z-index:2147483650!important}
 </style>
+
+<style id="restore-black-logo-glow-and-vacuum-transition-20261117">
+/* 開始介面的 Logo 與標準字：明確使用黑色泛光，並放在實際頁面 head 的全域樣式中。 */
+#intro-start-logo,#intro-start-title{
+  -webkit-filter:drop-shadow(0 0 5px rgba(0,0,0,1))
+    drop-shadow(0 0 14px rgba(0,0,0,.96))
+    drop-shadow(0 0 28px rgba(0,0,0,.82))!important;
+  filter:drop-shadow(0 0 5px rgba(0,0,0,1))
+    drop-shadow(0 0 14px rgba(0,0,0,.96))
+    drop-shadow(0 0 28px rgba(0,0,0,.82))!important;
+}
+/* 40.1 吸塵器成功轉場：同一隻好奇星保持原尺寸置中，外層彈入、角色本體左右連跳。 */
+#game-container #page1 .vacuum-curious-center{
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  position:absolute!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  margin:0!important;padding:0!important;align-items:center!important;justify-content:center!important;
+  transform:translate(-50%,-50%)!important;z-index:1000!important;pointer-events:none!important;
+  animation:vacuumCuriousCenterEnter 1.45s ease-in-out both!important;
+}
+#game-container #page1 .vacuum-curious-center img{
+  display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:contain!important;object-position:center!important;
+  animation:vacuumCuriousCenterWiggle 1.45s ease-in-out both!important;
+}
+@keyframes vacuumCuriousCenterEnter{
+  0%{opacity:0;scale:.72}
+  18%{opacity:1;scale:1.06}
+  38%{scale:.96}
+  62%,100%{opacity:1;scale:1}
+}
+@keyframes vacuumCuriousCenterWiggle{
+  0%,100%{translate:0 0;rotate:0deg}
+  14%{translate:-26px -10px;rotate:-9deg}
+  28%{translate:0 0;rotate:0deg}
+  48%{translate:26px -10px;rotate:9deg}
+  64%{translate:0 0;rotate:0deg}
+  82%{translate:-18px -7px;rotate:-6deg}
+  92%{translate:0 0;rotate:0deg}
+}
+</style>
 </head>
 
 <body>
@@ -15801,37 +15841,7 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 </style>
 
 
-<style id="restore-black-logo-glow-and-vacuum-transition-20261117">
-/* 使用者指定：Logo 與標準字都必須是黑色泛光，禁止後續舊規則清空 filter。 */
-#intro-start-logo,#intro-start-title{
-  -webkit-filter:drop-shadow(0 0 5px rgba(0,0,0,1))
-    drop-shadow(0 0 14px rgba(0,0,0,.96))
-    drop-shadow(0 0 28px rgba(0,0,0,.82))!important;
-  filter:drop-shadow(0 0 5px rgba(0,0,0,1))
-    drop-shadow(0 0 14px rgba(0,0,0,.96))
-    drop-shadow(0 0 28px rgba(0,0,0,.82))!important;
-}
-/* 40.1 吸塵器成功轉場：角色維持原尺寸置中，外層負責進場，圖片負責左右跳躍。 */
-#game-container #page1 .vacuum-curious-center{
-  animation:vacuumCuriousCenterEnter 1.45s ease-in-out both!important;
-}
-#game-container #page1 .vacuum-curious-center img{
-  animation:vacuumCuriousCenterWiggle 1.45s ease-in-out both!important;
-}
-@keyframes vacuumCuriousCenterEnter{
-  0%{opacity:0;scale:.72}
-  18%{opacity:1;scale:1.06}
-  38%{scale:.96}
-  62%,100%{opacity:1;scale:1}
-}
-@keyframes vacuumCuriousCenterWiggle{
-  0%,100%{translate:0 0;rotate:0deg}
-  18%{translate:-24px -9px;rotate:-8deg}
-  38%{translate:0 0;rotate:0deg}
-  62%{translate:24px -9px;rotate:8deg}
-  82%{translate:0 0;rotate:0deg}
-}
-</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
