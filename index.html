@@ -3829,7 +3829,7 @@ img { max-width:100%; }
     {
         id: -14,
         text: "親愛的日記：",
-        comicDialoguePosition: { left: "5%", top: "7%", tail: "bottom-right" },
+        comicDialoguePosition: { right: "-28%", top: "7%", tail: "bottom-left" },
         background: "漫畫背景",
         comicGroup: "opening-11-14",
         comicImages: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"],
@@ -3851,7 +3851,7 @@ img { max-width:100%; }
     {
         id: -12,
         text: "但我已經要成年了，仍對未來感到迷茫。",
-        comicDialoguePosition: { left: "7%", top: "62%", tail: "top-right" },
+        comicDialoguePosition: { left: "7%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
         comicGroup: "opening-11-14",
         comicImages: ["./pct/漫畫背景.webp", "./pct/13.webp"],
@@ -3861,7 +3861,7 @@ img { max-width:100%; }
     {
         id: -11,
         text: "我究竟擅長什麼？想要什麼？我到底適合什麼？",
-        comicDialoguePosition: { left: "8%", top: "48%", tail: "top-right" },
+        comicDialoguePosition: { left: "33%", top: "40%", tail: "bottom-left" },
         background: "漫畫背景",
         comicGroup: "opening-11-14",
         comicImages: ["./pct/14.webp"],
@@ -3880,7 +3880,7 @@ img { max-width:100%; }
     {
         id: -9,
         text: "真希望能收到你們的回覆。",
-        comicDialoguePosition: { left: "5%", top: "34%", tail: "bottom-right" },
+        comicDialoguePosition: { left: "5%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
         comicGroup: "opening-1-4",
         comicImages: ["./1漫畫/2.webp"],
@@ -4073,7 +4073,7 @@ img { max-width:100%; }
     {
         id: 13,
         comicGroup: 2,
-        comicDialoguePosition: { left: "3%", top: "18%", tail: "bottom-right" },
+        comicDialoguePosition: { left: "6%", top: "-8%", tail: "bottom-right" },
         comicImages: ["./1漫畫/1好奇星-2-第一張.webp","./1漫畫/1好奇星-2-第一張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "這裡以前是片大草原，不過因為發電機壞掉了...",
@@ -4081,7 +4081,6 @@ img { max-width:100%; }
     },
     {
         id: 13.1,
-        comicDialoguePosition: { right: "5%", top: "3%", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-2-第二張.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "我們的毛沒辦法被吹走，星球才會充滿了棉花咩。",
@@ -4090,14 +4089,14 @@ img { max-width:100%; }
         id: 15,
         comicGroup: 2,
         comicImages: ["./1漫畫/1好奇星-2-第二張.webp"],
-        comicDialoguePosition: { left: "7%", top: "21%", tail: "bottom-right" },
+        comicDialoguePosition: { left: "7%", top: "8%", tail: "bottom-right" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "{playerName}的星球是甚麼樣子的咩？",
     },
     {
         id: 14,
         comicGroup: 2,
-        comicDialoguePosition: { left: "7%", top: "39%", tail: "top-right" },
+        comicDialoguePosition: { left: "7%", top: "9%", tail: "bottom-right" },
         comicImages: ["./1漫畫/1好奇星-2-第三張.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "（所以羊怎麼會講話...）",
@@ -4105,7 +4104,6 @@ img { max-width:100%; }
     {
         id: 16,
         comicGroup: 2,
-        comicDialoguePosition: { left: "7%", top: "46%", tail: "bottom-right" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "叫做地球喔，但其實是什麼樣的我也沒有很清楚...",
@@ -4113,7 +4111,6 @@ img { max-width:100%; }
     {
         id: 17,
         comicGroup: 2,
-        comicDialoguePosition: { left: "7%", top: "62%", tail: "bottom-right" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "記得曾經聽到過這樣的星球咩。",
@@ -9650,29 +9647,9 @@ if (window.currentSceneBGM !== scene.bgm) {
     if (hasScoredOptions) {
         renderOptions(scene);
     } else if (isComicMode && comicBubbleText) {
-        // 漫畫先完成解碼與進場動畫，再顯示對白。
-        const comicBubble = comicBubbleText.parentElement;
-        if (comicBubble) comicBubble.style.opacity = "0";
-        const comicVisuals = Array.from(comicBox?.querySelectorAll(".comic-layer") || []);
-        const visualsReady = Promise.all(comicVisuals.map(img => {
-            if (typeof img.decode === "function") return img.decode().catch(() => null);
-            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-            return new Promise(resolve => {
-                img.addEventListener("load", resolve, { once: true });
-                img.addEventListener("error", resolve, { once: true });
-            });
-        }));
-        window.comicDialoguePending = true;
-        visualsReady.then(() => {
-            if (Number(storyScript[currentStep]?.id) !== Number(scene.id)) return;
-            if (window.comicDialogueStartTimer) clearTimeout(window.comicDialogueStartTimer);
-            window.comicDialogueStartTimer = setTimeout(() => {
-                if (Number(storyScript[currentStep]?.id) !== Number(scene.id)) return;
-                if (comicBubble && comicBubble.isConnected) comicBubble.style.opacity = "1";
-                window.comicDialoguePending = false;
-                startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
-            }, 680);
-        });
+        // 泡泡已同步建立，直接開始逐字輸出，避免 setTimeout 造成第一個字前的停頓。
+        window.comicDialoguePending = false;
+        startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
     } else {
         startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
     }
@@ -18640,6 +18617,4 @@ body.opening-comic-controls #game-container #skip-btn{
 #game-container #comic-box .comic-split-background,#game-container #comic-box .comic-split-role[data-comic-mask-role="11"],#game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;object-fit:contain!important;object-position:center center!important;}
 #game-container .dialogue-player-name,#game-container #comic-box .dialogue-player-name{color:inherit!important;fill:currentColor!important;font-weight:inherit!important;}
 #game-container .dream-cloud-transition img,#game-container .dream-cloud-transition img:nth-child(1),#game-container .dream-cloud-transition img:nth-child(2),#game-container .dream-cloud-transition img:nth-child(3){left:2%!important;top:-9%!important;width:108%!important;height:108%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center center!important;}
-#game-container #comic-box .comic-dialogue-layer{inset:2%!important;overflow:visible!important;}
-#game-container #comic-box .comic-speech-bubble{max-width:min(82%,680px)!important;overflow-wrap:anywhere!important;}
 </style>
