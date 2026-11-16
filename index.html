@@ -8657,9 +8657,10 @@ function enterGameAnimation() {
             if (gameContainer) gameContainer.classList.toggle("menu-collapsed");
         }
 
-        function startTypingEffect(text, callback) {
-            const textTag = document.getElementById("對話文本");
-            if (!textTag) return;
+        function startTypingEffect(text, callback, targetOverride = null) {
+            const defaultTextTag = document.getElementById("對話文本");
+            if (!defaultTextTag) return;
+            const textTag = targetOverride || defaultTextTag;
 
             if (window.myTypingTimer) {
                 clearInterval(window.myTypingTimer);
@@ -8672,8 +8673,10 @@ function enterGameAnimation() {
                 .replace(/（玩家名稱）/g, window.playerName || "");
 
             window.currentFullText = formattedText;
+            window.currentTypingTarget = textTag;
             window.isTyping = true;
-            textTag.innerHTML = ""; 
+            textTag.innerHTML = "";
+            if (targetOverride) defaultTextTag.innerHTML = "";
 
             let index = 0;
             window.myTypingTimer = setInterval(() => {
@@ -8684,6 +8687,11 @@ function enterGameAnimation() {
                 }
 
                 if (index < formattedText.length) {
+                    if (targetOverride) {
+                        textTag.textContent += formattedText.charAt(index);
+                        index++;
+                        return;
+                    }
                     // 爽快星送信小遊戲介紹：兩輪的操作關鍵詞統一使用純黃色。
                     const typingSceneId = Number(storyScript[currentStep]?.id);
                     const highlightTerm = typingSceneId === 177 ? "顏色"
@@ -8700,10 +8708,47 @@ function enterGameAnimation() {
                     clearInterval(window.myTypingTimer);
                     window.myTypingTimer = null;
                     window.isTyping = false;
+                    window.currentTypingTarget = null;
                     if (typeof callback === "function") callback();
                 }
             }, 30);
         }
+
+// 漫畫專用對話泡泡：每句話留在該漫畫群組的畫布上，直到切換下一組漫畫。
+function createComicDialogueBubble(comicBox, scene) {
+    if (!comicBox || !scene || typeof scene.text !== "string" || !scene.text.trim()) return null;
+    let layer = comicBox.querySelector(".comic-dialogue-layer");
+    if (!layer) {
+        layer = document.createElement("div");
+        layer.className = "comic-dialogue-layer";
+        layer.setAttribute("aria-live", "polite");
+        comicBox.appendChild(layer);
+    }
+    const sceneKey = String(scene.id ?? currentStep);
+    const existing = Array.from(layer.querySelectorAll(".comic-speech-bubble"))
+        .find(bubble => bubble.dataset.sceneId === sceneKey);
+    if (existing) return existing.querySelector(".comic-speech-text");
+
+    const slots = [
+        { left:"5%", top:"5%", tail:"bottom-right" },
+        { right:"5%", top:"5%", tail:"bottom-left" },
+        { left:"5%", bottom:"5%", tail:"top-right" },
+        { right:"5%", bottom:"5%", tail:"top-left" }
+    ];
+    const slot = scene.comicDialoguePosition || slots[layer.querySelectorAll(".comic-speech-bubble").length % slots.length];
+    const bubble = document.createElement("div");
+    bubble.className = "comic-speech-bubble";
+    bubble.dataset.sceneId = sceneKey;
+    bubble.dataset.tail = slot.tail || scene.comicDialogueTail || "bottom-right";
+    ["left","right","top","bottom"].forEach(key => {
+        if (slot[key] !== undefined) bubble.style[key] = typeof slot[key] === "number" ? slot[key] + "%" : String(slot[key]);
+    });
+    const text = document.createElement("span");
+    text.className = "comic-speech-text";
+    bubble.appendChild(text);
+    layer.appendChild(bubble);
+    return text;
+}
 
 
 // 劇情漫畫與開場漫畫共用同一個畫布、圖層 class、累積規則及淡入動畫。
@@ -8713,6 +8758,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || options.opening));
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
     if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
+        comicBox.querySelectorAll(".comic-dialogue-layer").forEach(layer => layer.remove());
         comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => {
             layer.getAnimations?.().forEach(animation => animation.cancel());
             layer.remove();
@@ -8826,9 +8872,8 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             if (options.opening) layer.classList.add("intro-comic-role");
             layer.setAttribute("data-comic-layer-kind", "split-role");
             // 11 的背景與角色使用相同透明畫布，需保持原始座標直接疊合。
-            if (options.opening && /(?:^|\/)11\.webp$/i.test(rolePath) && backgroundMaskPath) {
-                // 11背景與 11.webp 本來就是同座標的透明畫布，直接疊圖即可。
-                // 不可把背景圖當遮罩，否則只會保留背景不透明區域，反而裁掉角色。
+            if (/(?:^|\/)11\.webp$/i.test(rolePath) && backgroundMaskPath) {
+                // 11背景與11.webp使用同一畫布座標；角色直接疊合，不套用背景遮罩。
                 layer.setAttribute("data-comic-mask-role", "11");
             } else {
                 layer.removeAttribute("data-comic-mask-role");
@@ -8882,7 +8927,7 @@ function clearComicLayers(comicBox, comicImg) {
         window.removeEventListener("resize",window.__comicRoleClipResizeHandler);
         window.__comicRoleClipResizeHandler = null;
     }
-    if (comicBox) { comicBox.style.display="none"; comicBox.className=""; comicBox.removeAttribute("data-comic-paths"); comicBox.removeAttribute("data-comic-group"); comicBox.querySelectorAll(".comic-layer-extra,.comic-role-clip").forEach(layer=>layer.remove()); }
+    if (comicBox) { comicBox.style.display="none"; comicBox.className=""; comicBox.removeAttribute("data-comic-paths"); comicBox.removeAttribute("data-comic-group"); comicBox.querySelectorAll(".comic-layer-extra,.comic-role-clip,.comic-dialogue-layer").forEach(layer=>layer.remove()); }
     if (comicImg) {
         comicImg.getAnimations?.().forEach(animation => animation.cancel());
         comicImg.className="";
@@ -9007,7 +9052,7 @@ function renderScene(stepIndex) {
     const wireGameDialogue = document.getElementById("wire-game-dialogue-text");
     if (wireGameDialogue) { const firstInstruction = currentSceneId === 36 ? storyScript.find(item => Number(item.id) === 36.100) : null; wireGameDialogue.dataset.instructionPage = "0"; wireGameDialogue.textContent = firstInstruction ? String(firstInstruction.text || "").replace(/\/\/n|\\n/g, "\n") : (currentSceneId === 36 ? "" : String(scene.text || "").replace(/\/\/n|\\n/g, "\n")); }
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
-    setOpeningComicDialogueLayer(isComicMode && hasText);
+    setOpeningComicDialogueLayer(false);
     // CG 圖以漫畫背景為底，再將 CG 圖獨立疊在中央。
     const sceneBackgroundElement = scene.background ? document.getElementById(scene.background) : null;
     const requestedCGId = !isComicMode && sceneBackgroundElement && sceneBackgroundElement.classList.contains('CG圖')
@@ -9203,8 +9248,8 @@ if (!hasScoredOptions) {
         ];
         dialogElements.forEach(el => {
             if (!el) return;
-            // 漫畫場景仍顯示作者填寫的對話；只有沒有文字時才隱藏對話框。
-            if (!hasText) el.style.setProperty('display', 'none', 'important');
+            // 漫畫對話改由 comic-box 內的黑底白字泡泡呈現；一般對話框只用於非漫畫場景。
+            if (isComicMode || !hasText) el.style.setProperty('display', 'none', 'important');
             else el.style.removeProperty('display');
         });
     }
@@ -9435,13 +9480,16 @@ if (window.currentSceneBGM !== scene.bgm) {
         clearComicLayers(comicBox, comicImg);
     }
 
+    // 漫畫對話泡泡屬於目前漫畫格；同一 comicGroup 內逐句保留，換組才清除。
+    const comicBubbleText = isComicMode && hasText ? createComicDialogueBubble(comicBox, scene) : null;
+
     // 8. 問題介面直接顯示選項，不覆蓋上一幕的對話文字。
     if (hasScoredOptions) {
         renderOptions(scene);
     } else {
         startTypingEffect(dialogueTextForDisplay, () => {
             renderOptions(scene);
-        });
+        }, comicBubbleText);
     }
 
     // 提前載入所有可能接續的場景（包含題目分支），利用玩家閱讀對話的時間準備素材。
@@ -11598,6 +11646,11 @@ function openPersonalityResult(first,second){
                 window.isTyping = false;
                 const textBox = document.getElementById("對話文本");
                 if (textBox) textBox.innerHTML = window.currentFullText;
+                const typingTarget = window.currentTypingTarget;
+                if (typingTarget && typingTarget.classList.contains("comic-speech-text")) {
+                    typingTarget.textContent = window.currentFullText;
+                }
+                window.currentTypingTarget = null;
                 renderOptions(scene);
                 return;
             }
@@ -18042,5 +18095,66 @@ body.opening-comic-controls #game-container #skip-btn{
 #personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
 #personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark{
   font-size:1em!important;
+}
+</style>
+
+<style id="comic-speech-bubbles-and-result-size-final-20261116">
+/* 11 背景與角色是同一畫布：兩者強制相同大小、同中心、同拉伸方式；不使用任何遮罩。 */
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role[data-comic-mask-role="11"]{
+  position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+  width:90%!important;height:90%!important;min-width:0!important;min-height:0!important;
+  max-width:90%!important;max-height:90%!important;margin:0!important;padding:0!important;
+  transform:translate(-50%,-50%)!important;object-fit:fill!important;object-position:center center!important;
+}
+#game-container #comic-box .comic-split-role[data-comic-mask-role="11"]{
+  -webkit-mask-image:none!important;mask-image:none!important;
+}
+/* 漫畫對話泡泡：黑色框、黑色尾巴、白色文字，全部定位在漫畫畫布內。 */
+#game-container #comic-box .comic-dialogue-layer{
+  position:absolute!important;inset:7%!important;z-index:2147482000!important;
+  pointer-events:none!important;overflow:visible!important;
+}
+#game-container #comic-box .comic-speech-bubble{
+  position:absolute!important;box-sizing:border-box!important;
+  display:block!important;width:max-content!important;max-width:min(43%,360px)!important;
+  min-width:70px!important;padding:10px 15px!important;
+  border:2px solid #000!important;border-radius:17px!important;
+  background:#000!important;color:#fff!important;
+  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif!important;
+  font-size:clamp(14px,2.1cqw,22px)!important;font-weight:600!important;
+  line-height:1.45!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;
+  box-shadow:none!important;
+}
+#game-container #comic-box .comic-speech-text{display:block!important;color:#fff!important}
+#game-container #comic-box .comic-speech-bubble::after{
+  content:""!important;position:absolute!important;width:24px!important;height:20px!important;
+  background:#000!important;border:0!important;pointer-events:none!important;
+}
+#game-container #comic-box .comic-speech-bubble[data-tail="bottom-right"]::after{
+  right:15%!important;bottom:-17px!important;clip-path:polygon(0 0,100% 0,100% 100%)!important;
+}
+#game-container #comic-box .comic-speech-bubble[data-tail="bottom-left"]::after{
+  left:15%!important;bottom:-17px!important;clip-path:polygon(0 0,100% 0,0 100%)!important;
+}
+#game-container #comic-box .comic-speech-bubble[data-tail="top-right"]::after{
+  right:15%!important;top:-17px!important;clip-path:polygon(0 100%,100% 100%,100% 0)!important;
+}
+#game-container #comic-box .comic-speech-bubble[data-tail="top-left"]::after{
+  left:15%!important;top:-17px!important;clip-path:polygon(0 100%,100% 100%,0 0)!important;
+}
+/* 「結合……是……」與同分版統一 18px，包含星球名稱、玩家名稱及同分標記。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro *{
+  font-size:18px!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark{
+  font-size:18px!important;
+}
+/* 測驗標語再往下 10px。 */
+#personality-result-screen #personality-result-copy{
+  --result-disclaimer-shift-y:-170px!important;
 }
 </style>
