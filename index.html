@@ -15773,6 +15773,18 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 #game-container .dream-cloud-transition img:nth-child(2){left:2%!important;top:13%!important;width:104%!important;height:74%!important}
 #game-container .dream-cloud-transition img:nth-child(3){left:-9%!important;top:49%!important;width:114%!important;height:74%!important}
 </style>
+
+<style id="opening-comic-11-12-same-canvas-cloud-nudge-20261116">
+/* 11、12 是同尺寸透明畫布的兩個圖層，必須完全重合；不拆左右、不偏移。 */
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"],
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{
+ position:absolute!important;left:50%!important;top:50%!important;
+ width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+/* 最上方第一朵雲再往上移一點，其餘兩朵不動。 */
+#game-container .dream-cloud-transition img:nth-child(1){top:-40%!important}
+</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
@@ -19148,16 +19160,12 @@ body.opening-comic-controls #game-container #skip-btn{
  max-width:90%!important;max-height:90%!important;margin:0!important;padding:0!important;
  transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
 }
-/* 11、12 是兩張獨立完整漫畫格：各自佔據左右半幅，避免 12 疊在同一座標把 11 完全蓋住。 */
+/* 11、12 素材本身已把兩側畫面排在同一張透明畫布上，必須同座標完整重疊，不能再分別推到左右兩側。 */
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"],
-#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{
- top:50%!important;width:46%!important;height:86%!important;
- max-width:46%!important;max-height:86%!important;
-}
-#game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"]{left:26%!important}
-#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{left:74%!important}
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"],
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/13.webp"],
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/14.webp"]{
- left:50%!important;width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
+ left:50%!important;top:50%!important;width:90%!important;height:90%!important;
+ max-width:90%!important;max-height:90%!important;
 }
 </style>
