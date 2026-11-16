@@ -4698,7 +4698,7 @@ img { max-width:100%; }
     {
         id: 56,
         comicGroup: 4,
-        comicDialoguePosition: { left: "8%", bottom: "calc(-3% + 0px)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", bottom: "calc(-3% + 40px)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
@@ -8873,9 +8873,27 @@ function createComicDialogueBubble(comicBox, scene) {
     layer.style.setProperty("width", "100%", "important");
     layer.style.setProperty("height", "100%", "important");
     const sceneKey = String(scene.id ?? currentStep);
+    const applyComicBubblePosition = bubble => {
+        if (!bubble) return;
+        const position = scene.comicDialoguePosition || {};
+        ["left","right","top","bottom"].forEach(key => {
+            bubble.style.removeProperty(key);
+            if (position[key] !== undefined) {
+                const value = typeof position[key] === "number" ? position[key] + "%" : String(position[key]);
+                bubble.style.setProperty(key, value, "important");
+            }
+        });
+        bubble.style.setProperty("position", "absolute", "important");
+        bubble.style.setProperty("transform", "none", "important");
+        bubble.style.setProperty("margin", "0", "important");
+        bubble.dataset.tail = position.tail || scene.comicDialogueTail || "bottom-right";
+    };
     const existing = Array.from(layer.querySelectorAll(".comic-speech-bubble"))
         .find(bubble => bubble.dataset.sceneId === sceneKey);
-    if (existing) return existing.querySelector(".comic-speech-text");
+    if (existing) {
+        applyComicBubblePosition(existing);
+        return existing.querySelector(".comic-speech-text");
+    }
 
     const slots = [
         { left:"5%", top:"5%", tail:"bottom-right" },
@@ -8904,10 +8922,7 @@ function createComicDialogueBubble(comicBox, scene) {
     bubble.style.setProperty("padding", "9px 13px", "important");
     bubble.style.setProperty("white-space", "pre-wrap", "important");
     bubble.dataset.sceneId = sceneKey;
-    bubble.dataset.tail = slot.tail || scene.comicDialogueTail || "bottom-right";
-    ["left","right","top","bottom"].forEach(key => {
-        if (slot[key] !== undefined) bubble.style.setProperty(key, typeof slot[key] === "number" ? slot[key] + "%" : String(slot[key]), "important");
-    });
+    applyComicBubblePosition(bubble);
     const text = document.createElement("span");
     text.className = "comic-speech-text";
     Object.assign(text.style, {
@@ -15776,6 +15791,26 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 #game-container #skip-btn{position:absolute!important;top:14px!important;right:112px!important;left:auto!important;width:42px!important;height:42px!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:2147483649!important;pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation!important;}
 #game-container #skip-btn img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;}
 </style>
+
+<style id="restore-black-logo-glow-comic-transition-and-dialogue-20261117">
+/* 最終覆寫：Logo 必須保留黑色泛光；不要再被前面的 filter:none 覆蓋。 */
+#intro-start-logo{
+  -webkit-filter:drop-shadow(0 0 5px rgba(0,0,0,.98))
+    drop-shadow(0 0 14px rgba(0,0,0,.92))
+    drop-shadow(0 0 26px rgba(0,0,0,.78))!important;
+  filter:drop-shadow(0 0 5px rgba(0,0,0,.98))
+    drop-shadow(0 0 14px rgba(0,0,0,.92))
+    drop-shadow(0 0 26px rgba(0,0,0,.78))!important;
+}
+/* 恢復原本漫畫畫布由下往上滑入的轉場；前面錯誤的 animation:none 不再生效。 */
+#game-container #comic-box.comic-slide-up{
+  animation:comicSlideUp .65s cubic-bezier(.2,.75,.25,1) both!important;
+}
+#game-container #comic-box.opening-comic-active.comic-slide-up{
+  animation:comicSlideUp .65s cubic-bezier(.2,.75,.25,1) both!important;
+}
+</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
