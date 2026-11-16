@@ -10427,7 +10427,7 @@ function positionResultTextElements(layers,copy){
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機保留目前已接近正確的位置；電腦恢復透明尾端裁切前的舊定位基準。
     if(isMobileResultLayout){
-     const careerShiftX=7.5;
+     const careerShiftX=8.5;
      const careerShiftY=35;
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
@@ -17003,9 +17003,6 @@ body.opening-comic-controls #game-container #skip-btn{
 @media (max-width:900px), (pointer:coarse) and (max-width:1200px){
  #personality-result-screen #personality-result-copy{
   --result-disclaimer-shift-y:-18px!important;
- }
- #personality-result-screen #personality-result-copy > .result-secondary{
-  left:calc(var(--career-left, 0px) + 1px)!important;
  }
  #result-preview-share-overlay .result-preview-close{
   right:63px!important;top:-14px!important;
