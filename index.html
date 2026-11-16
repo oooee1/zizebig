@@ -17025,7 +17025,10 @@ body.opening-comic-controls #game-container #skip-btn{
  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
  z-index:3!important;
 }
-#game-container #comic-box .comic-split-background{z-index:2!important}
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{z-index:auto!important}
+#game-container #comic-box.opening-comic-active .comic-layer:not([src*="漫畫背景"]){z-index:auto!important}
+#game-container #comic-box.opening-comic-active .intro-comic-background[src*="漫畫背景"]{z-index:0!important}
 /* 所有新漫畫圖層逐張執行淡入上移；不讓整個漫畫容器一起滑動。 */
 @keyframes comicLayerEntry{
  from{opacity:0;translate:0 50px}
