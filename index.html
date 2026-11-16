@@ -12001,8 +12001,8 @@ function openPersonalityResult(first,second){
             comicStage.addEventListener("click", function(event) {
                 // 開場 11～14 有自己的 pointerup/click 推進流程；不可再落入一般劇情 nextStep，
                 // 否則同一次翻頁會同步推進底下場景並呼叫 clearComicLayers，讓 11 看起來被 12 蓋掉。
-                if (comicStage.classList.contains("opening-comic-active")) return;
-                const active = document.body.classList.contains("comic-scene-active");
+                const active = document.body.classList.contains("comic-scene-active") ||
+                    comicStage.classList.contains("opening-comic-active");
                 if (!active) return;
                 if (event.target && event.target.closest &&
                     event.target.closest("button,a,input,textarea,select,[data-no-story-advance]")) return;
@@ -12059,6 +12059,8 @@ function openPersonalityResult(first,second){
                 window.dreamCloudTransitionRunning = true;
                 playDreamCloudTransition(() => {
                     currentStep = targetIndex;
+                    // -7 是開場漫畫最後一格；完成雲轉場後才解除開場漫畫全螢幕層，再進入正式遊戲。
+                    restoreComicCanvasToGameStage();
                     if (currentStep >= 0 && currentStep < storyScript.length) renderScene(currentStep);
                     else showEndCredits();
                 }, () => {
@@ -12777,7 +12779,7 @@ function openPersonalityResult(first,second){
                     }
                     if (startScreen) startScreen.style.display = "none";
                     if (loadingScreen) loadingScreen.style.display = "none";
-                    if (comicScreen) restoreComicCanvasToGameStage();
+                    // 開場漫畫本身就是第一段劇情；此處不可先 restore/clear，否則 11 的圖層與開場狀態會被清掉。
                     if (page) {
                         page.style.visibility = "visible";
                         page.style.pointerEvents = "auto";
@@ -12875,14 +12877,24 @@ function openPersonalityResult(first,second){
                         loadingScreen.style.setProperty("min-height", "0", "important");
                         loadingScreen.style.setProperty("max-width", "100%", "important");
                         loadingScreen.style.setProperty("max-height", "100%", "important");
-                        loadingScreen.style.setProperty("z-index", "2147483647", "important");
+                        loadingScreen.style.setProperty("z-index", "2147483000", "important");
                         loadingScreen.style.setProperty("box-sizing", "border-box", "important");
                         loadingScreen.style.setProperty("pointer-events", "auto", "important");
                         [document.querySelector(".menu-container"), document.getElementById("skip-btn")].forEach(control => {
-                            if (control) control.style.setProperty("z-index", "2147483000", "important");
+                            if (control) {
+                                control.style.setProperty("z-index", "2147483647", "important");
+                                control.style.setProperty("visibility", "visible", "important");
+                                control.style.setProperty("opacity", "1", "important");
+                                control.style.setProperty("pointer-events", "auto", "important");
+                            }
                         });
                         const dev = document.getElementById("developer-tools");
-                        if (dev) { dev.style.setProperty("visibility", "hidden", "important"); dev.style.setProperty("pointer-events", "none", "important"); }
+                        if (dev) {
+                            dev.style.setProperty("visibility", "visible", "important");
+                            dev.style.setProperty("opacity", "1", "important");
+                            dev.style.setProperty("pointer-events", "auto", "important");
+                            dev.style.setProperty("z-index", "2147483647", "important");
+                        }
                         loadingScreen.style.display = "flex";
                         loadingScreen.style.opacity = "1";
                         loadingScreen.style.transition = "none";
@@ -13063,7 +13075,7 @@ function openPersonalityResult(first,second){
                         menuContainer.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
                         menuContainer.style.setProperty("left", "max(14px, env(safe-area-inset-left))", "important");
                         menuContainer.style.setProperty("right", "auto", "important");
-                        menuContainer.style.setProperty("z-index", "2147483600", "important");
+                        menuContainer.style.setProperty("z-index", "2147483647", "important");
                         menuContainer.style.setProperty("pointer-events", "auto", "important");
                     }
                     if (skipButton) {
@@ -13074,7 +13086,7 @@ function openPersonalityResult(first,second){
                         skipButton.style.setProperty("display", "flex", "important");
                         skipButton.style.setProperty("visibility", "visible", "important");
                         skipButton.style.setProperty("opacity", "1", "important");
-                        skipButton.style.setProperty("z-index", "2147483600", "important");
+                        skipButton.style.setProperty("z-index", "2147483647", "important");
                         skipButton.style.setProperty("pointer-events", "auto", "important");
                     }
                     if (developerTools) {
@@ -13082,10 +13094,10 @@ function openPersonalityResult(first,second){
                         developerTools.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
                         developerTools.style.setProperty("right", "14px", "important");
                         developerTools.style.setProperty("left", "auto", "important");
-                        developerTools.style.setProperty("z-index", "2147483601", "important");
+                        developerTools.style.setProperty("z-index", "2147483647", "important");
                     }
                     if (comicBox) {
-                        bindOpeningComicAdvance(comicBox);
+                        // 開場漫畫統一由 storyScript + nextStep 推進，避免另一套 openingComicIndex 同步改畫面。
                         comicBox.classList.add("opening-comic-active");
                         comicBox.style.setProperty("position","absolute","important");
                         comicBox.style.setProperty("inset","0","important");
@@ -13172,18 +13184,8 @@ function openPersonalityResult(first,second){
                 };
                 document.addEventListener("pointerup", handleStartActivation, true);
                 document.addEventListener("click", handleStartActivation, true);
-                const comicScreen = document.getElementById("comic-box");
-                if (comicScreen) {
-                    // 翻頁只保留 bindOpeningComicAdvance 的 click 入口。
-                    // 原本 pointerup 與 click 各推進一次，慢速合成 click 會把 12 直接推到 13，
-                    // 看起來就像 12 一出現便把 11 消失；450ms 節流無法可靠處理 iOS 延遲 click。
-                    comicScreen.addEventListener("click", function(event) {
-                        if (!comicScreen.classList.contains("opening-comic-active")) return;
-                        event.preventDefault(); event.stopPropagation();
-                        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
-                        if (event.detail === 0) advanceOpeningComic(event);
-                    }, true);
-                }
+                // 開場漫畫不再額外註冊第二個 click 攔截器；所有漫畫點擊只交給 bindComicStageAdvance，
+                // 避免 capture 階段 stopImmediatePropagation 把真正的翻頁事件攔截掉。
                 // 開發者工具使用原生事件綁定，不依賴內嵌 onclick；也移出固定畫面容器。
                 const devTools = document.getElementById("developer-tools");
                 const devToggle = document.getElementById("developer-tools-toggle");
@@ -15370,12 +15372,6 @@ body.opening-comic-controls #skip-btn{
 /* 開場漫畫背景整體壓暗，角色及文字圖層亮度不變。 */
 #comic-box.opening-comic-active .intro-comic-background{
  filter:brightness(0.45)!important;
-}
-/* 開始介面期間不顯示遊戲操作圖示，避免它們浮在首頁或載入介面上。 */
-#game-container:has(#intro-start-screen:not([style*="display: none"])) .menu-container,
-#game-container:has(#intro-start-screen:not([style*="display: none"])) #skip-btn{
- visibility:hidden!important;
- pointer-events:none!important;
 }
 </style>
 
@@ -18791,15 +18787,16 @@ body.opening-comic-controls #game-container #skip-btn{
 #game-container .menu-container{
  position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
  left:max(14px,env(safe-area-inset-left))!important;right:auto!important;
+ z-index:2147483647!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
 }
 #game-container > #developer-tools{
  position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
- right:14px!important;left:auto!important;z-index:2147483601!important;
- width:max-content!important;height:auto!important;
+ right:14px!important;left:auto!important;z-index:2147483647!important;
+ width:max-content!important;height:auto!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
 }
 #game-container > #skip-btn{
  position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
- right:112px!important;left:auto!important;z-index:2147483602!important;
+ right:112px!important;left:auto!important;z-index:2147483647!important;
  display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
 }
 /* 11 的背景與角色使用完全相同的 90% 畫布，遮罩不再因兩張圖層尺寸不同而錯位。 */
@@ -18978,7 +18975,7 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 #game-container .dream-cloud-transition{
  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
- z-index:2147483647!important;overflow:hidden!important;pointer-events:auto!important;background:transparent!important;
+ z-index:2147483000!important;overflow:hidden!important;pointer-events:none!important;background:transparent!important;
 }
 #game-container .dream-cloud-transition img{
  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
@@ -19197,21 +19194,17 @@ body.opening-comic-controls #game-container #skip-btn{
 /* Logo 與標準字都保留黑色泛光；標準字整個圖層置於 Logo 上方，避免 Logo 光暈覆蓋文字。 */
 #intro-start-logo{
   position:relative!important;z-index:1!important;
-  -webkit-filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
-    drop-shadow(0 0 22px rgba(0,0,0,.94))
-    drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
-  filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
-    drop-shadow(0 0 22px rgba(0,0,0,.94))
-    drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
+  -webkit-filter:drop-shadow(0 0 3px rgba(0,0,0,.98))
+    drop-shadow(0 0 8px rgba(0,0,0,.72))!important;
+  filter:drop-shadow(0 0 3px rgba(0,0,0,.98))
+    drop-shadow(0 0 8px rgba(0,0,0,.72))!important;
 }
 #intro-start-title{
   position:relative!important;z-index:2!important;
-  -webkit-filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
-    drop-shadow(0 0 22px rgba(0,0,0,.94))
-    drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
-  filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
-    drop-shadow(0 0 22px rgba(0,0,0,.94))
-    drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
+  -webkit-filter:drop-shadow(0 0 6px rgba(0,0,0,.98))
+    drop-shadow(0 0 15px rgba(0,0,0,.82))!important;
+  filter:drop-shadow(0 0 6px rgba(0,0,0,.98))
+    drop-shadow(0 0 15px rgba(0,0,0,.82))!important;
 }
 /* 第一朵與最後一朵雲各自上移 6 個百分點，中間雲保持原位。 */
 #game-container .dream-cloud-transition img:nth-child(1){top:-46%!important}
