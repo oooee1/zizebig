@@ -3828,7 +3828,7 @@ img { max-width:100%; }
         text: "親愛的日記：",
         comicDialoguePosition: { right: "-28%", top: "7%", tail: "bottom-left" },
         background: "漫畫背景",
-        comicGroup: "opening-panel-11",
+        comicGroup: "opening-spread-11-12",
         comicImages: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"],
         comicRolePath: "./pct/11.webp",
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
@@ -3839,7 +3839,7 @@ img { max-width:100%; }
         text: "爸、媽，今年過得真快，就如往常一樣...",
         comicDialoguePosition: { left: "7%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
-        comicGroup: "opening-panel-12",
+        comicGroup: "opening-spread-11-12",
         comicImages: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"],
         comicRolePath: "./pct/12.webp",
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
@@ -9037,18 +9037,22 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.style.setProperty("object-position", "center center", "important");
         }
         if (isSplitBackground || isSplitRole) {
-            // 12 的背景與角色必須使用完全相同的定位座標、尺寸與拉伸方式。
-            // 直接修正 inline !important 的定位，避免後加 CSS 無法覆蓋而造成「往右調沒反應」。
-            layer.style.setProperty("left", "50%", "important");
+            // 背景與角色先共用完全相同的座標；再依 11／12 分成左右兩個獨立漫畫格。
+            // 之前兩組都被設在 left:50% 且尺寸相同，12 疊上來後只是把 11 蓋住，
+            // 看起來就像 11 被刪掉；實際上圖層仍留在 DOM。
+            const panelMatch = (isSplitRole ? rolePath : backgroundMaskPath).match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i);
+            const openingPanelNumber = options.opening && panelMatch ? panelMatch[1] : null;
             layer.style.setProperty("top", "50%", "important");
-            layer.style.setProperty("width", "90%", "important");
-            layer.style.setProperty("height", "90%", "important");
-            layer.style.setProperty("max-width", "90%", "important");
-            layer.style.setProperty("max-height", "90%", "important");
+            layer.style.setProperty("left", openingPanelNumber === "11" ? "26%" : openingPanelNumber === "12" ? "74%" : "50%", "important");
+            layer.style.setProperty("width", openingPanelNumber ? "46%" : "90%", "important");
+            layer.style.setProperty("height", "86%", "important");
+            layer.style.setProperty("max-width", openingPanelNumber ? "46%" : "90%", "important");
+            layer.style.setProperty("max-height", "86%", "important");
             layer.style.setProperty("object-fit", "contain", "important");
             layer.style.setProperty("object-position", "center center", "important");
             layer.style.setProperty("opacity", "0", "important");
             layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
+            if (openingPanelNumber) layer.setAttribute("data-opening-panel", openingPanelNumber);
         }
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
         layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : String(10 + layerOrder), "important");
@@ -12717,12 +12721,11 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
-                // 第一組 11～14：共用漫畫紙背景，逐張追加且保留前一張；第二組 1～4 開始時清空第一組。
+                // 11、12 是同一個跨頁：共用 group，第二次 render 只追加 12 的圖層，保留 11。
+                // 13 開始換新 group，清除 11／12；1～4 仍各自獨立，避免跨頁殘留。
                 const openingComicFrames = [
-                    // 每一格使用獨立 group：翻頁時完整清掉上一格，避免 11～14 疊成同一張，
-                    // 也避免第 1 格的圖留在畫布上，到了第 2 格又被追加成 1+2。
-                    { group: "opening-panel-11", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-panel-12", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-spread-11-12", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-spread-11-12", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
                     { group: "opening-panel-13", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
                     { group: "opening-panel-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
                     { group: "opening-panel-1", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
@@ -12852,7 +12855,8 @@ function openPersonalityResult(first,second){
                     const frame = openingComicFrames[index];
                     const groupChanged = openingComicGroup !== frame.group;
                     if (groupChanged) { clearComicLayers(comicBox, comicImg); openingComicGroup = frame.group; }
-                    renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:true, rolePath:frame.rolePath });
+                    // 畫布不重播整體滑入；每張新圖層由 renderComicLayers 在解碼後各自同步淡入上移。
+                    renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:false, rolePath:frame.rolePath });
                     let comicHint=document.getElementById("opening-comic-next-hint");
                     if(!comicHint){
                         comicHint=document.createElement("div");
