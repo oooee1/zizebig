@@ -3268,8 +3268,6 @@ img { max-width:100%; }
 
 
 
-    </div>
-
     <!-- Dropbox /專題/片尾.txt：新版片尾名單 -->
     <div id="end-credits" aria-label="片尾名單">
         <div class="credits-roll">
@@ -3359,7 +3357,7 @@ img { max-width:100%; }
             <div class="credits-gap"></div>
             <div class="credits-heading">專題哀居：</div>
             <div>zz.zize</div>
-            <div>（QRCO）</div>
+            <div class="credits-project-qr"><img src="./pct/0星辰之路哀居.webp" alt="星辰之路專題 Instagram QR Code"></div>
 
             <div class="credits-gap"></div>
             <div class="credits-heading">工作人員哀居：</div>
@@ -3417,17 +3415,15 @@ img { max-width:100%; }
             <div>對，跑路了。</div>
 
             <div class="credits-gap"></div>
-            <div class="credits-title">星辰之路</div>
-            <div class="credits-gap"></div>
-            <div class="credits-title">感謝遊玩！</div>
-            <div class="credits-gap"></div>
-            <div class="credits-title">星辰之路 Instagram</div>
-            <div class="credits-project-instagram"><img src="./pct/0星辰之路哀居.webp" alt="星辰之路 Instagram"></div>
+            <div class="credits-title credits-title-brand">星辰之路</div>
+            <div class="credits-gap credits-gap-thanks"></div>
+            <div class="credits-title credits-title-thanks">感謝遊玩！</div>
             <div class="credits-brand-row">
                 <img src="./pct/logo.webp" alt="星辰之路 Logo">
                 <img src="./pct/標準字.webp" alt="星辰之路標準字">
             </div>
         </div>
+    </div>
     </div>
 
     <audio id="bgm-player" loop></audio>
@@ -10482,7 +10478,7 @@ function positionResultTextElements(layers,copy){
      const noteShiftX=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-x"))||0;
      const noteShiftY=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-y"))||0;
      note.style.setProperty("left",noteShiftX+"px","important");
-     note.style.setProperty("top",(buttonRect.top-copyRect.top-noteHeight-12+noteShiftY)+"px","important");
+     note.style.setProperty("top",(buttonRect.top-copyRect.top-noteHeight-18+noteShiftY)+"px","important");
     }else{
      // 按鈕尚未完成定位時，暫時隱藏標語，等下一次 layout/resize 再依按鈕定位。
      note.style.setProperty("visibility","hidden","important");
@@ -11199,12 +11195,44 @@ function openPersonalityResult(first,second){
             // 片尾所有「（玩家名稱）」都使用玩家在遊戲中輸入的名字。
             credits.innerHTML = credits.innerHTML.replace(/（玩家名稱）/g, window.playerName || "");
             playBGM("./audio/GG EZ(粤语版） (Cantonesem Version) - 森voice.mp3");
+            const gameContainer=document.getElementById("game-container");
+            if(gameContainer && credits.parentElement!==gameContainer) gameContainer.appendChild(credits);
             credits.classList.add("show");
+            const roll=credits.querySelector(".credits-roll");
+            if(roll){
+                roll.style.animation="none";
+                void roll.offsetHeight;
+                roll.style.animation="";
+                if(roll.dataset.returnToStartBound!=="1"){
+                    roll.dataset.returnToStartBound="1";
+                    roll.addEventListener("animationend",event=>{
+                        if(event.target!==roll || event.animationName!=="end-credits-scroll") return;
+                        credits.classList.remove("show");
+                        const startScreen=document.getElementById("intro-start-screen");
+                        const container=document.getElementById("game-container");
+                        const page=document.getElementById("page1");
+                        if(page){page.style.display="";page.style.visibility="hidden";page.style.pointerEvents="none";}
+                        if(startScreen && container){
+                            if(startScreen.parentElement!==container) container.appendChild(startScreen);
+                            startScreen.style.setProperty("position","absolute","important");
+                            startScreen.style.setProperty("inset","0","important");
+                            startScreen.style.setProperty("width","100%","important");
+                            startScreen.style.setProperty("height","100%","important");
+                            startScreen.style.setProperty("display","flex","important");
+                            startScreen.style.setProperty("pointer-events","auto","important");
+                            const startButton=document.getElementById("intro-start-button");
+                            if(startButton)startButton.dataset.started="0";
+                            const video=document.getElementById("intro-start-video");
+                            if(video){try{video.currentTime=0;video.play().catch(()=>{});}catch(error){}}
+                        }
+                    });
+                }
+            }
             let speedHint=credits.querySelector(".credits-speed-hint");
             if(!speedHint){
                 speedHint=document.createElement("div");
                 speedHint.className="credits-speed-hint";
-                speedHint.textContent="長按二倍速";
+                speedHint.textContent="長按三倍速";
                 credits.appendChild(speedHint);
             }
             // 長按只調整動畫 playbackRate，不改 duration，放開時保留當下播放進度。
@@ -11218,14 +11246,14 @@ function openPersonalityResult(first,second){
                 const startHold=()=>{
                     if(holdTimer)clearTimeout(holdTimer);
                     holdTimer=setTimeout(()=>{
-                        setCreditsRate(2);
-                        credits.classList.add("is-double-speed");
+                        setCreditsRate(3);
+                        credits.classList.add("is-triple-speed");
                     },450);
                 };
                 const endHold=()=>{
                     if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
                     setCreditsRate(1);
-                    credits.classList.remove("is-double-speed");
+                    credits.classList.remove("is-triple-speed");
                 };
                 credits.addEventListener("pointerdown",startHold,{passive:true});
                 document.addEventListener("pointerup",endHold);
@@ -12054,15 +12082,17 @@ function openPersonalityResult(first,second){
                     const startScreen = document.getElementById("intro-start-screen");
                     const comicScreen = document.getElementById("comic-box");
                     const loadingLayer = document.getElementById("loading-screen");
-                    // 所有開場覆蓋層移到 body，脫離 430px 的遊戲舞台尺寸與 stacking context。
-                    [loadingLayer, startScreen, comicScreen].forEach(layer => {
+                    // 載入畫面與漫畫可使用全螢幕；開始遊戲首頁本身必須留在遊戲舞台內。
+                    [loadingLayer, comicScreen].forEach(layer => {
                         if (layer && layer.parentElement !== document.body) document.body.appendChild(layer);
                     });
+                    const gameContainer = document.getElementById("game-container");
+                    if (startScreen && gameContainer && startScreen.parentElement !== gameContainer) gameContainer.appendChild(startScreen);;
                     if (startScreen) {
-                        startScreen.style.setProperty("position", "fixed", "important");
+                        startScreen.style.setProperty("position", "absolute", "important");
                         startScreen.style.setProperty("inset", "0", "important");
-                        startScreen.style.setProperty("width", "100vw", "important");
-                        startScreen.style.setProperty("height", "100dvh", "important");
+                        startScreen.style.setProperty("width", "100%", "important");
+                        startScreen.style.setProperty("height", "100%", "important");
                         startScreen.style.setProperty("display", "flex", "important");
                         startScreen.style.setProperty("pointer-events", "auto", "important");
                     }
@@ -14627,8 +14657,8 @@ body.opening-comic-controls #skip-btn{
  white-space:nowrap;pointer-events:none;
 }
 #end-credits .credits-roll{will-change:transform}
-/* 二倍速由 playbackRate 控制；不可改 animation-duration，以免動畫進度被重算。 */
-#end-credits.is-double-speed .credits-speed-hint{color:#ffb30f}
+/* 三倍速由 playbackRate 控制；不可改 animation-duration，以免動畫進度被重算。 */
+#end-credits.is-triple-speed .credits-speed-hint{color:#ffb30f}
 
 #end-credits .credits-title {
     font-size: clamp(2rem, 5vw, 3.2rem);
@@ -16782,4 +16812,41 @@ body > #developer-tools-panel button{
  opacity:0;visibility:hidden;
 }
 #personality-result-screen #personality-result-save{z-index:2147483005!important}
+</style>
+
+<style id="end-credits-game-stage-fix-20261116">
+/* 片尾限制在實際遊戲舞台內，桌機不再鋪滿整個瀏覽器。 */
+#game-container #end-credits{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ min-width:0!important;max-width:100%!important;
+ min-height:0!important;max-height:100%!important;
+ overflow:hidden!important;z-index:2147483600!important;
+}
+#game-container #end-credits .credits-speed-hint{
+ position:absolute!important;right:12px!important;bottom:12px!important;
+ z-index:2147483601!important;
+}
+/* 工作人員帳號文字在上、社群圖片在下。 */
+#end-credits .credits-person{
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:7px!important;width:100%!important;margin:12px auto!important;
+ text-align:center!important;
+}
+#end-credits .credits-person img{
+ display:block!important;width:clamp(58px,11vw,82px)!important;
+ height:auto!important;max-height:82px!important;object-fit:contain!important;
+}
+#end-credits .credits-project-qr{
+ display:flex!important;justify-content:center!important;align-items:center!important;
+ margin:8px auto 20px!important;width:100%!important;
+}
+#end-credits .credits-project-qr img{
+ display:block!important;width:clamp(110px,22vw,170px)!important;
+ height:auto!important;object-fit:contain!important;
+}
+#end-credits .credits-gap-thanks{height:8px!important;flex:none!important}
+#end-credits .credits-title-brand{margin-bottom:0!important}
+#end-credits .credits-title-thanks{margin-top:0!important}
 </style>
