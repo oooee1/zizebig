@@ -10883,6 +10883,8 @@ function openPersonalityResultCore(first,second){
   (primaryFormat.traitBreaks||[]).forEach(([from,to])=>{mainTraits=mainTraits.replaceAll(from,to);});
   (primaryFormat.workBreaks||[]).forEach(([from,to])=>{mainWork=mainWork.replaceAll(from,to);});
  }
+ // 熱情星的職場說明：移除「責任。」後多餘的格式換行，保留原文句子間正常的一行換行。
+ if(first==="熱情星")mainWork=mainWork.replaceAll("責任。<br>","責任。");
  // 熱情星＋熱情星：依指定位置換行，第三句直接接在「前進。」後面。
  if(first==="熱情星"&&second==="熱情星"){
   mainTraits=mainTraits
@@ -10986,7 +10988,7 @@ function openPersonalityResultCore(first,second){
  const careerIntro=copy.querySelector(".result-career-intro");
  if(careerIntro){
   const size=parseFloat(getComputedStyle(careerIntro).fontSize);
-  const mobileCareerIntro=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;
+  const mobileCareerIntro=window.matchMedia&&window.matchMedia("(max-width:900px), (pointer:coarse) and (max-width:1200px)").matches;
   const isTiedCareerIntro=careerIntro.classList.contains("result-career-intro-tied");
   const normalizeDifferentScore=isTiedCareerIntro?0:(mobileCareerIntro?-8:-18);
   if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size+normalizeDifferentScore+(mobileCareerIntro?0:-3))+"px","important");
@@ -14573,7 +14575,7 @@ body.opening-comic-controls #skip-btn{
 /* 標語由 JS 錨定在「繼續遊戲」上方；保留可選微調值。 */
 #personality-result-screen #personality-result-copy{
  --result-disclaimer-shift-x:0px;
- --result-disclaimer-shift-y:0px;
+ --result-disclaimer-shift-y:-18px;
 }
 </style>
 <style id="result-preview-share-title-visible-20261116">
@@ -16894,8 +16896,9 @@ body.opening-comic-controls #game-container #skip-btn{
 
 <style id="start-screen-hide-menu-and-result-tagline-fix-20261116">
 /* 開始遊戲首頁期間完全隱藏選單與音量鍵，避免圖示浮在首頁影片／按鈕上。 */
-#game-container.start-screen-active > .menu-container,
-#game-container.start-screen-active > #skip-btn{
+#game-container.start-screen-active .menu-container,
+#game-container.start-screen-active #volume-btn,
+#game-container.start-screen-active #skip-btn{
  display:none!important;visibility:hidden!important;opacity:0!important;
  pointer-events:none!important;
 }
