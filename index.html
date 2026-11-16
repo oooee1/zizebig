@@ -2919,6 +2919,51 @@ img { max-width:100%; }
  #intro-start-button{width:72%;min-height:52px}
 }
 </style>
+<style id="comic-unified-stage-and-loading-final-20261116">
+/* 漫畫尺寸由 renderComicLayers 逐張 inline 設定；這裡只確保舞台定位基準一致。 */
+#game-container{position:relative!important}
+#game-container > #loading-screen{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:100%!important;max-height:100%!important;
+ z-index:2147483647!important;box-sizing:border-box!important;
+}
+/* 共用紙背景滿版；所有漫畫內容與分離角色/背景維持同一個 86% contain 畫布。 */
+#game-container #comic-box .comic-layer:not([src*="漫畫背景"]){
+ width:86%!important;height:86%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:86%!important;
+ object-fit:contain!important;object-position:center center!important;
+}
+#game-container #comic-box .comic-layer[src*="漫畫背景"]{
+ width:100%!important;height:100%!important;
+ min-width:100%!important;min-height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ object-fit:cover!important;object-position:center center!important;
+}
+/* 11、12 與 13、14 同為原始 2160×3960 比例；禁止 fill 拉伸。 */
+#game-container #comic-box .intro-comic-background:not([src*="漫畫背景"]),
+#game-container #comic-box .intro-comic-role,
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{
+ object-fit:contain!important;object-position:center center!important;
+}
+/* 每個新漫畫圖層各自淡入上移，角色與背景都會觸發，不依賴容器動畫。 */
+@keyframes comicLayerEntry{
+ from{opacity:0;translate:0 50px}
+ to{opacity:1;translate:0 0}
+}
+/* 開始介面影片禁用畫中畫、媒體控制列與右上角媒體按鈕。 */
+#intro-start-video{pointer-events:none!important}
+#intro-start-video::-webkit-media-controls,
+#intro-start-video::-webkit-media-controls-enclosure,
+#intro-start-video::-webkit-media-controls-picture-in-picture-button,
+#intro-start-video::-webkit-media-controls-overlay-play-button,
+#intro-start-video::-webkit-media-controls-fullscreen-button{
+ display:none!important;opacity:0!important;visibility:hidden!important;
+}
+</style>
 </head>
 
 <body>
@@ -8609,9 +8654,21 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     const playLayerEntry = layer => {
         if (!layer) return;
         const play = () => {
-            layer.style.setProperty("animation", "none", "important");
-            void layer.offsetWidth;
-            layer.style.setProperty("animation", "comicLayerEntry .6s ease-out both", "important");
+            try {
+                if (typeof layer.getAnimations === "function") layer.getAnimations().forEach(animation => animation.cancel());
+                if (typeof layer.animate === "function") {
+                    layer.animate(
+                        [{ opacity: 0, translate: "0 50px" }, { opacity: 1, translate: "0 0" }],
+                        { duration: 600, easing: "ease-out", fill: "both" }
+                    );
+                } else {
+                    layer.style.setProperty("animation", "none", "important");
+                    void layer.offsetWidth;
+                    layer.style.setProperty("animation", "comicLayerEntry .6s ease-out both", "important");
+                }
+            } catch (_) {
+                layer.style.setProperty("animation", "comicLayerEntry .6s ease-out both", "important");
+            }
         };
         if (layer.complete && layer.naturalWidth > 0) play();
         else {
@@ -8625,6 +8682,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         if (shownPaths.includes(path)) return;
         const fileName = path.split("/").pop();
         const openingBg = options.opening && /(?:背景|漫畫背景)\\.(webp|png|jpe?g)$/i.test(fileName);
+        const isFullBleedOpeningBackdrop = options.opening && /漫畫背景\\.(webp|png|jpe?g)$/i.test(fileName);
         const isSplitBackground = isSplitBackgroundAndRole && path === backgroundMaskPath;
         const isSplitRole = isSplitBackgroundAndRole && path === rolePath;
         const extraClass =
@@ -8661,6 +8719,27 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.style.setProperty("mask-repeat", "no-repeat", "important");
         }
         if (isSplitBackground) layer.classList.add("comic-split-background");
+
+        // 所有漫畫分鏡都用同一個舞台比例與置中座標；只有共用紙背景滿版。
+        const layerSize = isFullBleedOpeningBackdrop ? "100%" : "86%";
+        layer.style.setProperty("position", "absolute", "important");
+        layer.style.setProperty("top", "50%", "important");
+        layer.style.setProperty("left", "50%", "important");
+        layer.style.setProperty("right", "auto", "important");
+        layer.style.setProperty("bottom", "auto", "important");
+        layer.style.setProperty("width", layerSize, "important");
+        layer.style.setProperty("height", layerSize, "important");
+        layer.style.setProperty("min-width", layerSize, "important");
+        layer.style.setProperty("min-height", layerSize, "important");
+        layer.style.setProperty("max-width", layerSize, "important");
+        layer.style.setProperty("max-height", layerSize, "important");
+        layer.style.setProperty("margin", "0", "important");
+        layer.style.setProperty("padding", "0", "important");
+        layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
+        layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : "contain", "important");
+        layer.style.setProperty("object-position", "center center", "important");
+        layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : (isSplitBackground ? "2" : (isSplitRole ? "3" : "2")), "important");
+        layer.style.setProperty("animation", "none", "important");
         playLayerEntry(layer);
         shownPaths.push(path);
     });
@@ -12131,10 +12210,17 @@ function openPersonalityResult(first,second){
                     const loadingLayer = document.getElementById("loading-screen");
                     // 開始畫面、漫畫與載入遮罩全部以遊戲舞台為定位基準。
                     const gameContainer = document.getElementById("game-container");
-                    // 載入遮罩留在 body 並維持 fixed；只有漫畫畫布放進遊戲舞台。
-                    [comicScreen].forEach(layer => {
+                    // 載入遮罩與漫畫畫布都固定留在遊戲舞台內；載入時以舞台絕對定位覆蓋 UI。
+                    [loadingLayer, comicScreen].forEach(layer => {
                         if (layer && gameContainer && layer.parentElement !== gameContainer) gameContainer.appendChild(layer);
                     });
+                    if (loadingLayer) {
+                        loadingLayer.style.setProperty("position", "absolute", "important");
+                        loadingLayer.style.setProperty("inset", "0", "important");
+                        loadingLayer.style.setProperty("width", "100%", "important");
+                        loadingLayer.style.setProperty("height", "100%", "important");
+                        loadingLayer.style.setProperty("z-index", "2147483647", "important");
+                    }
                     if(gameContainer)gameContainer.classList.add("start-screen-active");
                     if (startScreen && gameContainer && startScreen.parentElement !== gameContainer) gameContainer.appendChild(startScreen);
                     if (startScreen) {
@@ -12166,7 +12252,15 @@ function openPersonalityResult(first,second){
                         developerTools.style.right = "max(14px, env(safe-area-inset-right))";
                     }
                     const video = document.getElementById("intro-start-video");
-                    if (video && typeof video.play === "function") video.play().catch(() => {});
+                    if (video) {
+                        video.controls = false;
+                        video.removeAttribute("controls");
+                        video.disablePictureInPicture = true;
+                        video.disableRemotePlayback = true;
+                        video.setAttribute("disablepictureinpicture", "");
+                        video.setAttribute("disableremoteplayback", "");
+                        if (typeof video.play === "function") video.play().catch(() => {});
+                    }
                     window.__zizebigStartupStage = "開始介面已顯示，等待玩家開始";
                 }
 
