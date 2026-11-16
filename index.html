@@ -9664,8 +9664,10 @@ if (window.currentSceneBGM !== scene.bgm) {
         }));
         window.comicDialoguePending = true;
         visualsReady.then(() => {
+            if (Number(storyScript[currentStep]?.id) !== Number(scene.id)) return;
             if (window.comicDialogueStartTimer) clearTimeout(window.comicDialogueStartTimer);
             window.comicDialogueStartTimer = setTimeout(() => {
+                if (Number(storyScript[currentStep]?.id) !== Number(scene.id)) return;
                 if (comicBubble && comicBubble.isConnected) comicBubble.style.opacity = "1";
                 window.comicDialoguePending = false;
                 startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
@@ -11778,10 +11780,13 @@ function openPersonalityResult(first,second){
                 speedHint=document.createElement("div");
                 speedHint.className="credits-speed-hint";
                 speedHint.textContent="即將跳轉到開始介面";
-                speedHint.style.display="none";
                 credits.appendChild(speedHint);
-                const creditsRoll=credits.querySelector(".credits-roll");
-                if(creditsRoll){creditsRoll.addEventListener("animationend",()=>{speedHint.style.display="block";},{once:true});}
+            }
+            speedHint.style.display="none";
+            const creditsRoll=credits.querySelector(".credits-roll");
+            if(creditsRoll && creditsRoll.dataset.hintBound!=="1"){
+                creditsRoll.dataset.hintBound="1";
+                creditsRoll.addEventListener("animationend",()=>{speedHint.style.display="block";},{once:true});
             }
             // 長按只調整動畫 playbackRate，不改 duration，放開時保留當下播放進度。
             if(credits.dataset.holdSpeedBound!=="1"){
