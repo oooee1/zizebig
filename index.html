@@ -18831,3 +18831,16 @@ body.opening-comic-controls #game-container #skip-btn{
   --result-disclaimer-shift-y:-155px!important;
 }
 </style>
+
+<style id="result-save-mobile-scale-repair-20261116">
+/* 手機保存結果按鈕沿用桌機已修正的比例，避免 1.6 倍放大後壓住職業介紹內容。 */
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+  #personality-result-screen #personality-result-save{
+    transform:translateX(-50%) scale(.82)!important;
+    transform-origin:center bottom!important;
+  }
+  #personality-result-screen #personality-result-save:active{
+    transform:translate(-50%,1px) scale(.82)!important;
+  }
+}
+</style>
