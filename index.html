@@ -9041,7 +9041,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             // 之前兩組都被設在 left:50% 且尺寸相同，12 疊上來後只是把 11 蓋住，
             // 看起來就像 11 被刪掉；實際上圖層仍留在 DOM。
             const panelMatch = (isSplitRole ? rolePath : backgroundMaskPath).match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i);
-            const openingPanelNumber = options.opening && panelMatch ? panelMatch[1] : null;
+            const openingPanelNumber = comicGroup === "opening-spread-11-12" && panelMatch ? panelMatch[1] : null;
             layer.style.setProperty("top", "50%", "important");
             layer.style.setProperty("left", openingPanelNumber === "11" ? "26%" : openingPanelNumber === "12" ? "74%" : "50%", "important");
             layer.style.setProperty("width", openingPanelNumber ? "46%" : "90%", "important");
