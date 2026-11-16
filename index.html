@@ -3833,6 +3833,7 @@ img { max-width:100%; }
     {
         id: -12,
         text: "但我已經要成年了，仍對未來感到迷茫。",
+        comicDialoguePosition: { left: "8%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
         comicGroup: "opening-11-14",
         comicImages: ["./pct/漫畫背景.webp", "./pct/13.webp"],
@@ -3860,6 +3861,7 @@ img { max-width:100%; }
     {
         id: -9,
         text: "真希望能收到你們的回覆。",
+        comicDialoguePosition: { right: "8%", top: "7%", tail: "bottom-left" },
         background: "漫畫背景",
         comicGroup: "opening-1-4",
         comicImages: ["./1漫畫/2.webp"],
@@ -5238,6 +5240,9 @@ img { max-width:100%; }
     },
     {
         id: 98.11,
+        comicMode: true,
+        comicGroup: "sympathy-relief-98",
+        comicImages: ["./pct/CG圖 同情星衝浪放鬆.webp"],
         bgm: "./audio/2.Louis Armstrong and his Hot Five - Cornet Chop Suey - Kurt Boehme.mp3",
         background: "衝浪",
         nextId: 99, 
@@ -5252,6 +5257,9 @@ img { max-width:100%; }
     },
     {
         id: 98.22,
+        comicMode: true,
+        comicGroup: "sympathy-relief-98",
+        comicImages: ["./pct/CG圖 同情星吃東西放鬆.webp"],
         bgm: "./audio/2.Louis Armstrong and his Hot Five - Cornet Chop Suey - Kurt Boehme.mp3",
         background: "吃東西",
         nextId: 99, 
@@ -5266,6 +5274,9 @@ img { max-width:100%; }
     },
     {
         id: 98.33,
+        comicMode: true,
+        comicGroup: "sympathy-relief-98",
+        comicImages: ["./pct/CG圖 同情星去KTV放鬆.webp"],
         bgm: "./audio/2.Louis Armstrong and his Hot Five - Cornet Chop Suey - Kurt Boehme.mp3",
         background: "KTV",
         nextId: 99, 
@@ -5280,6 +5291,9 @@ img { max-width:100%; }
     },
     {
         id: 98.44,
+        comicMode: true,
+        comicGroup: "sympathy-relief-98",
+        comicImages: ["./pct/CG圖 同情星爬山放鬆.webp"],
         bgm: "./audio/2.Louis Armstrong and his Hot Five - Cornet Chop Suey - Kurt Boehme.mp3",
         background: "爬山",
         nextId: 99, 
@@ -8619,6 +8633,7 @@ function activateImages(container) { if (!container) return; container.querySele
             });
             if (Array.isArray(scene.comicImages)) paths.push(...scene.comicImages);
             if (scene.letterImage) paths.push(scene.letterImage);
+            if (Number(scene.id) === -7) paths.push("./1漫畫/雲1.webp", "./1漫畫/雲2.webp", "./1漫畫/雲3.webp");
 
             // 進入計分題時，一次準備好題目介面素材，避免拼圖與確認畫面逐張跑出來。
             const hasScoredOptions = Array.isArray(scene.options) && scene.options.some(
@@ -8871,16 +8886,22 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.classList.add("comic-split-role");
             if (options.opening) layer.classList.add("intro-comic-role");
             layer.setAttribute("data-comic-layer-kind", "split-role");
-            // 11 的背景與角色使用相同透明畫布，需保持原始座標直接疊合。
-            if (/(?:^|\/)11\.webp$/i.test(rolePath) && backgroundMaskPath) {
-                // 11背景與11.webp使用同一畫布座標；角色直接疊合，不套用背景遮罩。
-                layer.setAttribute("data-comic-mask-role", "11");
+            // 分離角色圖以同一格的背景圖 Alpha 作遮罩，避免人物跑出背景輪廓。
+            const splitNumber = isSplitRole ? rolePath.match(/(?:^|\/)(11|12)\.webp$/i) : null;
+            if (splitNumber && backgroundMaskPath) {
+                layer.setAttribute("data-comic-mask-role", splitNumber[1]);
+                const roleMaskUrl = 'url("' + backgroundMaskPath + '")';
+                layer.style.setProperty("--comic-role-mask", roleMaskUrl, "important");
+                layer.style.setProperty("-webkit-mask-image", roleMaskUrl, "important");
+                layer.style.setProperty("mask-image", roleMaskUrl, "important");
+                layer.style.setProperty("-webkit-mask-mode", "alpha", "important");
+                layer.style.setProperty("mask-mode", "alpha", "important");
             } else {
                 layer.removeAttribute("data-comic-mask-role");
+                layer.style.removeProperty("--comic-role-mask");
+                layer.style.setProperty("-webkit-mask-image", "none", "important");
+                layer.style.setProperty("mask-image", "none", "important");
             }
-            layer.style.removeProperty("--comic-role-mask");
-            layer.style.setProperty("-webkit-mask-image", "none", "important");
-            layer.style.setProperty("mask-image", "none", "important");
         }
 
         const isForegroundComic = !isFullBleedOpeningBackdrop;
@@ -8902,13 +8923,16 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
         layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : "contain", "important");
         layer.style.setProperty("object-position", "center center", "important");
-        // 11／12 分離背景與角色採相同固定畫布比例，避免各自依原圖比例縮放而錯位。
-        if (isAlignedSplitLayer && /(?:^|\/)(?:11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i.test(path)) {
+        // 所有漫畫前景統一使用相同 90%×90% 畫布框，保留原始比例置中。
+        if (isForegroundComic) {
             layer.style.setProperty("width", "90%", "important");
             layer.style.setProperty("height", "90%", "important");
+            layer.style.setProperty("min-width", "0", "important");
+            layer.style.setProperty("min-height", "0", "important");
             layer.style.setProperty("max-width", "90%", "important");
             layer.style.setProperty("max-height", "90%", "important");
-            layer.style.setProperty("object-fit", "fill", "important");
+            layer.style.setProperty("object-fit", "contain", "important");
+            layer.style.setProperty("object-position", "center center", "important");
         }
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
         layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : String(10 + layerOrder), "important");
@@ -8991,7 +9015,7 @@ function renderScene(stepIndex) {
     // 漫畫模式：只顯示場景背景與漫畫圖，不顯示對話框、角色立繪或角色名字。
     const sceneComicPaths = Array.isArray(scene.comicImages)
         ? scene.comicImages.filter(path => typeof path === "string" &&
-            (path.startsWith("./1漫畫/") || /^\.\/pct\/(?:漫畫背景|(?:11|12)背景|11|12|13|14)\.webp$/i.test(path)))
+            (scene.comicMode === true || path.startsWith("./1漫畫/") || /^\.\/pct\/(?:漫畫背景|(?:11|12)背景|11|12|13|14)\.webp$/i.test(path)))
         : [];
     const comicBoxAtSceneStart = document.getElementById("comic-box");
     const nextScene = storyScript[stepIndex + 1];
@@ -8999,7 +9023,7 @@ function renderScene(stepIndex) {
     const previousComicGroup = comicBoxAtSceneStart?.getAttribute("data-comic-group") || null;
     const nextSceneHasComic = Boolean(nextScene && Array.isArray(nextScene.comicImages) &&
         nextScene.comicImages.some(path => typeof path === "string" &&
-            (path.startsWith("./1漫畫/") || /^\.\/pct\/(?:漫畫背景|(?:11|12)背景|11|12|13|14)\.webp$/i.test(path))) &&
+            (nextScene.comicMode === true || path.startsWith("./1漫畫/") || /^\.\/pct\/(?:漫畫背景|(?:11|12)背景|11|12|13|14)\.webp$/i.test(path))) &&
         (currentComicGroup === null || nextScene.comicGroup === currentComicGroup));
     // 同組漫畫中間沒有新圖片的場景仍維持漫畫模式；跨組時不延續上一組圖層。
     const hasPreviousComicLayers = Boolean(comicBoxAtSceneStart &&
@@ -9007,7 +9031,7 @@ function renderScene(stepIndex) {
     const isContinuingComic = sceneComicPaths.length === 0 &&
         hasPreviousComicLayers && nextSceneHasComic &&
         (currentComicGroup === null || previousComicGroup === String(currentComicGroup));
-    const isComicMode = sceneComicPaths.length > 0 || isContinuingComic;
+    const isComicMode = sceneComicPaths.length > 0 || scene.comicMode === true || isContinuingComic;
 
     // 每次切換場景先取消上一幕的純背景提示。
     if (window.emptySceneHintTimer) {
@@ -9310,7 +9334,11 @@ if (!hasScoredOptions) {
             }
             else if (displayName.includes("路人好奇星")) pageEl.classList.add("speaker-curious-random-person");
             else if (displayName.includes("好奇星們")) pageEl.classList.add("speaker-curious-group");
-            else if (displayName === "信") pageEl.classList.add("speaker-letter", "speaker-npc");
+            else if (displayName === "信") {
+                pageEl.classList.add("speaker-letter", "speaker-npc");
+                const letterSpeakerName = pageEl.querySelector(".name-npc");
+                if (letterSpeakerName) letterSpeakerName.textContent = "信";
+            }
             else if (displayName.includes("星辰") || sceneSpeaker === "玩家") pageEl.classList.add("speaker-star");
             else if (displayName.includes("好奇星")) pageEl.classList.add("speaker-curious");
             else if (displayName.includes("同情星")) pageEl.classList.add("speaker-sympathy");
@@ -9455,16 +9483,22 @@ if (window.currentSceneBGM !== scene.bgm) {
         letterOverlayPage.appendChild(letterOverlay);
     }
     if (letterOverlay) {
-        letterOverlay.replaceChildren();
         if (scene.letterImage) {
-            const letterImg = document.createElement("img");
-            letterImg.src = scene.letterImage;
-            letterImg.alt = "信件";
-            letterImg.className = scene.letterImage.includes("貝殼信") ? "shell-letter-image" : "parent-letter-image";
-            letterOverlay.appendChild(letterImg);
+            const expectedClass = scene.letterImage.includes("貝殼信") ? "shell-letter-image" : "parent-letter-image";
+            let letterImg = letterOverlay.querySelector("img");
+            const isNewLetter = !letterImg || letterImg.getAttribute("src") !== scene.letterImage;
+            if (isNewLetter) {
+                letterOverlay.replaceChildren();
+                letterImg = document.createElement("img");
+                letterImg.src = scene.letterImage;
+                letterImg.alt = "信件";
+                letterImg.className = expectedClass;
+                letterOverlay.appendChild(letterImg);
+            }
             letterOverlay.style.display = "block";
         } else {
             letterOverlay.style.display = "none";
+            letterOverlay.replaceChildren();
         }
     }
 
@@ -9483,13 +9517,22 @@ if (window.currentSceneBGM !== scene.bgm) {
     // 漫畫對話泡泡屬於目前漫畫格；同一 comicGroup 內逐句保留，換組才清除。
     const comicBubbleText = isComicMode && hasText ? createComicDialogueBubble(comicBox, scene) : null;
 
-    // 8. 問題介面直接顯示選項，不覆蓋上一幕的對話文字。
+    // 漫畫先進場，再自動顯示對話；只延遲打字，不需要玩家多按一次。
+    if (window.comicDialogueStartTimer) clearTimeout(window.comicDialogueStartTimer);
+    window.comicDialogueStartTimer = null;
+    window.comicDialoguePending = false;
     if (hasScoredOptions) {
         renderOptions(scene);
+    } else if (isComicMode && comicBubbleText) {
+        window.comicDialoguePending = true;
+        window.comicDialogueStartTimer = setTimeout(() => {
+            window.comicDialogueStartTimer = null;
+            window.comicDialoguePending = false;
+            if (currentStep !== stepIndex) return;
+            startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
+        }, 480);
     } else {
-        startTypingEffect(dialogueTextForDisplay, () => {
-            renderOptions(scene);
-        }, comicBubbleText);
+        startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
     }
 
     // 提前載入所有可能接續的場景（包含題目分支），利用玩家閱讀對話的時間準備素材。
@@ -11621,6 +11664,54 @@ function openPersonalityResult(first,second){
             }
         }
 
+        // 開場 1～4 漫畫結束後的夢境轉場：三層雲依序蓋滿畫面，再淡出露出下一幕。
+        function playDreamCloudTransition(onComplete) {
+            const stage = document.getElementById("game-container");
+            if (!stage) { if (typeof onComplete === "function") onComplete(); return; }
+            const overlay = document.createElement("div");
+            overlay.className = "dream-cloud-transition";
+            overlay.setAttribute("aria-hidden", "true");
+            const sources = ["./1漫畫/雲1.webp", "./1漫畫/雲2.webp", "./1漫畫/雲3.webp"];
+            const images = sources.map((src, index) => {
+                const img = document.createElement("img");
+                img.src = src; img.alt = ""; img.dataset.cloudIndex = String(index);
+                overlay.appendChild(img); return img;
+            });
+            stage.appendChild(overlay);
+            const waitForImages = Promise.all(images.map(img => {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.addEventListener("load", resolve, { once: true });
+                    img.addEventListener("error", resolve, { once: true });
+                });
+            }));
+            let finished = false;
+            const finish = () => {
+                if (finished) return;
+                finished = true; overlay.remove();
+                if (typeof onComplete === "function") onComplete();
+            };
+            const fallback = setTimeout(finish, 5200);
+            waitForImages.then(() => {
+                if (finished) return;
+                const covers = images.map((img,index) => img.animate(
+                    [{opacity:0,transform:"translateY(16%) scale(1.08)"},{opacity:1,transform:"translateY(0) scale(1)"}],
+                    {duration:560,delay:index*130,easing:"cubic-bezier(.2,.75,.25,1)",fill:"forwards"}
+                ));
+                Promise.all(covers.map(a=>a.finished.catch(()=>null))).then(() => {
+                    if (finished) return;
+                    setTimeout(() => {
+                        if (finished) return;
+                        const reveals = [...images].reverse().map((img,index)=>img.animate(
+                            [{opacity:1,transform:"translateY(0) scale(1)"},{opacity:0,transform:"translateY(-12%) scale(1.06)"}],
+                            {duration:620,delay:index*90,easing:"ease-in",fill:"forwards"}
+                        ));
+                        Promise.all(reveals.map(a=>a.finished.catch(()=>null))).then(()=>{clearTimeout(fallback);finish();});
+                    },420);
+                });
+            });
+        }
+
         function nextStep() {
             // 只要目前畫面正在顯示「我的選擇」按鈕，就鎖住一般劇情推進。
             // 以實際顯示的按鈕判斷，不把場景編號寫死在 nextStep 裡。
@@ -11631,6 +11722,7 @@ function openPersonalityResult(first,second){
             // 目前場景還在載素材時，任何點擊都不能推進或跳過對話。
             if (sceneTransitionLoading) return;
             const scene = storyScript[currentStep];
+            if (window.dreamCloudTransitionRunning || window.comicDialoguePending) return;
             if (scene && Number(scene.id) === 8) return;
             // 351 是最後一幕劇情；點擊後直接切換到原本的電影式滾動片尾。
             if (scene && Number(scene.id) === 351) {
@@ -11656,6 +11748,20 @@ function openPersonalityResult(first,second){
             }
 
             if (scene && scene.options && scene.options.length > 0) return;
+
+            if (scene && Number(scene.id) === -7) {
+                const targetIndex = scene.nextId !== undefined
+                    ? storyScript.findIndex(item => Number(item.id) === Number(scene.nextId))
+                    : currentStep + 1;
+                window.dreamCloudTransitionRunning = true;
+                playDreamCloudTransition(() => {
+                    window.dreamCloudTransitionRunning = false;
+                    currentStep = targetIndex;
+                    if (currentStep >= 0 && currentStep < storyScript.length) renderScene(currentStep);
+                    else showEndCredits();
+                });
+                return;
+            }
 
             if (scene && scene.nextId !== undefined) {
                 currentStep = storyScript.findIndex(s => s.id === scene.nextId);
@@ -18158,3 +18264,31 @@ body.opening-comic-controls #game-container #skip-btn{
   --result-disclaimer-shift-y:-170px!important;
 }
 </style>
+
+<style id="comic-canvas-cloud-transition-final-20261116">
+/* 所有漫畫格固定在同一個 90%×90% 中央畫布；11/12 分層與 13/14 單張都用同一尺寸。 */
+#game-container #comic-box .comic-layer:not([src*="漫畫背景"]){
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:90%!important;height:90%!important;min-width:0!important;min-height:0!important;
+ max-width:90%!important;max-height:90%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+/* 11/12 角色使用同一格背景圖的 Alpha 遮罩。 */
+#game-container #comic-box .comic-split-role[data-comic-mask-role="11"],
+#game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{
+ -webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;
+ -webkit-mask-position:center center!important;mask-position:center center!important;
+ -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
+ -webkit-mask-mode:alpha!important;mask-mode:alpha!important;
+}
+#game-container .dream-cloud-transition{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ z-index:2147483000!important;overflow:hidden!important;pointer-events:auto!important;background:transparent!important;
+}
+#game-container .dream-cloud-transition img{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center center!important;
+ opacity:0;pointer-events:none!important;
+}
+</style>
+
