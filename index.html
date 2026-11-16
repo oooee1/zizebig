@@ -3361,7 +3361,7 @@ img { max-width:100%; }
 
             <div class="credits-gap"></div>
             <div class="credits-heading">工作人員哀居：</div>
-            <div class="credits-person">加烏賊加烏賊－@ouo3bbb－快點截圖加我 <img src="./pct/0烏賊哀居.webp" alt="烏賊 Instagram"></div>
+            <div class="credits-person credits-person-squid">加烏賊加烏賊－@ouo3bbb－快點截圖加我 <img src="./pct/0烏賊哀居.webp" alt="烏賊 Instagram"></div>
             <div class="credits-person">木鵝－@ooo.__ee <img src="./pct/0木鵝哀居.webp" alt="木鵝 Instagram"></div>
             <div class="credits-person">笑笑－@nana195207 <img src="./pct/0笑笑哀居.webp" alt="笑笑 Instagram"></div>
 
@@ -8594,7 +8594,7 @@ function enterGameAnimation() {
 function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options = {}) {
     if (!comicBox || !comicImg) return;
     const enteringComicMode = comicBox.style.display !== "block";
-    const shouldAnimateComicEntry = options.animateEntry !== false && (enteringComicMode || options.opening);
+    const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || options.opening));
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
     if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
         comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => layer.remove());
@@ -9141,7 +9141,7 @@ if (window.currentSceneBGM !== scene.bgm) {
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
     if (comicBox && comicImg && (sceneComicPaths.length > 0 || isContinuingComic)) {
-        renderComicLayers(comicBox, comicImg, sceneComicPaths, currentComicGroup);
+        renderComicLayers(comicBox, comicImg, sceneComicPaths, currentComicGroup, { animateEntry: sceneComicPaths.length > 0 });
     } else {
         clearComicLayers(comicBox, comicImg);
     }
@@ -10427,7 +10427,7 @@ function positionResultTextElements(layers,copy){
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
     // 手機保留目前已接近正確的位置；電腦恢復透明尾端裁切前的舊定位基準。
     if(isMobileResultLayout){
-     const careerShiftX=6.5;
+     const careerShiftX=7.5;
      const careerShiftY=35;
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
@@ -12089,11 +12089,11 @@ function openPersonalityResult(first,second){
                     const startScreen = document.getElementById("intro-start-screen");
                     const comicScreen = document.getElementById("comic-box");
                     const loadingLayer = document.getElementById("loading-screen");
-                    // 載入畫面與漫畫可使用全螢幕；開始遊戲首頁本身必須留在遊戲舞台內。
-                    [loadingLayer, comicScreen].forEach(layer => {
-                        if (layer && layer.parentElement !== document.body) document.body.appendChild(layer);
-                    });
+                    // 開始畫面、漫畫與載入遮罩全部以遊戲舞台為定位基準。
                     const gameContainer = document.getElementById("game-container");
+                    [loadingLayer, comicScreen].forEach(layer => {
+                        if (layer && gameContainer && layer.parentElement !== gameContainer) gameContainer.appendChild(layer);
+                    });
                     if(gameContainer)gameContainer.classList.add("start-screen-active");
                     if (startScreen && gameContainer && startScreen.parentElement !== gameContainer) gameContainer.appendChild(startScreen);
                     if (startScreen) {
@@ -12105,16 +12105,16 @@ function openPersonalityResult(first,second){
                         startScreen.style.setProperty("pointer-events", "auto", "important");
                     }
                     if (comicScreen) {
-                        comicScreen.style.setProperty("position", "fixed", "important");
+                        comicScreen.style.setProperty("position", "absolute", "important");
                         comicScreen.style.setProperty("inset", "0", "important");
-                        comicScreen.style.setProperty("width", "100vw", "important");
-                        comicScreen.style.setProperty("height", "100dvh", "important");
+                        comicScreen.style.setProperty("width", "100%", "important");
+                        comicScreen.style.setProperty("height", "100%", "important");
                     }
                     if (loadingLayer) {
-                        loadingLayer.style.setProperty("position", "fixed", "important");
+                        loadingLayer.style.setProperty("position", "absolute", "important");
                         loadingLayer.style.setProperty("inset", "0", "important");
-                        loadingLayer.style.setProperty("width", "100vw", "important");
-                        loadingLayer.style.setProperty("height", "100dvh", "important");
+                        loadingLayer.style.setProperty("width", "100%", "important");
+                        loadingLayer.style.setProperty("height", "100%", "important");
                     }
                     const developerTools = document.getElementById("developer-tools");
                     // 開發者工具移出遊戲裁切容器與開場畫面的 stacking context，固定在整個視窗最上層。
@@ -16905,5 +16905,24 @@ body.opening-comic-controls #game-container #skip-btn{
 /* 標語由 JS 以繼續遊戲按鈕作為定位錨點；禁止舊版規則把它推回長條紙座標。 */
 #personality-result-screen #personality-result-copy .result-disclaimer{
  transform:none!important;
+}
+</style>
+
+<style id="stage-comic-loading-and-credits-fixes-20261116">
+#game-container > #loading-screen{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:0!important;max-width:100%!important;min-height:0!important;max-height:100%!important}
+#game-container #comic-box.opening-comic-active .intro-comic-background,
+#game-container #comic-box.opening-comic-active .intro-comic-role{width:92%!important;height:92%!important;min-width:0!important;min-height:0!important;max-width:92%!important;max-height:92%!important;object-fit:fill!important}
+#game-container #comic-box.opening-comic-active .intro-comic-role[data-comic-mask-role="11"]{-webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;-webkit-mask-position:center!important;mask-position:center!important}
+#game-container #comic-box.opening-comic-active .intro-comic-background,
+#game-container #comic-box.opening-comic-active .intro-comic-role{animation:fadeInUp .6s ease-out both!important}
+#end-credits .credits-person img{width:100px!important;height:100px!important;max-width:100px!important;max-height:100px!important;object-fit:contain!important;flex:0 0 100px!important}
+#end-credits .credits-person-squid{font-size:.82em!important;line-height:1.35!important}
+#result-preview-share-overlay .result-preview-share-title{font-family:"PingFang TC","Heiti TC","Microsoft JhengHei",system-ui,sans-serif!important;font-style:normal!important;font-weight:500!important;-webkit-text-fill-color:#fff!important;color:#fff!important;font-synthesis:none!important}
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+ #personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:-18px!important}
+ #result-preview-share-overlay .result-preview-close{right:48px!important;top:-7px!important}
+}
+@media (min-width:901px) and (pointer:fine){
+ #personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:0px!important}
 }
 </style>
