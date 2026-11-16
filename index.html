@@ -10433,7 +10433,7 @@ if (window.currentSceneBGM !== scene.bgm) {
                 "就是萌！正面看，萌！背面看，萌！左邊看，萌！右面看，萌！上面看，萌！下面看，萌！",
                 "我強大的克制力讓星辰避免了一場可怕的騷擾",
                 "我長眼睛就是為了看這個🔥我長眼睛就是為了看這個🔥我長眼睛就是為了看這個🔥",
-                "我就是一平平無奇的老百姓，你讓我刷到這種顏值，我的心跳一路「蹦蹦蹦噠噠噠撲騰撲騰」沒停過…"
+                "我就是一平平無奇的老百姓，你讓我刷到這種顏值，我的心跳一路“蹦蹦蹦噠噠噠撲騰撲騰”沒停過…"
             ];
             function playMailSuccessAction(){
                 const sprite=document.getElementById("爽快星開心");
@@ -19178,14 +19178,32 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style>
 
-<style id="opening-comic-11-12-same-canvas-cloud-nudge-20261116">
-/* 最終覆蓋舊版 11／12 左右偏移：兩張素材的透明畫布原本就包含各自位置，必須同尺寸、同座標疊合。 */
+<style id="opening-comic-11-12-persistence-logo-cloud-final-20261116">
+/* 11、12 是兩張獨立的完整漫畫圖：同一畫布累積顯示，後出現的 12 不得清除或遮住 11。 */
+#game-container #comic-box.opening-comic-active{isolation:isolate!important}
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"]{
+  z-index:40!important;visibility:visible!important;
+}
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{
+  z-index:30!important;visibility:visible!important;
+}
+/* 兩張沿用同一畫布座標；不再左右拆分，也不覆寫各自淡入動畫的 opacity。 */
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"],
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{
- position:absolute!important;left:50%!important;top:50%!important;
- width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
- transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+  position:absolute!important;left:50%!important;top:50%!important;
+  width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
+  transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
 }
-/* 最上方第一朵雲上移 6 個百分點，其他雲不變。 */
-#game-container .dream-cloud-transition img:nth-child(1){top:-40%!important}
+/* 開始介面的 Logo 與標準字都恢復白色泛光。 */
+#intro-start-logo,#intro-start-title{
+  -webkit-filter:drop-shadow(0 0 9px rgba(255,255,255,.96))
+    drop-shadow(0 0 22px rgba(255,255,255,.76))
+    drop-shadow(0 0 38px rgba(255,255,255,.52))!important;
+  filter:drop-shadow(0 0 9px rgba(255,255,255,.96))
+    drop-shadow(0 0 22px rgba(255,255,255,.76))
+    drop-shadow(0 0 38px rgba(255,255,255,.52))!important;
+}
+/* 第一朵與最後一朵雲各自上移 6 個百分點，中間雲保持原位。 */
+#game-container .dream-cloud-transition img:nth-child(1){top:-46%!important}
+#game-container .dream-cloud-transition img:nth-child(3){top:42%!important}
 </style>
