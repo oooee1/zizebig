@@ -1121,8 +1121,8 @@
 
 /* 跳過鍵固定在最右上角，尺寸稍微縮小 */
 #skip-btn {
-    position: absolute;
-    top:max(22px,calc(env(safe-area-inset-top) + 8px));
+    position: fixed!important;
+    top:max(30px,calc(env(safe-area-inset-top) + 16px));
     right:128px;
     z-index:2147483649;
     width: 52px;
@@ -3044,37 +3044,15 @@ img { max-width:100%; }
 #game-container .dream-cloud-transition{z-index:2147483647!important}#game-container .menu-container{z-index:2147483648!important;position:absolute!important}#game-container > #skip-btn{z-index:2147483649;position:absolute!important}#game-container > #developer-tools{z-index:2147483650!important;position:absolute!important}#game-container #developer-tools-toggle,#game-container #developer-tools-panel,#game-container #developer-tools-panel button{position:relative!important;z-index:2147483650!important}
 </style>
 
-<style id="restore-black-logo-glow-and-vacuum-transition-20261117">
-/* 開始介面的 Logo 與標準字：明確使用黑色泛光，並放在實際頁面 head 的全域樣式中。 */
-#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;} #intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
-/* 40.1 吸塵器成功轉場：同一隻好奇星保持原尺寸置中，外層彈入、角色本體左右連跳。 */
-#game-container #page1 .vacuum-curious-center{
-  display:flex!important;visibility:visible!important;opacity:1!important;
-  position:absolute!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
-  margin:0!important;padding:0!important;align-items:center!important;justify-content:center!important;
-  transform:translate(-50%,-50%)!important;z-index:1000!important;pointer-events:none!important;
-  animation:vacuumCuriousCenterEnter 1.45s ease-in-out both!important;
-}
-#game-container #page1 .vacuum-curious-center img{
-  display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
-  object-fit:contain!important;object-position:center!important;
-  animation:vacuumCuriousCenterWiggle 1.45s ease-in-out both!important;
-}
-@keyframes vacuumCuriousCenterEnter{
-  0%{opacity:0;scale:.72}
-  18%{opacity:1;scale:1.06}
-  38%{scale:.96}
-  62%,100%{opacity:1;scale:1}
-}
-@keyframes vacuumCuriousCenterWiggle{
-  0%,100%{translate:0 0;rotate:0deg}
-  14%{translate:-26px -10px;rotate:-9deg}
-  28%{translate:0 0;rotate:0deg}
-  48%{translate:26px -10px;rotate:9deg}
-  64%{translate:0 0;rotate:0deg}
-  82%{translate:-18px -7px;rotate:-6deg}
-  92%{translate:0 0;rotate:0deg}
-}
+<style id="restore-black-logo-glow-and-normal-transition-20261117">
+#intro-start-content{isolation:isolate!important}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 8px rgba(0,0,0,.95))!important;filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 8px rgba(0,0,0,.95))!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.95))!important;filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.95))!important;}
+</style>
+<style id="final-skip-dialogue-cloud-logo-adjustments-20261117">
+#game-container > #skip-btn{position:fixed!important;top:max(30px,calc(env(safe-area-inset-top) + 16px))!important;right:128px!important;left:auto!important;width:52px!important;height:52px!important;z-index:2147483649!important;}
+#intro-start-logo{-webkit-filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 8px rgba(0,0,0,.95))!important;filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 8px rgba(0,0,0,.95))!important;}
+#intro-start-title{-webkit-filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.95))!important;filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.95))!important;}
 </style>
 </head>
 
@@ -4164,7 +4142,7 @@ img { max-width:100%; }
     {
         id: 13.1,
         comicImages: [],
-        comicDialoguePosition: { left: "calc(40% + 34px)", top: "calc(20% + 7px)", tail: "top-left" },
+        comicDialoguePosition: { left: "calc(40% + 34px)", top: "calc(10% + 7px)", tail: "top-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "我們的毛沒辦法被吹走，星球才會充滿了棉花咩。",
     },
@@ -4172,14 +4150,14 @@ img { max-width:100%; }
         id: 15,
         comicGroup: 2,
         comicImages: ["./1漫畫/1好奇星-2-第二張.webp","./1漫畫/1好奇星-2-第三張.webp"],
-        comicDialoguePosition: { left: "5%", top: "calc(21% + 5% + 8px + 6%)", tail: "top-right" },
+        comicDialoguePosition: { left: "5%", top: "calc(21% + 5% + 8px - 2%)", tail: "top-right" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "{playerName}的星球是什麼樣子的咩？",
     },
     {
         id: 14,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(13% + 5% + 16px)", top: "calc(19% + 5% + 7px + 7%)", tail: "top-right" },
+        comicDialoguePosition: { left: "calc(13% + 5% + 16px + 10%)", top: "calc(19% + 5% + 7px + 7%)", tail: "top-right" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "（所以羊怎麼會講話...）",
     },
@@ -4194,7 +4172,7 @@ img { max-width:100%; }
     {
         id: 17,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(23% + 14px)", bottom: "7%", tail: "top-right" },
+        comicDialoguePosition: { left: "calc(32% + 14px)", bottom: "3%", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "記得曾經聽到過這樣的星球咩。",
@@ -4697,7 +4675,7 @@ img { max-width:100%; }
     {
         id: 52,
         comicGroup: 3,
-        comicDialoguePosition: { left: "calc(26% + 20px)", top: "calc(44% - 14px - 18%)", tail: "bottom-left" },
+        comicDialoguePosition: { left: "calc(45% + 20px)", top: "calc(44% - 14px - 18%)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "拼圖嗎？",
@@ -4723,7 +4701,7 @@ img { max-width:100%; }
     {
         id: 55,
         comicGroup: 3,
-        comicDialoguePosition: { left: "8%", top: "calc(35% + 34px + 14%)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", top: "calc(35% + 34px + 34%)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "哇，它被喚醒了！",
@@ -4731,7 +4709,7 @@ img { max-width:100%; }
     {
         id: 56,
         comicGroup: 4,
-        comicDialoguePosition: { left: "8%", bottom: "calc(47% + 40px)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", bottom: "calc(57% + 40px)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
@@ -4746,7 +4724,7 @@ img { max-width:100%; }
     {
         id: 57,
         comicGroup: 4,
-        comicDialoguePosition: { right: "4%", top: "calc(8% + 32px + 38%)", tail: "bottom-left" },
+        comicDialoguePosition: { right: "4%", top: "calc(8% + 32px + 38%)", tail: "top-left" },
         comicImages: ["./1漫畫/1好奇星-4-第二張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "嘿咻！",
@@ -9432,29 +9410,8 @@ if (!hasScoredOptions) {
         activateImages(bgContainer);
         bgContainer.style.display = 'block';
         if (shouldFadeQuietScene && previousBgContainer && previousBgContainer !== bgContainer) {
-            if (Number(currentSceneId) === 40.1) {
-                // 40.1「好奇星跳跳跳」：舊背景往外放大、散焦淡出；新草叢背景由模糊放大狀態收回清晰。
-                // 這一幕不再只套用 0.42 秒的普通淡入，背景轉場必須肉眼可見。
-                const oldBackgroundLayer = previousBgContainer.cloneNode(true);
-                oldBackgroundLayer.removeAttribute("id");
-                oldBackgroundLayer.setAttribute("aria-hidden", "true");
-                oldBackgroundLayer.style.cssText += ";display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:2!important;pointer-events:none!important;opacity:1!important;transform-origin:center center!important;";
-                const oldImage = oldBackgroundLayer.querySelector("img");
-                if (oldImage) oldImage.style.cssText += ";width:100%!important;height:100%!important;object-fit:cover!important;";
-                pageEl?.appendChild(oldBackgroundLayer);
-                const oldExit = oldBackgroundLayer.animate(
-                    [{opacity:1,transform:"scale(1)",filter:"blur(0px)"},{opacity:0,transform:"scale(1.1)",filter:"blur(9px)"}],
-                    {duration:900,easing:"cubic-bezier(.2,.75,.25,1)",fill:"forwards"}
-                );
-                oldExit.finished.catch(()=>{}).then(()=>oldBackgroundLayer.remove());
-                bgContainer.animate(
-                    [{opacity:.12,transform:"scale(1.1)",filter:"blur(10px)"},{opacity:1,transform:"scale(1)",filter:"blur(0px)"}],
-                    {duration:900,easing:"cubic-bezier(.2,.75,.25,1)",fill:"both"}
-                );
-            } else {
-                void bgContainer.offsetWidth;
-                bgContainer.classList.add('scene-transition-fade');
-            }
+            void bgContainer.offsetWidth;
+            bgContainer.classList.add('scene-transition-fade');
         }
 
         const sceneText = typeof scene.text === 'string' ? scene.text : '';
@@ -9504,7 +9461,7 @@ if (!hasScoredOptions) {
         // 只有背景確實切換時，才讓整個場景（包含有對話的畫面）一起過渡。
         // 同一背景的連續台詞不重播，避免每句話都閃動。
         pageEl.classList.remove('scene-content-transition');
-        if (shouldFadeQuietScene && Number(currentSceneId) !== 40.1) {
+        if (shouldFadeQuietScene) {
             void pageEl.offsetWidth;
             pageEl.classList.add('scene-content-transition');
         }
@@ -9753,30 +9710,9 @@ if (window.currentSceneBGM !== scene.bgm) {
         });
     }
 
-    // 40.1 吸塵器成功：保留原位置的好奇星，另複製一隻到舞台中央播放動作。
+    // 40.1 不再複製角色到畫面中央，保留原位置角色與原本的角色動畫。
     const oldVacuumCenter = document.getElementById("vacuum-curious-center");
     if (oldVacuumCenter) oldVacuumCenter.remove();
-    if (Number(currentSceneId) === 40.1) {
-        const originalCurious = document.getElementById("好奇星有尾巴");
-        const originalImage = originalCurious && originalCurious.querySelector("img");
-        const stage = document.getElementById("page1");
-        if (originalCurious && originalImage && stage) {
-            const originalRect = originalCurious.getBoundingClientRect();
-            const centerSprite = originalCurious.cloneNode(true);
-            centerSprite.id = "vacuum-curious-center";
-            centerSprite.className = "vacuum-curious-center";
-            centerSprite.style.setProperty("width", originalRect.width + "px", "important");
-            centerSprite.style.setProperty("height", originalRect.height + "px", "important");
-            originalCurious.style.display = "none";
-            const centerImage = centerSprite.querySelector("img");
-            if (centerImage) {
-                centerImage.removeAttribute("data-src");
-                centerImage.src = originalImage.currentSrc || originalImage.src;
-                centerImage.alt = "中央動畫中的好奇星";
-            }
-            stage.appendChild(centerSprite);
-        }
-    }
 
     // 特殊無文字轉場：中央角色動畫期間已切換為恢復草地的場景。
     if (Number(currentSceneId) === 40.1 && Number(scene.autoAdvanceAfterMs) > 0) {
@@ -9831,6 +9767,14 @@ if (window.currentSceneBGM !== scene.bgm) {
     // 同組漫畫的純對話格不重新呼叫圖層渲染器，保留目前畫面與進場狀態，避免閃黑。
 
     // 漫畫對話泡泡屬於目前漫畫格；同一 comicGroup 內逐句保留，換組才清除。
+    // 第 17 格必須保留第 16 格「叫做地球喔……」的前一句；若上一格泡泡因重繪而遺失，就補回。
+    if (isComicMode && Number(scene.id) === 17 && !comicBox.querySelector('.comic-speech-bubble[data-scene-id="16"]')) {
+        const previousDialogueScene = storyScript.find(item => Number(item.id) === 16);
+        if (previousDialogueScene) {
+            const previousDialogueText = createComicDialogueBubble(comicBox, previousDialogueScene);
+            if (previousDialogueText) previousDialogueText.textContent = previousDialogueScene.text;
+        }
+    }
     const comicBubbleText = isComicMode && hasText ? createComicDialogueBubble(comicBox, scene) : null;
 
     // 漫畫先進場，再自動顯示對話；只延遲打字，不需要玩家多按一次。
@@ -9908,8 +9852,8 @@ if (window.currentSceneBGM !== scene.bgm) {
             else element.style.setProperty("display", "none", "important");
         });
 
-        // 只在第一次出現有文字的普通對話框時顯示教學提示。
-        if (shouldShowDialog && !window.hasShownDialogueHint) {
+        // 每次出現普通對話文字時都顯示「點一下繼續」，不再只顯示第一次。
+        if (shouldShowDialog) {
             const pageForHint = document.getElementById("page1");
             if (pageForHint) pageForHint.classList.add("show-dialogue-hint");
             window.hasShownDialogueHint = true;
@@ -12090,14 +12034,14 @@ function openPersonalityResult(first,second){
                 if (finished) return;
                 // 改用 CSS transition，避免 iOS WebView 在舞台重排時取消 WAAPI 動畫。
                 images.forEach((img,index) => {
-                    const initial = index === 1 ? "translateY(-7%) scale(1.05,1.12)" : "translateY(7%) scale(1.05,1.12)";
+                    const initial = "translateX(" + (index % 2 === 0 ? "-115%" : "115%") + ") scale(1.05,1.12)";
                     img.style.setProperty("opacity","0");
                     img.style.setProperty("transform",initial + (index === 0 ? " scaleX(-1)" : ""));
                     img.style.setProperty("transition","none");
                 });
                 requestAnimationFrame(() => requestAnimationFrame(() => {
                     images.forEach((img,index) => {
-                        const target = index === 1 ? "translateY(-4%) scale(1.05,1.12)" : "translateY(4%) scale(1.05,1.12)";
+                        const target = "translateX(0) scale(1.05,1.12)";
                         const delay = index * 130;
                         img.style.setProperty("transition","opacity 560ms cubic-bezier(.2,.75,.25,1) "+delay+"ms, transform 560ms cubic-bezier(.2,.75,.25,1) "+delay+"ms");
                         img.style.setProperty("opacity","1");
@@ -12112,7 +12056,7 @@ function openPersonalityResult(first,second){
                         if (finished) return;
                         [...images].reverse().forEach((img,index) => {
                             const sourceIndex = images.indexOf(img);
-                            const target = sourceIndex === 1 ? "translateY(10%) scale(1.05,1.12)" : "translateY(-10%) scale(1.05,1.12)";
+                            const target = "translateX(" + (sourceIndex % 2 === 0 ? "115%" : "-115%") + ") scale(1.05,1.12)";
                             const delay = index * 90;
                             img.style.setProperty("transition","opacity 620ms ease-in "+delay+"ms, transform 620ms ease-in "+delay+"ms");
                             img.style.setProperty("opacity","0");
@@ -12894,8 +12838,8 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         menuContainer.style.setProperty("right", "auto", "important");
                     }
                     if (skipButton) {
-                        skipButton.style.setProperty("position", "absolute", "important");
-                        skipButton.style.setProperty("top", "max(22px, calc(env(safe-area-inset-top) + 8px))", "important");
+                        skipButton.style.setProperty("position", "fixed", "important");
+                        skipButton.style.setProperty("top", "max(30px, calc(env(safe-area-inset-top) + 16px))", "important");
                         skipButton.style.setProperty("right", "128px", "important");
                         skipButton.style.setProperty("left", "auto", "important");
                         skipButton.style.setProperty("display", "flex", "important");
@@ -13137,8 +13081,8 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         menuContainer.style.setProperty("pointer-events", "auto", "important");
                     }
                     if (skipButton) {
-                        skipButton.style.setProperty("position", "absolute", "important");
-                        skipButton.style.setProperty("top", "max(22px, calc(env(safe-area-inset-top) + 8px))", "important");
+                        skipButton.style.setProperty("position", "fixed", "important");
+                        skipButton.style.setProperty("top", "max(30px, calc(env(safe-area-inset-top) + 16px))", "important");
                         skipButton.style.setProperty("right", "128px", "important");
                         skipButton.style.setProperty("left", "auto", "important");
                         skipButton.style.setProperty("display", "flex", "important");
