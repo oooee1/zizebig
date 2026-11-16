@@ -9041,7 +9041,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             // 之前兩組都被設在 left:50% 且尺寸相同，12 疊上來後只是把 11 蓋住，
             // 看起來就像 11 被刪掉；實際上圖層仍留在 DOM。
             const panelMatch = (isSplitRole ? rolePath : backgroundMaskPath).match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i);
-            const openingPanelNumber = comicGroup === "opening-spread-11-12" && panelMatch ? panelMatch[1] : null;
+            const openingPanelNumber = options.opening && panelMatch ? panelMatch[1] : null;
             layer.style.setProperty("top", "50%", "important");
             layer.style.setProperty("left", openingPanelNumber === "11" ? "26%" : openingPanelNumber === "12" ? "74%" : "50%", "important");
             layer.style.setProperty("width", openingPanelNumber ? "46%" : "90%", "important");
@@ -12721,13 +12721,13 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
-                // 11、12 是同一個跨頁：共用 group，第二次 render 只追加 12 的圖層，保留 11。
-                // 13 開始換新 group，清除 11／12；1～4 仍各自獨立，避免跨頁殘留。
+                // 11～14 是同一段連續漫畫：翻到 13、14 時也保留前面已出現的圖層。
+                // 進入 1～4 後才切換下一段；每一格仍各自更新，避免 1、2 等單格互相疊在一起。
                 const openingComicFrames = [
-                    { group: "opening-spread-11-12", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-spread-11-12", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
-                    { group: "opening-panel-13", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
-                    { group: "opening-panel-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
+                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
+                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
                     { group: "opening-panel-1", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
                     { group: "opening-panel-2", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
                     { group: "opening-panel-3", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
