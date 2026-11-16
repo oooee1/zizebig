@@ -18580,13 +18580,12 @@ body.opening-comic-controls #game-container #skip-btn{
       }catch(error){console.warn("[開始介面影片] 播放啟動失敗。",error);}
     }
   }
-  ["loadeddata","canplay","canplaythrough","pageshow"].forEach(name=>window.addEventListener(name,startIntroVideo,{passive:true}));
+  ["loadeddata","canplay","canplaythrough","playing"].forEach(name=>video.addEventListener(name,startIntroVideo,{passive:true}));
+  window.addEventListener("pageshow",startIntroVideo,{passive:true});
   document.addEventListener("visibilitychange",()=>{if(!document.hidden)startIntroVideo();});
   if(typeof MutationObserver!=="undefined"){
     new MutationObserver(startIntroVideo).observe(screen,{attributes:true,attributeFilter:["style","class"]});
   }
-  const originalShowStartInterface=window.showStartInterface;
-  document.addEventListener("DOMContentLoaded",startIntroVideo,{once:true});
   requestAnimationFrame(()=>requestAnimationFrame(startIntroVideo));
   // 影片在載入時可能先於畫面顯示完成；畫面真正顯示後再補一次播放。
   window.addEventListener("load",()=>setTimeout(startIntroVideo,120),{once:true});
