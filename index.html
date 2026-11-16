@@ -12361,14 +12361,15 @@ function openPersonalityResult(first,second){
 
                 function loadStartInterface() {
                     showStartupLoading("正在載入開始介面...");
-                    window.__zizebigStartupStage = "載入開始介面素材";
-                    preloadImages(["./pct/logo.webp", "./pct/標準字.webp"], error => {
-                        if (error) console.warn("[開始介面] Logo 或標準字載入不完整：", error);
-                        if (loadingPercent) loadingPercent.textContent = "100%";
-                        const bar = document.getElementById("progress-bar");
-                        if (bar) bar.style.width = "100%";
-                        showStartInterface();
-                    }, true);
+                    window.__zizebigStartupStage = "顯示開始介面（圖片由畫面上的 img 元素自行載入）";
+
+                    // logo.webp 與標準字.webp 已經在 intro-start-screen 的 img[src] 中。
+                    // 不要再用 preloadImages(new Image()) 重複下載同兩張圖並阻塞畫面；
+                    // 直接顯示開始介面，瀏覽器會正常載入既有 img[src]。
+                    if (loadingPercent) loadingPercent.textContent = "100%";
+                    const bar = document.getElementById("progress-bar");
+                    if (bar) bar.style.width = "100%";
+                    showStartInterface();
                 }
 
                 const startButton = document.getElementById("intro-start-button");
