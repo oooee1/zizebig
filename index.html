@@ -13021,7 +13021,7 @@ function openPersonalityResult(first,second){
                         developerTools.style.setProperty("z-index", "2147483647", "important");
                     }
                     if (comicBox) {
-                        // 開場漫畫統一由 storyScript + nextStep 推進，避免另一套 openingComicIndex 同步改畫面。
+                        // 開場漫畫統一由 storyScript + nextStep 推進，不再建立第二套畫面索引。
                         comicBox.classList.add("opening-comic-active");
                         comicBox.style.setProperty("position","absolute","important");
                         comicBox.style.setProperty("inset","0","important");
