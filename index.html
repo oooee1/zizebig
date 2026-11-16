@@ -15557,6 +15557,71 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
   font-size:1em!important;line-height:inherit!important;
 }
 </style>
+
+<style id="actual-visual-regression-fixes-20261116">
+/* 11、12：以 JS 標記的分鏡編號為唯一定位依據，背景與角色必須完全重合。 */
+#game-container #comic-box.opening-comic-active .comic-layer[data-opening-panel="11"],
+#game-container #comic-box.opening-comic-active .comic-layer[data-opening-panel="12"]{
+  position:absolute!important;
+  top:50%!important;
+  width:46%!important;
+  height:86%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:46%!important;
+  max-height:86%!important;
+  margin:0!important;
+  padding:0!important;
+  transform:translate(-50%,-50%)!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+}
+#game-container #comic-box.opening-comic-active .comic-layer[data-opening-panel="11"]{left:26%!important}
+#game-container #comic-box.opening-comic-active .comic-layer[data-opening-panel="12"]{left:74%!important}
+/* 雲朵保留三片不同高度，不再被後續 150% 規則放大成整片遮住畫面。 */
+#game-container .dream-cloud-transition img:nth-child(1){
+  left:-10%!important;top:-24%!important;width:120%!important;height:86%!important;
+}
+#game-container .dream-cloud-transition img:nth-child(2){
+  left:-6%!important;top:8%!important;width:112%!important;height:92%!important;
+}
+#game-container .dream-cloud-transition img:nth-child(3){
+  left:-10%!important;top:38%!important;width:120%!important;height:86%!important;
+}
+#game-container .dream-cloud-transition img{
+  max-width:none!important;max-height:none!important;object-fit:fill!important;
+}
+/* 結果保存按鈕恢復小尺寸；一般與按下狀態都不得再套 1.6 倍放大。 */
+#personality-result-screen #personality-result-save{
+  transform:translateX(-50%) scale(.82)!important;
+}
+#personality-result-screen #personality-result-save:active{
+  transform:translate(-50%,1px) scale(.82)!important;
+}
+/* 「結合……是……」一般與同分結果統一字級、行高與文字基線。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  position:relative!important;
+  left:0!important;
+  font-size:clamp(16px,2.5cqw,20px)!important;
+  line-height:1.4!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-next{
+  font-size:1em!important;line-height:inherit!important;vertical-align:baseline!important;
+}
+@media (max-width:768px){
+  #personality-result-screen #personality-result-copy .result-career-intro,
+  #personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+    font-size:clamp(15px,3.2cqw,19px)!important;
+  }
+}
+</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
