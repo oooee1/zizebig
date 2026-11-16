@@ -12719,14 +12719,16 @@ function openPersonalityResult(first,second){
 
                 // 第一組 11～14：共用漫畫紙背景，逐張追加且保留前一張；第二組 1～4 開始時清空第一組。
                 const openingComicFrames = [
-                    { group: "opening-11-14", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-11-14", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
-                    { group: "opening-11-14", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
-                    { group: "opening-11-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
-                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
-                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
-                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
-                    { group: "opening-1-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
+                    // 每一格使用獨立 group：翻頁時完整清掉上一格，避免 11～14 疊成同一張，
+                    // 也避免第 1 格的圖留在畫布上，到了第 2 格又被追加成 1+2。
+                    { group: "opening-panel-11", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-panel-12", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-panel-13", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
+                    { group: "opening-panel-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
+                    { group: "opening-panel-1", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
+                    { group: "opening-panel-2", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
+                    { group: "opening-panel-3", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
+                    { group: "opening-panel-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
                 ];
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
@@ -15810,6 +15812,34 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
   width:132%!important;height:108%!important;max-width:none!important;
   object-fit:fill!important;
 }
+</style>
+
+
+<style id="opening-comic-final-overrides-20261116">
+/* 開場漫畫每頁只顯示當前分鏡；翻頁提示固定在畫布上方。 */
+#game-container #comic-box.opening-comic-active #opening-comic-next-hint{
+  z-index:2147483647!important;
+  pointer-events:none!important;
+}
+/* 雲 1、2 的尺寸與位置以遊戲畫布為基準，向左右延伸出邊界避免露白。 */
+#game-container .dream-cloud-transition img:nth-child(1){
+  left:-22%!important;top:-4%!important;width:144%!important;height:112%!important;
+}
+#game-container .dream-cloud-transition img:nth-child(2){
+  left:-19%!important;top:29%!important;width:138%!important;height:112%!important;
+}
+/* 七個中文字寬度；寬度由字體大小決定，避免在窄螢幕擠成長條。 */
+#game-container #comic-box .comic-speech-bubble{
+  width:7em!important;max-width:7em!important;min-width:0!important;
+  padding:8px 9px!important;white-space:normal!important;
+}
+/* 長按提示與加速操作保持可接收觸控，不顯示系統長按選取／選單。 */
+#end-credits,#end-credits .credits-roll{
+  -webkit-user-select:none!important;user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+#end-credits.show{pointer-events:auto!important;touch-action:none!important;}
+#end-credits .credits-roll{pointer-events:auto!important;touch-action:none!important;}
 </style>
 
 </html>
