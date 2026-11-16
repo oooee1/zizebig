@@ -10405,7 +10405,7 @@ function positionResultTextElements(layers,copy){
  const findImage=name=>Array.from(layers.querySelectorAll("img")).find(img=>(img.dataset.resultSrc||decodeURIComponent(img.src)).includes(name));
  const textPaper=findImage("背景 文字.webp");
  const lowerNolan=findImage("下面那張諾蘭紙.webp")||layers.querySelector("img");
- const longStrip=findImage("背景 長條紙.webp");
+ const longStrip=null;
  const apply=()=>{
   if(!textPaper||!textPaper.naturalWidth||!copy.clientWidth)return;
   const responsiveScale=Math.min(1,layers.clientWidth/390)||1;
@@ -10461,32 +10461,29 @@ function positionResultTextElements(layers,copy){
     button.style.setProperty("margin","0","important");
    }
   }
-  if(longStrip&&longStrip.complete&&longStrip.naturalWidth){
-   const b=getResultImageAlphaBounds(longStrip);
-   const note=copy.querySelector(".result-disclaimer");
-   if(b&&note){
-    const copyRect=copy.getBoundingClientRect();
-    const continueButton=copy.querySelector(".result-continue");
-    note.style.setProperty("position","absolute","important");
-    note.style.setProperty("width","100%","important");
-    note.style.setProperty("margin","0","important");
-    note.style.setProperty("transform","none","important");
-    // 標語直接錨定在「繼續遊戲」上方，不再使用長條紙的超大固定偏移量。
-    if(continueButton){
-     const buttonRect=continueButton.getBoundingClientRect();
-     const noteHeight=note.getBoundingClientRect().height||note.offsetHeight||24;
-     const noteShiftX=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-x"))||0;
-     const noteShiftY=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-y"))||0;
-     note.style.setProperty("left",noteShiftX+"px","important");
-     note.style.setProperty("top",(buttonRect.top-copyRect.top-noteHeight-18+noteShiftY)+"px","important");
-    }else{
-     // 按鈕尚未完成定位時，暫時隱藏標語，等下一次 layout/resize 再依按鈕定位。
-     note.style.setProperty("visibility","hidden","important");
-    }
+  const note=copy.querySelector(".result-disclaimer");
+  if(note){
+   const copyRect=copy.getBoundingClientRect();
+   const continueButton=copy.querySelector(".result-continue");
+   note.style.setProperty("position","absolute","important");
+   note.style.setProperty("width","100%","important");
+   note.style.setProperty("margin","0","important");
+   note.style.setProperty("transform","none","important");
+   if(continueButton){
+    const buttonRect=continueButton.getBoundingClientRect();
+    const noteHeight=note.getBoundingClientRect().height||note.offsetHeight||24;
+    const noteShiftX=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-x"))||0;
+    const noteShiftY=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-y"))||0;
+    note.style.setProperty("left",noteShiftX+"px","important");
+    // 與按鈕保持 27px 間距；不依賴長條紙圖片是否成功讀取透明邊界。
+    note.style.setProperty("top",(buttonRect.top-copyRect.top-noteHeight-27+noteShiftY)+"px","important");
+    note.style.setProperty("visibility","visible","important");
+   }else{
+    note.style.setProperty("visibility","hidden","important");
    }
   }
  };
- const images=[textPaper,lowerNolan,longStrip].filter(Boolean);
+ const images=[textPaper,lowerNolan].filter(Boolean);
  images.forEach(img=>{if(!img.complete)img.addEventListener("load",apply,{once:true});});
  if(images.every(img=>img.complete))apply();
  if(window._resultPositionResize)window.removeEventListener("resize",window._resultPositionResize);
@@ -10984,9 +10981,16 @@ function openPersonalityResultCore(first,second){
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-2)+"px","important");
   });
  }
- // 職業介紹「結合……是……」整體縮小3px；說明文字在目前計算字級上增加1px。
+ // 「結合……是……」不論兩個高分是否相同，一律採用同分版的字級。
+ // 不同分版舊 CSS 手機多放大 8px、桌機多放大 18px；先扣回差值，再沿用原本桌機 -3px。
  const careerIntro=copy.querySelector(".result-career-intro");
- if(careerIntro){const size=parseFloat(getComputedStyle(careerIntro).fontSize);const mobileCareerIntro=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size+(mobileCareerIntro?0:-3))+"px","important");}
+ if(careerIntro){
+  const size=parseFloat(getComputedStyle(careerIntro).fontSize);
+  const mobileCareerIntro=window.matchMedia&&window.matchMedia("(max-width: 768px)").matches;
+  const isTiedCareerIntro=careerIntro.classList.contains("result-career-intro-tied");
+  const normalizeDifferentScore=isTiedCareerIntro?0:(mobileCareerIntro?-8:-18);
+  if(Number.isFinite(size))careerIntro.style.setProperty("font-size",Math.max(1,size+normalizeDifferentScore+(mobileCareerIntro?0:-3))+"px","important");
+ }
  // 玩家名字在介紹句中必須跟隨句子字級；避免前面的手機全域縮字與這裡縮小整句造成相對字級偏大。
  copy.querySelectorAll(".result-player-name,.result-belongs-player-char").forEach(el=>el.style.setProperty("font-size","1em","important"));
  if(careerIntro)careerIntro.querySelectorAll(".result-player-name").forEach(el=>el.style.setProperty("font-size","1em","important"));
@@ -11213,6 +11217,7 @@ function openPersonalityResult(first,second){
                         const page=document.getElementById("page1");
                         if(page){page.style.display="";page.style.visibility="hidden";page.style.pointerEvents="none";}
                         if(startScreen && container){
+                            container.classList.add("start-screen-active");
                             if(startScreen.parentElement!==container) container.appendChild(startScreen);
                             startScreen.style.setProperty("position","absolute","important");
                             startScreen.style.setProperty("inset","0","important");
@@ -12087,7 +12092,8 @@ function openPersonalityResult(first,second){
                         if (layer && layer.parentElement !== document.body) document.body.appendChild(layer);
                     });
                     const gameContainer = document.getElementById("game-container");
-                    if (startScreen && gameContainer && startScreen.parentElement !== gameContainer) gameContainer.appendChild(startScreen);;
+                    if(gameContainer)gameContainer.classList.add("start-screen-active");
+                    if (startScreen && gameContainer && startScreen.parentElement !== gameContainer) gameContainer.appendChild(startScreen);
                     if (startScreen) {
                         startScreen.style.setProperty("position", "absolute", "important");
                         startScreen.style.setProperty("inset", "0", "important");
@@ -12176,6 +12182,7 @@ function openPersonalityResult(first,second){
                     // 漫畫、選單與跳過鍵都留在遊戲舞台內，桌機不再脫離 430px 遊戲框。
                     document.body.classList.add("opening-comic-controls");
                     const gameContainer=document.getElementById("game-container");
+                    if(gameContainer)gameContainer.classList.remove("start-screen-active");
                     if(gameContainer && comicBox && comicBox.parentElement!==gameContainer) gameContainer.appendChild(comicBox);
                     if (comicBox) {
                         bindOpeningComicAdvance(comicBox);
@@ -16882,5 +16889,18 @@ body.opening-comic-controls #game-container #skip-btn{
  position:absolute!important;top:max(12px,env(safe-area-inset-top))!important;
  right:max(12px,env(safe-area-inset-right))!important;left:auto!important;
  z-index:2147483647!important;
+}
+</style>
+
+<style id="start-screen-hide-menu-and-result-tagline-fix-20261116">
+/* 開始遊戲首頁期間完全隱藏選單與音量鍵，避免圖示浮在首頁影片／按鈕上。 */
+#game-container.start-screen-active > .menu-container,
+#game-container.start-screen-active > #skip-btn{
+ display:none!important;visibility:hidden!important;opacity:0!important;
+ pointer-events:none!important;
+}
+/* 標語由 JS 以繼續遊戲按鈕作為定位錨點；禁止舊版規則把它推回長條紙座標。 */
+#personality-result-screen #personality-result-copy .result-disclaimer{
+ transform:none!important;
 }
 </style>
