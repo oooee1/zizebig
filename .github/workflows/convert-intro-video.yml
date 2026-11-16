@@ -40,5 +40,6 @@ jobs:
             echo "MP4 is already up to date."
           else
             git commit -m "Add iOS-compatible intro video"
+            git pull --rebase origin main
             git push
           fi
