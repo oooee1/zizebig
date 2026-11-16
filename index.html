@@ -12069,6 +12069,14 @@ function openPersonalityResult(first,second){
 
                 function showStartupLoading(message) {
                     if (loadingScreen) {
+                        const stage = document.getElementById("game-container");
+                        if (stage && loadingScreen.parentElement !== stage) stage.appendChild(loadingScreen);
+                        loadingScreen.style.setProperty("position", "absolute", "important");
+                        loadingScreen.style.setProperty("inset", "0", "important");
+                        loadingScreen.style.setProperty("width", "100%", "important");
+                        loadingScreen.style.setProperty("height", "100%", "important");
+                        loadingScreen.style.setProperty("max-width", "100%", "important");
+                        loadingScreen.style.setProperty("max-height", "100%", "important");
                         loadingScreen.style.display = "flex";
                         loadingScreen.style.opacity = "1";
                         loadingScreen.style.transition = "none";
@@ -16225,6 +16233,20 @@ body.opening-comic-controls #skip-btn{
   overlay.style.setProperty("box-sizing","border-box","important");
   overlay.style.setProperty("overflow","hidden","important");
   overlay.style.setProperty("padding","8px 6px","important");
+  const shareTitle=overlay.querySelector(".result-preview-share-title");
+  if(shareTitle){
+   shareTitle.textContent="分享到…";
+   shareTitle.style.setProperty("display","block","important");
+   shareTitle.style.setProperty("visibility","visible","important");
+   shareTitle.style.setProperty("opacity","1","important");
+   shareTitle.style.setProperty("font-family",'"PingFang TC","Microsoft JhengHei",Arial,sans-serif',"important");
+   shareTitle.style.setProperty("font-style","normal","important");
+   shareTitle.style.setProperty("font-weight","600","important");
+   shareTitle.style.setProperty("font-size","18px","important");
+   shareTitle.style.setProperty("line-height","1.5","important");
+   shareTitle.style.setProperty("color","#fff","important");
+   shareTitle.style.setProperty("-webkit-text-fill-color","#fff","important");
+  }
   const modal=overlay.querySelector(".result-preview-modal");
   if(modal){
    modal.style.setProperty("box-sizing","border-box","important");
@@ -16924,5 +16946,69 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 @media (min-width:901px) and (pointer:fine){
  #personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:0px!important}
+}
+</style>
+
+
+<style id="stage-comic-result-final-adjustments-20261116">
+/* 開場與後續漫畫全部以遊戲舞台為共同畫布；角色與背景同尺寸、同中心，不再用視窗 vw/vh。 */
+#game-container #comic-box.opening-comic-active .comic-layer{
+ position:absolute!important;
+ top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:92%!important;height:92%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:92%!important;max-height:92%!important;
+ margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;
+ object-fit:fill!important;
+}
+/* 11 的角色不再被背景 alpha 遮罩切掉下半身；12 與 11 都使用完整畫布。 */
+#game-container #comic-box.opening-comic-active .intro-comic-role[data-comic-mask-role="11"]{
+ -webkit-mask-image:none!important;mask-image:none!important;
+ -webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;
+}
+/* 11、12、1～4 每張新漫畫圖層都沿用同一個淡入上移動畫。 */
+#game-container #comic-box.opening-comic-active .comic-layer{
+ animation:fadeInUp .6s ease-out both!important;
+}
+/* 故事後續漫畫也使用與開場相同的淡入動畫。 */
+#game-container #comic-box:not(.opening-comic-active) .comic-layer.anim-fade-in-up{
+ animation:fadeInUp .6s ease-out both!important;
+}
+/* 載入層固定以遊戲舞台為定位基準，不依賴瀏覽器視窗大小。 */
+#game-container > #loading-screen{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:100%!important;max-height:100%!important;
+ z-index:999999!important;box-sizing:border-box!important;
+}
+/* 片尾所有工作人員 IG 圖片統一放大，烏賊那一列文字再縮小。 */
+#end-credits .credits-person img{
+ width:120px!important;height:120px!important;
+ min-width:120px!important;min-height:120px!important;
+ max-width:120px!important;max-height:120px!important;
+ object-fit:contain!important;flex:0 0 120px!important;
+}
+#end-credits .credits-person-squid{font-size:.76em!important;line-height:1.3!important}
+/* 分享提示直接指定中文字體與可見狀態，避免繼承遊戲字體造成缺字或斜體。 */
+#result-preview-share-overlay .result-preview-share-title{
+ font-family:"PingFang TC","Microsoft JhengHei",Arial,sans-serif!important;
+ font-style:normal!important;font-weight:600!important;
+ font-size:18px!important;line-height:1.5!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ display:block!important;visibility:visible!important;opacity:1!important;
+}
+/* 結果頁調整僅限手機：標語上移、適合職業右移；桌機結果頁維持原樣。 */
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+ #personality-result-screen #personality-result-copy{
+  --result-disclaimer-shift-y:-18px!important;
+ }
+ #personality-result-screen #personality-result-copy > .result-secondary{
+  left:calc(var(--career-left, 0px) + 1px)!important;
+ }
+ #result-preview-share-overlay .result-preview-close{
+  right:63px!important;top:-14px!important;
+ }
 }
 </style>
