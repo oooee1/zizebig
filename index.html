@@ -9166,7 +9166,8 @@ if (!hasScoredOptions) {
         ];
         dialogElements.forEach(el => {
             if (!el) return;
-            if (isComicMode || !hasText) el.style.setProperty('display', 'none', 'important');
+            // 漫畫場景仍顯示作者填寫的對話；只有沒有文字時才隱藏對話框。
+            if (!hasText) el.style.setProperty('display', 'none', 'important');
             else el.style.removeProperty('display');
         });
     }
@@ -14961,6 +14962,27 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 
 
 
+<style id="opening-comic-dialogue-and-11-mask-fix-20261116">
+#game-container #comic-box.opening-comic-active .intro-comic-background[src*="11背景"],
+#game-container #comic-box.opening-comic-active .intro-comic-role[data-comic-mask-role="11"]{
+ width:86%!important;height:auto!important;min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:90%!important;object-fit:contain!important;object-position:center center!important;
+}
+#game-container #comic-box.opening-comic-active .intro-comic-role[data-comic-mask-role="11"]{
+ -webkit-mask-image:var(--comic-role-mask)!important;mask-image:var(--comic-role-mask)!important;
+ -webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;
+ -webkit-mask-position:center center!important;mask-position:center center!important;
+ -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;z-index:12!important;
+}
+#game-container #comic-box.opening-comic-active .intro-comic-background[src*="11背景"]{z-index:11!important}
+body.opening-comic-controls #game-container .dialog-wrapper{
+ position:absolute!important;z-index:2147482600!important;pointer-events:none!important;
+}
+body.opening-comic-controls #game-container .dialog-wrapper *{pointer-events:auto}
+body.opening-comic-controls #game-container #對話框,
+body.opening-comic-controls #game-container #對話框那條線,
+body.opening-comic-controls #game-container .player-svg{z-index:2147482601!important}
+</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
