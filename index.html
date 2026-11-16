@@ -3809,7 +3809,82 @@ img { max-width:100%; }
         window.PROJECT_ASSET_CATALOG = PROJECT_ASSET_CATALOG;
 
         const storyScript = [
-            {
+    // 開場漫畫正式納入劇情場景；每張都可直接填寫 text，對話框會依文字自動顯示。
+    {
+        id: -14,
+        text: "",
+        background: "漫畫背景",
+        comicGroup: "opening-11-14",
+        comicImages: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"],
+        comicRolePath: "./pct/11.webp",
+        bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
+        nextId: -13
+    },
+    {
+        id: -13,
+        text: "",
+        background: "漫畫背景",
+        comicGroup: "opening-11-14",
+        comicImages: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"],
+        comicRolePath: "./pct/12.webp",
+        bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
+        nextId: -12
+    },
+    {
+        id: -12,
+        text: "",
+        background: "漫畫背景",
+        comicGroup: "opening-11-14",
+        comicImages: ["./pct/漫畫背景.webp", "./pct/13.webp"],
+        bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
+        nextId: -11
+    },
+    {
+        id: -11,
+        text: "",
+        background: "漫畫背景",
+        comicGroup: "opening-11-14",
+        comicImages: ["./pct/14.webp"],
+        bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
+        nextId: -10
+    },
+    {
+        id: -10,
+        text: "",
+        background: "漫畫背景",
+        comicGroup: "opening-1-4",
+        comicImages: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"],
+        bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
+        nextId: -9
+    },
+    {
+        id: -9,
+        text: "",
+        background: "漫畫背景",
+        comicGroup: "opening-1-4",
+        comicImages: ["./1漫畫/2.webp"],
+        bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
+        nextId: -8
+    },
+    {
+        id: -8,
+        text: "",
+        background: "漫畫背景",
+        comicGroup: "opening-1-4",
+        comicImages: ["./1漫畫/3.webp"],
+        bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
+        nextId: -7
+    },
+    {
+        id: -7,
+        text: "",
+        background: "漫畫背景",
+        comicGroup: "opening-1-4",
+        comicImages: ["./1漫畫/4.webp"],
+        bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
+        nextId: 0
+    },
+    {
         id: 0,
         text: "呃...怎麼回事，頭好暈。",
         speaker: "星辰",
@@ -8830,14 +8905,16 @@ function renderScene(stepIndex) {
 
     // 漫畫模式：只顯示場景背景與漫畫圖，不顯示對話框、角色立繪或角色名字。
     const sceneComicPaths = Array.isArray(scene.comicImages)
-        ? scene.comicImages.filter(path => typeof path === "string" && path.startsWith("./1漫畫/"))
+        ? scene.comicImages.filter(path => typeof path === "string" &&
+            (path.startsWith("./1漫畫/") || /^\.\/pct\/(?:漫畫背景|(?:11|12)背景|11|12|13|14)\.webp$/i.test(path)))
         : [];
     const comicBoxAtSceneStart = document.getElementById("comic-box");
     const nextScene = storyScript[stepIndex + 1];
     const currentComicGroup = scene.comicGroup ?? null;
     const previousComicGroup = comicBoxAtSceneStart?.getAttribute("data-comic-group") || null;
     const nextSceneHasComic = Boolean(nextScene && Array.isArray(nextScene.comicImages) &&
-        nextScene.comicImages.some(path => typeof path === "string" && path.startsWith("./1漫畫/")) &&
+        nextScene.comicImages.some(path => typeof path === "string" &&
+            (path.startsWith("./1漫畫/") || /^\.\/pct\/(?:漫畫背景|(?:11|12)背景|11|12|13|14)\.webp$/i.test(path))) &&
         (currentComicGroup === null || nextScene.comicGroup === currentComicGroup));
     // 同組漫畫中間沒有新圖片的場景仍維持漫畫模式；跨組時不延續上一組圖層。
     const hasPreviousComicLayers = Boolean(comicBoxAtSceneStart &&
@@ -9308,7 +9385,10 @@ if (window.currentSceneBGM !== scene.bgm) {
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
     if (comicBox && comicImg && (sceneComicPaths.length > 0 || isContinuingComic)) {
-        renderComicLayers(comicBox, comicImg, sceneComicPaths, currentComicGroup, { animateEntry: sceneComicPaths.length > 0 });
+        renderComicLayers(comicBox, comicImg, sceneComicPaths, currentComicGroup, {
+            animateEntry: sceneComicPaths.length > 0,
+            rolePath: scene.comicRolePath || ""
+        });
     } else {
         clearComicLayers(comicBox, comicImg);
     }
@@ -12436,16 +12516,14 @@ function openPersonalityResult(first,second){
                     showStartupLoading("正在載入素材...");
                     window.__zizebigStartupStage = "預載開場漫畫與第一幕素材";
                     // 漫畫和第一幕一起載入；使用可容錯模式，單張圖片逾時／失敗不會讓啟動畫面卡死。
-                    const startupAssets = [...new Set([...openingComicAssets, ...initialAssets])];
-                    preloadImages(startupAssets, error => {
-                        if (error) console.warn("[開場載入] 部分素材未能預載，仍繼續：", error);
-                        openingComicIndex = 0;
-                        openingComicGroup = null;
+                    // 開場漫畫已是 storyScript 的前八幕；只預載第一幕所需素材，接著由一般劇情流程逐幕推進。
+                    preloadImages(initialAssets, error => {
+                        if (error) console.warn("[開場劇情] 部分素材未能預載，仍繼續：", error);
                         if (loadingScreen) loadingScreen.style.display = "none";
                         const dev = document.getElementById("developer-tools");
                         if (dev) { dev.style.setProperty("visibility", "visible", "important"); dev.style.setProperty("pointer-events", "auto", "important"); }
-                        renderOpeningComicFrame(0);
-                    });
+                        startFirstScene();
+                    }, true);
                 }
 
                 function loadStartInterface() {
