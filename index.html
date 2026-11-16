@@ -16531,7 +16531,7 @@ body > #developer-tools-panel button{
   }
   if(window.MutationObserver){
    const observer=new MutationObserver(()=>requestAnimationFrame(update));
-   observer.observe(screen,{childList:true,subtree:true,attributes:true,attributeFilter:["style","class","hidden"]});
+   observer.observe(screen,{childList:true,subtree:true});
   }
   update();
  }
