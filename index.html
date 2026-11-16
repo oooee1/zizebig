@@ -3684,29 +3684,29 @@ img { max-width:100%; }
                 "./audio/點擊1.mp3"
             ],
             comicImages: [
-                            "./1/1好奇星-1-第一張.webp",
-                "./1/1好奇星-1-第二張背景.webp",
-                "./1/1好奇星-1-第二張角色.webp",
-                "./1/1好奇星-2-第一張.webp",
-                "./1/1好奇星-2-第一張好奇星.webp",
-                "./1/1好奇星-2-第三張.webp",
-                "./1/1好奇星-2-第二張.webp",
-                "./1/1好奇星-2-第四張.webp",
-                "./1/1好奇星-2-第四張好奇星.webp",
-                "./1/1好奇星-3-第一張.webp",
-                "./1/1好奇星-3-第二張.webp",
-                "./1/1好奇星-3-第二張拼圖.webp",
-                "./1/1好奇星-4-第一張.webp",
-                "./1/1好奇星-4-第三張.webp",
-                "./1/1好奇星-4-第二張.webp",
-                "./1/1好奇星-5-第一張.webp",
-                "./1/1好奇星-5-第二張.webp",
-                "./1/2同情星-2-第一張.webp",
-                "./1/2同情星-2-第三張.webp",
-                "./1/2同情星-2-第二張.webp",
-                "./1/2同情星-2-第四張.webp",
-                "./1/信.webp",
-                "./1/貝殼信.webp",
+                "./1漫畫/1.webp",
+                            "./1漫畫/1好奇星-1-第一張.webp",
+                "./1漫畫/1好奇星-1-第二張角色.webp",
+                "./1漫畫/1好奇星-2-第一張.webp",
+                "./1漫畫/1好奇星-2-第一張好奇星.webp",
+                "./1漫畫/1好奇星-2-第三張.webp",
+                "./1漫畫/1好奇星-2-第二張.webp",
+                "./1漫畫/1好奇星-2-第四張.webp",
+                "./1漫畫/1好奇星-2-第四張好奇星.webp",
+                "./1漫畫/1好奇星-3-第一張.webp",
+                "./1漫畫/1好奇星-3-第二張.webp",
+                "./1漫畫/1好奇星-3-第二張拼圖.webp",
+                "./1漫畫/1好奇星-4-第一張.webp",
+                "./1漫畫/1好奇星-4-第三張.webp",
+                "./1漫畫/1好奇星-4-第二張.webp",
+                "./1漫畫/1好奇星-5-第一張.webp",
+                "./1漫畫/1好奇星-5-第二張.webp",
+                "./1漫畫/2同情星-2-第一張.webp",
+                "./1漫畫/2同情星-2-第三張.webp",
+                "./1漫畫/2同情星-2-第二張.webp",
+                "./1漫畫/2同情星-2-第四張.webp",
+                "./1漫畫/信.webp",
+                "./1漫畫/貝殼信.webp",
                 "./pct/CG圖 好奇星 發電廠.webp",
                 "./pct/CG圖 星辰讀父母信件.webp",
                 "./pct/CG圖 最終結果 星辰.webp",
@@ -3901,7 +3901,7 @@ img { max-width:100%; }
         bgm: "./audio/Plink, Plank, Plunk! - Leroy Anderson.mp3",
         text: "",
         background: "好奇星草叢",
-        comicImages: ["./1/1好奇星-1-第一張.webp"],
+        comicImages: ["./1漫畫/1好奇星-1-第一張.webp"],
         // 漫畫模式：不設定 speaker，不顯示對話框、角色立繪與角色名字。
         nextId: 4
     },
@@ -12379,6 +12379,9 @@ function openPersonalityResult(first,second){
                     comicBox.dataset.advanceBound="1";
                     comicBox.addEventListener("click",event=>{
                         if(!comicBox.classList.contains("opening-comic-active"))return;
+                        // 選單、跳過鍵與開發者工具的點擊不可被漫畫翻頁攔截。
+                        if (event.target && event.target.closest &&
+                            event.target.closest(".menu-container,#skip-btn,#developer-tools")) return;
                         advanceOpeningComic(event);
                     },true);
                 }
@@ -12387,6 +12390,19 @@ function openPersonalityResult(first,second){
                     if (event) {
                         event.preventDefault();
                         event.stopPropagation();
+                    }
+                    // 開場漫畫沿用使用者點擊「開始」的手勢啟動音樂，避免非同步預載後被瀏覽器擋下。
+                    const openingMusic = document.getElementById("bgm-player");
+                    if (openingMusic) {
+                        openingMusic.pause();
+                        openingMusic.src = "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3";
+                        openingMusic.loop = true;
+                        openingMusic.volume = 0.75;
+                        openingMusic.currentTime = 0;
+                        const playOpeningMusic = openingMusic.play();
+                        if (playOpeningMusic && typeof playOpeningMusic.catch === "function") {
+                            playOpeningMusic.catch(error => console.warn("[開場音樂] 播放未啟動：", error));
+                        }
                     }
                     const startScreen = document.getElementById("intro-start-screen");
                     const comicBox = document.getElementById("comic-box");
@@ -12397,6 +12413,16 @@ function openPersonalityResult(first,second){
                     const gameContainer=document.getElementById("game-container");
                     if(gameContainer)gameContainer.classList.remove("start-screen-active");
                     if(gameContainer && comicBox && comicBox.parentElement!==gameContainer) gameContainer.appendChild(comicBox);
+                    if (menuContainer) {
+                        menuContainer.style.setProperty("position", "relative", "important");
+                        menuContainer.style.setProperty("z-index", "2147483600", "important");
+                        menuContainer.style.setProperty("pointer-events", "auto", "important");
+                    }
+                    if (skipButton) {
+                        skipButton.style.setProperty("position", "relative", "important");
+                        skipButton.style.setProperty("z-index", "2147483600", "important");
+                        skipButton.style.setProperty("pointer-events", "auto", "important");
+                    }
                     if (comicBox) {
                         bindOpeningComicAdvance(comicBox);
                         comicBox.classList.add("opening-comic-active");
@@ -12424,15 +12450,16 @@ function openPersonalityResult(first,second){
 
                 function loadStartInterface() {
                     showStartupLoading("正在載入開始介面...");
-                    window.__zizebigStartupStage = "顯示開始介面（圖片由畫面上的 img 元素自行載入）";
-
-                    // logo.webp 與標準字.webp 已經在 intro-start-screen 的 img[src] 中。
-                    // 不要再用 preloadImages(new Image()) 重複下載同兩張圖並阻塞畫面；
-                    // 直接顯示開始介面，瀏覽器會正常載入既有 img[src]。
-                    if (loadingPercent) loadingPercent.textContent = "100%";
-                    const bar = document.getElementById("progress-bar");
-                    if (bar) bar.style.width = "100%";
-                    showStartInterface();
+                    window.__zizebigStartupStage = "載入開始介面 Logo 與標準字";
+                    // 開始介面本身也必須等 Logo／標準字完成下載與解碼後才顯示，
+                    // 避免玩家進入開始畫面後才看到圖片和泛光逐一跳出。
+                    preloadImages(["./pct/logo.webp", "./pct/標準字.webp"], error => {
+                        if (error) console.warn("[開始介面] Logo／標準字載入略有延遲：", error);
+                        if (loadingPercent) loadingPercent.textContent = "100%";
+                        const bar = document.getElementById("progress-bar");
+                        if (bar) bar.style.width = "100%";
+                        showStartInterface();
+                    }, true);
                 }
 
                 const startButton = document.getElementById("intro-start-button");
@@ -17494,4 +17521,80 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 /* 信件說話者名稱使用米色。 */
 #page1.speaker-letter .name-npc{fill:#D8B98A!important}
 
+</style>
+
+<style id="user-adjustments-20261116-followup-final">
+/* 開始介面：Logo 泛光降低；標準字再縮小並左移，避免標準字光暈蓋住 Logo。 */
+#intro-start-logo{
+  filter:drop-shadow(0 0 4px rgba(0,0,0,.72)) drop-shadow(0 0 11px rgba(0,0,0,.48))!important;
+}
+#intro-start-title{
+  width:min(52%,230px)!important;
+  max-height:18vh!important;
+  margin-top:-12px!important;
+  margin-left:-8px!important;
+  filter:none!important;
+}
+@media(max-width:500px){
+  #intro-start-title{width:min(56%,220px)!important;margin-left:-6px!important;max-height:17vh!important}
+}
+/* 漫畫統一稍微放大，保留原始長寬比與舞台中心定位。 */
+#game-container #comic-box .comic-layer:not([src*="漫畫背景"]){
+  width:90%!important;max-width:90%!important;height:auto!important;
+  max-height:90%!important;object-fit:contain!important;object-position:center!important;
+}
+#game-container #comic-box .intro-comic-background:not([src*="漫畫背景"]),
+#game-container #comic-box .intro-comic-role,
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{
+  width:90%!important;max-width:90%!important;height:auto!important;max-height:90%!important;
+  object-fit:contain!important;object-position:center!important;
+}
+/* 整個遊戲不允許長按選取文字或跳出 iOS 文字選取放大鏡；表單輸入仍可正常編輯。 */
+#game-container,#game-container *{
+  -webkit-user-select:none!important;user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+#game-container input,#game-container textarea,[contenteditable="true"]{
+  -webkit-user-select:text!important;user-select:text!important;
+  -webkit-touch-callout:default!important;
+}
+/* 結果頁「結合……是……」縮小 4px；手機與桌機都套用。 */
+#personality-result-screen #personality-result-copy .result-career-intro:not(.result-career-intro-tied){
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 14px)!important;
+}
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+  #personality-result-screen #personality-result-copy .result-career-intro,
+  #personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+    font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 1px)!important;
+  }
+}
+/* 測驗標語再上移 8px。 */
+#personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:-68px!important}
+/* 桌機保存結果按鈕縮小；手機版尺寸不變。 */
+@media (min-width:901px) and (pointer:fine){
+  #personality-result-screen #personality-result-save{
+    font-size:clamp(22px,3vw,48px)!important;
+    transform:translateX(-50%) scale(.82)!important;
+    transform-origin:center bottom!important;
+  }
+  #personality-result-screen #personality-result-save:active{
+    transform:translate(-50%,1px) scale(.82)!important;
+  }
+}
+/* 漸層寬度限制在遊戲舞台寬度內，桌機不再延伸到舞台外。 */
+#personality-result-screen #personality-result-save::before{
+  width:min(100vw,430px)!important;
+  max-width:100%!important;
+}
+/* 分享視窗叉叉左移 8px、上移 6px，並補足字形外框避免轉角缺口。 */
+#result-preview-share-overlay .result-preview-close{
+  right:58px!important;top:-6px!important;
+  -webkit-text-stroke:2px #111!important;
+  text-shadow:1px 1px 0 #111,-1px -1px 0 #111,1px -1px 0 #111,-1px 1px 0 #111,
+    0 0 1px #111!important;
+}
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+  #result-preview-share-overlay .result-preview-close{right:66px!important;top:-13px!important}
+}
 </style>
