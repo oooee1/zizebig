@@ -14610,6 +14610,36 @@ body.opening-comic-controls #skip-btn{
  display:none!important;opacity:0!important;visibility:hidden!important;
 }
 </style>
+<style id="loading-overlay-ui-order-and-video-icon-final-20261116">
+/* 載入頁層級最高；遊戲控制與開發者工具固定低一層，載入期間不會浮在遮罩上。 */
+#game-container .menu-container,
+#game-container #skip-btn,
+body.opening-comic-controls .menu-container,
+body.opening-comic-controls #skip-btn,
+body > #developer-tools{
+ z-index:2147483000!important;
+}
+/* 載入畫面只覆蓋遊戲舞台，不會擴張到桌機整個瀏覽器視窗。 */
+#game-container > #loading-screen{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ z-index:2147483647!important;
+}
+/* 不讓開始影片顯示原生畫中畫、遠端播放或控制列圖示。 */
+#intro-start-video{
+ pointer-events:none!important;
+ -webkit-appearance:none!important;appearance:none!important;
+}
+#intro-start-video::-webkit-media-controls,
+#intro-start-video::-webkit-media-controls-enclosure,
+#intro-start-video::-webkit-media-controls-panel,
+#intro-start-video::-webkit-media-controls-picture-in-picture-button,
+#intro-start-video::-webkit-media-controls-overlay-play-button,
+#intro-start-video::-webkit-media-controls-fullscreen-button,
+#intro-start-video::-webkit-media-controls-toggle-closed-captions-button,
+#intro-start-video::-webkit-media-controls-overflow-button{
+ display:none!important;opacity:0!important;visibility:hidden!important;
+}
+</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
