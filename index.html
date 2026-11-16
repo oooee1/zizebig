@@ -12344,6 +12344,7 @@ function openPersonalityResult(first,second){
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
                 let openingComicGroup = null;
+                let lastOpeningComicAdvanceAt = 0;
 
                 function showStartupLoading(message) {
                     if (loadingScreen) {
@@ -12476,7 +12477,11 @@ function openPersonalityResult(first,second){
 
                 function advanceOpeningComic(event) {
                     if (event) { event.preventDefault(); event.stopPropagation(); if (event.stopImmediatePropagation) event.stopImmediatePropagation(); }
-                    openingComicIndex++;
+                    // 防止同一次觸控／點擊被觸控層與合成 click 重複計算，導致 11～14 被瞬間跳過而直接跳到 1.webp。
+                    const now = Date.now();
+                    if (now - lastOpeningComicAdvanceAt < 450) return;
+                    lastOpeningComicAdvanceAt = now;
+                    openingComicIndex = Math.min(openingComicIndex + 1, openingComicFrames.length);
                     renderOpeningComicFrame(openingComicIndex);
                 }
                 // 漫畫圖片本身不攔截點擊；在漫畫畫布捕捉點擊，確保提示與推進功能都在最上層。
@@ -12497,6 +12502,10 @@ function openPersonalityResult(first,second){
                         event.preventDefault();
                         event.stopPropagation();
                     }
+                    // 每次從開始介面進入都從 11 的第一格重新播放，避免沿用上次結束時的索引而直接跳到 1.webp。
+                    openingComicIndex = 0;
+                    openingComicGroup = null;
+                    lastOpeningComicAdvanceAt = 0;
                     // 開場漫畫沿用使用者點擊「開始」的手勢啟動音樂，避免非同步預載後被瀏覽器擋下。
                     const openingMusic = document.getElementById("bgm-player");
                     if (openingMusic) {
