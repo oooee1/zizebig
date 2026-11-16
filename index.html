@@ -3883,8 +3883,7 @@ img { max-width:100%; }
         comicDialoguePosition: { right: "5%", top: "7%", tail: "bottom-left" },
         background: "漫畫背景",
         comicGroup: "opening-sequence-11-14",
-        comicImages: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"],
-        comicRolePath: "./pct/11.webp",
+        comicImages: ["./1漫畫/11.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -13
     },
@@ -3894,8 +3893,7 @@ img { max-width:100%; }
         comicDialoguePosition: { left: "7%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
         comicGroup: "opening-sequence-11-14",
-        comicImages: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"],
-        comicRolePath: "./pct/12.webp",
+        comicImages: ["./1漫畫/12.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -12
     },
@@ -3905,7 +3903,7 @@ img { max-width:100%; }
         comicDialoguePosition: { left: "7%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
         comicGroup: "opening-sequence-11-14",
-        comicImages: ["./pct/漫畫背景.webp", "./pct/13.webp"],
+        comicImages: ["./1漫畫/13.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -11
     },
@@ -3915,7 +3913,7 @@ img { max-width:100%; }
         comicDialoguePosition: { left: "33%", top: "40%", tail: "bottom-left" },
         background: "漫畫背景",
         comicGroup: "opening-sequence-11-14",
-        comicImages: ["./pct/14.webp"],
+        comicImages: ["./1漫畫/14.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -10
     },
@@ -8984,7 +8982,8 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             }
         };
         // 11／12 的背景與角色是同一張分鏡的兩個圖層：等兩張都載入後同一幀啟動動畫。
-        const openingPairMatch = options.opening && (layer.src || "").match(/(?:^|\/)(11|12)(背景)?\.(?:webp|png|jpe?g)$/i);
+        const isCompositeOpeningFrame = options.opening && /(?:^|\/)(?:11|12|13|14)\.(?:webp|png|jpe?g)$/i.test(layer.src || "");
+        const openingPairMatch = options.opening && !isCompositeOpeningFrame && (layer.src || "").match(/(?:^|\/)(11|12)(背景)?\.(?:webp|png|jpe?g)$/i);
         if (openingPairMatch) {
             const pairNumber = openingPairMatch[1];
             if (openingPairScheduled.has(pairNumber)) return;
@@ -9033,7 +9032,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         let layer;
         if (shownPaths.length === 0 && !comicImg.getAttribute("src")) {
             comicImg.src = path;
-            comicImg.alt = "漫畫圖";
+            comicImg.alt = "";
             comicImg.className = "comic-layer" + extraClass;
             layer = comicImg;
         } else {
@@ -9148,7 +9147,7 @@ function clearComicLayers(comicBox, comicImg) {
         comicImg.getAnimations?.().forEach(animation => animation.cancel());
         comicImg.className="";
         comicImg.removeAttribute("src");
-        ["opacity","translate","animation","width","height","min-width","min-height","max-width","max-height","object-fit","object-position","z-index"].forEach(property => comicImg.style.removeProperty(property));
+        ["opacity","translate","animation","position","top","left","right","bottom","transform","width","height","min-width","min-height","max-width","max-height","margin","padding","object-fit","object-position","z-index","filter","pointer-events"].forEach(property => comicImg.style.removeProperty(property));
     }
 }
 function restoreComicCanvasToGameStage() {
@@ -19135,5 +19134,25 @@ body.opening-comic-controls #game-container #skip-btn{
 /* 不同高分版本只再放大星球名稱，不改動已縮小的整句字級。 */
 #personality-result-screen #personality-result-copy .result-career-intro:not(.result-career-intro-tied) .result-career-intro-star{
   font-size:calc(1em + 10px)!important;line-height:1.15!important;
+}
+</style>
+
+<style id="verified-opening-logo-and-comic-unification-20261116">
+/* Logo 不再產生會覆蓋標準字的外擴光暈；標準字獨立置於上層。 */
+#intro-start-content{isolation:isolate!important}
+#intro-start-logo{position:relative!important;z-index:1!important;filter:none!important;-webkit-filter:none!important}
+#intro-start-title{position:relative!important;z-index:2!important;filter:none!important;-webkit-filter:none!important}
+/* 11～14 是四張完整合成圖，全部沿用 1～4 漫畫的同一張置中畫布與進場方式。 */
+#game-container #comic-box.opening-comic-active .comic-layer{
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:90%!important;height:90%!important;min-width:0!important;min-height:0!important;
+ max-width:90%!important;max-height:90%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"],
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"],
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/13.webp"],
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/14.webp"]{
+ left:50%!important;width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
 }
 </style>
