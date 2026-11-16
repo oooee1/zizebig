@@ -9233,7 +9233,7 @@ function renderScene(stepIndex) {
         scene.letterImage && scene.text &&
         [70, 71, 71.1, 72, 129, 130, 131, 191.1, 191.2, 191.3, 191.4].includes(Number(currentSceneId))
     );
-    const rawSceneSpeaker = isLetterReadingScene ? "信封" : (scene.speaker || inferredCharacterSpeaker);
+    const rawSceneSpeaker = scene.letterImage && scene.text ? "信封" : (scene.speaker || inferredCharacterSpeaker);
     // 熱情星劇情中的「居民們」不顯示群體立繪，也不顯示說話者名稱。
     const hideHotPassionResidentsGroup = Number(currentSceneId) >= 221 && Number(currentSceneId) <= 351 && (rawSceneSpeaker === "居民們" || (Array.isArray(scene.characters) && scene.characters.includes("居民們")));
     // 熱情星的「居民們」仍顯示說話者名稱；只在下方角色顯示流程隱藏群體立繪。
