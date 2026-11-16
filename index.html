@@ -9124,6 +9124,8 @@ function renderScene(stepIndex) {
         hasPreviousComicLayers && nextSceneHasComic &&
         (currentComicGroup === null || previousComicGroup === String(currentComicGroup));
     const isComicMode = sceneComicPaths.length > 0 || scene.comicMode === true || isContinuingComic;
+    const comicStageForMode = document.getElementById("game-container");
+    if (comicStageForMode) comicStageForMode.classList.toggle("comic-scene-active", isComicMode);
 
     // 每次切換場景先取消上一幕的純背景提示。
     if (window.emptySceneHintTimer) {
@@ -18495,4 +18497,14 @@ body.opening-comic-controls #game-container #skip-btn{
 #game-container #wire-game-overlay,#game-container #wire-game-overlay *,
 #game-container #wire-game-svg,#game-container #mail-game-overlay,#game-container #mail-game-overlay *,
 #game-container .mail-game-envelope,#game-container .mail-game-mailbox{touch-action:none!important}
+</style>
+
+<style id="comic-scene-hide-legacy-dialogue-final-20261116">
+/* 只要目前是漫畫場景，隱藏舊式底部對話框、名字框與箭頭；漫畫泡泡仍由 comic-box 顯示。 */
+#game-container.comic-scene-active #對話框,
+#game-container.comic-scene-active #對話框那條線,
+#game-container.comic-scene-active .player-svg,
+#game-container.comic-scene-active .dialog-wrapper{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
 </style>
