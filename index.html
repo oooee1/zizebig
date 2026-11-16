@@ -9122,11 +9122,19 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         // 11、12 各自成對堆疊：11背景→11角色→12背景→12角色。
         // 不能把所有背景放在所有角色下面，否則 11角色會浮到12背景前面。
 
-        const comicLayerZ = isFullBleedOpeningBackdrop ? 0
+        // 開場 11、12 是兩張各自帶透明留白的完整分鏡：12 後加入時不可用較高層級整張壓住 11。
+        // 固定 11 在上層、12 在下層；兩張仍各自保留透明區域與獨立淡入，不清除舊圖。
+        const isOpening11 = options.opening && /(?:^|\/)11\.(?:webp|png|jpe?g)$/i.test(path);
+        const isOpening12 = options.opening && /(?:^|\/)12\.(?:webp|png|jpe?g)$/i.test(path);
+        const comicLayerZ = isOpening11 ? 30 : isOpening12 ? 20 : isFullBleedOpeningBackdrop ? 0
             : isSplitBackground ? (splitPanelNumber === 11 ? 10 : 30)
             : isSplitRole ? (splitPanelNumber === 11 ? 20 : 40)
             : 10 + layerOrder;
         layer.style.setProperty("z-index", String(comicLayerZ), "important");
+        if (isOpening11 || isOpening12) {
+            layer.style.setProperty("opacity", "1", "important");
+            layer.style.setProperty("visibility", "visible", "important");
+        }
         playLayerEntry(layer);
         shownPaths.push(path);
     });
