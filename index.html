@@ -8915,8 +8915,9 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     const enteringComicMode = comicBox.style.display !== "block";
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
     const groupChanged = comicGroup !== null && previousGroup !== null && previousGroup !== String(comicGroup);
-    // 開場漫畫同一段內逐層累積；group 改變代表切換漫畫段落，必須清空上一段。
-    const preserveOpeningLayers = false;
+    // 開場漫畫同一段內逐層累積；跨到 1～5 的清空由 renderOpeningComicFrame 明確執行。
+    // 不在 renderer 內重複清除，避免非同步呼叫時把前一格剛加入的圖層刪掉。
+    const preserveOpeningLayers = options.opening === true;
     // opening 只負責啟用 11／12 雙圖層同步，不代表每一格都要讓整張漫畫畫布重新滑入。
     const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || (groupChanged && !preserveOpeningLayers)));
     if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
@@ -9056,6 +9057,12 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
 
         const isForegroundComic = !isFullBleedOpeningBackdrop;
         const isAlignedSplitLayer = isSplitBackground || isSplitRole;
+        // 先取得分鏡編號再使用；舊程式在宣告前讀取 splitPanelNumber，
+        // 會觸發 TDZ ReferenceError，令 11／12 的角色圖層無法完成建立。
+        const splitPanelMatch = (isSplitBackground || isSplitRole)
+            ? path.match(/(?:^|\\/)(11|12)(?:背景)?\\.(?:webp|png|jpe?g)$/i)
+            : null;
+        const splitPanelNumber = splitPanelMatch ? Number(splitPanelMatch[1]) : 0;
         const layerOrder = shownPaths.length;
         layer.style.setProperty("position", "absolute", "important");
         layer.style.setProperty("top", "50%", "important");
@@ -9104,10 +9111,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         // 先疊完 11、12 的兩張背景，再疊兩個角色；12 背景不可以蓋掉 11 角色。
         // 11、12 各自成對堆疊：11背景→11角色→12背景→12角色。
         // 不能把所有背景放在所有角色下面，否則 11角色會浮到12背景前面。
-        const splitPanelMatch = (isSplitBackground || isSplitRole)
-            ? path.match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i)
-            : null;
-        const splitPanelNumber = splitPanelMatch ? Number(splitPanelMatch[1]) : 0;
+
         const comicLayerZ = isFullBleedOpeningBackdrop ? 0
             : isSplitBackground ? (splitPanelNumber === 11 ? 10 : 30)
             : isSplitRole ? (splitPanelNumber === 11 ? 20 : 40)
@@ -18663,10 +18667,10 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
     drop-shadow(0 0 22px rgba(255,255,255,.76))
     drop-shadow(0 0 38px rgba(255,255,255,.52))!important;
 }
-/* 保留標準字原本的泛光強度，只讓 Logo 位於較上層，避免光暈視覺上壓住 Logo。 */
+/* 標準字泛光維持原強度並放在 Logo 後方；Logo 不加泛光，避免兩種光暈互相覆蓋。 */
 #intro-start-content{isolation:isolate!important}
-#intro-start-logo{position:relative!important;z-index:2!important}
 #intro-start-title{position:relative!important;z-index:1!important}
+#intro-start-logo{position:relative!important;z-index:2!important;filter:none!important}
 #intro-start-title{
   width:min(52%,230px)!important;
   max-height:18vh!important;
