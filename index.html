@@ -3828,7 +3828,7 @@ img { max-width:100%; }
         text: "親愛的日記：",
         comicDialoguePosition: { right: "-28%", top: "7%", tail: "bottom-left" },
         background: "漫畫背景",
-        comicGroup: "opening-sequence-all",
+        comicGroup: "opening-sequence-11-14",
         comicImages: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"],
         comicRolePath: "./pct/11.webp",
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
@@ -3839,7 +3839,7 @@ img { max-width:100%; }
         text: "爸、媽，今年過得真快，就如往常一樣...",
         comicDialoguePosition: { left: "7%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
-        comicGroup: "opening-sequence-all",
+        comicGroup: "opening-sequence-11-14",
         comicImages: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"],
         comicRolePath: "./pct/12.webp",
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
@@ -3850,7 +3850,7 @@ img { max-width:100%; }
         text: "但我已經要成年了，仍對未來感到迷茫。",
         comicDialoguePosition: { left: "7%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
-        comicGroup: "opening-sequence-all",
+        comicGroup: "opening-sequence-11-14",
         comicImages: ["./pct/漫畫背景.webp", "./pct/13.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -11
@@ -3860,7 +3860,7 @@ img { max-width:100%; }
         text: "我究竟擅長什麼？想要什麼？我到底適合什麼？",
         comicDialoguePosition: { left: "33%", top: "40%", tail: "bottom-left" },
         background: "漫畫背景",
-        comicGroup: "opening-sequence-all",
+        comicGroup: "opening-sequence-11-14",
         comicImages: ["./pct/14.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -10
@@ -3869,7 +3869,7 @@ img { max-width:100%; }
         id: -10,
         text: "",
         background: "漫畫背景",
-        comicGroup: "opening-sequence-all",
+        comicGroup: "opening-sequence-1-5",
         comicImages: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -9
@@ -3879,7 +3879,7 @@ img { max-width:100%; }
         text: "真希望能收到你們的回覆。",
         comicDialoguePosition: { left: "5%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
-        comicGroup: "opening-sequence-all",
+        comicGroup: "opening-sequence-1-5",
         comicImages: ["./1漫畫/2.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -8
@@ -3888,7 +3888,7 @@ img { max-width:100%; }
         id: -8,
         text: "",
         background: "漫畫背景",
-        comicGroup: "opening-sequence-all",
+        comicGroup: "opening-sequence-1-5",
         comicImages: ["./1漫畫/3.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: -7
@@ -3897,7 +3897,7 @@ img { max-width:100%; }
         id: -7,
         text: "",
         background: "漫畫背景",
-        comicGroup: "opening-sequence-all",
+        comicGroup: "opening-sequence-1-5",
         comicImages: ["./1漫畫/4.webp"],
         bgm: "./audio/Chopin - Nocturne Op. 55 No. 1 - Kassia.mp3",
         nextId: 0
@@ -8856,11 +8856,11 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     const enteringComicMode = comicBox.style.display !== "block";
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
     const groupChanged = comicGroup !== null && previousGroup !== null && previousGroup !== String(comicGroup);
-    // 開場漫畫必須與正式劇情漫畫一樣逐層累積；即使資料中的 group 暫時不一致，也不可清除前一格。
-    const preserveOpeningLayers = options.opening === true;
+    // 開場漫畫同一段內逐層累積；group 改變代表切換漫畫段落，必須清空上一段。
+    const preserveOpeningLayers = false;
     // opening 只負責啟用 11／12 雙圖層同步，不代表每一格都要讓整張漫畫畫布重新滑入。
     const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || (groupChanged && !preserveOpeningLayers)));
-    if (!preserveOpeningLayers && comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
+    if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
         delete comicBox.dataset.opening11EntryStarted;
         delete comicBox.dataset.opening12EntryStarted;
         comicBox.querySelectorAll(".comic-dialogue-layer").forEach(layer => layer.remove());
@@ -12715,17 +12715,17 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
-                // 開場 11、12、13、14、1、2、3、4 是同一段連續漫畫。
-                // 每次點擊只追加當前格，絕不因為切換編號或分組而清除上一格。
+                // 11～14 為第一段；切換到 1～5 時必須清空第一段，再累積第二段。
+                // 同一段內逐格保留，只有跨段時才清空上一段。
                 const openingComicFrames = [
-                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
-                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
-                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
-                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
-                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
-                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
-                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
+                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
+                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
+                    { group: "opening-sequence-1-5", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
+                    { group: "opening-sequence-1-5", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
+                    { group: "opening-sequence-1-5", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
+                    { group: "opening-sequence-1-5", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
                 ];
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
