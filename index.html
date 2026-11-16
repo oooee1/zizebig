@@ -3829,7 +3829,7 @@ img { max-width:100%; }
     {
         id: -14,
         text: "親愛的日記：",
-        comicDialoguePosition: { right: "-6%", top: "7%", tail: "bottom-left" },
+        comicDialoguePosition: { right: "8%", top: "7%", tail: "bottom-left" },
         background: "漫畫背景",
         comicGroup: "opening-11-14",
         comicImages: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"],
@@ -3861,7 +3861,7 @@ img { max-width:100%; }
     {
         id: -11,
         text: "我究竟擅長什麼？想要什麼？我到底適合什麼？",
-        comicDialoguePosition: { left: "25%", top: "27%", tail: "bottom-left" },
+        comicDialoguePosition: { left: "29%", top: "33%", tail: "bottom-left" },
         background: "漫畫背景",
         comicGroup: "opening-11-14",
         comicImages: ["./pct/14.webp"],
@@ -3880,7 +3880,7 @@ img { max-width:100%; }
     {
         id: -9,
         text: "真希望能收到你們的回覆。",
-        comicDialoguePosition: { left: "1%", top: "7%", tail: "bottom-right" },
+        comicDialoguePosition: { left: "-3%", top: "7%", tail: "bottom-right" },
         background: "漫畫背景",
         comicGroup: "opening-1-4",
         comicImages: ["./1漫畫/2.webp"],
@@ -4616,7 +4616,7 @@ img { max-width:100%; }
     {
         id: 52,
         comicGroup: 3,
-        comicDialoguePosition: { left: "7%", top: "34%", tail: "bottom-right" },
+        comicDialoguePosition: { left: "7%", top: "39%", tail: "bottom-right" },
         comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "拼圖嗎？",
@@ -4624,7 +4624,7 @@ img { max-width:100%; }
     {
         id: 53,
         comicGroup: 3,
-        comicDialoguePosition: { right: "2%", top: "-2%", tail: "bottom-right" },
+        comicDialoguePosition: { right: "5%", top: "-5%", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-3-第二張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好酷，我也是第一次看到咩。",
@@ -4633,7 +4633,7 @@ img { max-width:100%; }
     {
         id: 54,
         comicGroup: 3,
-        comicDialoguePosition: { left: "7%", top: "-2%", tail: "bottom-right" },
+        comicDialoguePosition: { left: "7%", top: "-5%", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "它好像進到火箭裡面了。",
@@ -4642,7 +4642,7 @@ img { max-width:100%; }
     {
         id: 55,
         comicGroup: 3,
-        comicDialoguePosition: { left: "8%", top: "25%", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", top: "29%", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "哇，它被喚醒了！",
@@ -4650,7 +4650,7 @@ img { max-width:100%; }
     {
         id: 56,
         comicGroup: 4,
-        comicDialoguePosition: { left: "8%", bottom: "5%", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", bottom: "2%", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
@@ -9613,12 +9613,12 @@ if (window.currentSceneBGM !== scene.bgm) {
         renderOptions(scene);
     } else if (isComicMode && comicBubbleText) {
         window.comicDialoguePending = true;
-        window.comicDialogueStartTimer = setTimeout(() => {
+        window.comicDialogueStartTimer = requestAnimationFrame(() => {
             window.comicDialogueStartTimer = null;
             window.comicDialoguePending = false;
             if (currentStep !== stepIndex) return;
             startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
-        }, 0);
+        });
     } else {
         startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
     }
@@ -15309,13 +15309,12 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 
 
 <style id="opening-comic-dialogue-layer-final-20261116">
-#game-container > #對話框,
-#game-container > #對話框那條線,
-#game-container > .player-svg{position:absolute!important;z-index:2147483600!important;visibility:visible!important}
-#game-container > #對話框{display:block!important;left:0!important;bottom:0!important;width:100%!important}
-#game-container > #對話框 #對話文本,
-#game-container > #對話框 #dialogue-next-hint,
-#game-container > #對話框 #dialogue-next-arrow{visibility:visible!important}
+/* 開場漫畫只使用漫畫內的對話泡泡，不再把一般遊戲對話框搬到漫畫上。 */
+body.opening-comic-controls #game-container > #對話框,
+body.opening-comic-controls #game-container > #對話框那條線,
+body.opening-comic-controls #game-container > .player-svg{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
 </style>
 <style id="opening-comic-dialogue-and-11-mask-fix-20261116">
 #game-container #comic-box.opening-comic-active .intro-comic-background[src*="11背景"],
@@ -15343,10 +15342,10 @@ body.opening-comic-controls #game-container .player-svg{z-index:2147482601!impor
 /* 12 的背景與角色是同一張透明畫布；固定相同的方框與拉伸方式，不再各自 contain 造成縫隙。 */
 #game-container #comic-box .comic-split-background,
 #game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{
-  position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+  position:absolute!important;top:50%!important;left:calc(50% - 4vw)!important;right:auto!important;bottom:auto!important;
   width:90%!important;height:90%!important;min-width:0!important;min-height:0!important;
   max-width:90%!important;max-height:90%!important;margin:0!important;padding:0!important;
-  transform:translate(-50%,-50%)!important;translate:0 0!important;
+  transform:translate(-50%,-50%)!important;
   object-fit:fill!important;object-position:center center!important;
 }
 /* 對話泡泡加寬，避免文字太早換行。 */
@@ -15377,10 +15376,13 @@ body.opening-comic-controls #game-container .player-svg{z-index:2147482601!impor
 #game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{-webkit-mask-image:none!important;mask-image:none!important;}
 #game-container #comic-box .dialogue-player-name{color:#D7763D!important;font-weight:700!important;}
 #game-container #comic-box .comic-dialogue-layer{inset:4%!important;}
-#game-container #comic-box .comic-speech-bubble{max-width:min(62%,560px)!important;padding:10px 20px!important;}
-#game-container .dream-cloud-transition img{
- left:-15%!important;top:-15%!important;width:130%!important;height:130%!important;
- max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;
+#game-container #comic-box .comic-speech-bubble{max-width:min(82%,680px)!important;padding:12px 28px!important;}
+#game-container .dream-cloud-transition img,
+#game-container .dream-cloud-transition img:nth-child(1),
+#game-container .dream-cloud-transition img:nth-child(2),
+#game-container .dream-cloud-transition img:nth-child(3){
+ position:absolute!important;left:-25%!important;top:-25%!important;width:150%!important;height:150%!important;
+ max-width:none!important;max-height:none!important;object-fit:fill!important;object-position:center!important;
 }
 #game-container{touch-action:manipulation!important;}
 </style>
@@ -15390,6 +15392,28 @@ document.addEventListener("dblclick", function(event) {
 }, {passive:false});
 </script>
 
+
+<style id="comic-layout-final-fix-20261116b">
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{
+ left:calc(50% - 4vw)!important;width:90%!important;height:90%!important;
+ object-fit:fill!important;object-position:center!important;
+}
+#game-container #comic-box .comic-speech-bubble{max-width:min(82%,680px)!important;padding:12px 28px!important;}
+#game-container #comic-box .dialogue-player-name{color:#D7763D!important;font-weight:700!important}
+#game-container .dream-cloud-transition img,
+#game-container .dream-cloud-transition img:nth-child(1),
+#game-container .dream-cloud-transition img:nth-child(2),
+#game-container .dream-cloud-transition img:nth-child(3){
+ position:absolute!important;left:-25%!important;top:-25%!important;width:150%!important;height:150%!important;
+ max-width:none!important;max-height:none!important;object-fit:fill!important;object-position:center!important;
+}
+body.opening-comic-controls #game-container > #對話框,
+body.opening-comic-controls #game-container > #對話框那條線,
+body.opening-comic-controls #game-container > .player-svg{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
