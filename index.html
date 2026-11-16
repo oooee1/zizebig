@@ -8878,25 +8878,6 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         if (!Array.isArray(shownPaths)) shownPaths = [];
     } catch (_) { shownPaths = []; }
 
-    // 同組漫畫換格時，移除上一格不再使用的前景層，只保留仍在新清單中的共用底圖。
-    // 若本幕沒有新漫畫圖（純延續場景），則保留原圖不動。
-    if (comicPaths.length > 0) {
-        const matchesWantedPath = source => comicPaths.some(path => source === path || source.endsWith(path.replace(/^\.\//, "")));
-        comicBox.querySelectorAll(".comic-layer").forEach(layer => {
-            const source = layer.getAttribute("src") || "";
-            if (matchesWantedPath(source)) return;
-            layer.getAnimations?.().forEach(animation => animation.cancel());
-            if (layer === comicImg) {
-                layer.removeAttribute("src");
-                layer.className = "";
-                ["opacity","translate","animation","width","height","min-width","min-height","max-width","max-height","object-fit","object-position","z-index","position","top","left","right","bottom","transform"].forEach(property => layer.style.removeProperty(property));
-            } else {
-                layer.remove();
-            }
-        });
-        shownPaths = shownPaths.filter(path => comicPaths.includes(path));
-    }
-
     const backgroundMaskPath = comicPaths.find(path => /(?:^|\/)[^/]*背景\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\.(webp|png|jpe?g)$/i.test(path)) || "";
     const rolePath = options.rolePath || comicPaths.find(path => /角色\.(webp|png|jpe?g)$/i.test(path)) || "";
     const isSplitBackgroundAndRole = Boolean(backgroundMaskPath && rolePath && comicPaths.includes(rolePath));
