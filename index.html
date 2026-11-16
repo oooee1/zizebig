@@ -8837,6 +8837,8 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     // opening 只負責啟用 11／12 雙圖層同步，不代表每一格都要讓整張漫畫畫布重新滑入。
     const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || groupChanged));
     if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
+        delete comicBox.dataset.opening11EntryStarted;
+        delete comicBox.dataset.opening12EntryStarted;
         comicBox.querySelectorAll(".comic-dialogue-layer").forEach(layer => layer.remove());
         comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => {
             layer.getAnimations?.().forEach(animation => animation.cancel());
@@ -9018,7 +9020,7 @@ function clearComicLayers(comicBox, comicImg) {
         window.removeEventListener("resize",window.__comicRoleClipResizeHandler);
         window.__comicRoleClipResizeHandler = null;
     }
-    if (comicBox) { comicBox.style.display="none"; comicBox.className=""; comicBox.removeAttribute("data-comic-paths"); comicBox.removeAttribute("data-comic-group"); comicBox.querySelectorAll(".comic-layer-extra,.comic-role-clip,.comic-dialogue-layer").forEach(layer=>layer.remove()); }
+    if (comicBox) { comicBox.style.display="none"; comicBox.className=""; comicBox.removeAttribute("data-comic-paths"); comicBox.removeAttribute("data-comic-group"); delete comicBox.dataset.opening11EntryStarted; delete comicBox.dataset.opening12EntryStarted; comicBox.querySelectorAll(".comic-layer-extra,.comic-role-clip,.comic-dialogue-layer").forEach(layer=>layer.remove()); }
     if (comicImg) {
         comicImg.getAnimations?.().forEach(animation => animation.cancel());
         comicImg.className="";
@@ -11774,7 +11776,7 @@ function openPersonalityResult(first,second){
             waitForImages.then(() => {
                 if (finished) return;
                 const covers = images.map((img,index) => img.animate(
-                    [{opacity:0,transform:index===1?"translateY(-7%) scale(1,2.15)":"translateY(7%) scale(1,2.15)"},{opacity:1,transform:index===1?"translateY(-4%) scale(1,2.15)":"translateY(4%) scale(1,2.15)"}],
+                    [{opacity:0,transform:index===1?"translateY(-7%) scale(1.25,2.15)":"translateY(7%) scale(1.25,2.15)"},{opacity:1,transform:index===1?"translateY(-4%) scale(1.25,2.15)":"translateY(4%) scale(1.25,2.15)"}],
                     {duration:560,delay:index*130,easing:"cubic-bezier(.2,.75,.25,1)",fill:"forwards"}
                 ));
                 Promise.all(covers.map(a=>a.finished.catch(()=>null))).then(() => {
@@ -11783,7 +11785,7 @@ function openPersonalityResult(first,second){
                     setTimeout(() => {
                         if (finished) return;
                         const reveals = [...images].reverse().map((img,index)=>img.animate(
-                            [{opacity:1,transform:index===1?"translateY(-4%) scale(1,2.15)":"translateY(4%) scale(1,2.15)"},{opacity:0,transform:index===1?"translateY(10%) scale(1,2.15)":"translateY(-10%) scale(1,2.15)"}],
+                            [{opacity:1,transform:index===1?"translateY(-4%) scale(1.25,2.15)":"translateY(4%) scale(1.25,2.15)"},{opacity:0,transform:index===1?"translateY(10%) scale(1.25,2.15)":"translateY(-10%) scale(1.25,2.15)"}],
                             {duration:620,delay:index*90,easing:"ease-in",fill:"forwards"}
                         ));
                         Promise.all(reveals.map(a=>a.finished.catch(()=>null))).then(finish);
