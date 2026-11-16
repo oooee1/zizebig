@@ -17384,4 +17384,47 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 #intro-start-video::-webkit-media-controls-fullscreen-button,
 #intro-start-video::-webkit-media-controls-toggle-closed-captions-button,
 #intro-start-video::-webkit-media-controls-overflow-button{display:none!important;visibility:hidden!important;opacity:0!important}
+
+/* 本輪調整：叉叉向左10px，手機版另補足目前覆蓋值。 */
+#result-preview-share-overlay .result-preview-close{right:50px!important}
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+ #result-preview-share-overlay .result-preview-close{right:58px!important}
+}
+/* 保存圖片後方的白色漸層加強。 */
+#personality-result-screen #personality-result-save::before{
+ bottom:-42px!important;width:min(48vw,440px)!important;height:118px!important;
+ background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.96) 30%,rgba(255,255,255,.68) 62%,rgba(255,255,255,0) 100%)!important;
+}
+/* 測驗標語大幅上移。 */
+#personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:-60px!important}
+/* 片尾星球背景音樂曲目略縮小，烏賊那段文字略放大。 */
+#end-credits .credits-music-track{font-size:.82em!important;line-height:1.35!important}
+#end-credits .credits-person-squid{font-size:.92em!important;line-height:1.35!important}
+/* 片尾停在最後的 Logo／標準字，不把空白 padding 算進滾動高度。 */
+#end-credits .credits-roll{padding-bottom:0!important}
+#end-credits .credits-brand-row{
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ gap:8px!important;width:min(88%,760px)!important;margin:28px auto 18px!important;
+}
+#end-credits .credits-brand-row img:first-child{width:clamp(112px,22vw,205px)!important;height:auto!important}
+#end-credits .credits-brand-row img:last-child{width:clamp(170px,34vw,330px)!important;height:auto!important}
+/* 開始介面 Logo 放大、標準字縮小上移，兩者加泛光。 */
+#intro-start-logo{
+ width:clamp(104px,30%,158px)!important;max-height:23vh!important;
+ filter:drop-shadow(0 0 9px rgba(255,255,255,.72)) drop-shadow(0 0 22px rgba(255,255,255,.42))!important;
+}
+#intro-start-title{
+ width:min(68%,292px)!important;max-height:24vh!important;margin-top:-10px!important;
+ filter:drop-shadow(0 0 7px rgba(255,255,255,.66)) drop-shadow(0 0 17px rgba(255,255,255,.38))!important;
+}
+#intro-start-button{font-size:clamp(54px,15vw,74px)!important;min-height:118px!important}
+#intro-start-button .start-button-orange{
+ color:#FF8A00!important;-webkit-text-fill-color:#FF8A00!important;text-shadow:0 0 8px rgba(255,138,0,.52)!important;
+}
+@media(max-width:500px){
+ #intro-start-logo{width:clamp(96px,34%,145px)!important}
+ #intro-start-title{width:min(74%,292px)!important;margin-top:-9px!important}
+ #intro-start-button{font-size:clamp(48px,14vw,66px)!important;min-height:78px!important}
+}
+
 </style>
