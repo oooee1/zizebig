@@ -11896,11 +11896,15 @@ function openPersonalityResult(first,second){
                 // 只調整三張素材的擺放位置，不更動下方 WAAPI 的進退場方向與動畫。
                 // 每張雲都維持整個舞台大小，只移動畫布的垂直位置；透明留白不再被裁成小圖。
                 const cloudLayout = [
-                    { left:"-12%", top:"-28%", width:"124%", height:"120%" },
-                    { left:"-10%", top:"20%", width:"120%", height:"120%" },
-                    { left:"-14%", top:"55%", width:"128%", height:"120%" }
+                    { left:"-6%", top:"-22%", width:"112%", height:"108%", zIndex:"1" },
+                    { left:"-5%", top:"20%", width:"110%", height:"108%", zIndex:"2" },
+                    // 最下面一朵縮小，並提高圖層順序，確保它最後疊在另外兩朵上方。
+                    { left:"-2%", top:"57%", width:"104%", height:"96%", zIndex:"3" }
                 ][index];
-                for (const [key,value] of Object.entries(cloudLayout)) img.style.setProperty(key,value,"important");
+                for (const [key,value] of Object.entries(cloudLayout)) {
+                    if (key === "zIndex") img.style.setProperty("z-index",value,"important");
+                    else img.style.setProperty(key,value,"important");
+                }
                 img.style.setProperty("position","absolute","important");
                 img.style.setProperty("right","auto","important");
                 img.style.setProperty("bottom","auto","important");
