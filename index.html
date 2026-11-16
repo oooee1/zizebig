@@ -8983,33 +8983,12 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.classList.add("comic-split-role");
             if (options.opening) layer.classList.add("intro-comic-role");
             layer.setAttribute("data-comic-layer-kind", "split-role");
-            // 分離角色圖以同一格的背景圖 Alpha 作遮罩，避免人物跑出背景輪廓。
+            // 11／12 角色與背景是同尺寸透明畫布，疊在同一座標系；不使用背景 Alpha 遮罩裁切。
             const splitNumber = isSplitRole ? rolePath.match(/(?:^|\/)(11|12)\.webp$/i) : null;
-            if (splitNumber) {
-                layer.setAttribute("data-comic-mask-role", splitNumber[1]);
-                // 11、12 的角色必須受同格背景 Alpha 限制；使用對應背景圖作遮罩，
-                // 不再把遮罩設成 none，避免角色透明畫布中的圖像跑出分鏡背景輪廓。
-                layer.style.removeProperty("--comic-role-mask");
-                if (backgroundMaskPath) {
-                    const maskSource = 'url("' + backgroundMaskPath + '")';
-                    layer.style.setProperty("-webkit-mask-image", maskSource, "important");
-                    layer.style.setProperty("mask-image", maskSource, "important");
-                    layer.style.setProperty("-webkit-mask-size", "100% 100%", "important");
-                    layer.style.setProperty("mask-size", "100% 100%", "important");
-                    layer.style.setProperty("-webkit-mask-position", "center center", "important");
-                    layer.style.setProperty("mask-position", "center center", "important");
-                    layer.style.setProperty("-webkit-mask-repeat", "no-repeat", "important");
-                    layer.style.setProperty("mask-repeat", "no-repeat", "important");
-                } else {
-                    layer.style.setProperty("-webkit-mask-image", "none", "important");
-                    layer.style.setProperty("mask-image", "none", "important");
-                }
-            } else {
-                layer.removeAttribute("data-comic-mask-role");
-                layer.style.removeProperty("--comic-role-mask");
-                layer.style.setProperty("-webkit-mask-image", "none", "important");
-                layer.style.setProperty("mask-image", "none", "important");
-            }
+            if (splitNumber) layer.setAttribute("data-comic-mask-role", splitNumber[1]);
+            else layer.removeAttribute("data-comic-mask-role");
+            layer.style.setProperty("-webkit-mask-image", "none", "important");
+            layer.style.setProperty("mask-image", "none", "important");
         }
 
         const isForegroundComic = !isFullBleedOpeningBackdrop;
@@ -12731,14 +12710,14 @@ function openPersonalityResult(first,second){
                 // 11～14 為第一段；切換到 1～5 時必須清空第一段，再累積第二段。
                 // 同一段內逐格保留，只有跨段時才清空上一段。
                 const openingComicFrames = [
-                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
-                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
-                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
-                    { group: "opening-sequence-1-5", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
-                    { group: "opening-sequence-1-5", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
-                    { group: "opening-sequence-1-5", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
-                    { group: "opening-sequence-1-5", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
+                    { group: "opening-sequence-11-14", sceneId: -14, paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-sequence-11-14", sceneId: -13, paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-sequence-11-14", sceneId: -12, paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
+                    { group: "opening-sequence-11-14", sceneId: -11, paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
+                    { group: "opening-sequence-1-5", sceneId: -10, paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
+                    { group: "opening-sequence-1-5", sceneId: -9, paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
+                    { group: "opening-sequence-1-5", sceneId: -8, paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
+                    { group: "opening-sequence-1-5", sceneId: -7, paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
                 ];
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
@@ -12866,8 +12845,7 @@ function openPersonalityResult(first,second){
                     renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:false, rolePath:frame.rolePath });
                     // 開場漫畫走獨立的逐格播放流程，不會經過 renderScene；
                     // 因此必須在這裡同步建立該格的對話泡泡，沿用 storyScript 原文與位置。
-                    const openingDialogueSceneIds = [-14, -13, -12, -11, -10, -9, -8, -7];
-                    const dialogueScene = storyScript.find(scene => Number(scene.id) === openingDialogueSceneIds[index]);
+                    const dialogueScene = storyScript.find(scene => Number(scene.id) === Number(frame.sceneId));
                     if (dialogueScene && typeof dialogueScene.text === "string" && dialogueScene.text.trim()) {
                         const dialogueTarget = createComicDialogueBubble(comicBox, dialogueScene);
                         if (dialogueTarget) {
@@ -15657,6 +15635,25 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
 }
 </style>
 
+
+<style id="verified-final-overrides-20261116">
+@media (max-width:768px){
+ #personality-result-screen #personality-result-save,
+ #personality-result-screen #personality-result-save:active{transform:translateX(-50%)!important}
+}
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+ font-size:clamp(16px,2.5cqw,20px)!important;line-height:1.4!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-next{font-size:1em!important}
+#game-container .dream-cloud-transition img:nth-child(1){left:-7%!important;top:-17%!important;width:112%!important;height:76%!important}
+#game-container .dream-cloud-transition img:nth-child(2){left:2%!important;top:13%!important;width:104%!important;height:74%!important}
+#game-container .dream-cloud-transition img:nth-child(3){left:-9%!important;top:49%!important;width:114%!important;height:74%!important}
+</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
