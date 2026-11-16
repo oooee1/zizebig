@@ -16951,8 +16951,8 @@ body.opening-comic-controls #game-container #skip-btn{
 
 
 <style id="stage-comic-result-final-adjustments-20261116">
-/* 所有漫畫共用同一個舞台尺寸與定位：不再把開場漫畫額外放大，後續漫畫也同步到相同尺寸。 */
-#game-container #comic-box .comic-layer{
+/* 只縮小漫畫前景圖層；背景保持原本尺寸，繼續鋪滿遊戲畫面。 */
+#game-container #comic-box .comic-layer:not(.intro-comic-background){
  position:absolute!important;
  top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
  width:86%!important;height:86%!important;
@@ -16962,18 +16962,19 @@ body.opening-comic-controls #game-container #skip-btn{
  transform:translate(-50%,-50%)!important;
  object-fit:contain!important;object-position:center center!important;
 }
-/* 開場漫畫舊規則的選擇器優先級較高，這裡明確覆蓋它；不再使用 92vw／92dvh。 */
-#game-container #comic-box.opening-comic-active .comic-layer,
-#game-container #comic-box.opening-comic-active .intro-comic-background,
+/* 開場漫畫背景不套用前景縮放，維持完整畫面尺寸。 */
+#game-container #comic-box.opening-comic-active .intro-comic-background{
+ position:absolute!important;
+ top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:100%!important;height:100%!important;
+ min-width:100%!important;min-height:100%!important;
+ max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;
+ object-fit:cover!important;object-position:center center!important;
+}
+/* 11／12 分離素材：背景保持滿版，角色作為漫畫前景縮小並置中。 */
 #game-container #comic-box.opening-comic-active .intro-comic-role{
- width:86%!important;height:86%!important;
- min-width:0!important;min-height:0!important;
- max-width:86%!important;max-height:86%!important;
- object-fit:contain!important;
-}
-/* 11、12 分離背景與角色也使用相同的 86% 畫布，確保兩層完全重合。 */
-#game-container #comic-box .intro-comic-background,
-#game-container #comic-box .intro-comic-role{
  position:absolute!important;
  top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
  width:86%!important;height:86%!important;
@@ -16983,13 +16984,14 @@ body.opening-comic-controls #game-container #skip-btn{
  transform:translate(-50%,-50%)!important;
  object-fit:contain!important;object-position:center center!important;
 }
-/* 11 角色取消會切掉下半部的 alpha 遮罩。 */
+/* 11 角色遮罩仍對應角色自己的完整透明畫布。 */
 #game-container #comic-box .intro-comic-role[data-comic-mask-role="11"]{
  -webkit-mask-image:none!important;mask-image:none!important;
+ -webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;
 }
-/* 開場與後續漫畫使用完全相同的單層淡入上移，不再同時執行容器滑入與圖片淡入造成雙重位移。 */
+/* 漫畫圖層沿用單層淡入上移，不讓容器動畫造成雙重位移。 */
 #game-container #comic-box.comic-slide-up{animation:none!important}
-#game-container #comic-box .comic-layer{
+#game-container #comic-box .comic-layer:not(.intro-comic-background){
  animation:fadeInUp .6s ease-out both!important;
 }
 /* 載入層固定以遊戲舞台為定位基準。 */
@@ -17013,12 +17015,9 @@ body.opening-comic-controls #game-container #skip-btn{
  font-family:"PingFang TC","Microsoft JhengHei",Arial,sans-serif!important;
  font-style:normal!important;font-weight:600!important;
  font-size:18px!important;line-height:1.5!important;
- color:#fff!important;-webkit-text-fill-color:#fff!important;
- display:block!important;visibility:visible!important;opacity:1!important;
+ -webkit-text-fill-color:#fff!important;color:#fff!important;
 }
-/* 結果頁調整僅限手機。 */
 @media (max-width:900px), (pointer:coarse) and (max-width:1200px){
- #personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:-18px!important}
- #result-preview-share-overlay .result-preview-close{right:63px!important;top:-14px!important}
+ #personality-result-screen .result-save-close{right:63px!important;top:-14px!important}
 }
 </style>
