@@ -9076,25 +9076,24 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.style.setProperty("object-position", "center center", "important");
         }
         if (isSplitBackground || isSplitRole) {
-            // 11 與 12 是同一個開場畫面中的兩格：各自佔左右半幅，前一格不清除。
-            // 同一格的背景與角色共用完全相同的定位及尺寸。
-            const panelMatch = (isSplitRole ? rolePath : backgroundMaskPath).match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i);
-            const panelNumber = options.opening && panelMatch ? panelMatch[1] : null;
+            // 11／12 的相對位置已經畫在同尺寸透明素材內，四張圖必須共用同一張中央畫布。
+            // 不再把整張透明畫布推到 26%／74%，避免角色與背景一起偏移。
             layer.style.setProperty("top", "50%", "important");
-            layer.style.setProperty("left", panelNumber === "11" ? "26%" : panelNumber === "12" ? "74%" : "50%", "important");
-            layer.style.setProperty("width", panelNumber ? "46%" : "90%", "important");
-            layer.style.setProperty("height", panelNumber ? "86%" : "90%", "important");
-            layer.style.setProperty("max-width", panelNumber ? "46%" : "90%", "important");
-            layer.style.setProperty("max-height", panelNumber ? "86%" : "90%", "important");
+            layer.style.setProperty("left", "50%", "important");
+            layer.style.setProperty("width", "90%", "important");
+            layer.style.setProperty("height", "90%", "important");
+            layer.style.setProperty("max-width", "90%", "important");
+            layer.style.setProperty("max-height", "90%", "important");
             layer.style.setProperty("object-fit", "contain", "important");
             layer.style.setProperty("object-position", "center center", "important");
             layer.style.setProperty("opacity", "0", "important");
             layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
-            if (panelNumber) layer.setAttribute("data-opening-panel", panelNumber);
-            else layer.removeAttribute("data-opening-panel");
+            layer.removeAttribute("data-opening-panel");
         }
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
-        layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : String(10 + layerOrder), "important");
+        // 先疊完 11、12 的兩張背景，再疊兩個角色；12 背景不可以蓋掉 11 角色。
+        const comicLayerZ = isFullBleedOpeningBackdrop ? 0 : isSplitBackground ? 10 : isSplitRole ? 20 : 10 + layerOrder;
+        layer.style.setProperty("z-index", String(comicLayerZ), "important");
         playLayerEntry(layer);
         shownPaths.push(path);
     });
@@ -11869,10 +11868,12 @@ function openPersonalityResult(first,second){
                 const img = document.createElement("img");
                 img.src = src; img.alt = ""; img.dataset.cloudIndex = String(index);
                 // 雲的位置直接寫在元素上，避免後面重複的全域 CSS 把三張圖覆蓋成同一位置。
+                // 雲圖本身是高比例透明畫布；寬高必須依原圖比例放大，才能讓實際雲體延伸到舞台邊緣。
+                // 只調整三張素材的擺放位置，不更動下方 WAAPI 的進退場方向與動畫。
                 const cloudLayout = [
-                    { left:"-18%", top:"-20%", width:"136%", height:"62%" },
-                    { left:"-12%", top:"22%", width:"124%", height:"62%" },
-                    { left:"-18%", top:"60%", width:"136%", height:"62%" }
+                    { left:"-18%", top:"-48%", width:"136%", height:"204%" },
+                    { left:"-10%", top:"-18%", width:"136%", height:"204%" },
+                    { left:"-24%", top:"-58%", width:"150%", height:"225%" }
                 ][index];
                 for (const [key,value] of Object.entries(cloudLayout)) img.style.setProperty(key,value,"important");
                 img.style.setProperty("position","absolute","important");
@@ -19007,3 +19008,40 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style>
 
+
+<style id="zz-final-source-order-fix-20261116">
+/* 最後生效的結果介紹字級：雙高分不同與同分版本完全一致，包含所有巢狀文字。 */
+#personality-result-screen #personality-result-copy .result-career-intro:not(.result-career-intro-tied),
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:clamp(16px,calc(3.4cqw + 6px),20px)!important;
+  line-height:1.45!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro > *,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-next{
+  font-size:1em!important;line-height:inherit!important;
+}
+/* 11、12 的背景與角色共用同一張完整透明畫布；素材內的左右位置不再被 CSS 二次平移。 */
+#game-container #comic-box.opening-comic-active .comic-split-background,
+#game-container #comic-box.opening-comic-active .comic-split-role{
+  top:50%!important;left:50%!important;width:90%!important;height:90%!important;
+  max-width:90%!important;max-height:90%!important;
+  object-fit:contain!important;object-position:center center!important;
+  transform:translate(-50%,-50%)!important;
+}
+/* 雲層的實際透明畫布放大到足以讓雲體抵達舞台邊緣；不覆寫動畫 transform。 */
+#game-container .dream-cloud-transition img:nth-child(1){
+  left:-18%!important;top:-48%!important;width:136%!important;height:204%!important;
+  object-fit:fill!important;object-position:center center!important;
+}
+#game-container .dream-cloud-transition img:nth-child(2){
+  left:-10%!important;top:-18%!important;width:136%!important;height:204%!important;
+  object-fit:fill!important;object-position:center center!important;
+}
+#game-container .dream-cloud-transition img:nth-child(3){
+  left:-24%!important;top:-58%!important;width:150%!important;height:225%!important;
+  object-fit:fill!important;object-position:center center!important;
+}
+</style>
