@@ -18399,3 +18399,28 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style>
 
+
+<style id="absolute-final-comic-touch-overrides-20261116">
+/* 最後覆蓋所有較早的漫畫 CSS：12 的背景與角色同框、同尺寸、同拉伸，不再各自 contain。 */
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:90%!important;height:90%!important;min-width:0!important;min-height:0!important;
+ max-width:90%!important;max-height:90%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;translate:0 0!important;
+ object-fit:fill!important;object-position:center center!important;
+}
+/* 漫畫泡泡寬一點，讓一行能容納更多字。 */
+#game-container #comic-box .comic-speech-bubble{max-width:min(64%,520px)!important;padding:11px 21px!important;}
+.dialogue-player-name{color:#F07824!important;fill:#F07824!important;font-weight:800!important}
+/* 雲素材透明留白較多，沿 X/Y 軸放大後再依不同高度錯位，填滿整個遊戲畫面。 */
+#game-container .dream-cloud-transition img{
+ position:absolute!important;inset:0!important;left:0!important;right:auto!important;top:0!important;bottom:auto!important;
+ width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+ object-fit:fill!important;object-position:center center!important;transform-origin:center center!important;
+}
+#game-container *{touch-action:manipulation!important}
+#game-container #wire-game-overlay,#game-container #wire-game-overlay *,
+#game-container #wire-game-svg,#game-container #mail-game-overlay,#game-container #mail-game-overlay *,
+#game-container .mail-game-envelope,#game-container .mail-game-mailbox{touch-action:none!important}
+</style>
