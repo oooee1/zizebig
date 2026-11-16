@@ -16023,18 +16023,7 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
   max-width:min(33%,270px)!important;
   padding:8px 12px!important;
 }
-/* 40.1：好奇星先完整左右搖擺，再切換到下一個場景。 */
-@keyframes curiousSwayBeforeSceneChange{
-  0%,100%{transform:rotate(0deg)}
-  18%{transform:rotate(-9deg)}
-  38%{transform:rotate(5deg)}
-  58%{transform:rotate(-5deg)}
-  78%{transform:rotate(8deg)}
-}
-#page1 #好奇星有尾巴.curious-sway img{
-  animation:curiousSwayBeforeSceneChange 1.3s ease-in-out both!important;
-  transform-origin:bottom center!important;
-}
+
 /* 「結合……是……」整句縮小，包含星球名稱與第二高分提示。 */
 #personality-result-screen #personality-result-copy .result-career-intro,
 #personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
@@ -19024,17 +19013,7 @@ body.opening-comic-controls #game-container #skip-btn{
   left:-9%!important;top:49%!important;right:auto!important;bottom:auto!important;
   width:114%!important;height:74%!important;object-fit:contain!important;object-position:center!important;
 }
-/* 40.1：好奇星左右搖擺一次，動畫結束後才進入 41 的草叢背景。 */
-@keyframes curiousSwayTransition{
-  0%,100%{transform:rotate(0deg)}
-  22%{transform:rotate(-8deg)}
-  48%{transform:rotate(0deg)}
-  74%{transform:rotate(8deg)}
-}
-#好奇星有尾巴.curious-sway img{
-  animation:curiousSwayTransition 1.05s ease-in-out both!important;
-  transform-origin:bottom center!important;
-}
+
 /* 「結合……是……」整句再收小一階，星球名稱不額外放大。 */
 #personality-result-screen #personality-result-copy .result-career-intro,
 #personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
