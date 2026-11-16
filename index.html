@@ -357,7 +357,7 @@
 
         #page1 #熱情星戴上王冠 {
             bottom: 157px !important;
-            transform: translate(8px, 48px) scale(0.82) !important;
+            transform: translate(8px, 56px) scale(0.82) !important;
             transform-origin: top left;
         }
 
@@ -2973,6 +2973,22 @@ img { max-width:100%; }
  display:none!important;opacity:0!important;visibility:hidden!important;
 }
 </style>
+<style id="user-fixes-20261116-happy-comic-cloud">
+@keyframes dadSmileGentle {
+  0%,100% { transform:translateY(0) rotate(0deg); }
+  38% { transform:translateY(-3px) rotate(-.7deg); }
+  68% { transform:translateY(1px) rotate(.3deg); }
+}
+#page1 .角色圖.anim-dad-smile img{
+  animation:dadSmileGentle 1.05s ease-in-out 1 both!important;
+  transform-origin:bottom center!important;
+}
+#game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{translate:10px 0!important;}
+#game-container .dream-cloud-transition img:nth-child(1){left:-10%!important;top:-24%!important;width:120%!important;height:86%!important;}
+#game-container .dream-cloud-transition img:nth-child(2){left:-6%!important;top:8%!important;width:112%!important;height:92%!important;}
+#game-container .dream-cloud-transition img:nth-child(3){left:-10%!important;top:38%!important;width:120%!important;height:86%!important;}
+</style>
+
 </head>
 
 <body>
@@ -8009,12 +8025,18 @@ img { max-width:100%; }
     },
     {
         "id": 307,
+        comicMode: true,
+        comicGroup: "family-photo-307",
+        comicImages: ["./pct/CG圖 星辰全家福.webp"],
         bgm: "./audio/4.Handel March, trumpet and organ. (March from Rinaldo)_320k.mp3",
         "text": "",
         background: "星辰全家福"
     },
     {
         "id": 307.1,
+        comicMode: true,
+        comicGroup: "family-photo-307",
+        comicImages: ["./pct/CG圖 星辰全家福.webp"],
         bgm: "./audio/4.Handel March, trumpet and organ. (March from Rinaldo)_320k.mp3",
         "text": "這是，我們的全家福...",
         "speaker":"星辰",
@@ -9614,9 +9636,11 @@ if (window.currentSceneBGM !== scene.bgm) {
         case '好奇星開心閉眼':
         case '同情星感動':
         case '爽快星開心':
-        case '爸爸微笑':
         case '媽媽微笑':
             charElement.classList.add('anim-bounce');
+            break;
+        case '爸爸微笑':
+            charElement.classList.add('anim-dad-smile');
             break;
 
         case '星辰思考':
@@ -11316,7 +11340,7 @@ function openPersonalityResultCore(first,second){
   originalSizes.forEach(([el,size])=>{
    // 好奇星主標由獨立的0.6倍規則控制，連同「奇」字一起跳過全頁文字縮小，避免三字大小不一致。
    if(el.closest&&el.closest(".result-name-curiosity"))return;
-   if(el.closest&&el.closest(".result-career-intro-star"))return;
+   if(el.closest&&(el.closest(".result-career-intro-star")||el.closest(".result-career-intro-next")))return;
    if(Number.isFinite(size))el.style.setProperty("font-size",Math.max(1,size-1.5)+"px","important");
   });
   // 好奇星中文名稱不額外縮放；只有英文標題保留既有的 O／E 字級調整。
@@ -11661,7 +11685,7 @@ function openPersonalityResult(first,second){
         }
 
         // 開場 1～4 漫畫結束後的夢境轉場：三層雲依序蓋滿畫面，再淡出露出下一幕。
-        function playDreamCloudTransition(onComplete) {
+        function playDreamCloudTransition(onCovered, onComplete) {
             const stage = document.getElementById("game-container");
             if (!stage) { if (typeof onComplete === "function") onComplete(); return; }
             const overlay = document.createElement("div");
@@ -11682,27 +11706,37 @@ function openPersonalityResult(first,second){
                 });
             }));
             let finished = false;
+            let covered = false;
+            const switchSceneUnderClouds = () => {
+                if (covered) return;
+                covered = true;
+                if (typeof onCovered === "function") onCovered();
+            };
             const finish = () => {
                 if (finished) return;
-                finished = true; overlay.remove();
+                switchSceneUnderClouds();
+                finished = true;
+                clearTimeout(fallback);
+                overlay.remove();
                 if (typeof onComplete === "function") onComplete();
             };
             const fallback = setTimeout(finish, 5200);
             waitForImages.then(() => {
                 if (finished) return;
                 const covers = images.map((img,index) => img.animate(
-                    [{opacity:0,transform:"translateY(16%) scale(1.08)"},{opacity:1,transform:"translateY(0) scale(1)"}],
+                    [{opacity:0,transform:index===1?"translateY(-18%) scale(1.1)":"translateY(18%) scale(1.1)"},{opacity:1,transform:"translateY(0) scale(1)"}],
                     {duration:560,delay:index*130,easing:"cubic-bezier(.2,.75,.25,1)",fill:"forwards"}
                 ));
                 Promise.all(covers.map(a=>a.finished.catch(()=>null))).then(() => {
                     if (finished) return;
+                    switchSceneUnderClouds();
                     setTimeout(() => {
                         if (finished) return;
                         const reveals = [...images].reverse().map((img,index)=>img.animate(
-                            [{opacity:1,transform:"translateY(0) scale(1)"},{opacity:0,transform:"translateY(-12%) scale(1.06)"}],
+                            [{opacity:1,transform:"translateY(0) scale(1)"},{opacity:0,transform:index===1?"translateY(18%) scale(1.06)":"translateY(-18%) scale(1.06)"}],
                             {duration:620,delay:index*90,easing:"ease-in",fill:"forwards"}
                         ));
-                        Promise.all(reveals.map(a=>a.finished.catch(()=>null))).then(()=>{clearTimeout(fallback);finish();});
+                        Promise.all(reveals.map(a=>a.finished.catch(()=>null))).then(finish);
                     },420);
                 });
             });
@@ -11751,10 +11785,11 @@ function openPersonalityResult(first,second){
                     : currentStep + 1;
                 window.dreamCloudTransitionRunning = true;
                 playDreamCloudTransition(() => {
-                    window.dreamCloudTransitionRunning = false;
                     currentStep = targetIndex;
                     if (currentStep >= 0 && currentStep < storyScript.length) renderScene(currentStep);
                     else showEndCredits();
+                }, () => {
+                    window.dreamCloudTransitionRunning = false;
                 });
                 return;
             }
@@ -12342,7 +12377,7 @@ function openPersonalityResult(first,second){
         }
 
         function playNodAnim(charId) {
-            hideAllCharacters();
+            // renderScene 已統一清除上一幕角色；此處不可再次全部隱藏，否則會藏掉同幕其他立繪。
             const target = document.getElementById(charId);
             if (!target) return;
             target.style.display = 'block'; 
@@ -18245,19 +18280,14 @@ body.opening-comic-controls #game-container #skip-btn{
 #game-container #comic-box .comic-speech-bubble[data-tail="top-left"]::after{
   left:15%!important;top:-17px!important;clip-path:polygon(0 100%,100% 100%,0 0)!important;
 }
-/* 「結合……是……」與同分版統一 18px，包含星球名稱、玩家名稱及同分標記。 */
-#personality-result-screen #personality-result-copy .result-career-intro,
-#personality-result-screen #personality-result-copy .result-career-intro *{
-  font-size:18px!important;
-}
+/* 「結合……是……」保留原本句子字級，只讓星球名稱與可能職業提示稍微縮小。 */
 #personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
-#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
-#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark{
-  font-size:18px!important;
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-next{
+  font-size:.92em!important;
 }
 /* 測驗標語再往下 10px。 */
 #personality-result-screen #personality-result-copy{
-  --result-disclaimer-shift-y:-170px!important;
+  --result-disclaimer-shift-y:-160px!important;
 }
 </style>
 
