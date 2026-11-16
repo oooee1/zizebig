@@ -15592,11 +15592,22 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
   max-width:none!important;max-height:none!important;object-fit:fill!important;
 }
 /* 結果保存按鈕恢復小尺寸；一般與按下狀態都不得再套 1.6 倍放大。 */
-#personality-result-screen #personality-result-save{
-  transform:translateX(-50%) scale(.82)!important;
+@media (min-width:769px){
+  #personality-result-screen #personality-result-save{
+    transform:translateX(-50%) scale(.82)!important;
+  }
+  #personality-result-screen #personality-result-save:active{
+    transform:translate(-50%,1px) scale(.82)!important;
+  }
 }
-#personality-result-screen #personality-result-save:active{
-  transform:translate(-50%,1px) scale(.82)!important;
+@media (max-width:768px){
+  /* 手機保存結果維持原本大小，不套用桌機縮小設定。 */
+  #personality-result-screen #personality-result-save{
+    transform:translateX(-50%) scale(1.6)!important;
+  }
+  #personality-result-screen #personality-result-save:active{
+    transform:translate(-50%,1px) scale(1.6)!important;
+  }
 }
 /* 「結合……是……」一般與同分結果統一字級、行高與文字基線。 */
 #personality-result-screen #personality-result-copy .result-career-intro,
