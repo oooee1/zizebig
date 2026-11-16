@@ -12986,7 +12986,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                 function showStartInterface() {
                     if (loadingScreen) loadingScreen.style.display = "none";
                     const devAtStart = document.getElementById("developer-tools");
-                    if (devAtStart) { devAtStart.style.setProperty("visibility", "visible", "important"); devAtStart.style.setProperty("pointer-events", "auto", "important"); }
+                    if (devAtStart) { devAtStart.style.setProperty("visibility", "hidden", "important"); devAtStart.style.setProperty("pointer-events", "auto", "important"); }
                     const page = document.getElementById("page1");
                     if (page) {
                         page.style.visibility = "hidden";
@@ -13129,7 +13129,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         if (error) console.warn("[開場劇情] 部分素材未能預載，仍繼續：", error);
                         if (loadingScreen) loadingScreen.style.display = "none";
                         const dev = document.getElementById("developer-tools");
-                        if (dev) { dev.style.setProperty("visibility", "visible", "important"); dev.style.setProperty("pointer-events", "auto", "important"); }
+                        if (dev) { dev.style.setProperty("visibility", "hidden", "important"); dev.style.setProperty("pointer-events", "auto", "important"); }
                         startFirstScene();
                     }, true);
                 }
