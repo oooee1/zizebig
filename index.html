@@ -17237,7 +17237,6 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
   if(platform==="instagram"){
    // 網頁版無法寫入 iOS UIPasteboard 的 Instagram 專用貼紙資料；
    // 先把結果圖交給使用者保存，再直接開啟 Instagram。
-   const file=getShareFile(blob);
    const url=URL.createObjectURL(blob);
    const link=document.createElement("a");
    link.href=url;link.download=activeFile;link.style.display="none";
@@ -17245,7 +17244,7 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
    setTimeout(()=>URL.revokeObjectURL(url),60000);
    window.location.href="instagram://app";
    openFallback("https://www.instagram.com/");
-   if(label)label.textContent="正在開啟 Instagram；請選擇結果圖片並加入限動貼紙";
+   if(label)label.textContent="正在下載結果圖並開啟 Instagram；請在限動選取圖片，再加入 Add Yours 貼紙";
    return;
   }
  }
