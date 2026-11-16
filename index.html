@@ -16962,6 +16962,15 @@ body.opening-comic-controls #game-container #skip-btn{
  transform:translate(-50%,-50%)!important;
  object-fit:contain!important;object-position:center center!important;
 }
+/* 開場漫畫舊規則的選擇器優先級較高，這裡明確覆蓋它；不再使用 92vw／92dvh。 */
+#game-container #comic-box.opening-comic-active .comic-layer,
+#game-container #comic-box.opening-comic-active .intro-comic-background,
+#game-container #comic-box.opening-comic-active .intro-comic-role{
+ width:86%!important;height:86%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:86%!important;
+ object-fit:contain!important;
+}
 /* 11、12 分離背景與角色也使用相同的 86% 畫布，確保兩層完全重合。 */
 #game-container #comic-box .intro-comic-background,
 #game-container #comic-box .intro-comic-role{
