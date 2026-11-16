@@ -4133,7 +4133,7 @@ img { max-width:100%; }
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "你要不要參觀我們的星球咩？",
         characters: ["好奇星會跳"],
-        background: "好奇星草叢",
+        background: "好奇星草原",
     },
     {
         id: 12,
@@ -4145,7 +4145,7 @@ img { max-width:100%; }
     {
         id: 13,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(1% + 8px - 5%)", top: "calc(3% + 6px + 5%)", tail: "bottom-right" },
+        comicDialoguePosition: { left: "calc(1% + 8px - 5%)", top: "calc(3% + 6px + 5%)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-2-第一張.webp","./1漫畫/1好奇星-2-第一張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "這裡以前是片大草原，不過因為發電機壞掉了...",
@@ -4154,7 +4154,7 @@ img { max-width:100%; }
     {
         id: 13.1,
         comicImages: [],
-        comicDialoguePosition: { left: "calc(40% + 34px)", top: "calc(0% + 7px)", tail: "top-left" },
+        comicDialoguePosition: { left: "calc(40% + 34px)", top: "calc(0% + 9px)", tail: "bottom-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "我們的毛沒辦法被吹走，星球才會充滿了棉花咩。",
     },
@@ -4162,14 +4162,14 @@ img { max-width:100%; }
         id: 15,
         comicGroup: 2,
         comicImages: ["./1漫畫/1好奇星-2-第二張.webp","./1漫畫/1好奇星-2-第三張.webp"],
-        comicDialoguePosition: { left: "5%", top: "calc(21% + 5% + 8px - 12%)", tail: "top-right" },
+        comicDialoguePosition: { left: "5%", top: "calc(21% + 5% + 8px - 12% + 10px)", tail: "bottom-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "{playerName}的星球是什麼樣子的咩？",
     },
     {
         id: 14,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(13% + 5% + 16px + 20%)", top: "calc(19% + 5% + 7px + 7%)", tail: "top-right" },
+        comicDialoguePosition: { left: "calc(13% + 5% + 16px + 20% + 5px)", top: "calc(19% + 5% + 7px + 7%)", tail: "bottom-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "（所以羊怎麼會講話...）",
     },
@@ -4184,7 +4184,7 @@ img { max-width:100%; }
     {
         id: 17,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(32% + 14px + 9%)", bottom: "-1%", tail: "top-right" },
+        comicDialoguePosition: { left: "calc(32% + 14px + 9%)", bottom: "calc(-1% + 15px)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "記得曾經聽到過這樣的星球咩。",
@@ -4695,7 +4695,7 @@ img { max-width:100%; }
     {
         id: 53,
         comicGroup: 3,
-        comicDialoguePosition: { right: "5%", top: "calc(1% + 20px + 35%)", tail: "top-right" },
+        comicDialoguePosition: { right: "5%", top: "calc(1% + 20px + 35%)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-3-第二張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好酷，我也是第一次看到咩。",
@@ -4713,7 +4713,7 @@ img { max-width:100%; }
     {
         id: 55,
         comicGroup: 3,
-        comicDialoguePosition: { left: "8%", top: "calc(35% + 34px + 54%)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", top: "calc(35% + 34px + 54% - 8px)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "哇，它被喚醒了！",
@@ -9487,6 +9487,7 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle("mail-failure-mode", Number(scene.id) === 179.5);
         // 337.1「我的選擇」停留畫面：開啟飄雪與微光粒子效果。
         pageEl.classList.toggle("my-choice-atmosphere", currentSceneId === 337.1);
+        pageEl.classList.toggle("curious-star-intro-jump", Number(currentSceneId) === 11);
 
         // 送信教學每次切換一句話都重新播放立繪動畫；三張表情都加上，
         // 由 CSS 讓當下實際顯示的立繪呈現動畫，避免動畫加在隱藏角色上。
@@ -13152,7 +13153,25 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                             resolve(ok);
                         };
                         const onLoaded = () => { loadedFirstFrame = true; };
-                        const onReady = () => finish(true);
+                        const onReady = () => {
+                            video.muted = true;
+                            video.defaultMuted = true;
+                            video.autoplay = true;
+                            video.loop = true;
+                            video.playsInline = true;
+                            video.setAttribute("muted", "");
+                            video.setAttribute("autoplay", "");
+                            video.setAttribute("playsinline", "");
+                            const startPlayback = () => {
+                                try {
+                                    const playAttempt = video.play();
+                                    if (playAttempt && typeof playAttempt.then === "function") {
+                                        playAttempt.then(() => finish(true)).catch(() => finish(true));
+                                    } else finish(true);
+                                } catch (error) { finish(true); }
+                            };
+                            startPlayback();
+                        };
                         const onError = () => finish(false);
                         const videoFallback = setTimeout(() => finish(loadedFirstFrame), 15000);
                         video.preload = "auto";
@@ -13169,7 +13188,17 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         const bar = document.getElementById("progress-bar");
                         if (bar) bar.style.width = "70%";
                         videoReady.then(ok => {
-                            if (!ok) console.warn("[開始介面] 背景影片未能完整預載，仍會嘗試播放。");
+                            if (!ok) {
+                                console.warn("[開始介面] 背景影片尚未取得可播放畫面，重新載入後再進入。");
+                                if (loadingPercent) loadingPercent.textContent = "影片載入中，請稍候…";
+                                const retryVideo = () => {
+                                    if (video && video.readyState >= 2) showStartInterface();
+                                    else if (video) { try { video.load(); } catch (error) {} setTimeout(retryVideo, 1200); }
+                                    else showStartInterface();
+                                };
+                                setTimeout(retryVideo, 1200);
+                                return;
+                            }
                             if (loadingPercent) loadingPercent.textContent = "100%";
                             if (bar) bar.style.width = "100%";
                             showStartInterface();
@@ -15861,7 +15890,17 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
     const playPromise=video.play();
     if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(()=>{});
   }
-  if(video){video.addEventListener("loadeddata",tryPlayVideo);video.addEventListener("canplay",tryPlayVideo);video.addEventListener("playing",()=>{});}
+  if(video){
+    video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;
+    video.setAttribute("muted","");video.setAttribute("autoplay","");video.setAttribute("playsinline","");
+    video.addEventListener("loadeddata",tryPlayVideo);
+    video.addEventListener("canplay",tryPlayVideo);
+    video.addEventListener("playing",()=>{});
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)tryPlayVideo();});
+    window.addEventListener("pageshow",tryPlayVideo);
+    const startButton=document.getElementById("intro-start-button");
+    if(startButton)startButton.addEventListener("click",tryPlayVideo,true);
+  }
   if(start&&typeof MutationObserver!=="undefined"){
     const observer=new MutationObserver(tryPlayVideo);
     observer.observe(start,{attributes:true,attributeFilter:["style","class"]});
@@ -19364,5 +19403,35 @@ body.opening-comic-controls #game-container > #skip-btn{
 #game-container #page1 .scene-transition-fade{
   animation:quiet-scene-transition .42s ease-out both!important;
   filter:none!important;
+}
+</style>
+
+
+<style id="20261117-curious-comic-video-dev-final">
+/* 第11幕：切換到草原背景，好奇星會跳立繪置中登場並持續彈跳。 */
+#page1.curious-star-intro-jump #好奇星會跳{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  position:absolute!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  width:min(58vw,270px)!important;height:auto!important;margin:0!important;
+  transform:translate(-50%,-50%)!important;translate:none!important;
+  z-index:1000!important;
+}
+#page1.curious-star-intro-jump #好奇星會跳 img{
+  display:block!important;width:100%!important;height:auto!important;max-width:none!important;
+  animation:curiousStarIntroHop .72s cubic-bezier(.32,.7,.28,1) infinite!important;
+  transform-origin:bottom center!important;
+}
+@keyframes curiousStarIntroHop{
+  0%,100%{transform:translateY(0) scale(1,1)}
+  22%{transform:translateY(0) scale(1.12,.88)}
+  55%{transform:translateY(-42px) scale(.94,1.08)}
+  78%{transform:translateY(-12px) scale(1.02,.98)}
+}
+/* 開發者入口預設真正隱藏；只有解鎖後加上 dev-tools-revealed 才顯示。 */
+#developer-tools:not(.dev-tools-revealed){
+  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+}
+#developer-tools.dev-tools-revealed{
+  display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
 }
 </style>
