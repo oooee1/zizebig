@@ -12095,8 +12095,7 @@ function openPersonalityResult(first,second){
             const fallback = setTimeout(finish, 5200);
             waitForImages.then(() => {
                 if (finished) return;
-                // 不使用 WAAPI：部分 iOS WebView 在舞台重排時會取消 img.animate()，
-                // 改用原生 CSS transition，讓三層雲的進場／退場都能穩定顯示。
+                // 改用 CSS transition，避免 iOS WebView 在舞台重排時取消 WAAPI 動畫。
                 images.forEach((img,index) => {
                     const initial = index === 1 ? "translateY(-7%) scale(1.05,1.12)" : "translateY(7%) scale(1.05,1.12)";
                     img.style.setProperty("opacity","0");
@@ -12106,12 +12105,13 @@ function openPersonalityResult(first,second){
                 requestAnimationFrame(() => requestAnimationFrame(() => {
                     images.forEach((img,index) => {
                         const target = index === 1 ? "translateY(-4%) scale(1.05,1.12)" : "translateY(4%) scale(1.05,1.12)";
-                        img.style.setProperty("transition","opacity 560ms cubic-bezier(.2,.75,.25,1) "+(index*130)+"ms, transform 560ms cubic-bezier(.2,.75,.25,1) "+(index*130)+"ms");
+                        const delay = index * 130;
+                        img.style.setProperty("transition","opacity 560ms cubic-bezier(.2,.75,.25,1) "+delay+"ms, transform 560ms cubic-bezier(.2,.75,.25,1) "+delay+"ms");
                         img.style.setProperty("opacity","1");
                         img.style.setProperty("transform",target + (index === 0 ? " scaleX(-1)" : ""));
                     });
                 }));
-                // 三層雲全部蓋住畫面後才切換場景。
+                // 三層雲依序蓋滿後才切換場景。
                 setTimeout(() => {
                     if (finished) return;
                     switchSceneUnderClouds();
@@ -12120,14 +12120,60 @@ function openPersonalityResult(first,second){
                         [...images].reverse().forEach((img,index) => {
                             const sourceIndex = images.indexOf(img);
                             const target = sourceIndex === 1 ? "translateY(10%) scale(1.05,1.12)" : "translateY(-10%) scale(1.05,1.12)";
-                            img.style.setProperty("transition","opacity 620ms ease-in "+(index*90)+"ms, transform 620ms ease-in "+(index*90)+"ms");
+                            const delay = index * 90;
+                            img.style.setProperty("transition","opacity 620ms ease-in "+delay+"ms, transform 620ms ease-in "+delay+"ms");
                             img.style.setProperty("opacity","0");
                             img.style.setProperty("transform",target + (sourceIndex === 0 ? " scaleX(-1)" : ""));
                         });
                         setTimeout(finish,800);
                     },420);
                 },820);
-            });          }
+            });
+        }
+
+        // 所有漫畫場景都由同一套 storyScript / nextStep 推進。
+        (function bindComicStageAdvance(){
+            const comicStage = document.getElementById("comic-box");
+            if (!comicStage || comicStage.dataset.comicAdvanceBound === "1") return;
+            comicStage.dataset.comicAdvanceBound = "1";
+            comicStage.addEventListener("click", function(event) {
+                // 開場 11～14 有自己的 pointerup/click 推進流程；不可再落入一般劇情 nextStep，
+                // 否則同一次翻頁會同步推進底下場景並呼叫 clearComicLayers，讓 11 看起來被 12 蓋掉。
+                const active = document.body.classList.contains("comic-scene-active") ||
+                    comicStage.classList.contains("opening-comic-active");
+                if (!active) return;
+                if (event.target && event.target.closest &&
+                    event.target.closest("button,a,input,textarea,select,[data-no-story-advance]")) return;
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                nextStep();
+            }, true);
+        })();
+
+        function nextStep() {
+            // 只要目前畫面正在顯示「我的選擇」按鈕，就鎖住一般劇情推進。
+            // 以實際顯示的按鈕判斷，不把場景編號寫死在 nextStep 裡。
+            const myChoiceButton = document.getElementById("my-choice-result-button");
+            if (myChoiceButton && myChoiceButton.style.display !== "none") return;
+            const wirePage = document.getElementById("page1");
+            if (wirePage && (wirePage.classList.contains("wire-game-mode") || wirePage.classList.contains("mail-game-mode"))) return;
+            // 目前場景還在載素材時，任何點擊都不能推進或跳過對話。
+            if (sceneTransitionLoading) return;
+            const scene = storyScript[currentStep];
+            if (window.dreamCloudTransitionRunning || window.comicDialoguePending) return;
+            if (scene && Number(scene.id) === 8) return;
+            // 351 是最後一幕劇情；點擊後直接切換到原本的電影式滾動片尾。
+            if (scene && Number(scene.id) === 351) {
+                showEndCredits();
+                return;
+            }
+
+            if (window.isTyping) {
+                if (window.myTypingTimer) {
+                    clearInterval(window.myTypingTimer);
+                    window.myTypingTimer = null;
+                }
                 window.isTyping = false;
                 const textBox = document.getElementById("對話文本");
                 if (textBox) textBox.innerHTML = window.currentFullText;
@@ -19404,8 +19450,4 @@ body.opening-comic-controls #game-container #skip-btn{right:112px!important;top:
 /* 選單圖示本體 48px、跳過圖示 42px：以圖示中心對齊，不是只對齊外框頂端。 */
 #game-container #skip-btn,body.opening-comic-controls #game-container #skip-btn{top:max(22px,calc(env(safe-area-inset-top) + 8px))!important;right:128px!important;z-index:2147483649!important;}
 body.opening-comic-controls #game-container #skip-btn{top:max(22px,calc(env(safe-area-inset-top) + 8px))!important;right:128px!important;}
-</style>
-<style id="20261117-cloud-transition-css-motion">
-#game-container .dream-cloud-transition{z-index:2147483646!important;display:block!important;visibility:visible!important;opacity:1!important;}
-#game-container .dream-cloud-transition img{display:block!important;visibility:visible!important;pointer-events:none!important;will-change:opacity,transform;}
 </style>
