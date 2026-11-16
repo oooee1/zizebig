@@ -3341,8 +3341,8 @@ img { max-width:100%; }
     <!-- Dropbox /專題/片尾.txt：新版片尾名單 -->
     <div id="end-credits" aria-label="片尾名單">
         <div class="credits-roll">
-
-
+            <div>光華高中116級專題製作</div>
+            <div class="credits-gap"></div>
             <div class="credits-heading">背景音樂：</div>
             <div>GGEZ</div>
             <div class="credits-note">（這首是沒有版權的）</div>
@@ -3389,9 +3389,6 @@ img { max-width:100%; }
             <div class="credits-gap"></div>
             <div class="credits-heading">友情客串：</div>
             <div>1937．滬信</div>
-
-            <div class="credits-gap"></div>
-            <div>光華高中116級專題製作</div>
 
             <div class="credits-gap"></div>
             <div class="credits-heading">角色設計：</div>
@@ -4528,9 +4525,11 @@ img { max-width:100%; }
     {
         id: 40.1,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
-        text: "(轉場 好奇星左右搖擺)",
-        background: "好奇星草叢",
+        text: "",
+        background: "好奇星棉花重災區",
         characters: ["好奇星有尾巴"],
+        nextId: 41,
+        autoAdvanceAfterMs: 1150,
     },
     {
         id: 41,
@@ -8879,10 +8878,31 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         if (!Array.isArray(shownPaths)) shownPaths = [];
     } catch (_) { shownPaths = []; }
 
+    // 同組漫畫換格時，移除上一格不再使用的前景層，只保留仍在新清單中的共用底圖。
+    // 若本幕沒有新漫畫圖（純延續場景），則保留原圖不動。
+    if (comicPaths.length > 0) {
+        const matchesWantedPath = source => comicPaths.some(path => source === path || source.endsWith(path.replace(/^\.\//, "")));
+        comicBox.querySelectorAll(".comic-layer").forEach(layer => {
+            const source = layer.getAttribute("src") || "";
+            if (matchesWantedPath(source)) return;
+            layer.getAnimations?.().forEach(animation => animation.cancel());
+            if (layer === comicImg) {
+                layer.removeAttribute("src");
+                layer.className = "";
+                ["opacity","translate","animation","width","height","min-width","min-height","max-width","max-height","object-fit","object-position","z-index","position","top","left","right","bottom","transform"].forEach(property => layer.style.removeProperty(property));
+            } else {
+                layer.remove();
+            }
+        });
+        shownPaths = shownPaths.filter(path => comicPaths.includes(path));
+    }
+
     const backgroundMaskPath = comicPaths.find(path => /(?:^|\/)[^/]*背景\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\.(webp|png|jpe?g)$/i.test(path)) || "";
     const rolePath = options.rolePath || comicPaths.find(path => /角色\.(webp|png|jpe?g)$/i.test(path)) || "";
     const isSplitBackgroundAndRole = Boolean(backgroundMaskPath && rolePath && comicPaths.includes(rolePath));
 
+    // 每次呼叫都建立新的配對狀態；11 與 12 各自同步，不沿用上一格的已播放標記。
+    const openingPairScheduled = new Set();
     // 等每張圖片完成解碼後，直接對該圖層執行獨立動畫；不再依賴已經播放過的 CSS class。
     const playLayerEntry = layer => {
         if (!layer) return;
@@ -8911,9 +8931,8 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         const openingPairMatch = options.opening && (layer.src || "").match(/(?:^|\/)(11|12)(背景)?\.(?:webp|png|jpe?g)$/i);
         if (openingPairMatch) {
             const pairNumber = openingPairMatch[1];
-            const startedKey = "opening" + pairNumber + "EntryStarted";
-            if (comicBox.dataset[startedKey] === "1") return;
-            comicBox.dataset[startedKey] = "1";
+            if (openingPairScheduled.has(pairNumber)) return;
+            openingPairScheduled.add(pairNumber);
             Promise.resolve().then(() => {
                 const pairPattern = new RegExp("(?:^|/)(?:" + pairNumber + "背景|" + pairNumber + ")\\.(?:webp|png|jpe?g)$", "i");
                 const pair = Array.from(comicBox.querySelectorAll(".comic-layer")).filter(img => pairPattern.test(img.src || ""));
@@ -9122,6 +9141,7 @@ function setOpeningComicDialogueLayer(active) {
 function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
+    if (window.storyAutoAdvanceTimer) { clearTimeout(window.storyAutoAdvanceTimer); window.storyAutoAdvanceTimer = null; }
     // 負數 ID 是開場漫畫：控制列保持頂端同一排；進入正式劇情時自動恢復。
     document.body.classList.toggle("opening-comic-controls", Number(scene.id) < 0);
 
@@ -9585,9 +9605,19 @@ if (window.currentSceneBGM !== scene.bgm) {
             else if (charName === "好奇星") playCuriousAnim("好奇星", "curious-bounce");
             else if (charName === "好奇星開心") playCuriousAnim("好奇星開心", "curious-wiggle");
             else if (charName === "好奇星會跳") playCuriousAnim("好奇星會跳", "curious-pop");
-            else if (charName === "好奇星有尾巴") playCuriousAnim("好奇星有尾巴", "curious-bounce");
+            else if (charName === "好奇星有尾巴") playCuriousAnim("好奇星有尾巴", currentSceneId === 40.1 ? "curious-sway" : "curious-bounce");
             else if (charName === "好奇星開心有尾巴") playCuriousAnim("好奇星開心有尾巴", "curious-wiggle");
         });
+    }
+
+    // 特殊無文字轉場：先播放角色動作，再自動切換到下一個背景場景。
+    if (Number(currentSceneId) === 40.1 && Number(scene.autoAdvanceAfterMs) > 0) {
+        const expectedStep = stepIndex;
+        window.storyAutoAdvanceTimer = setTimeout(() => {
+            window.storyAutoAdvanceTimer = null;
+            if (currentStep !== expectedStep || sceneTransitionLoading || window.isTyping || window.dreamCloudTransitionRunning) return;
+            nextStep();
+        }, Number(scene.autoAdvanceAfterMs));
     }
 
     // 信件插圖獨立顯示，不啟動漫畫模式，也不遮掉一般對話框。
@@ -12493,7 +12523,7 @@ function openPersonalityResult(first,second){
         function playCuriousAnim(charId, animType = 'curious-bounce') {
             const target = document.getElementById(charId);
             if (!target) return;
-            target.classList.remove('curious-bounce', 'curious-wiggle', 'curious-pop', 'nod-head'); 
+            target.classList.remove('curious-bounce', 'curious-wiggle', 'curious-pop', 'curious-sway', 'nod-head'); 
             void target.offsetWidth; 
             target.classList.add(animType); 
         }
@@ -18611,4 +18641,57 @@ body.opening-comic-controls #game-container #skip-btn{
 #game-container #comic-box .comic-split-background,#game-container #comic-box .comic-split-role[data-comic-mask-role="11"],#game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;object-fit:contain!important;object-position:center center!important;}
 #game-container .dialogue-player-name,#game-container #comic-box .dialogue-player-name{color:inherit!important;fill:currentColor!important;font-weight:inherit!important;}
 #game-container .dream-cloud-transition img,#game-container .dream-cloud-transition img:nth-child(1),#game-container .dream-cloud-transition img:nth-child(2),#game-container .dream-cloud-transition img:nth-child(3){left:2%!important;top:-9%!important;width:108%!important;height:108%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center center!important;}
+</style>
+
+<style id="final-user-adjustments-20261116-b">
+/* 11、12 的同步進場由 renderComicLayers 每格重新配對；此處不再覆蓋透明度。 */
+#game-container #comic-box .comic-speech-bubble{
+  max-width:min(36%,300px)!important;
+  padding:9px 13px!important;
+  overflow-wrap:anywhere!important;
+}
+/* 三朵雲各自錯開高度與左右位置，不再被統一的 inset 規則疊成一團。 */
+#game-container .dream-cloud-transition img:nth-child(1){
+  left:-7%!important;top:-17%!important;right:auto!important;bottom:auto!important;
+  width:112%!important;height:76%!important;object-fit:contain!important;object-position:center!important;
+}
+#game-container .dream-cloud-transition img:nth-child(2){
+  left:2%!important;top:13%!important;right:auto!important;bottom:auto!important;
+  width:104%!important;height:74%!important;object-fit:contain!important;object-position:center!important;
+}
+#game-container .dream-cloud-transition img:nth-child(3){
+  left:-9%!important;top:49%!important;right:auto!important;bottom:auto!important;
+  width:114%!important;height:74%!important;object-fit:contain!important;object-position:center!important;
+}
+/* 40.1：好奇星左右搖擺一次，動畫結束後才進入 41 的草叢背景。 */
+@keyframes curiousSwayTransition{
+  0%,100%{transform:rotate(0deg)}
+  22%{transform:rotate(-8deg)}
+  48%{transform:rotate(0deg)}
+  74%{transform:rotate(8deg)}
+}
+#好奇星有尾巴.curious-sway img{
+  animation:curiousSwayTransition 1.05s ease-in-out both!important;
+  transform-origin:bottom center!important;
+}
+/* 「結合……是……」整句再收小一階，星球名稱不額外放大。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:clamp(16px,calc(3.4cqw + 6px),20px)!important;
+}
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-group,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-tie-mark,
+#personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-next{
+  font-size:1em!important;
+}
+/* 保存結果後方的白色漸層再加重一點，保留原本範圍與按鈕位置。 */
+#personality-result-screen #personality-result-save::before{
+  background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.99) 28%,rgba(255,255,255,.82) 62%,rgba(255,255,255,0) 100%)!important;
+  height:132px!important;
+}
+/* 測驗標語只比目前位置往下 5px。 */
+#personality-result-screen #personality-result-copy{
+  --result-disclaimer-shift-y:-155px!important;
+}
 </style>
