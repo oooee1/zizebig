@@ -8793,7 +8793,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     comicPaths.forEach(path => {
         if (shownPaths.includes(path)) return;
         const fileName = path.split("/").pop();
-        const openingBg = /(?:背景|漫畫背景)\.(webp|png|jpe?g)$/i.test(fileName);
+        const openingBg = /漫畫背景\.(webp|png|jpe?g)$/i.test(fileName);
         const isFullBleedOpeningBackdrop = /漫畫背景\.(webp|png|jpe?g)$/i.test(fileName);
         const isSplitBackground = isSplitBackgroundAndRole && path === backgroundMaskPath;
         const isSplitRole = isSplitBackgroundAndRole && path === rolePath;
