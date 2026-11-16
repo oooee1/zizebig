@@ -4142,7 +4142,7 @@ img { max-width:100%; }
     {
         id: 13.1,
         comicImages: [],
-        comicDialoguePosition: { left: "calc(40% + 34px)", top: "calc(10% + 7px)", tail: "top-left" },
+        comicDialoguePosition: { left: "calc(40% + 34px)", top: "calc(0% + 7px)", tail: "top-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "我們的毛沒辦法被吹走，星球才會充滿了棉花咩。",
     },
@@ -4150,21 +4150,21 @@ img { max-width:100%; }
         id: 15,
         comicGroup: 2,
         comicImages: ["./1漫畫/1好奇星-2-第二張.webp","./1漫畫/1好奇星-2-第三張.webp"],
-        comicDialoguePosition: { left: "5%", top: "calc(21% + 5% + 8px - 2%)", tail: "top-right" },
+        comicDialoguePosition: { left: "5%", top: "calc(21% + 5% + 8px - 12%)", tail: "top-right" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "{playerName}的星球是什麼樣子的咩？",
     },
     {
         id: 14,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(13% + 5% + 16px + 10%)", top: "calc(19% + 5% + 7px + 7%)", tail: "top-right" },
+        comicDialoguePosition: { left: "calc(13% + 5% + 16px + 20%)", top: "calc(19% + 5% + 7px + 7%)", tail: "top-right" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "（所以羊怎麼會講話...）",
     },
     {
         id: 16,
         comicGroup: 2,
-        comicDialoguePosition: { left: "7%", top: "calc(38% + 28% + 27px + 28%)", tail: "top-right" },
+        comicDialoguePosition: { left: "7%", top: "calc(38% + 28% + 27px + 18%)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "叫做地球喔，但其實是什麼樣的我也沒有很清楚...",
@@ -4172,7 +4172,7 @@ img { max-width:100%; }
     {
         id: 17,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(32% + 14px)", bottom: "3%", tail: "top-right" },
+        comicDialoguePosition: { left: "calc(32% + 14px + 9%)", bottom: "-1%", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "記得曾經聽到過這樣的星球咩。",
@@ -4675,7 +4675,7 @@ img { max-width:100%; }
     {
         id: 52,
         comicGroup: 3,
-        comicDialoguePosition: { left: "calc(45% + 20px)", top: "calc(44% - 14px - 18%)", tail: "bottom-left" },
+        comicDialoguePosition: { left: "calc(45% + 20px + 19%)", top: "calc(44% - 14px - 18%)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "拼圖嗎？",
@@ -4701,7 +4701,7 @@ img { max-width:100%; }
     {
         id: 55,
         comicGroup: 3,
-        comicDialoguePosition: { left: "8%", top: "calc(35% + 34px + 34%)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", top: "calc(35% + 34px + 54%)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "哇，它被喚醒了！",
@@ -4709,7 +4709,7 @@ img { max-width:100%; }
     {
         id: 56,
         comicGroup: 4,
-        comicDialoguePosition: { left: "8%", bottom: "calc(57% + 40px)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", bottom: "calc(67% + 40px)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
@@ -9705,7 +9705,7 @@ if (window.currentSceneBGM !== scene.bgm) {
             else if (charName === "好奇星") playCuriousAnim("好奇星", "curious-bounce");
             else if (charName === "好奇星開心") playCuriousAnim("好奇星開心", "curious-wiggle");
             else if (charName === "好奇星會跳") playCuriousAnim("好奇星會跳", "curious-pop");
-            else if (charName === "好奇星有尾巴") playCuriousAnim("好奇星有尾巴", currentSceneId === 40.1 ? "curious-sway" : "curious-bounce");
+            else if (charName === "好奇星有尾巴") playCuriousAnim("好奇星有尾巴", "curious-bounce");
             else if (charName === "好奇星開心有尾巴") playCuriousAnim("好奇星開心有尾巴", "curious-wiggle");
         });
     }
@@ -9776,6 +9776,7 @@ if (window.currentSceneBGM !== scene.bgm) {
         }
     }
     const comicBubbleText = isComicMode && hasText ? createComicDialogueBubble(comicBox, scene) : null;
+    if (comicBox) comicBox.classList.toggle("comic-has-dialogue-hint", Boolean(comicBubbleText));
 
     // 漫畫先進場，再自動顯示對話；只延遲打字，不需要玩家多按一次。
     window.comicDialogueStartToken = (window.comicDialogueStartToken || 0) + 1;
@@ -19290,3 +19291,42 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style>
 
+
+<style id="20261117-dialogue-skip-logo-transition-final">
+/* 一般對話與漫畫泡泡都恢復「點一下繼續」提示。 */
+#page1.show-dialogue-hint #dialogue-next-hint{
+  display:block!important;visibility:visible!important;opacity:1!important;
+}
+#game-container #comic-box.comic-has-dialogue-hint::after{
+  content:"點一下繼續";
+  position:absolute;right:24px;bottom:18px;z-index:2147483646;
+  display:block;padding:5px 9px;border:1px solid #ffb30f;
+  background:rgba(15,15,15,.92);color:#fff;
+  font-family:'CPTrans',sans-serif;font-size:13px;line-height:1.4;
+  white-space:nowrap;pointer-events:none;
+}
+/* 開場漫畫切換時跳過鍵維持相對遊戲舞台定位，不可改成 fixed。 */
+body.opening-comic-controls #game-container > #skip-btn{
+  position:absolute!important;
+  top:max(22px,calc(env(safe-area-inset-top) + 8px))!important;
+  right:128px!important;left:auto!important;
+  width:42px!important;height:42px!important;
+}
+/* Logo 與標準字都要有黑色泛光；Logo 在上層，光暈不會被標準字蓋掉。 */
+#intro-start-logo{
+  position:relative!important;z-index:3!important;
+  -webkit-filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 8px rgba(0,0,0,.95))!important;
+  filter:drop-shadow(0 0 3px #000) drop-shadow(0 0 8px rgba(0,0,0,.95))!important;
+}
+#intro-start-title{
+  position:relative!important;z-index:1!important;
+  -webkit-filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.95))!important;
+  filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.95))!important;
+}
+/* 好奇星跳跳跳回到與其他場景相同的 0.42 秒淡入轉場，不加霧、不放大背景。 */
+#game-container #page1.scene-content-transition,
+#game-container #page1 .scene-transition-fade{
+  animation:quiet-scene-transition .42s ease-out both!important;
+  filter:none!important;
+}
+</style>
