@@ -16425,3 +16425,70 @@ body.opening-comic-controls #skip-btn{
   translate:none!important;
 }
 </style>
+
+
+<style id="result-scroll-fade-and-developer-top-layer-20261116">
+/* 進入測驗結果後，隱藏左上選單／音量與右上跳過鍵；開發者工具獨立保留。 */
+#game-container:has(#personality-result-screen.show) > .menu-container,
+#game-container:has(#personality-result-screen.show) > #skip-btn{
+ display:none!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+/* 開發者工具移到 body 後固定在整個頁面最上層，開始畫面與載入遮罩期間也可操作。 */
+body > #developer-tools{
+ position:fixed!important;
+ top:max(14px,env(safe-area-inset-top))!important;
+ right:max(14px,env(safe-area-inset-right))!important;
+ z-index:2147483647!important;
+ display:block!important;
+ visibility:visible!important;
+ opacity:1!important;
+ pointer-events:auto!important;
+}
+body > #developer-tools,
+body > #developer-tools *{
+ pointer-events:auto!important;
+}
+body > #developer-tools-toggle,
+body > #developer-tools-panel,
+body > #developer-tools-panel button{
+ position:relative!important;
+ z-index:2147483647!important;
+ touch-action:manipulation!important;
+}
+/* 捲到結果頁最底端時，保存結果按鈕與它後面的白色漸層一起淡出。 */
+#personality-result-screen #personality-result-save{
+ transition:opacity .45s ease,visibility .45s ease!important;
+}
+#personality-result-screen.at-scroll-end #personality-result-save:not([hidden]){
+ opacity:0!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+</style>
+<script id="developer-tools-body-portal-and-result-scroll-fade-20261116">
+(function(){
+ function setup(){
+  const dev=document.getElementById("developer-tools");
+  if(dev&&dev.parentElement!==document.body)document.body.appendChild(dev);
+  const screen=document.getElementById("personality-result-screen");
+  if(!screen||screen.dataset.endFadeBound==="true")return;
+  screen.dataset.endFadeBound="true";
+  const update=()=>{
+   const atEnd=screen.scrollHeight-screen.clientHeight-screen.scrollTop<=8;
+   screen.classList.toggle("at-scroll-end",atEnd);
+  };
+  screen.addEventListener("scroll",update,{passive:true});
+  if(window.ResizeObserver){
+   const observer=new ResizeObserver(update);
+   observer.observe(screen);
+   const poster=screen.querySelector("#personality-result-poster");
+   if(poster)observer.observe(poster);
+  }
+  update();
+ }
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});
+ else setup();
+})();
+</script>
