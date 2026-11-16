@@ -10425,16 +10425,26 @@ if (window.currentSceneBGM !== scene.bgm) {
                 sprite.classList.add("mail-sprite-motion",isSuccess?"mail-motion-happy":"mail-motion-panicked");
                 if(image)image.classList.add(isSuccess?"mail-happy-motion":"mail-panicked-motion");
             }
-            // 答對時隨機說出一種台詞，並播放對應的專屬動作。
+            // 答對時從台詞池隨機抽一句；只有 6767／閃身步沿用各自的專屬動作。
+            const mailSuccessLines = [
+                "6767",
+                "閃身步！",
+                "我不是奶龍！",
+                "就是萌！正面看，萌！背面看，萌！左邊看，萌！右面看，萌！上面看，萌！下面看，萌！",
+                "我強大的克制力讓星辰避免了一場可怕的騷擾",
+                "我長眼睛就是為了看這個🔥我長眼睛就是為了看這個🔥我長眼睛就是為了看這個🔥",
+                "我就是一平平無奇的老百姓，你讓我刷到這種顏值，我的心跳一路「蹦蹦蹦噠噠噠撲騰撲騰」沒停過…"
+            ];
             function playMailSuccessAction(){
                 const sprite=document.getElementById("爽快星開心");
                 const image=sprite&&sprite.querySelector("img");
-                const use6767=Math.random()<0.5;
-                setMailFeedback(use6767?"6767":"閃身步！");
+                const line=mailSuccessLines[Math.floor(Math.random()*mailSuccessLines.length)];
+                setMailFeedback(line);
                 if(!image)return;
                 image.classList.remove("mail-action-6767","mail-action-dodge","mail-happy-motion");
+                if(line!=="6767"&&line!=="閃身步！")return;
                 void image.offsetWidth;
-                image.classList.add(use6767?"mail-action-6767":"mail-action-dodge");
+                image.classList.add(line==="6767"?"mail-action-6767":"mail-action-dodge");
             }
             const names={red:"紅色",green:"綠色",blue:"藍色",yellow:"黃色",triangle:"三角形",circle:"圓形",heart:"愛心",square:"正方形"};
             function updateStatus(){
