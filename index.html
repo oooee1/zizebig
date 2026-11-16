@@ -8632,8 +8632,8 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         if (!Array.isArray(shownPaths)) shownPaths = [];
     } catch (_) { shownPaths = []; }
 
-    const backgroundMaskPath = comicPaths.find(path => /(?:^|\\/)[^/]*背景\\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\\.(webp|png|jpe?g)$/i.test(path)) || "";
-    const rolePath = options.rolePath || comicPaths.find(path => /角色\\.(webp|png|jpe?g)$/i.test(path)) || "";
+    const backgroundMaskPath = comicPaths.find(path => /(?:^|\/)[^/]*背景\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\.(webp|png|jpe?g)$/i.test(path)) || "";
+    const rolePath = options.rolePath || comicPaths.find(path => /角色\.(webp|png|jpe?g)$/i.test(path)) || "";
     const isSplitBackgroundAndRole = Boolean(backgroundMaskPath && rolePath && comicPaths.includes(rolePath));
 
     // 等每張圖片完成解碼後，直接對該圖層執行獨立動畫；不再依賴已經播放過的 CSS class。
@@ -8678,8 +8678,8 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     comicPaths.forEach(path => {
         if (shownPaths.includes(path)) return;
         const fileName = path.split("/").pop();
-        const openingBg = options.opening && /(?:背景|漫畫背景)\\.(webp|png|jpe?g)$/i.test(fileName);
-        const isFullBleedOpeningBackdrop = options.opening && /漫畫背景\\.(webp|png|jpe?g)$/i.test(fileName);
+        const openingBg = options.opening && /(?:背景|漫畫背景)\.(webp|png|jpe?g)$/i.test(fileName);
+        const isFullBleedOpeningBackdrop = options.opening && /漫畫背景\.(webp|png|jpe?g)$/i.test(fileName);
         const isSplitBackground = isSplitBackgroundAndRole && path === backgroundMaskPath;
         const isSplitRole = isSplitBackgroundAndRole && path === rolePath;
         const extraClass =
@@ -8743,7 +8743,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
 
     comicBox.setAttribute("data-comic-paths", JSON.stringify(shownPaths));
     if (comicGroup !== null) comicBox.setAttribute("data-comic-group", String(comicGroup));
-    const firstFileName = shownPaths[0] ? shownPaths[0].split("/").pop().replace(/\\.[^/.]+$/, "") : "comic";
+    const firstFileName = shownPaths[0] ? shownPaths[0].split("/").pop().replace(/\.[^/.]+$/, "") : "comic";
     comicBox.className = "comic-style-" + firstFileName + (options.opening ? " opening-comic-active" : "");
     if (shouldAnimateComicEntry) { void comicBox.offsetWidth; comicBox.classList.add("comic-slide-up"); }
 }
