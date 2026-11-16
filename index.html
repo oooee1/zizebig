@@ -3141,7 +3141,10 @@ img { max-width:100%; }
 
         <!-- 開始介面：影片在後方，黑幕與 Logo／標準字在前方。 -->
         <section id="intro-start-screen" style="display:none" aria-label="星辰之路開始畫面">
-            <video id="intro-start-video" src="./玩法介紹影片.webm" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate nofullscreen noremoteplayback"></video>
+            <video id="intro-start-video" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate nofullscreen noremoteplayback">
+                <source src="./玩法介紹影片.mp4" type="video/mp4">
+                <source src="./玩法介紹影片.webm" type="video/webm">
+            </video>
             <div id="intro-start-content">
                 <img id="intro-start-logo" src="./pct/logo.webp" alt="星辰之路 Logo">
                 <img id="intro-start-title" src="./pct/標準字.webp" alt="星辰之路">
@@ -12850,6 +12853,17 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         menuContainer.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
                         menuContainer.style.setProperty("left", "max(14px, env(safe-area-inset-left))", "important");
                         menuContainer.style.setProperty("right", "auto", "important");
+                        menuContainer.style.setProperty("display", "flex", "important");
+                        menuContainer.style.setProperty("visibility", "visible", "important");
+                        menuContainer.style.setProperty("opacity", "1", "important");
+                        menuContainer.style.setProperty("pointer-events", "auto", "important");
+                    }
+                    const volumeControl = document.getElementById("volume-btn");
+                    if (volumeControl) {
+                        volumeControl.style.removeProperty("display");
+                        volumeControl.style.setProperty("visibility", "visible", "important");
+                        volumeControl.style.setProperty("opacity", "1", "important");
+                        volumeControl.style.setProperty("pointer-events", "auto", "important");
                     }
                     if (skipButton) {
                         skipButton.style.setProperty("position", "fixed", "important");
@@ -13107,7 +13121,17 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         menuContainer.style.setProperty("left", "max(14px, env(safe-area-inset-left))", "important");
                         menuContainer.style.setProperty("right", "auto", "important");
                         menuContainer.style.setProperty("z-index", "2147483647", "important");
+                        menuContainer.style.setProperty("display", "flex", "important");
+                        menuContainer.style.setProperty("visibility", "visible", "important");
+                        menuContainer.style.setProperty("opacity", "1", "important");
                         menuContainer.style.setProperty("pointer-events", "auto", "important");
+                    }
+                    const volumeControl = document.getElementById("volume-btn");
+                    if (volumeControl) {
+                        volumeControl.style.removeProperty("display");
+                        volumeControl.style.setProperty("visibility", "visible", "important");
+                        volumeControl.style.setProperty("opacity", "1", "important");
+                        volumeControl.style.setProperty("pointer-events", "auto", "important");
                     }
                     if (skipButton) {
                         skipButton.style.setProperty("position", "fixed", "important");
@@ -18548,11 +18572,12 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style>
 
-<style id="restore-start-screen-menu-volume-video-20261117">
-/* 開始畫面不應因隱藏開發者跳轉而連帶隱藏正常控制。 */
+<style id="start-screen-control-visibility-final-20261117">
+/* 開始遊戲首頁不顯示上方控制列；進入漫畫時由 beginOpeningComics 明確恢復。 */
 #game-container.start-screen-active .menu-container,
-#game-container.start-screen-active #volume-btn{
-  display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+#game-container.start-screen-active #volume-btn,
+#game-container.start-screen-active #skip-btn{
+  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
 }
 </style>
 <script id="restart-intro-video-after-screen-reveal-20261117">
