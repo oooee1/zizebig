@@ -8657,7 +8657,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
                     animation.cancel();
                 };
             } else {
-                layer.classList.add("comic-layer-entry");
+                layer.style.setProperty("animation", "comicLayerEntry .6s ease-out both", "important");
             }
         };
         if (layer.complete && layer.naturalWidth > 0) play();
@@ -17327,6 +17327,7 @@ body.opening-comic-controls #game-container #skip-btn{
 
 <style id="comic-renderer-single-source-fix-final-20261116">
 /* 最後覆蓋舊版重複規則：漫畫前景統一 86% 寬、原始比例；底紙背景仍滿版。 */
+#game-container #comic-box .comic-layer{animation:none!important}
 #game-container #comic-box .comic-layer:not([src*="漫畫背景"]){
  width:86%!important;height:auto!important;min-width:0!important;min-height:0!important;
  max-width:86%!important;max-height:86%!important;
@@ -17344,7 +17345,6 @@ body.opening-comic-controls #game-container #skip-btn{
  max-width:86%!important;max-height:86%!important;
  object-fit:contain!important;object-position:center center!important;
 }
-#game-container #comic-box .comic-layer-entry{animation:comicLayerEntry .6s ease-out both!important}
 @keyframes comicLayerEntry{from{opacity:0;translate:0 50px}to{opacity:1;translate:0 0}}
 #game-container{position:relative!important}
 #game-container > #loading-screen{
