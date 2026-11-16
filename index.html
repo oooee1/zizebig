@@ -2983,7 +2983,7 @@ img { max-width:100%; }
   animation:dadSmileGentle 1.05s ease-in-out 1 both!important;
   transform-origin:bottom center!important;
 }
-#game-container #comic-box .comic-split-role[data-comic-mask-role="12"]{translate:10px 0!important;}
+
 #game-container .dream-cloud-transition img:nth-child(1){left:-10%!important;top:-24%!important;width:120%!important;height:86%!important;}
 #game-container .dream-cloud-transition img:nth-child(2){left:-6%!important;top:8%!important;width:112%!important;height:92%!important;}
 #game-container .dream-cloud-transition img:nth-child(3){left:-10%!important;top:38%!important;width:120%!important;height:86%!important;}
@@ -9012,7 +9012,10 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.style.setProperty("object-position", "center center", "important");
         }
         if (isSplitBackground || isSplitRole) {
-            // 12 背景與人物使用同一個固定畫布框與拉伸方式，消除獨立 contain 造成的內縮縫。
+            // 12 的背景與角色必須使用完全相同的定位座標、尺寸與拉伸方式。
+            // 直接修正 inline !important 的定位，避免後加 CSS 無法覆蓋而造成「往右調沒反應」。
+            layer.style.setProperty("left", "calc(50% - 4vw)", "important");
+            layer.style.setProperty("top", "50%", "important");
             layer.style.setProperty("width", "90%", "important");
             layer.style.setProperty("height", "90%", "important");
             layer.style.setProperty("max-width", "90%", "important");
