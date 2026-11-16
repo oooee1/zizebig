@@ -3976,6 +3976,7 @@ img { max-width:100%; }
         bgm: "./audio/Plink, Plank, Plunk! - Leroy Anderson.mp3",
         text: "",
         background: "好奇星草叢",
+        comicGroup: "curious-1-first",
         comicImages: ["./1漫畫/1好奇星-1-第一張.webp"],
         // 漫畫模式：不設定 speaker，不顯示對話框、角色立繪與角色名字。
         nextId: 4
@@ -3985,8 +3986,10 @@ img { max-width:100%; }
         bgm: "./audio/Plink, Plank, Plunk! - Leroy Anderson.mp3",
         text: "",
         background: "漫畫背景",
+        comicGroup: "curious-1-second",
         comicImages: [
             "./1漫畫/1.webp",
+            "./1漫畫/1好奇星-1-第二張角色.webp"
         ],
         nextId: 5
     },
@@ -8793,7 +8796,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         if (shownPaths.includes(path)) return;
         const fileName = path.split("/").pop();
         const openingBg = options.opening && /(?:背景|漫畫背景)\.(webp|png|jpe?g)$/i.test(fileName);
-        const isFullBleedOpeningBackdrop = options.opening && /漫畫背景\.(webp|png|jpe?g)$/i.test(fileName);
+        const isFullBleedOpeningBackdrop = /漫畫背景\.(webp|png|jpe?g)$/i.test(fileName);
         const isSplitBackground = isSplitBackgroundAndRole && path === backgroundMaskPath;
         const isSplitRole = isSplitBackgroundAndRole && path === rolePath;
         const extraClass =
@@ -8902,6 +8905,8 @@ function restoreComicCanvasToGameStage() {
 function renderScene(stepIndex) {
     const scene = storyScript[stepIndex];
     if (!scene) return;
+    // 負數 ID 是開場漫畫：控制列保持頂端同一排；進入正式劇情時自動恢復。
+    document.body.classList.toggle("opening-comic-controls", Number(scene.id) < 0);
 
     // 漫畫模式：只顯示場景背景與漫畫圖，不顯示對話框、角色立繪或角色名字。
     const sceneComicPaths = Array.isArray(scene.comicImages)
@@ -14905,6 +14910,56 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 #intro-start-video::-webkit-media-controls-toggle-closed-captions-button,
 #intro-start-video::-webkit-media-controls-overflow-button{display:none!important;visibility:hidden!important;opacity:0!important}
 </style>
+
+<style id="final-opening-comic-logo-controls-career-fix-20261116">
+/* Logo 與標準字使用完全相同、比上一版更明顯的白色泛光；保留標準字左移與縮小。 */
+#intro-start-logo,
+#intro-start-title{
+  filter:
+    drop-shadow(0 0 9px rgba(255,255,255,.96))
+    drop-shadow(0 0 22px rgba(255,255,255,.76))
+    drop-shadow(0 0 38px rgba(255,255,255,.52))!important;
+}
+#intro-start-title{
+  width:min(52%,230px)!important;
+  max-height:18vh!important;
+  margin-top:-8px!important;
+  margin-left:-8px!important;
+}
+@media(max-width:500px){
+  #intro-start-title{
+    width:min(56%,220px)!important;
+    max-height:17vh!important;
+    margin-top:-7px!important;
+    margin-left:-6px!important;
+  }
+}
+/* 開場漫畫控制列：選單／音量留左側，跳過鍵移到右側開發者按鈕左邊，同一水平線。 */
+body.opening-comic-controls #game-container #skip-btn{
+  position:fixed!important;
+  top:max(14px,env(safe-area-inset-top))!important;
+  right:max(112px,calc(env(safe-area-inset-right) + 104px))!important;
+  left:auto!important;
+  z-index:2147483646!important;
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+/* 漫畫紙背景一定填滿遊戲舞台，不套用暗化或半透明；圖層尺寸由 renderer 設為 100%。 */
+#game-container #comic-box .comic-layer[src*="漫畫背景"]{
+  opacity:1!important;
+  filter:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+/* 一般雙高分與同星高分的「結合……是……」完全同字級，統一比原本縮小 4px。 */
+#personality-result-screen #personality-result-copy .result-career-intro,
+#personality-result-screen #personality-result-copy .result-career-intro.result-career-intro-tied{
+  font-size:calc(clamp(21px,calc(4.2cqw + 8px),25px) + 1px)!important;
+}
+</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
