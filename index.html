@@ -2651,6 +2651,15 @@ img { max-width:100%; }
     width:39%;
     height:39%;
 }
+/* 信件每次出現都從略小、略低的位置淡入，不影響一般對話框。 */
+@keyframes story-letter-arrive {
+    from { opacity:0; transform:translate(-50%,-44%) scale(.86); }
+    to { opacity:1; transform:translate(-50%,-50%) scale(1); }
+}
+#story-letter-overlay img {
+    animation:story-letter-arrive .7s cubic-bezier(.2,.75,.25,1) both!important;
+    transform-origin:center center!important;
+}
 
 /* ===== 郵筒遊戲視覺修正：最末端強制覆蓋所有舊版規則 ===== */
 #page1.mail-game-mode #mail-game-overlay{overflow:visible!important;}
@@ -3902,7 +3911,7 @@ img { max-width:100%; }
         text: "",
         background: "漫畫背景",
         comicImages: [
-            "./1漫畫/1好奇星-1-第二張.webp",
+            "./1漫畫/1.webp",
         ],
         nextId: 5
     },
@@ -8917,7 +8926,11 @@ function renderScene(stepIndex) {
     })();
     // 只有劇情明確設定的 speaker，或本幕實際出現的角色立繪，才能決定說話人。
     // 不再從對話文字或場景 ID 自動補上「居民」等泛稱；沒有人物說話就不顯示名字。
-    const rawSceneSpeaker = scene.speaker || inferredCharacterSpeaker;
+    const isLetterReadingScene = Boolean(
+        scene.letterImage && scene.text &&
+        [70, 71, 71.1, 72, 129, 130, 131].includes(Number(currentSceneId))
+    );
+    const rawSceneSpeaker = isLetterReadingScene ? "信" : (scene.speaker || inferredCharacterSpeaker);
     // 熱情星劇情中的「居民們」不顯示群體立繪，也不顯示說話者名稱。
     const hideHotPassionResidentsGroup = Number(currentSceneId) >= 221 && Number(currentSceneId) <= 351 && (rawSceneSpeaker === "居民們" || (Array.isArray(scene.characters) && scene.characters.includes("居民們")));
     // 熱情星的「居民們」仍顯示說話者名稱；只在下方角色顯示流程隱藏群體立繪。
@@ -9109,6 +9122,7 @@ if (!hasScoredOptions) {
             }
             else if (displayName.includes("路人好奇星")) pageEl.classList.add("speaker-curious-random-person");
             else if (displayName.includes("好奇星們")) pageEl.classList.add("speaker-curious-group");
+            else if (displayName === "信") pageEl.classList.add("speaker-letter", "speaker-npc");
             else if (displayName.includes("星辰") || sceneSpeaker === "玩家") pageEl.classList.add("speaker-star");
             else if (displayName.includes("好奇星")) pageEl.classList.add("speaker-curious");
             else if (displayName.includes("同情星")) pageEl.classList.add("speaker-sympathy");
@@ -17432,5 +17446,28 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
  #intro-start-title{width:min(74%,292px)!important;margin-top:-9px!important}
  #intro-start-button{font-size:clamp(48px,14vw,66px)!important;min-height:78px!important}
 }
+
+
+/* 開始介面：Logo 放大一倍，標準字縮小；泛光改成明顯黑色，開始遊戲文字不發光。 */
+#intro-start-logo{
+ width:clamp(208px,60%,316px)!important;
+ max-height:35vh!important;
+ filter:drop-shadow(0 0 8px rgba(0,0,0,.98)) drop-shadow(0 0 20px rgba(0,0,0,.94)) drop-shadow(0 0 34px rgba(0,0,0,.78))!important;
+}
+#intro-start-title{
+ width:min(58%,250px)!important;
+ max-height:20vh!important;
+ margin-top:-14px!important;
+ filter:drop-shadow(0 0 7px rgba(0,0,0,.98)) drop-shadow(0 0 18px rgba(0,0,0,.9)) drop-shadow(0 0 28px rgba(0,0,0,.72))!important;
+}
+#intro-start-button .start-button-orange{
+ text-shadow:none!important;
+}
+@media(max-width:500px){
+ #intro-start-logo{width:clamp(190px,68%,290px)!important;max-height:32vh!important}
+ #intro-start-title{width:min(62%,248px)!important;max-height:18vh!important;margin-top:-12px!important}
+}
+/* 信件說話者名稱使用米色。 */
+#page1.speaker-letter .name-npc{fill:#D8B98A!important}
 
 </style>
