@@ -4656,6 +4656,7 @@ img { max-width:100%; }
     {
         id: 51,
         comicGroup: 3,
+        comicDialoguePosition: { left: "5%", top: "calc(5% + 5px)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "欸？這是什麼！",
@@ -19231,4 +19232,9 @@ body.opening-comic-controls #game-container #skip-btn{
 #game-container #page1 .vacuum-curious-center{left:50%!important;top:50%!important;width:auto!important;height:auto!important;transform:translate(-50%,-50%)!important;overflow:visible!important;}
 #game-container #page1 .vacuum-curious-center img{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center!important;}
 @keyframes vacuumCuriousCenterWiggle{0%,100%{transform:translateX(0) rotate(0)}22%{transform:translateX(-22px) rotate(-8deg)}48%{transform:translateX(0) rotate(0)}74%{transform:translateX(22px) rotate(8deg)}}
+</style>
+<style id="opening-comic-menu-collapse-fix-20261117">
+body.opening-comic-controls #game-container.menu-collapsed #menu-items-wrapper,
+body.opening-comic-controls #game-container.menu-collapsed #skip-btn{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
+body.opening-comic-controls #game-container #burger-menu{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:2147483647!important;touch-action:manipulation!important;}
 </style>
