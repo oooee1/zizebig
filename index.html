@@ -19148,8 +19148,14 @@ body.opening-comic-controls #game-container #skip-btn{
  max-width:90%!important;max-height:90%!important;margin:0!important;padding:0!important;
  transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
 }
+/* 11、12 是兩張獨立完整漫畫格：各自佔據左右半幅，避免 12 疊在同一座標把 11 完全蓋住。 */
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"],
-#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"],
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{
+ top:50%!important;width:46%!important;height:86%!important;
+ max-width:46%!important;max-height:86%!important;
+}
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/11.webp"]{left:26%!important}
+#game-container #comic-box.opening-comic-active .comic-layer[src*="/12.webp"]{left:74%!important}
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/13.webp"],
 #game-container #comic-box.opening-comic-active .comic-layer[src*="/14.webp"]{
  left:50%!important;width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
