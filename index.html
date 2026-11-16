@@ -12954,10 +12954,9 @@ function openPersonalityResult(first,second){
                     }
                     const frame = openingComicFrames[index];
                     const groupChanged = openingComicGroup !== frame.group;
-                    // 11～14 現在每格都是完整合成圖，不可把前一格的圖片殘留並疊到下一格。
-                    // 每次切換都清除 comic-img 與所有 extra 圖層，避免舊背景／破圖圖示留在畫面。
-                    const isSingleFrameOpeningComic = frame.group === "opening-sequence-11-14";
-                    if (groupChanged || isSingleFrameOpeningComic) {
+                    // 同一組開場漫畫逐格累積：11 保留到 12，11+12 保留到 13，依此類推。
+                    // 只有從 11～14 切換到 1～5（或重新開始另一組）時才清除整個畫布。
+                    if (groupChanged) {
                         clearComicLayers(comicBox, comicImg);
                         openingComicGroup = frame.group;
                     }
