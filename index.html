@@ -9007,7 +9007,7 @@ function renderScene(stepIndex) {
     const wireGameDialogue = document.getElementById("wire-game-dialogue-text");
     if (wireGameDialogue) { const firstInstruction = currentSceneId === 36 ? storyScript.find(item => Number(item.id) === 36.100) : null; wireGameDialogue.dataset.instructionPage = "0"; wireGameDialogue.textContent = firstInstruction ? String(firstInstruction.text || "").replace(/\/\/n|\\n/g, "\n") : (currentSceneId === 36 ? "" : String(scene.text || "").replace(/\/\/n|\\n/g, "\n")); }
     const hasText = typeof scene.text === "string" && scene.text.trim() !== "";
-    setOpeningComicDialogueLayer(Number(scene.id) < 0 && isComicMode && hasText);
+    setOpeningComicDialogueLayer(isComicMode && hasText);
     // CG 圖以漫畫背景為底，再將 CG 圖獨立疊在中央。
     const sceneBackgroundElement = scene.background ? document.getElementById(scene.background) : null;
     const requestedCGId = !isComicMode && sceneBackgroundElement && sceneBackgroundElement.classList.contains('CG圖')
@@ -10643,9 +10643,12 @@ function alignStarDecorationToHolePaper(decoration,layers,star){
   decoration.style.setProperty("z-index","9","important");
   const animationClass={"好奇星":"curiosity","同情星":"compassion","爽快星":"brisk","熱情星":"passion"}[star]||"curiosity";
   decoration.style.removeProperty("opacity");
-  decoration.classList.remove("result-curiosity-idle","result-compassion-idle","result-brisk-idle","result-passion-idle");
-  decoration.classList.remove("result-curiosity-enter","result-compassion-enter","result-brisk-enter","result-passion-enter");
-  decoration.classList.add("result-"+animationClass+"-enter");
+  if(decoration.dataset.entryAnimationStarted!=="1"){
+   decoration.classList.remove("result-curiosity-idle","result-compassion-idle","result-brisk-idle","result-passion-idle");
+   decoration.classList.remove("result-curiosity-enter","result-compassion-enter","result-brisk-enter","result-passion-enter");
+   decoration.classList.add("result-"+animationClass+"-enter");
+   decoration.dataset.entryAnimationStarted="1";
+  }
  };
  if(decoration.complete&&paper.complete)align();
  else{
@@ -12622,7 +12625,7 @@ function openPersonalityResult(first,second){
                     window.__zizebigStartupStage = "預載開場漫畫與第一幕素材";
                     // 漫畫和第一幕一起載入；使用可容錯模式，單張圖片逾時／失敗不會讓啟動畫面卡死。
                     // 開場漫畫已是 storyScript 的前八幕；只預載第一幕所需素材，接著由一般劇情流程逐幕推進。
-                    preloadImages(initialAssets, error => {
+                    preloadImages([...new Set([...openingComicAssets, ...initialAssets])], error => {
                         if (error) console.warn("[開場劇情] 部分素材未能預載，仍繼續：", error);
                         if (loadingScreen) loadingScreen.style.display = "none";
                         const dev = document.getElementById("developer-tools");
@@ -18004,5 +18007,22 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 #personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star {
   font-size:1em!important;
+}
+</style>
+
+<style id="user-fixes-opening-comic-result-motion-20261116">
+/* 11 背景與 11 角色原本是同座標畫布，固定相同的 90% 畫布尺寸，避免 CSS 後置覆蓋造成角色偏出背景。 */
+#game-container #comic-box.opening-comic-active .comic-split-background,
+#game-container #comic-box.opening-comic-active .comic-split-role[data-comic-mask-role="11"]{
+  width:90%!important;height:90%!important;
+  min-width:0!important;min-height:0!important;
+  max-width:90%!important;max-height:90%!important;
+  top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+  transform:translate(-50%,-50%)!important;
+  object-fit:fill!important;object-position:center center!important;
+}
+/* 測驗結果提醒文字再上移 40px；不移動其他結果內容。 */
+#personality-result-screen #personality-result-copy{
+  --result-disclaimer-shift-y:-190px!important;
 }
 </style>
