@@ -10422,7 +10422,7 @@ function positionResultTextElements(layers,copy){
      const careerBaseLeft=(copy.clientWidth-careerWidth)/2;
      const careerBaseTop=(imageRect.top-copyRect.top+(textBounds.y+textBounds.height)*scaleY-15)/responsiveScale+40;
      career.style.setProperty("left",(careerBaseLeft-1)+"px","important");
-     career.style.setProperty("top",(careerBaseTop)+"px","important");
+     career.style.setProperty("top",(careerBaseTop+150)+"px","important");
     }
     career.style.setProperty("translate","none","important");
    }
@@ -10456,7 +10456,7 @@ function positionResultTextElements(layers,copy){
     note.style.width="100%";
     const isMobileNoteLayout=window.matchMedia("(max-width:900px)").matches ||
       (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
-    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?820:650)/responsiveScale)+"px";
+    note.style.top=((imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?1820:1150)/responsiveScale)+"px";
     note.style.transform="translateY(-100%)";
     note.style.margin="0";
    }
@@ -14131,7 +14131,7 @@ window.savePersonalityResultImage=async function(){
   translate:none!important;transform:none!important;
   /* 前面的主結果區以 top:440px 定位，職業區改回正常流時必須補回同等位移，
      否則「適合職業」會回到文件流起點，撞上「職場優勢與劣勢」標題。 */
-  margin-top:286px!important;
+  margin-top:86px!important;
  }
  #personality-result-screen #personality-result-copy > .result-disclaimer{
   position:relative!important;top:auto!important;left:auto!important;
@@ -16598,6 +16598,13 @@ body > #developer-tools-panel button{
 }
 /* 職業區與參考標語由 positionResultTextElements() 依圖片座標定位；
    不在 CSS 額外 translate，避免覆蓋 JS 定位並把透明尾端撐高。 */
+/* 桌機維持原本結果版面位置；手機職業區與參考標語才套用本輪位移。 */
+@media (min-width:901px) and (pointer:fine){
+ #personality-result-screen #personality-result-copy .result-secondary{
+  translate:0 -150px!important;
+ }
+}
+
 /* 白色底部漸層與保存按鈕使用相同淡出狀態。 */
 #personality-result-screen::after{
  content:"";
