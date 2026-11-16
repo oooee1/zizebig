@@ -3039,7 +3039,7 @@ img { max-width:100%; }
 
         <!-- 開始介面：影片在後方，黑幕與 Logo／標準字在前方。 -->
         <section id="intro-start-screen" style="display:none" aria-label="星辰之路開始畫面">
-            <video id="intro-start-video" src="./玩法介紹影片.webm" autoplay muted loop playsinline preload="auto" disablepictureinpicture controlslist="nodownload noplaybackrate nofullscreen noremoteplayback"></video>
+            <video id="intro-start-video" src="./玩法介紹影片.webm" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate nofullscreen noremoteplayback"></video>
             <div id="intro-start-content">
                 <img id="intro-start-logo" src="./pct/logo.webp" alt="星辰之路 Logo">
                 <img id="intro-start-title" src="./pct/標準字.webp" alt="星辰之路">
@@ -8625,24 +8625,14 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     const backgroundMaskPath = comicPaths.find(path => /(?:^|\\/)[^/]*背景\\.(webp|png|jpe?g)$/i.test(path) && !/漫畫背景\\.(webp|png|jpe?g)$/i.test(path)) || "";
     const rolePath = options.rolePath || comicPaths.find(path => /角色\\.(webp|png|jpe?g)$/i.test(path)) || "";
     const isSplitBackgroundAndRole = Boolean(backgroundMaskPath && rolePath && comicPaths.includes(rolePath));
+    // 每張新圖層都用同一個 CSS 進場動畫；等圖片解碼完成才開始，避免預載快取讓動畫提前播完。
     const playLayerEntry = layer => {
         if (!layer) return;
         const play = () => {
-            try {
-                if (typeof layer.getAnimations === "function") layer.getAnimations().forEach(animation => animation.cancel());
-                if (typeof layer.animate === "function") {
-                    layer.animate(
-                        [{ opacity: 0, translate: "0 50px" }, { opacity: 1, translate: "0 0" }],
-                        { duration: 600, easing: "ease-out", fill: "both" }
-                    );
-                } else {
-                    layer.style.setProperty("animation", "none", "important");
-                    void layer.offsetWidth;
-                    layer.style.setProperty("animation", "comicLayerEntry .6s ease-out both", "important");
-                }
-            } catch (_) {
-                layer.style.setProperty("animation", "comicLayerEntry .6s ease-out both", "important");
-            }
+            layer.classList.remove("comic-layer-entry");
+            layer.style.removeProperty("animation");
+            void layer.offsetWidth;
+            layer.classList.add("comic-layer-entry");
         };
         if (layer.complete && layer.naturalWidth > 0) play();
         else {
@@ -8681,20 +8671,22 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         if (isSplitRole) {
             layer.classList.add("comic-split-role");
             if (options.opening) layer.classList.add("intro-comic-role");
-            layer.dataset.comicMaskRole = "split";
-            layer.style.setProperty("--comic-role-mask", `url("${backgroundMaskPath}")`);
-            layer.style.setProperty("-webkit-mask-image", "var(--comic-role-mask)", "important");
-            layer.style.setProperty("mask-image", "var(--comic-role-mask)", "important");
-            layer.style.setProperty("-webkit-mask-size", "100% 100%", "important");
-            layer.style.setProperty("mask-size", "100% 100%", "important");
-            layer.style.setProperty("-webkit-mask-position", "center", "important");
-            layer.style.setProperty("mask-position", "center", "important");
-            layer.style.setProperty("-webkit-mask-repeat", "no-repeat", "important");
-            layer.style.setProperty("mask-repeat", "no-repeat", "important");
+            // 背景與角色原始畫布都是 2160×3960，透明像素本身已經決定相對位置。
+            // 不再把背景 alpha 當成角色遮罩，避免把角色裁掉或令其看起來不在背景內。
+            layer.removeAttribute("data-comic-mask-role");
+            layer.style.removeProperty("--comic-role-mask");
+            layer.style.setProperty("-webkit-mask-image", "none", "important");
+            layer.style.setProperty("mask-image", "none", "important");
         }
         if (isSplitBackground) layer.classList.add("comic-split-background");
 
-        // 所有漫畫分鏡都用同一個舞台比例與置中座標；只有共用紙背景滿版。
+        // 開場漫畫與後續劇情漫畫一律使用同一個遊戲舞台；所有前景圖層共用 86% 畫布。
+        // 只有最底層「漫畫背景」鋪滿舞台；11／12 的局部背景和角色都屬於前景漫畫。
+        comicBox.style.setProperty("position", "absolute", "important");
+        comicBox.style.setProperty("inset", "0", "important");
+        comicBox.style.setProperty("width", "100%", "important");
+        comicBox.style.setProperty("height", "100%", "important");
+        comicBox.style.setProperty("overflow", "hidden", "important");
         const layerSize = isFullBleedOpeningBackdrop ? "100%" : "86%";
         layer.style.setProperty("position", "absolute", "important");
         layer.style.setProperty("top", "50%", "important");
@@ -8712,8 +8704,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
         layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : "contain", "important");
         layer.style.setProperty("object-position", "center center", "important");
-        layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : (isSplitBackground ? "2" : (isSplitRole ? "3" : "2")), "important");
-        layer.style.setProperty("animation", "none", "important");
+        layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : (isSplitBackground ? "2" : (isSplitRole ? "4" : "2")), "important");
         playLayerEntry(layer);
         shownPaths.push(path);
     });
@@ -12150,14 +12141,20 @@ function openPersonalityResult(first,second){
                 function showStartupLoading(message) {
                     if (loadingScreen) {
                         const stage = document.getElementById("game-container");
-                        if (stage && loadingScreen.parentElement !== stage) stage.appendChild(loadingScreen);
+                        if (stage) {
+                            stage.style.setProperty("position", "relative", "important");
+                            if (loadingScreen.parentElement !== stage) stage.appendChild(loadingScreen);
+                        }
                         loadingScreen.style.setProperty("position", "absolute", "important");
                         loadingScreen.style.setProperty("inset", "0", "important");
                         loadingScreen.style.setProperty("width", "100%", "important");
                         loadingScreen.style.setProperty("height", "100%", "important");
+                        loadingScreen.style.setProperty("min-width", "0", "important");
+                        loadingScreen.style.setProperty("min-height", "0", "important");
                         loadingScreen.style.setProperty("max-width", "100%", "important");
                         loadingScreen.style.setProperty("max-height", "100%", "important");
                         loadingScreen.style.setProperty("z-index", "2147483647", "important");
+                        loadingScreen.style.setProperty("box-sizing", "border-box", "important");
                         const dev = document.getElementById("developer-tools");
                         if (dev) { dev.style.setProperty("visibility", "hidden", "important"); dev.style.setProperty("pointer-events", "none", "important"); }
                         loadingScreen.style.display = "flex";
@@ -12185,6 +12182,7 @@ function openPersonalityResult(first,second){
                     // 開始畫面、漫畫與載入遮罩全部以遊戲舞台為定位基準。
                     const gameContainer = document.getElementById("game-container");
                     // 載入遮罩與漫畫畫布都固定留在遊戲舞台內；載入時以舞台絕對定位覆蓋 UI。
+                    if (gameContainer) gameContainer.style.setProperty("position", "relative", "important");
                     [loadingLayer, comicScreen].forEach(layer => {
                         if (layer && gameContainer && layer.parentElement !== gameContainer) gameContainer.appendChild(layer);
                     });
@@ -14551,6 +14549,67 @@ body.opening-comic-controls #skip-btn{
 }
 </style>
 
+<style id="comic-renderer-consistent-canvas-fix-20261116">
+/* 開場與劇情漫畫固定在遊戲舞台內；不再使用 fixed／vw／dvh 造成桌機尺寸飄移。 */
+#game-container #comic-box{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;overflow:hidden!important;
+}
+/* 所有前景漫畫（11～14、1～4、好奇星第1組第2張、後續第1～5張）統一 86% 畫布。 */
+#game-container #comic-box .comic-layer:not([src*="漫畫背景"]){
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:86%!important;height:86%!important;min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:86%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+/* 共用漫畫紙背景只鋪滿遊戲舞台，不跟著前景縮放。 */
+#game-container #comic-box .comic-layer[src*="漫畫背景"]{
+ position:absolute!important;top:50%!important;left:50%!important;
+ width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;
+ max-width:100%!important;max-height:100%!important;transform:translate(-50%,-50%)!important;
+ object-fit:cover!important;object-position:center center!important;z-index:0!important;
+}
+/* 11／12 分離背景與角色使用同一張 2160×3960 畫布，不做 fill 拉伸，也不套錯誤遮罩。 */
+#game-container #comic-box .intro-comic-background:not([src*="漫畫背景"]),
+#game-container #comic-box .intro-comic-role,
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{
+ position:absolute!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ width:86%!important;height:86%!important;min-width:0!important;min-height:0!important;
+ max-width:86%!important;max-height:86%!important;margin:0!important;padding:0!important;
+ transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
+}
+#game-container #comic-box .comic-split-background{z-index:2!important}
+#game-container #comic-box .comic-split-role{
+ z-index:4!important;-webkit-mask-image:none!important;mask-image:none!important;
+}
+/* 每個新圖層（包括 11／12 的角色）在圖片解碼後都會確實淡入上移。 */
+@keyframes comicLayerEntry{
+ from{opacity:0;translate:0 50px}
+ to{opacity:1;translate:0 0}
+}
+#game-container #comic-box .comic-layer-entry{
+ animation:comicLayerEntry .6s ease-out both!important;
+}
+/* 載入頁永遠是遊戲舞台內的絕對滿版遮罩，層級高於選單、跳過與開發者 UI。 */
+#game-container > #loading-screen{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;max-width:100%!important;max-height:100%!important;
+ z-index:2147483647!important;box-sizing:border-box!important;pointer-events:auto!important;
+}
+/* 開始介面影片不顯示右上角畫中畫／遠端播放相機圖示或媒體控制列。 */
+#intro-start-video{pointer-events:none!important}
+#intro-start-video::-webkit-media-controls,
+#intro-start-video::-webkit-media-controls-enclosure,
+#intro-start-video::-webkit-media-controls-panel,
+#intro-start-video::-webkit-media-controls-picture-in-picture-button,
+#intro-start-video::-webkit-media-controls-overlay-play-button,
+#intro-start-video::-webkit-media-controls-fullscreen-button,
+#intro-start-video::-webkit-media-controls-toggle-closed-captions-button,
+#intro-start-video::-webkit-media-controls-overflow-button{
+ display:none!important;opacity:0!important;visibility:hidden!important;
+}
+</style>
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
