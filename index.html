@@ -9041,8 +9041,18 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             const splitNumber = isSplitRole ? rolePath.match(/(?:^|\/)(11|12)\.webp$/i) : null;
             if (splitNumber) layer.setAttribute("data-comic-mask-role", splitNumber[1]);
             else layer.removeAttribute("data-comic-mask-role");
-            layer.style.setProperty("-webkit-mask-image", "none", "important");
-            layer.style.setProperty("mask-image", "none", "important");
+            // 角色以對應的背景透明度作遮罩，避免角色越出自己的漫畫格。
+            const maskUrl = backgroundMaskPath ? 'url("' + backgroundMaskPath + '")' : "none";
+            layer.style.setProperty("-webkit-mask-image", maskUrl, "important");
+            layer.style.setProperty("mask-image", maskUrl, "important");
+            layer.style.setProperty("-webkit-mask-size", "100% 100%", "important");
+            layer.style.setProperty("mask-size", "100% 100%", "important");
+            layer.style.setProperty("-webkit-mask-position", "center center", "important");
+            layer.style.setProperty("mask-position", "center center", "important");
+            layer.style.setProperty("-webkit-mask-repeat", "no-repeat", "important");
+            layer.style.setProperty("mask-repeat", "no-repeat", "important");
+            layer.style.setProperty("-webkit-mask-mode", "alpha", "important");
+            layer.style.setProperty("mask-mode", "alpha", "important");
         }
 
         const isForegroundComic = !isFullBleedOpeningBackdrop;
@@ -11879,10 +11889,11 @@ function openPersonalityResult(first,second){
                 // 雲的位置直接寫在元素上，避免後面重複的全域 CSS 把三張圖覆蓋成同一位置。
                 // 雲圖本身是高比例透明畫布；寬高必須依原圖比例放大，才能讓實際雲體延伸到舞台邊緣。
                 // 只調整三張素材的擺放位置，不更動下方 WAAPI 的進退場方向與動畫。
+                // 每張雲都維持整個舞台大小，只移動畫布的垂直位置；透明留白不再被裁成小圖。
                 const cloudLayout = [
-                    { left:"-18%", top:"-16%", width:"136%", height:"76%" },
-                    { left:"-10%", top:"31%", width:"124%", height:"76%" },
-                    { left:"-24%", top:"67%", width:"150%", height:"76%" }
+                    { left:"0%", top:"-28%", width:"100%", height:"100%" },
+                    { left:"0%", top:"8%", width:"100%", height:"100%" },
+                    { left:"0%", top:"44%", width:"100%", height:"100%" }
                 ][index];
                 for (const [key,value] of Object.entries(cloudLayout)) img.style.setProperty(key,value,"important");
                 img.style.setProperty("position","absolute","important");
@@ -19057,5 +19068,34 @@ body.opening-comic-controls #game-container #skip-btn{
 #personality-result-screen #personality-result-copy .result-career-intro .result-career-intro-star{
   font-size:calc(1em + 6px)!important;
   line-height:1.2!important;
+}
+
+/* 最終漫畫修正：11／12 角色直接使用各自背景 alpha 遮罩，取消舊版的 mask:none 覆蓋。 */
+#game-container #comic-box.opening-comic-active .comic-split-role[data-comic-mask-role="11"],
+#game-container #comic-box.opening-comic-active .comic-split-role[data-comic-mask-role="12"]{
+  -webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;
+  -webkit-mask-position:center center!important;mask-position:center center!important;
+  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
+  -webkit-mask-mode:alpha!important;mask-mode:alpha!important;
+}
+/* 雲朵每張都維持舞台完整尺寸，只在垂直方向錯開；不縮小單張雲的畫布。 */
+#game-container .dream-cloud-transition img:nth-child(1){
+  left:0!important;right:auto!important;top:-28%!important;bottom:auto!important;
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:fill!important;object-position:center center!important;
+}
+#game-container .dream-cloud-transition img:nth-child(2){
+  left:0!important;right:auto!important;top:8%!important;bottom:auto!important;
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:fill!important;object-position:center center!important;
+}
+#game-container .dream-cloud-transition img:nth-child(3){
+  left:0!important;right:auto!important;top:44%!important;bottom:auto!important;
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:fill!important;object-position:center center!important;
+}
+/* 不同高分版本只再放大星球名稱，不改動已縮小的整句字級。 */
+#personality-result-screen #personality-result-copy .result-career-intro:not(.result-career-intro-tied) .result-career-intro-star{
+  font-size:calc(1em + 10px)!important;line-height:1.15!important;
 }
 </style>
