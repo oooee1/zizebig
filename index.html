@@ -4171,7 +4171,7 @@ img { max-width:100%; }
     {
         id: 13.1,
         comicImages: [],
-        comicDialoguePosition: { left: "calc(20% + 34px)", top: "calc(20% + 7px)", tail: "top-left" },
+        comicDialoguePosition: { left: "calc(30% + 34px)", top: "calc(20% + 7px)", tail: "top-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "我們的毛沒辦法被吹走，星球才會充滿了棉花咩。",
     },
@@ -4179,7 +4179,7 @@ img { max-width:100%; }
         id: 15,
         comicGroup: 2,
         comicImages: ["./1漫畫/1好奇星-2-第二張.webp","./1漫畫/1好奇星-2-第三張.webp"],
-        comicDialoguePosition: { left: "calc(8% + 5%)", top: "calc(21% + 5% + 8px + 3%)", tail: "bottom-right" },
+        comicDialoguePosition: { left: "calc(5px)", top: "calc(21% + 5% + 8px + 6%)", tail: "top-right" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "{playerName}的星球是什麼樣子的咩？",
     },
@@ -4193,7 +4193,7 @@ img { max-width:100%; }
     {
         id: 16,
         comicGroup: 2,
-        comicDialoguePosition: { left: "7%", top: "calc(38% + 28% + 27px + 8%)", tail: "bottom-right" },
+        comicDialoguePosition: { left: "7%", top: "calc(38% + 28% + 27px + 18%)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "叫做地球喔，但其實是什麼樣的我也沒有很清楚...",
@@ -4201,7 +4201,7 @@ img { max-width:100%; }
     {
         id: 17,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(15% + 14px)", bottom: "7%", tail: "top-right" },
+        comicDialoguePosition: { left: "calc(23% + 14px)", bottom: "7%", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "記得曾經聽到過這樣的星球咩。",
@@ -4704,7 +4704,7 @@ img { max-width:100%; }
     {
         id: 52,
         comicGroup: 3,
-        comicDialoguePosition: { left: "calc(16% + 20px)", top: "calc(44% - 14px - 9%)", tail: "bottom-right" },
+        comicDialoguePosition: { left: "calc(26% + 20px)", top: "calc(44% - 14px - 18%)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "拼圖嗎？",
@@ -4712,7 +4712,7 @@ img { max-width:100%; }
     {
         id: 53,
         comicGroup: 3,
-        comicDialoguePosition: { right: "5%", top: "calc(1% + 20px + 9%)", tail: "top-left" },
+        comicDialoguePosition: { right: "5%", top: "calc(1% + 20px + 22%)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-3-第二張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好酷，我也是第一次看到咩。",
@@ -4738,7 +4738,7 @@ img { max-width:100%; }
     {
         id: 56,
         comicGroup: 4,
-        comicDialoguePosition: { left: "8%", bottom: "calc(17% + 40px)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", bottom: "calc(47% + 40px)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
@@ -4753,7 +4753,7 @@ img { max-width:100%; }
     {
         id: 57,
         comicGroup: 4,
-        comicDialoguePosition: { right: "4%", top: "calc(8% + 32px + 9%)", tail: "bottom-left" },
+        comicDialoguePosition: { right: "4%", top: "calc(8% + 32px + 25%)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-4-第二張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "嘿咻！",
@@ -8792,9 +8792,21 @@ function enterGameAnimation() {
 }
 
         function toggleMenu(e) {
-            if (e) e.stopPropagation();
+            if (e) { e.preventDefault(); e.stopPropagation(); }
             const gameContainer = document.getElementById("game-container");
-            if (gameContainer) gameContainer.classList.toggle("menu-collapsed");
+            if (!gameContainer) return;
+            const collapsed = gameContainer.classList.toggle("menu-collapsed");
+            // 選單、音量與跳過鍵共用同一個收合狀態，直接同步三者的可見性，
+            // 不再只靠分散的 CSS class，避免音量 wrapper 留在畫面上。
+            const wrapper = document.getElementById("menu-items-wrapper");
+            const skip = document.getElementById("skip-btn");
+            const controls = [wrapper, skip].filter(Boolean);
+            controls.forEach(control => {
+                control.style.setProperty("opacity", collapsed ? "0" : "1", "important");
+                control.style.setProperty("visibility", collapsed ? "hidden" : "visible", "important");
+                control.style.setProperty("pointer-events", collapsed ? "none" : "auto", "important");
+            });
+            if (wrapper) wrapper.style.setProperty("max-width", collapsed ? "0" : "100px", "important");
         }
 
         function highlightPlayerNameInDialogue(target) {
@@ -12463,7 +12475,7 @@ function openPersonalityResult(first,second){
 
         const overlay = document.createElement("div");
         overlay.id = "skip-confirm-overlay";
-        overlay.style.cssText = "position:absolute;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;";
+        overlay.style.cssText = "position:absolute;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;pointer-events:auto;";
         overlay.innerHTML = `
           <style>
             #skip-confirm-overlay .skip-card{position:relative;width:min(390px,100%);box-sizing:border-box;padding:28px 24px 23px;background:#000;border:2px solid #ffb30f;border-radius:18px 22px 17px 21px;color:#fff;text-align:center;font-family:Arial,sans-serif;font-weight:bold;box-shadow:none;overflow:hidden;}
@@ -19339,4 +19351,57 @@ body.opening-comic-controls #game-container #burger-menu{display:flex!important;
   will-change:transform;
 }
 /* 讓缺席的「記得曾經聽到過這樣的星球咩」泡泡留在漫畫畫面內。 */
+</style>
+
+
+<style id="20261117-controls-skip-logo-cloud-final-root-fix">
+/* 控制列中心線對齊：選單按鈕 58px、跳過鍵 42px，故跳過鍵下移 8px 對齊中心。 */
+#game-container #skip-btn,
+body.opening-comic-controls #game-container #skip-btn{
+  top:22px!important;
+  right:112px!important;
+  left:auto!important;
+  width:42px!important;height:42px!important;
+}
+/* 確認視窗必須在漫畫畫布之上，否則點擊跳過後視窗會被漫畫蓋住。 */
+#game-container #skip-confirm-overlay{
+  position:absolute!important;inset:0!important;
+  z-index:2147483647!important;
+  display:flex!important;pointer-events:auto!important;
+}
+#game-container #skip-confirm-overlay .skip-card,
+#game-container #skip-confirm-overlay .skip-card *{
+  pointer-events:auto!important;
+}
+/* 標準字黑色泛光留在後層；Logo 完整置於泛光前方，避免彼此遮蓋。
+   不再同時給兩張圖層套大型陰影，也不使用白色泛光。 */
+#intro-start-content{position:relative!important;isolation:isolate!important}
+#intro-start-title{
+  position:relative!important;z-index:1!important;
+  -webkit-filter:drop-shadow(0 0 4px rgba(0,0,0,1))
+    drop-shadow(0 0 10px rgba(0,0,0,.88))!important;
+  filter:drop-shadow(0 0 4px rgba(0,0,0,1))
+    drop-shadow(0 0 10px rgba(0,0,0,.88))!important;
+}
+#intro-start-logo{
+  position:relative!important;z-index:3!important;
+  -webkit-filter:none!important;filter:none!important;
+}
+/* 雲轉場是舞台內獨立的最上層效果，避免被漫畫容器或場景背景壓在下面。 */
+#game-container>.dream-cloud-transition,
+#game-container .dream-cloud-transition{
+  position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;
+  z-index:2147483646!important;
+  display:block!important;visibility:visible!important;
+  overflow:hidden!important;pointer-events:none!important;
+}
+#game-container .dream-cloud-transition img{
+  display:block!important;visibility:visible!important;
+  opacity:0;pointer-events:none!important;
+}
+/* 不讓舊的 animation:none 規則阻止不支援 WAAPI 時的 CSS 後備進場。 */
+#game-container #comic-box .comic-layer-entry{
+  animation:comicLayerEntry .6s ease-out both!important;
+}
 </style>
