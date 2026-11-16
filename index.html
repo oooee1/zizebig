@@ -8856,9 +8856,11 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
     const enteringComicMode = comicBox.style.display !== "block";
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
     const groupChanged = comicGroup !== null && previousGroup !== null && previousGroup !== String(comicGroup);
+    // 開場漫畫必須與正式劇情漫畫一樣逐層累積；即使資料中的 group 暫時不一致，也不可清除前一格。
+    const preserveOpeningLayers = options.opening === true;
     // opening 只負責啟用 11／12 雙圖層同步，不代表每一格都要讓整張漫畫畫布重新滑入。
-    const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || groupChanged));
-    if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
+    const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || (groupChanged && !preserveOpeningLayers)));
+    if (!preserveOpeningLayers && comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
         delete comicBox.dataset.opening11EntryStarted;
         delete comicBox.dataset.opening12EntryStarted;
         comicBox.querySelectorAll(".comic-dialogue-layer").forEach(layer => layer.remove());
