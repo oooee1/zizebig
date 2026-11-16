@@ -4193,7 +4193,7 @@ img { max-width:100%; }
     {
         id: 16,
         comicGroup: 2,
-        comicDialoguePosition: { left: "7%", top: "calc(38% + 28% + 27px + 18%)", tail: "top-right" },
+        comicDialoguePosition: { left: "7%", top: "calc(38% + 28% + 27px + 28%)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "叫做地球喔，但其實是什麼樣的我也沒有很清楚...",
@@ -8806,7 +8806,11 @@ function enterGameAnimation() {
                 control.style.setProperty("visibility", collapsed ? "hidden" : "visible", "important");
                 control.style.setProperty("pointer-events", collapsed ? "none" : "auto", "important");
             });
-            if (wrapper) wrapper.style.setProperty("max-width", collapsed ? "0" : "100px", "important");
+            if (wrapper) {
+                wrapper.style.setProperty("display", collapsed ? "none" : "flex", "important");
+                wrapper.style.setProperty("max-width", collapsed ? "0" : "100px", "important");
+                wrapper.setAttribute("aria-hidden", collapsed ? "true" : "false");
+            }
         }
 
         function highlightPlayerNameInDialogue(target) {
@@ -13137,7 +13141,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         skipButton.style.setProperty("display", "flex", "important");
                         skipButton.style.setProperty("visibility", "visible", "important");
                         skipButton.style.setProperty("opacity", "1", "important");
-                        skipButton.style.setProperty("z-index", "2147483647", "important");
+                        skipButton.style.setProperty("z-index", "2147483649", "important");
                         skipButton.style.setProperty("pointer-events", "auto", "important");
                     }
                     if (developerTools) {
@@ -19431,4 +19435,9 @@ body.opening-comic-controls #game-container #skip-btn{right:112px!important;top:
 /* opacity:0!important 會壓過 Web Animations API，讓三片雲永遠透明；改回一般 opacity。 */
 #game-container .dream-cloud-transition img{opacity:0;visibility:visible!important;display:block!important;}
 #skip-confirm-overlay{z-index:2147483647!important;pointer-events:auto!important}#skip-confirm-overlay *{pointer-events:auto}
+</style>
+<style id="20261117-controls-row-centering-final">
+/* 選單圖示本體 48px、跳過圖示 42px：以圖示中心對齊，不是只對齊外框頂端。 */
+#game-container #skip-btn,body.opening-comic-controls #game-container #skip-btn{top:max(22px,calc(env(safe-area-inset-top) + 8px))!important;right:128px!important;z-index:2147483649!important;}
+body.opening-comic-controls #game-container #skip-btn{top:max(22px,calc(env(safe-area-inset-top) + 8px))!important;right:128px!important;}
 </style>
