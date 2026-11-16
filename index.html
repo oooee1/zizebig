@@ -9088,11 +9088,11 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             // 11／12 的相對位置已經畫在同尺寸透明素材內，四張圖必須共用同一張中央畫布。
             // 不再把整張透明畫布推到 26%／74%，避免角色與背景一起偏移。
             layer.style.setProperty("top", "50%", "important");
-            layer.style.setProperty("left", "50%", "important");
-            layer.style.setProperty("width", "90%", "important");
-            layer.style.setProperty("height", "90%", "important");
-            layer.style.setProperty("max-width", "90%", "important");
-            layer.style.setProperty("max-height", "90%", "important");
+            layer.style.setProperty("left", splitPanelNumber === 11 ? "26%" : "74%", "important");
+            layer.style.setProperty("width", "46%", "important");
+            layer.style.setProperty("height", "86%", "important");
+            layer.style.setProperty("max-width", "46%", "important");
+            layer.style.setProperty("max-height", "86%", "important");
             layer.style.setProperty("object-fit", "contain", "important");
             layer.style.setProperty("object-position", "center center", "important");
             layer.style.setProperty("opacity", "0", "important");
