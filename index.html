@@ -3986,8 +3986,8 @@ img { max-width:100%; }
         bgm: "./audio/Plink, Plank, Plunk! - Leroy Anderson.mp3",
         text: "",
         background: "漫畫背景",
-        comicGroup: "curious-1-second",
-        // 第二張只疊好奇星角色透明圖；底圖沿用場景「漫畫背景」，不再載入錯誤的 1.webp。
+        comicGroup: "curious-1-first",
+        // 第二張沿用第一張漫畫畫布，只新增好奇星角色透明圖，避免切換群組時清空第一張。
         comicImages: ["./1漫畫/1好奇星-1-第二張角色.webp"],
         nextId: 5
     },
@@ -8847,22 +8847,23 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         }
 
         const isForegroundComic = !isFullBleedOpeningBackdrop;
+        const isAlignedSplitLayer = isSplitBackground || isSplitRole;
         const layerOrder = shownPaths.length;
         layer.style.setProperty("position", "absolute", "important");
         layer.style.setProperty("top", "50%", "important");
         layer.style.setProperty("left", "50%", "important");
         layer.style.setProperty("right", "auto", "important");
         layer.style.setProperty("bottom", "auto", "important");
-        layer.style.setProperty("width", isForegroundComic ? "86%" : "100%", "important");
-        layer.style.setProperty("height", isForegroundComic ? "auto" : "100%", "important");
+        layer.style.setProperty("width", isForegroundComic ? "90%" : "100%", "important");
+        layer.style.setProperty("height", !isForegroundComic ? "100%" : (isAlignedSplitLayer ? "90%" : "auto"), "important");
         layer.style.setProperty("min-width", "0", "important");
         layer.style.setProperty("min-height", "0", "important");
-        layer.style.setProperty("max-width", isForegroundComic ? "86%" : "100%", "important");
-        layer.style.setProperty("max-height", isForegroundComic ? "86%" : "100%", "important");
+        layer.style.setProperty("max-width", isForegroundComic ? "90%" : "100%", "important");
+        layer.style.setProperty("max-height", isForegroundComic ? "90%" : "100%", "important");
         layer.style.setProperty("margin", "0", "important");
         layer.style.setProperty("padding", "0", "important");
         layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
-        layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : "contain", "important");
+        layer.style.setProperty("object-fit", isFullBleedOpeningBackdrop ? "cover" : (isAlignedSplitLayer ? "fill" : "contain"), "important");
         layer.style.setProperty("object-position", "center center", "important");
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
         layer.style.setProperty("z-index", isFullBleedOpeningBackdrop ? "0" : String(10 + layerOrder), "important");
@@ -12233,14 +12234,36 @@ function openPersonalityResult(first,second){
                     const startScreen = document.getElementById("intro-start-screen");
                     const comicScreen = document.getElementById("comic-box");
                     const page = document.getElementById("page1");
-                    const developerTools = document.getElementById("developer-tools");
-                    if (developerTools && developerTools.parentElement !== document.body) document.body.appendChild(developerTools);
-                    document.body.classList.remove("opening-comic-controls");
                     const gameContainer = document.getElementById("game-container");
+                    const developerTools = document.getElementById("developer-tools");
+                    if (gameContainer && developerTools && developerTools.parentElement !== gameContainer) gameContainer.appendChild(developerTools);
+                    document.body.classList.remove("opening-comic-controls");
                     const menuContainer = document.querySelector(".menu-container");
                     const skipButton = document.getElementById("skip-btn");
                     if (gameContainer && menuContainer && menuContainer.parentElement !== gameContainer) gameContainer.appendChild(menuContainer);
                     if (gameContainer && skipButton && skipButton.parentElement !== gameContainer) gameContainer.appendChild(skipButton);
+                    if (menuContainer) {
+                        menuContainer.style.setProperty("position", "absolute", "important");
+                        menuContainer.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
+                        menuContainer.style.setProperty("left", "max(14px, env(safe-area-inset-left))", "important");
+                        menuContainer.style.setProperty("right", "auto", "important");
+                    }
+                    if (skipButton) {
+                        skipButton.style.setProperty("position", "absolute", "important");
+                        skipButton.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
+                        skipButton.style.setProperty("right", "108px", "important");
+                        skipButton.style.setProperty("left", "auto", "important");
+                        skipButton.style.setProperty("display", "flex", "important");
+                        skipButton.style.setProperty("visibility", "visible", "important");
+                        skipButton.style.setProperty("opacity", "1", "important");
+                        skipButton.style.setProperty("pointer-events", "auto", "important");
+                    }
+                    if (developerTools && gameContainer) {
+                        developerTools.style.setProperty("position", "absolute", "important");
+                        developerTools.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
+                        developerTools.style.setProperty("right", "14px", "important");
+                        developerTools.style.setProperty("left", "auto", "important");
+                    }
                     if (startScreen) startScreen.style.display = "none";
                     if (loadingScreen) loadingScreen.style.display = "none";
                     if (comicScreen) restoreComicCanvasToGameStage();
@@ -12491,20 +12514,38 @@ function openPersonalityResult(first,second){
                     const comicBox = document.getElementById("comic-box");
                     const menuContainer = document.querySelector(".menu-container");
                     const skipButton = document.getElementById("skip-btn");
-                    // 漫畫、選單與跳過鍵都留在遊戲舞台內，桌機不再脫離 430px 遊戲框。
+                    const developerTools = document.getElementById("developer-tools");
+                    // 漫畫、選單、跳過鍵與開發者工具都固定在遊戲舞台內。
                     document.body.classList.add("opening-comic-controls");
                     const gameContainer=document.getElementById("game-container");
                     if(gameContainer)gameContainer.classList.remove("start-screen-active");
                     if(gameContainer && comicBox && comicBox.parentElement!==gameContainer) gameContainer.appendChild(comicBox);
+                    if (developerTools && developerTools.parentElement !== gameContainer) gameContainer.appendChild(developerTools);
                     if (menuContainer) {
-                        menuContainer.style.setProperty("position", "relative", "important");
+                        menuContainer.style.setProperty("position", "absolute", "important");
+                        menuContainer.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
+                        menuContainer.style.setProperty("left", "max(14px, env(safe-area-inset-left))", "important");
+                        menuContainer.style.setProperty("right", "auto", "important");
                         menuContainer.style.setProperty("z-index", "2147483600", "important");
                         menuContainer.style.setProperty("pointer-events", "auto", "important");
                     }
                     if (skipButton) {
-                        skipButton.style.setProperty("position", "relative", "important");
+                        skipButton.style.setProperty("position", "absolute", "important");
+                        skipButton.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
+                        skipButton.style.setProperty("right", "108px", "important");
+                        skipButton.style.setProperty("left", "auto", "important");
+                        skipButton.style.setProperty("display", "flex", "important");
+                        skipButton.style.setProperty("visibility", "visible", "important");
+                        skipButton.style.setProperty("opacity", "1", "important");
                         skipButton.style.setProperty("z-index", "2147483600", "important");
                         skipButton.style.setProperty("pointer-events", "auto", "important");
+                    }
+                    if (developerTools) {
+                        developerTools.style.setProperty("position", "absolute", "important");
+                        developerTools.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
+                        developerTools.style.setProperty("right", "14px", "important");
+                        developerTools.style.setProperty("left", "auto", "important");
+                        developerTools.style.setProperty("z-index", "2147483601", "important");
                     }
                     if (comicBox) {
                         bindOpeningComicAdvance(comicBox);
@@ -17758,3 +17799,33 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 </style>
 
+
+
+<style id="final-stage-controls-comic-alignment-20261116">
+/* 選單、跳過與開發者工具都以遊戲舞台為定位基準；跳過鍵排在開發者按鈕左側。 */
+#game-container .menu-container{
+ position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
+ left:max(14px,env(safe-area-inset-left))!important;right:auto!important;
+}
+#game-container #developer-tools{
+ position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
+ right:14px!important;left:auto!important;z-index:2147483601!important;
+}
+#game-container #skip-btn{
+ position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
+ right:108px!important;left:auto!important;z-index:2147483600!important;
+ display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+}
+/* 11 的背景與角色使用完全相同的 90% 畫布，遮罩不再因兩張圖層尺寸不同而錯位。 */
+#game-container #comic-box .comic-split-background,
+#game-container #comic-box .comic-split-role{
+ width:90%!important;height:90%!important;
+ min-width:0!important;min-height:0!important;
+ max-width:90%!important;max-height:90%!important;
+ object-fit:fill!important;object-position:center center!important;
+}
+/* 漫畫紙底維持原本較深的黑度；Logo／標準字白色泛光獨立處理。 */
+#game-container #comic-box .comic-layer[src*="漫畫背景"]{
+ filter:brightness(.45)!important;
+}
+</style>
