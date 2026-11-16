@@ -8873,9 +8873,18 @@ function createComicDialogueBubble(comicBox, scene) {
     layer.style.setProperty("width", "100%", "important");
     layer.style.setProperty("height", "100%", "important");
     const sceneKey = String(scene.id ?? currentStep);
+    const slots = [
+        { left:"5%", top:"5%", tail:"bottom-right" },
+        { right:"5%", top:"5%", tail:"bottom-left" },
+        { left:"5%", bottom:"5%", tail:"top-right" },
+        { right:"5%", bottom:"5%", tail:"top-left" }
+    ];
     const applyComicBubblePosition = bubble => {
         if (!bubble) return;
-        const position = scene.comicDialoguePosition || {};
+        const allBubbles = Array.from(layer.querySelectorAll(".comic-speech-bubble"));
+        const currentIndex = allBubbles.indexOf(bubble);
+        const fallbackIndex = currentIndex >= 0 ? currentIndex : allBubbles.length;
+        const position = scene.comicDialoguePosition || slots[fallbackIndex % slots.length];
         ["left","right","top","bottom"].forEach(key => {
             bubble.style.removeProperty(key);
             if (position[key] !== undefined) {
@@ -8895,13 +8904,6 @@ function createComicDialogueBubble(comicBox, scene) {
         return existing.querySelector(".comic-speech-text");
     }
 
-    const slots = [
-        { left:"5%", top:"5%", tail:"bottom-right" },
-        { right:"5%", top:"5%", tail:"bottom-left" },
-        { left:"5%", bottom:"5%", tail:"top-right" },
-        { right:"5%", bottom:"5%", tail:"top-left" }
-    ];
-    const slot = scene.comicDialoguePosition || slots[layer.querySelectorAll(".comic-speech-bubble").length % slots.length];
     const bubble = document.createElement("div");
     bubble.className = "comic-speech-bubble";
     Object.assign(bubble.style, {
