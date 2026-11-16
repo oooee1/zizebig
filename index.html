@@ -15115,10 +15115,12 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 }
 </style>
 <style id="result-disclaimer-position-controls-20261116">
-/* 測驗標語的調整入口：改這兩個值即可移動，JS 不再用 inline 預設值蓋掉。 */
-#personality-result-screen #personality-result-copy{
- --result-disclaimer-shift-x:0px;
- --result-disclaimer-shift-y:0px;
+/* 測驗標語再上移 10px；桌機與手機分別延續各自原本的位置。 */
+@media (min-width:901px) and (pointer:fine){
+ #personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:-10px!important}
+}
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+ #personality-result-screen #personality-result-copy{--result-disclaimer-shift-y:-28px!important}
 }
 </style>
 <style id="opening-comic-and-ending-hints-20261116">
@@ -17750,7 +17752,7 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
 body.opening-comic-controls #game-container #skip-btn{
   position:absolute!important;
   top:max(14px,env(safe-area-inset-top))!important;
-  right:max(12px,env(safe-area-inset-right))!important;
+  right:112px!important;
   left:auto!important;
   z-index:2147483646!important;
   display:flex!important;
@@ -17802,18 +17804,19 @@ body.opening-comic-controls #game-container #skip-btn{
 
 
 <style id="final-stage-controls-comic-alignment-20261116">
-/* 選單、跳過與開發者工具都以遊戲舞台為定位基準；跳過鍵排在開發者按鈕左側。 */
+/* 開發者工具與跳過鍵是兩個獨立絕對定位圖層，不參與彼此排版；全部以遊戲舞台為基準。 */
 #game-container .menu-container{
  position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
  left:max(14px,env(safe-area-inset-left))!important;right:auto!important;
 }
-#game-container #developer-tools{
+#game-container > #developer-tools{
  position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
  right:14px!important;left:auto!important;z-index:2147483601!important;
+ width:max-content!important;height:auto!important;
 }
-#game-container #skip-btn{
+#game-container > #skip-btn{
  position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;
- right:108px!important;left:auto!important;z-index:2147483600!important;
+ right:112px!important;left:auto!important;z-index:2147483602!important;
  display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
 }
 /* 11 的背景與角色使用完全相同的 90% 畫布，遮罩不再因兩張圖層尺寸不同而錯位。 */
