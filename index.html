@@ -11844,6 +11844,24 @@ function openPersonalityResult(first,second){
             });
         }
 
+        // 漫畫畫布專用推進事件：不依賴底下已隱藏的舊對話框，點畫面任何位置都能推進。
+        (function bindComicStageAdvance(){
+            const comicStage = document.getElementById("comic-box");
+            if (!comicStage || comicStage.dataset.comicAdvanceBound === "1") return;
+            comicStage.dataset.comicAdvanceBound = "1";
+            comicStage.addEventListener("click", function(event) {
+                const active = document.body.classList.contains("comic-scene-active") ||
+                    comicStage.classList.contains("opening-comic-active");
+                if (!active) return;
+                if (event.target && event.target.closest &&
+                    event.target.closest("button,a,input,textarea,select,[data-no-story-advance]")) return;
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                nextStep();
+            }, true);
+        })();
+
         function nextStep() {
             // 只要目前畫面正在顯示「我的選擇」按鈕，就鎖住一般劇情推進。
             // 以實際顯示的按鈕判斷，不把場景編號寫死在 nextStep 裡。
