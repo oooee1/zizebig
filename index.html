@@ -12948,7 +12948,13 @@ function openPersonalityResult(first,second){
                     }
                     const frame = openingComicFrames[index];
                     const groupChanged = openingComicGroup !== frame.group;
-                    if (groupChanged) { clearComicLayers(comicBox, comicImg); openingComicGroup = frame.group; }
+                    // 11～14 現在每格都是完整合成圖，不可把前一格的圖片殘留並疊到下一格。
+                    // 每次切換都清除 comic-img 與所有 extra 圖層，避免舊背景／破圖圖示留在畫面。
+                    const isSingleFrameOpeningComic = frame.group === "opening-sequence-11-14";
+                    if (groupChanged || isSingleFrameOpeningComic) {
+                        clearComicLayers(comicBox, comicImg);
+                        openingComicGroup = frame.group;
+                    }
                     // 畫布不重播整體滑入；每張新圖層由 renderComicLayers 在解碼後各自同步淡入上移。
                     renderComicLayers(comicBox, comicImg, frame.paths, frame.group, { opening:true, animateEntry:false });
                     // 開場漫畫走獨立的逐格播放流程，不會經過 renderScene；
