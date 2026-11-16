@@ -8611,9 +8611,9 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             if (isSplitBackgroundAndRole && path === rolePath && options.opening) {
                 // 分離素材是同一張透明畫布：角色與背景必須共用完整畫布座標。
                 layer.classList.add("intro-comic-role");
-                if (backgroundMaskPath) {
-                    layer.style.setProperty("--comic-role-mask", `url("${backgroundMaskPath}")`);
-                }
+                // 角色圖直接顯示；不再把背景圖當 CSS mask，避免 12 背景透明通道將角色整張遮掉。
+                layer.style.setProperty("-webkit-mask-image","none","important");
+                layer.style.setProperty("mask-image","none","important");
                 comicBox.appendChild(layer);
             } else if (isSplitBackgroundAndRole && path === rolePath) {
                 comicBox.appendChild(layer);
@@ -15933,13 +15933,6 @@ body.opening-comic-controls #skip-btn{
  function closePreview(){
   const overlay=document.getElementById("result-preview-share-overlay");
   if(overlay){
-   window.removeEventListener("resize",overlay.__positionPreviewToStage);
-   window.removeEventListener("scroll",overlay.__positionPreviewToStage,true);
-   if(window.visualViewport){
-    window.visualViewport.removeEventListener("resize",overlay.__positionPreviewToStage);
-    window.visualViewport.removeEventListener("scroll",overlay.__positionPreviewToStage);
-   }
-   if(overlay.__stageResizeObserver)overlay.__stageResizeObserver.disconnect();
    overlay.remove();
   }
   if(activePreviewURL){URL.revokeObjectURL(activePreviewURL);activePreviewURL="";}
@@ -16006,50 +15999,30 @@ body.opening-comic-controls #skip-btn{
     '</div>'+
     '<div class="result-preview-share-title">分享到…</div>'+
    '</div>';
-  document.body.appendChild(overlay);
-  // 分享視窗必須以遊戲舞台的真實矩形定位；桌機舞台只有 430px × 90vh，並非整個瀏覽器視窗。
-  const positionPreviewToStage=()=>{
-   const stage=document.getElementById("game-container");
-   if(!stage||!overlay.isConnected)return;
-   const rect=stage.getBoundingClientRect();
-   /* 使用舞台實際可視矩形，不使用瀏覽器視窗尺寸；內容超出時在舞台內裁切。 */
-   overlay.style.setProperty("position","fixed","important");
-   overlay.style.setProperty("left",Math.max(0,rect.left)+"px","important");
-   overlay.style.setProperty("top",Math.max(0,rect.top)+"px","important");
-   overlay.style.setProperty("right","auto","important");
-   overlay.style.setProperty("bottom","auto","important");
-   overlay.style.setProperty("width",Math.max(0,Math.min(rect.width,window.innerWidth-Math.max(0,rect.left)))+"px","important");
-   overlay.style.setProperty("height",Math.max(0,Math.min(rect.height,window.innerHeight-Math.max(0,rect.top)))+"px","important");
-   overlay.style.setProperty("inset","auto","important");
-   overlay.style.setProperty("transform","none","important");
-   overlay.style.setProperty("box-sizing","border-box","important");
-   overlay.style.setProperty("overflow","hidden","important");
-   overlay.style.setProperty("padding","8px 6px","important");
-   const modal=overlay.querySelector(".result-preview-modal");
-   if(modal){
-    modal.style.setProperty("box-sizing","border-box","important");
-    modal.style.setProperty("max-height","100%","important");
-    modal.style.setProperty("width","100%","important");
-    modal.style.setProperty("min-height","0","important");
-    modal.style.setProperty("overflow","hidden","important");
-    modal.style.setProperty("gap","clamp(5px,1.2vh,10px)","important");
-   }
-   const img=overlay.querySelector(".result-preview-image");
-   if(img)img.style.setProperty("max-height","min(27vh, calc(100% - 180px))","important");
-  };
-  positionPreviewToStage();
-  window.addEventListener("resize",positionPreviewToStage,{passive:true});
-  window.addEventListener("scroll",positionPreviewToStage,{passive:true,capture:true});
-  if(window.visualViewport){
-   window.visualViewport.addEventListener("resize",positionPreviewToStage,{passive:true});
-   window.visualViewport.addEventListener("scroll",positionPreviewToStage,{passive:true});
-  }
+  // 分享視窗直接放進遊戲舞台，完全沿用舞台本身的尺寸、縮放與裁切，不再用瀏覽器視窗座標模擬。
   const stageForPreview=document.getElementById("game-container");
-  if(stageForPreview&&window.ResizeObserver){
-   overlay.__stageResizeObserver=new ResizeObserver(positionPreviewToStage);
-   overlay.__stageResizeObserver.observe(stageForPreview);
+  if(!stageForPreview)throw new Error("找不到遊戲舞台，無法顯示結果預覽");
+  stageForPreview.appendChild(overlay);
+  overlay.style.setProperty("position","absolute","important");
+  overlay.style.setProperty("inset","0","important");
+  overlay.style.setProperty("width","100%","important");
+  overlay.style.setProperty("height","100%","important");
+  overlay.style.setProperty("max-width","100%","important");
+  overlay.style.setProperty("max-height","100%","important");
+  overlay.style.setProperty("box-sizing","border-box","important");
+  overlay.style.setProperty("overflow","hidden","important");
+  overlay.style.setProperty("padding","8px 6px","important");
+  const modal=overlay.querySelector(".result-preview-modal");
+  if(modal){
+   modal.style.setProperty("box-sizing","border-box","important");
+   modal.style.setProperty("max-height","100%","important");
+   modal.style.setProperty("width","100%","important");
+   modal.style.setProperty("min-height","0","important");
+   modal.style.setProperty("overflow","hidden","important");
+   modal.style.setProperty("gap","clamp(5px,1.2vh,10px)","important");
   }
-  overlay.__positionPreviewToStage=positionPreviewToStage;
+  const previewImage=overlay.querySelector(".result-preview-image");
+  if(previewImage)previewImage.style.setProperty("max-height","min(27dvh, calc(100% - 180px))","important");
   overlay.querySelector(".result-preview-close").addEventListener("click",closePreview);
   const zone=overlay.querySelector(".result-preview-download-zone");
   zone.addEventListener("click",downloadResultPreview);
@@ -16461,14 +16434,9 @@ body.opening-comic-controls #skip-btn{
 /* 11／12 分鏡：角色使用對應背景的透明度遮罩，避免角色越出該張背景。 */
 #comic-box.opening-comic-active .intro-comic-role{
   z-index:3!important;
-  -webkit-mask-image:var(--comic-role-mask)!important;
-  mask-image:var(--comic-role-mask)!important;
-  -webkit-mask-size:86vw 86dvh!important;
-  mask-size:86vw 86dvh!important;
-  -webkit-mask-position:center!important;
-  mask-position:center!important;
-  -webkit-mask-repeat:no-repeat!important;
-  mask-repeat:no-repeat!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+  opacity:1!important;
   pointer-events:none!important;
 }
 /* 開場漫畫不做整個畫布滑入；只讓漫畫內容圖片本身沿用原本的 fadeInUp 出場動畫。 */
