@@ -16476,7 +16476,7 @@ body > #developer-tools-panel button{
   if(!screen||screen.dataset.endFadeBound==="true")return;
   screen.dataset.endFadeBound="true";
   const update=()=>{
-   const atEnd=screen.scrollHeight-screen.clientHeight-screen.scrollTop<=8;
+   const hasScrollableContent=screen.scrollHeight>screen.clientHeight+8;\n   const atEnd=hasScrollableContent&&screen.scrollHeight-screen.clientHeight-screen.scrollTop<=8;
    screen.classList.toggle("at-scroll-end",atEnd);
   };
   screen.addEventListener("scroll",update,{passive:true});
