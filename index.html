@@ -8756,7 +8756,7 @@ function enterGameAnimation() {
             if (targetOverride) defaultTextTag.innerHTML = "";
 
             let index = 0;
-            window.myTypingTimer = setInterval(() => {
+            const typeNextCharacter = () => {
                 if (!window.isTyping) {
                     clearInterval(window.myTypingTimer);
                     window.myTypingTimer = null;
@@ -8789,7 +8789,9 @@ function enterGameAnimation() {
                     window.currentTypingTarget = null;
                     if (typeof callback === "function") callback();
                 }
-            }, 30);
+            };
+            window.myTypingTimer = setInterval(typeNextCharacter, 30);
+            typeNextCharacter();
         }
 
 // 漫畫專用對話泡泡：每句話留在該漫畫群組的畫布上，直到切換下一組漫畫。
@@ -9616,12 +9618,12 @@ if (window.currentSceneBGM !== scene.bgm) {
         renderOptions(scene);
     } else if (isComicMode && comicBubbleText) {
         window.comicDialoguePending = true;
-        window.comicDialogueStartTimer = requestAnimationFrame(() => {
+        window.comicDialogueStartTimer = setTimeout(() => {
             window.comicDialogueStartTimer = null;
             window.comicDialoguePending = false;
             if (currentStep !== stepIndex) return;
             startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
-        });
+        }, 0);
     } else {
         startTypingEffect(dialogueTextForDisplay, () => renderOptions(scene), comicBubbleText);
     }
