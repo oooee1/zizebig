@@ -13174,11 +13174,9 @@ function openPersonalityResult(first,second){
                 document.addEventListener("click", handleStartActivation, true);
                 const comicScreen = document.getElementById("comic-box");
                 if (comicScreen) {
-                    comicScreen.addEventListener("pointerup", function(event) {
-                        if (!comicScreen.classList.contains("opening-comic-active")) return;
-                        if (event.pointerType === "mouse" && event.button !== 0) return;
-                        advanceOpeningComic(event);
-                    }, {capture:true,passive:false});
+                    // 翻頁只保留 bindOpeningComicAdvance 的 click 入口。
+                    // 原本 pointerup 與 click 各推進一次，慢速合成 click 會把 12 直接推到 13，
+                    // 看起來就像 12 一出現便把 11 消失；450ms 節流無法可靠處理 iOS 延遲 click。
                     comicScreen.addEventListener("click", function(event) {
                         if (!comicScreen.classList.contains("opening-comic-active")) return;
                         event.preventDefault(); event.stopPropagation();
@@ -19196,9 +19194,9 @@ body.opening-comic-controls #game-container #skip-btn{
   width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
   transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
 }
-/* 黑色泛光只留在 Logo；標準字不再把外擴光暈壓到 Logo 上。 */
+/* Logo 與標準字都保留黑色泛光；標準字整個圖層置於 Logo 上方，避免 Logo 光暈覆蓋文字。 */
 #intro-start-logo{
-  position:relative!important;z-index:3!important;
+  position:relative!important;z-index:1!important;
   -webkit-filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
     drop-shadow(0 0 22px rgba(0,0,0,.94))
     drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
@@ -19208,7 +19206,12 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 #intro-start-title{
   position:relative!important;z-index:2!important;
-  -webkit-filter:none!important;filter:none!important;
+  -webkit-filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
+    drop-shadow(0 0 22px rgba(0,0,0,.94))
+    drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
+  filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
+    drop-shadow(0 0 22px rgba(0,0,0,.94))
+    drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
 }
 /* 第一朵與最後一朵雲各自上移 6 個百分點，中間雲保持原位。 */
 #game-container .dream-cloud-transition img:nth-child(1){top:-46%!important}
