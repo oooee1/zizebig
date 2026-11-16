@@ -9608,7 +9608,7 @@ if (window.currentSceneBGM !== scene.bgm) {
     if (!charElement) return;
 
     // 清除舊動畫 Class 並重置
-    charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-panicked', 'anim-cry', 'anim-nod', 'anim-excited', 'anim-passion-fire', 'anim-passion-normal', 'anim-crowned-king');
+    charElement.classList.remove('anim-bounce', 'anim-sway', 'anim-depress', 'anim-panicked', 'anim-cry', 'anim-nod', 'anim-excited', 'anim-dad-smile', 'anim-passion-fire', 'anim-passion-normal', 'anim-crowned-king');
     void charElement.offsetWidth; // 強制重繪 (Reflow)
 
     // 依角色加入對應的單次動畫；已由 playCuriousAnim / playHappyJumpAnim 處理的角色不重複加入。
@@ -18309,7 +18309,7 @@ body.opening-comic-controls #game-container #skip-btn{
 }
 #game-container .dream-cloud-transition{
  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
- z-index:2147483000!important;overflow:hidden!important;pointer-events:auto!important;background:transparent!important;
+ z-index:2147483647!important;overflow:hidden!important;pointer-events:auto!important;background:transparent!important;
 }
 #game-container .dream-cloud-transition img{
  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
