@@ -8567,6 +8567,8 @@ img { max-width:100%; }
         let loadedCount = 0;
         let totalCritical = 1;
         const assetLoadPromises = new Map();
+        // 保留已下載並完成 decode 的圖片節點，避免開始遊戲後漫畫素材被回收而重新解碼。
+        const assetImageCache = new Map();
         const readySceneIndexes = new Set();
         const pendingSceneLoads = new Map();
 
@@ -8616,6 +8618,9 @@ img { max-width:100%; }
 
                 const promise = new Promise((resolve, reject) => {
                     const img = new Image();
+                    img.decoding = "sync";
+                    img.fetchPriority = "high";
+                    assetImageCache.set(src, img);
                     let settled = false;
                     const finish = error => {
                         if (settled) return;
@@ -9041,18 +9046,12 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             const splitNumber = isSplitRole ? rolePath.match(/(?:^|\/)(11|12)\.webp$/i) : null;
             if (splitNumber) layer.setAttribute("data-comic-mask-role", splitNumber[1]);
             else layer.removeAttribute("data-comic-mask-role");
-            // 角色以對應的背景透明度作遮罩，避免角色越出自己的漫畫格。
-            const maskUrl = backgroundMaskPath ? 'url("' + backgroundMaskPath + '")' : "none";
-            layer.style.setProperty("-webkit-mask-image", maskUrl, "important");
-            layer.style.setProperty("mask-image", maskUrl, "important");
-            layer.style.setProperty("-webkit-mask-size", "100% 100%", "important");
-            layer.style.setProperty("mask-size", "100% 100%", "important");
-            layer.style.setProperty("-webkit-mask-position", "center center", "important");
-            layer.style.setProperty("mask-position", "center center", "important");
-            layer.style.setProperty("-webkit-mask-repeat", "no-repeat", "important");
-            layer.style.setProperty("mask-repeat", "no-repeat", "important");
-            layer.style.setProperty("-webkit-mask-mode", "alpha", "important");
-            layer.style.setProperty("mask-mode", "alpha", "important");
+            // 11／12 的角色與背景是同一張透明畫布，不能拿背景 alpha 再遮一次；
+            // 二次遮罩會把角色裁掉或造成角色與背景看起來錯位。
+            layer.style.removeProperty("-webkit-mask-image");
+            layer.style.removeProperty("mask-image");
+            layer.style.removeProperty("-webkit-mask-size");
+            layer.style.removeProperty("mask-size");
         }
 
         const isForegroundComic = !isFullBleedOpeningBackdrop;
@@ -9098,7 +9097,8 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
             layer.style.setProperty("object-position", "center center", "important");
             layer.style.setProperty("opacity", "0", "important");
             layer.style.setProperty("transform", "translate(-50%, -50%)", "important");
-            layer.removeAttribute("data-opening-panel");
+            // CSS 與 JS 使用同一個分鏡編號，讓 11／12 的背景和角色各自成對定位。
+            layer.setAttribute("data-opening-panel", String(splitPanelNumber));
         }
         // 每張新分鏡都比上一張高一層；同一張分離背景在前、角色在後。
         // 先疊完 11、12 的兩張背景，再疊兩個角色；12 背景不可以蓋掉 11 角色。
@@ -18663,6 +18663,10 @@ body.opening-comic-controls #game-container #skip-btn{z-index:2147483000!importa
     drop-shadow(0 0 22px rgba(255,255,255,.76))
     drop-shadow(0 0 38px rgba(255,255,255,.52))!important;
 }
+/* 保留標準字原本的泛光強度，只讓 Logo 位於較上層，避免光暈視覺上壓住 Logo。 */
+#intro-start-content{isolation:isolate!important}
+#intro-start-logo{position:relative!important;z-index:2!important}
+#intro-start-title{position:relative!important;z-index:1!important}
 #intro-start-title{
   width:min(52%,230px)!important;
   max-height:18vh!important;
@@ -19070,28 +19074,30 @@ body.opening-comic-controls #game-container #skip-btn{
   line-height:1.2!important;
 }
 
-/* 最終漫畫修正：11／12 角色直接使用各自背景 alpha 遮罩，取消舊版的 mask:none 覆蓋。 */
-#game-container #comic-box.opening-comic-active .comic-split-role[data-comic-mask-role="11"],
-#game-container #comic-box.opening-comic-active .comic-split-role[data-comic-mask-role="12"]{
-  -webkit-mask-size:100% 100%!important;mask-size:100% 100%!important;
-  -webkit-mask-position:center center!important;mask-position:center center!important;
-  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
-  -webkit-mask-mode:alpha!important;mask-mode:alpha!important;
+/* 11／12 是完整透明畫布配對，不使用第二層 alpha 遮罩；定位標記由 JS 實際寫入。 */
+#game-container #comic-box.opening-comic-active .comic-layer[data-opening-panel="11"],
+#game-container #comic-box.opening-comic-active .comic-layer[data-opening-panel="12"]{
+  position:absolute!important;top:50%!important;height:86%!important;
+  min-width:0!important;min-height:0!important;max-height:86%!important;
+  margin:0!important;padding:0!important;transform:translate(-50%,-50%)!important;
+  object-fit:contain!important;object-position:center center!important;
 }
-/* 雲朵每張都維持舞台完整尺寸，只在垂直方向錯開；不縮小單張雲的畫布。 */
+#game-container #comic-box.opening-comic-active .comic-layer[data-opening-panel="11"]{left:26%!important;width:46%!important;max-width:46%!important}
+#game-container #comic-box.opening-comic-active .comic-layer[data-opening-panel="12"]{left:74%!important;width:46%!important;max-width:46%!important}
+/* 三朵雲都超出舞台邊緣一點，確保沒有細縫；上、下兩朵放大，中間往下移。 */
 #game-container .dream-cloud-transition img:nth-child(1){
-  left:0!important;right:auto!important;top:-28%!important;bottom:auto!important;
-  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  left:-10%!important;right:auto!important;top:-34%!important;bottom:auto!important;
+  width:120%!important;height:116%!important;max-width:none!important;max-height:none!important;
   object-fit:fill!important;object-position:center center!important;
 }
 #game-container .dream-cloud-transition img:nth-child(2){
-  left:0!important;right:auto!important;top:8%!important;bottom:auto!important;
-  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  left:-7%!important;right:auto!important;top:14%!important;bottom:auto!important;
+  width:114%!important;height:112%!important;max-width:none!important;max-height:none!important;
   object-fit:fill!important;object-position:center center!important;
 }
 #game-container .dream-cloud-transition img:nth-child(3){
-  left:0!important;right:auto!important;top:44%!important;bottom:auto!important;
-  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  left:-10%!important;right:auto!important;top:48%!important;bottom:auto!important;
+  width:120%!important;height:116%!important;max-width:none!important;max-height:none!important;
   object-fit:fill!important;object-position:center center!important;
 }
 /* 不同高分版本只再放大星球名稱，不改動已縮小的整句字級。 */
