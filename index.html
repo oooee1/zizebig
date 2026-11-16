@@ -12099,7 +12099,8 @@ function openPersonalityResult(first,second){
                     const loadingLayer = document.getElementById("loading-screen");
                     // 開始畫面、漫畫與載入遮罩全部以遊戲舞台為定位基準。
                     const gameContainer = document.getElementById("game-container");
-                    [loadingLayer, comicScreen].forEach(layer => {
+                    // 載入遮罩留在 body 並維持 fixed；只有漫畫畫布放進遊戲舞台。
+                    [comicScreen].forEach(layer => {
                         if (layer && gameContainer && layer.parentElement !== gameContainer) gameContainer.appendChild(layer);
                     });
                     if(gameContainer)gameContainer.classList.add("start-screen-active");
@@ -12118,18 +12119,13 @@ function openPersonalityResult(first,second){
                         comicScreen.style.setProperty("width", "100%", "important");
                         comicScreen.style.setProperty("height", "100%", "important");
                     }
-                    if (loadingLayer) {
-                        loadingLayer.style.setProperty("position", "absolute", "important");
-                        loadingLayer.style.setProperty("inset", "0", "important");
-                        loadingLayer.style.setProperty("width", "100%", "important");
-                        loadingLayer.style.setProperty("height", "100%", "important");
-                    }
+                    // loadingLayer 不設定 absolute；它始終由 body 上的 fixed 規則覆蓋整個視窗。
                     const developerTools = document.getElementById("developer-tools");
                     // 開發者工具移出遊戲裁切容器與開場畫面的 stacking context，固定在整個視窗最上層。
                     if (developerTools && developerTools.parentElement !== document.body) document.body.appendChild(developerTools);
                     if (developerTools) {
                         developerTools.style.setProperty("position", "fixed", "important");
-                        developerTools.style.setProperty("z-index", "2147483647", "important");
+                        developerTools.style.setProperty("z-index", "2147483000", "important");
                         developerTools.style.setProperty("pointer-events", "auto", "important");
                         developerTools.style.setProperty("visibility", "visible", "important");
                         developerTools.style.setProperty("opacity", "1", "important");
@@ -16994,18 +16990,18 @@ body.opening-comic-controls #game-container #skip-btn{
  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
 }
 /* 11、12 局部背景與角色各自淡入；角色不再被背景選擇器排除。 */
-@keyframes comicLayerOpacityEntry{
- from{opacity:0}
- to{opacity:1}
+@keyframes comicLayerEntry{
+ from{opacity:0;translate:0 40px}
+ to{opacity:1;translate:0 0}
 }
 #game-container #comic-box.opening-comic-active .intro-comic-background:not([src*="漫畫背景"]),
 #game-container #comic-box.opening-comic-active .intro-comic-role{
- animation:comicLayerOpacityEntry .6s ease-out both!important;
+ animation:comicLayerEntry .6s ease-out both!important;
 }
 /* 開場其餘前景漫畫也使用單層淡入，不對容器和圖片疊加位移動畫。 */
 #game-container #comic-box.comic-slide-up{animation:none!important}
 #game-container #comic-box.opening-comic-active .comic-layer:not(.intro-comic-background){
- animation:fadeInUp .6s ease-out both!important;
+ animation:comicLayerEntry .6s ease-out both!important;
 }
 /* 載入畫面固定在整個視窗最上層，任何遊戲 UI 都不能蓋住它。 */
 #loading-screen{
