@@ -12721,17 +12721,17 @@ function openPersonalityResult(first,second){
                     }, true);
                 }
 
-                // 11～14 是同一段連續漫畫：翻到 13、14 時也保留前面已出現的圖層。
-                // 進入 1～4 後才切換下一段；每一格仍各自更新，避免 1、2 等單格互相疊在一起。
+                // 開場 11、12、13、14、1、2、3、4 是同一段連續漫畫。
+                // 每次點擊只追加當前格，絕不因為切換編號或分組而清除上一格。
                 const openingComicFrames = [
-                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
-                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
-                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
-                    { group: "opening-sequence-11-14", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
-                    { group: "opening-panel-1", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
-                    { group: "opening-panel-2", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
-                    { group: "opening-panel-3", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
-                    { group: "opening-panel-4", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
+                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./pct/11背景.webp", "./pct/11.webp"], rolePath: "./pct/11.webp" },
+                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./pct/12背景.webp", "./pct/12.webp"], rolePath: "./pct/12.webp" },
+                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./pct/13.webp"] },
+                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./pct/14.webp"] },
+                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./1漫畫/1.webp"] },
+                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./1漫畫/2.webp"] },
+                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./1漫畫/3.webp"] },
+                    { group: "opening-sequence-all", paths: ["./pct/漫畫背景.webp", "./1漫畫/4.webp"] }
                 ];
                 const openingComicAssets = [...new Set(openingComicFrames.flatMap(frame => frame.paths))];
                 let openingComicIndex = 0;
