@@ -9755,15 +9755,16 @@ if (window.currentSceneBGM !== scene.bgm) {
     // 劇情漫畫使用共用圖層渲染器。
     const comicBox = document.getElementById('comic-box');
     const comicImg = document.getElementById('comic-img');
-    if (comicBox && comicImg && (sceneComicPaths.length > 0 || isContinuingComic)) {
+    if (comicBox && comicImg && sceneComicPaths.length > 0) {
         renderComicLayers(comicBox, comicImg, sceneComicPaths, currentComicGroup, {
             animateEntry: undefined,
             opening: Number(scene.id) < 0,
             rolePath: scene.comicRolePath || ""
         });
-    } else {
+    } else if (!isContinuingComic) {
         clearComicLayers(comicBox, comicImg);
     }
+    // 同組漫畫的純對話格不重新呼叫圖層渲染器，保留目前畫面與進場狀態，避免閃黑。
 
     // 漫畫對話泡泡屬於目前漫畫格；同一 comicGroup 內逐句保留，換組才清除。
     const comicBubbleText = isComicMode && hasText ? createComicDialogueBubble(comicBox, scene) : null;
