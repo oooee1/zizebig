@@ -16055,7 +16055,7 @@ body.opening-comic-controls #skip-btn{
 }
 #result-preview-share-overlay .result-preview-image{
  display:block!important;width:auto!important;height:auto!important;
- max-width:min(82vw,430px)!important;max-height:58vh!important;
+ max-width:min(49.2vw,258px)!important;max-height:34.8vh!important;
  object-fit:contain!important;box-shadow:0 5px 24px rgba(0,0,0,.28)!important;
  -webkit-user-drag:none!important;
 }
@@ -16087,8 +16087,15 @@ body.opening-comic-controls #skip-btn{
  text-align:center!important;margin-top:0!important;
 }
 @media (min-width:901px){
- #result-preview-share-overlay .result-preview-image{max-height:55vh!important;max-width:min(52vw,430px)!important}
- #result-preview-share-overlay .result-preview-close{right:calc(50% - min(26vw,215px) - 17px)!important;top:-12px!important}
+ /* 桌機預覽限制在中央 430px 遊戲舞台內，不得延伸到瀏覽器整個視窗。 */
+ #result-preview-share-overlay{
+  left:50%!important;right:auto!important;top:0!important;bottom:0!important;
+  width:min(430px,100vw)!important;height:100dvh!important;
+  transform:translateX(-50%)!important;padding:12px 8px!important;
+ }
+ #result-preview-share-overlay .result-preview-modal{width:100%!important;max-width:100%!important}
+ #result-preview-share-overlay .result-preview-image{max-height:33vh!important;max-width:min(31.2vw,258px)!important}
+ #result-preview-share-overlay .result-preview-close{right:0!important;top:-8px!important}
 }
 </style>
 
@@ -16476,7 +16483,8 @@ body > #developer-tools-panel button{
   if(!screen||screen.dataset.endFadeBound==="true")return;
   screen.dataset.endFadeBound="true";
   const update=()=>{
-   const hasScrollableContent=screen.scrollHeight>screen.clientHeight+8;\n   const atEnd=hasScrollableContent&&screen.scrollHeight-screen.clientHeight-screen.scrollTop<=8;
+   const hasScrollableContent=screen.scrollHeight>screen.clientHeight+8;
+   const atEnd=hasScrollableContent&&screen.scrollHeight-screen.clientHeight-screen.scrollTop<=8;
    screen.classList.toggle("at-scroll-end",atEnd);
   };
   screen.addEventListener("scroll",update,{passive:true});
@@ -16492,3 +16500,21 @@ body > #developer-tools-panel button{
  else setup();
 })();
 </script>
+
+
+<style id="result-preview-image-scale-and-share-title-upright-20261116">
+/* 「分享方式」標題不跟隨按鈕的角度旋轉，也取消斜體／斜切。 */
+#result-preview-share-overlay .result-preview-share-title{
+ font-style:normal!important;
+ transform:none!important;
+ rotate:none!important;
+ skew:none!important;
+ font-weight:400!important;
+}
+#result-preview-share-overlay .result-preview-share-title,
+#result-preview-share-overlay .result-preview-share-title *{
+ font-style:normal!important;
+ transform:none!important;
+ rotate:none!important;
+}
+</style>
