@@ -142,8 +142,8 @@
     object-fit: cover;
 }
 
-/* CG 圖以漫畫背景襯底；正方形 CG 保持比例並置中顯示。 */
-#漫畫背景 { z-index: 0; }
+/* CG 圖以背景襯底；正方形 CG 保持比例並置中顯示。 */
+#背景 { z-index: 0; }
 .CG圖 { z-index: 2; }
 .CG圖.cg-square-image {
     display: flex;
@@ -162,8 +162,8 @@
     transform: translate(-50%, -50%);
 }
 
-/* 漫畫模式專用背景加深，保留原圖構圖與細節。 */
-#漫畫背景 img {
+/* 模式專用背景加深，保留原圖構圖與細節。 */
+#背景 img {
     filter: brightness(0.45);
 }
         /* 修改原本的 @keyframes shake */
@@ -1273,7 +1273,7 @@
         .ask-btn:active { transform: translateY(2px); box-shadow: none; }
         @media(max-width:420px) { #askname-item { padding: 27px 18px 20px; } }
 /* --------------------------------------------------
-   1. 漫畫容器：專職「絕對置中」（絕不寫 transform 動畫）
+   1. 容器：專職「絕對置中」（絕不寫 transform 動畫）
 -------------------------------------------------- */
 #comic-box {
   position: absolute;
@@ -1284,7 +1284,7 @@
   pointer-events: none;
 }
 
-/* 進入漫畫時，整個漫畫畫布從目前對話框下方滑上來，覆蓋在對話之上。 */
+/* 進入時，整個畫布從目前對話框下方滑上來，覆蓋在對話之上。 */
 #comic-box.comic-slide-up {
   animation: comicSlideUp 0.65s cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
@@ -1307,7 +1307,7 @@
   to { transform: translateY(0); }
 }
 
-/* 漫畫各圖層共用同一個置中畫布，切換分鏡時不關閉整個漫畫容器。 */
+/* 各圖層共用同一個置中畫布，切換分鏡時不關閉整個容器。 */
 #comic-box .comic-layer {
   position: absolute;
   top: 50%;
@@ -1320,14 +1320,14 @@
   object-fit: contain;
 }
 
-/* 裁切視窗會與背景漫畫實際顯示的矩形完全重合。 */
+/* 裁切視窗會與背景實際顯示的矩形完全重合。 */
 #comic-box .comic-role-clip {
   position: absolute;
   overflow: hidden;
   pointer-events: none;
 }
 
-/* 角色圖以背景漫畫的矩形為固定視窗；角色圖片本身與動畫都限制在視窗內。 */
+/* 角色圖以背景的矩形為固定視窗；角色圖片本身與動畫都限制在視窗內。 */
 #comic-box .comic-role-clip {
   box-sizing: border-box;
   overflow: hidden !important;
@@ -1391,7 +1391,7 @@
 }
 
 /* --------------------------------------------------
-   3. 個別漫畫微調（只調 <img> 本身的大小與角度）
+   3. 個別微調（只調 <img> 本身的大小與角度）
 -------------------------------------------------- */
 /* ✉️ 「信」的專屬樣式 */
 .comic-style-信 #comic-img {
@@ -1412,7 +1412,7 @@
   }
 }
 
-/* 💡 動畫通用的 Class (要淡入登場的漫畫加這條) */
+/* 💡 動畫通用的 Class (要淡入登場的加這條) */
 .anim-fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
 }
@@ -2128,7 +2128,7 @@ img { max-width:100%; }
     /* 爽快星送信分類：教學沿用原劇情對話框；遊戲採第一人稱單封輪替 */
     #mail-game-overlay{display:none;position:absolute;inset:0;z-index:5300;overflow:hidden;}
     #page1.mail-tutorial-mode .player-svg{display:none!important;}
-    /* 教學對話改成漫畫式對話泡泡：上方是框，下方是爽快星 */
+    /* 教學對話改成式對話泡泡：上方是框，下方是爽快星 */
     #page1.mail-tutorial-mode #對話框{
         display:block!important;
         position:absolute!important;
@@ -2348,7 +2348,7 @@ img { max-width:100%; }
     .wire-line-yellow { stroke:#FBE783; }
     .wire-line-red { stroke:#EC6131; }
     .wire-line-blue { stroke:#88DCFB; }
-    /* 拉電線小遊戲對話框：漫畫式橢圓對話泡泡，尾端指向說話者所在的上方區域 */
+    /* 拉電線小遊戲對話框：式橢圓對話泡泡，尾端指向說話者所在的上方區域 */
     #wire-game-dialogue {
         position:absolute; left:2%; bottom:10.5%; width:74%; min-height:15%;
         box-sizing:border-box; padding:clamp(10px,2.2vw,20px) clamp(18px,3.6vw,30px);
@@ -2623,14 +2623,14 @@ img { max-width:100%; }
     }
 }
 
-/* 貝殼信縮小為原本尺寸的一半，其他漫畫圖層不受影響 */
+/* 貝殼信縮小為原本尺寸的一半，其他圖層不受影響 */
 #comic-box .comic-layer.comic-shell-letter {
     width: 39% !important;
     height: 39% !important;
     max-width: 39% !important;
     max-height: 39% !important;
 }
-/* 信件插圖：保留一般場景背景與對話框，不進入漫畫模式 */
+/* 信件插圖：保留一般場景背景與對話框，不進入模式 */
 #story-letter-overlay {
     position:absolute;
     inset:0;
@@ -3076,7 +3076,7 @@ img { max-width:100%; }
             <div id="衝浪" class="CG圖"><img data-src="./pct/CG圖 同情星衝浪放鬆.webp"></div>
             <div id="爬山" class="CG圖"><img data-src="./pct/CG圖 同情星爬山放鬆.webp"></div>
             <div id="吃東西" class="CG圖"><img data-src="./pct/CG圖 同情星吃東西放鬆.webp"></div>
-            <div id="漫畫背景" class="背景圖"><img data-src="./pct/漫畫背景.webp" alt="漫畫背景"></div>
+            <div id="背景" class="背景圖"><img data-src="./pct/背景.webp" alt="背景"></div>
             <div id="好奇星草原" class="背景圖"><img data-src="./pct/好奇星 草原 直.webp"></div>
             <div id="好奇星草叢" class="背景圖"><img data-src="./pct/好奇星 草叢 直.webp"></div>
             <div id="好奇星棉花重災區" class="背景圖"><img data-src="./pct/好奇星 棉花重災區(救好奇星) 直.webp"></div>
@@ -3286,9 +3286,9 @@ img { max-width:100%; }
 </div>
 
         </div>
-        <!-- 漫畫/插圖顯示容器 -->
+        <!-- /插圖顯示容器 -->
 <div id="comic-box" style="display: none;">
-    <img id="comic-img" src="" alt="漫畫圖">
+    <img id="comic-img" src="" alt="圖">
 </div>
 
 
@@ -3379,7 +3379,7 @@ img { max-width:100%; }
             <div>烏賊ALL</div>
 
             <div class="credits-gap"></div>
-            <div class="credits-heading">漫畫製作：</div>
+            <div class="credits-heading">製作：</div>
             <div>烏賊</div>
             <div>木鵝</div>
 
@@ -3675,29 +3675,29 @@ img { max-width:100%; }
                 "./audio/點擊1.mp3"
             ],
             comicImages: [
-                            "./1漫畫/1好奇星-1-第一張.webp",
-                "./1漫畫/1好奇星-1-第二張背景.webp",
-                "./1漫畫/1好奇星-1-第二張角色.webp",
-                "./1漫畫/1好奇星-2-第一張.webp",
-                "./1漫畫/1好奇星-2-第一張好奇星.webp",
-                "./1漫畫/1好奇星-2-第三張.webp",
-                "./1漫畫/1好奇星-2-第二張.webp",
-                "./1漫畫/1好奇星-2-第四張.webp",
-                "./1漫畫/1好奇星-2-第四張好奇星.webp",
-                "./1漫畫/1好奇星-3-第一張.webp",
-                "./1漫畫/1好奇星-3-第二張.webp",
-                "./1漫畫/1好奇星-3-第二張拼圖.webp",
-                "./1漫畫/1好奇星-4-第一張.webp",
-                "./1漫畫/1好奇星-4-第三張.webp",
-                "./1漫畫/1好奇星-4-第二張.webp",
-                "./1漫畫/1好奇星-5-第一張.webp",
-                "./1漫畫/1好奇星-5-第二張.webp",
-                "./1漫畫/2同情星-2-第一張.webp",
-                "./1漫畫/2同情星-2-第三張.webp",
-                "./1漫畫/2同情星-2-第二張.webp",
-                "./1漫畫/2同情星-2-第四張.webp",
-                "./1漫畫/信.webp",
-                "./1漫畫/貝殼信.webp",
+                            "./1/1好奇星-1-第一張.webp",
+                "./1/1好奇星-1-第二張背景.webp",
+                "./1/1好奇星-1-第二張角色.webp",
+                "./1/1好奇星-2-第一張.webp",
+                "./1/1好奇星-2-第一張好奇星.webp",
+                "./1/1好奇星-2-第三張.webp",
+                "./1/1好奇星-2-第二張.webp",
+                "./1/1好奇星-2-第四張.webp",
+                "./1/1好奇星-2-第四張好奇星.webp",
+                "./1/1好奇星-3-第一張.webp",
+                "./1/1好奇星-3-第二張.webp",
+                "./1/1好奇星-3-第二張拼圖.webp",
+                "./1/1好奇星-4-第一張.webp",
+                "./1/1好奇星-4-第三張.webp",
+                "./1/1好奇星-4-第二張.webp",
+                "./1/1好奇星-5-第一張.webp",
+                "./1/1好奇星-5-第二張.webp",
+                "./1/2同情星-2-第一張.webp",
+                "./1/2同情星-2-第三張.webp",
+                "./1/2同情星-2-第二張.webp",
+                "./1/2同情星-2-第四張.webp",
+                "./1/信.webp",
+                "./1/貝殼信.webp",
                 "./pct/CG圖 好奇星 發電廠.webp",
                 "./pct/CG圖 星辰讀父母信件.webp",
                 "./pct/CG圖 最終結果 星辰.webp",
@@ -3718,7 +3718,7 @@ img { max-width:100%; }
                 "./pct/憤怒的居民很憤怒.webp",
                 "./pct/憤怒的居民高潮（看到熱情星戴上王冠）.webp",
                 "./pct/憤怒的居民：跨三小操集掰.webp",
-                "./pct/漫畫背景.webp",
+                "./pct/背景.webp",
                 "./pct/煩躁的居民不煩躁.webp",
                 "./pct/煩躁的居民講英文.webp",
                 "./pct/熱情星噴.webp",
@@ -3892,7 +3892,7 @@ img { max-width:100%; }
         bgm: "./audio/Plink, Plank, Plunk! - Leroy Anderson.mp3",
         text: "",
         background: "好奇星草叢",
-        comicImages: ["./1漫畫/1好奇星-1-第一張.webp"],
+        comicImages: ["./1/1好奇星-1-第一張.webp"],
         // 漫畫模式：不設定 speaker，不顯示對話框、角色立繪與角色名字。
         nextId: 4
     },
@@ -3965,25 +3965,17 @@ img { max-width:100%; }
         background: "好奇星草叢",
     },
     {
-        id: 12.1,
-        bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
-        background: "好奇星草原",
-    },
-    {
         id: 13,
         comicGroup: 2,
         comicImages: ["./1漫畫/1好奇星-2-第一張.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "這裡以前是片大草原，不過因為發電機壞掉了...",
-        characters: ["好奇星哭"],
         background: "好奇星草原",
     },
     {
         id: 13.1,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "我們的毛沒辦法被吹走，星球才會充滿了棉花咩。",
-        characters: ["好奇星哭"],
-        background: "好奇星草原",
     },
     {
         id: 14,
@@ -3991,8 +3983,6 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-2-第一張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "（所以羊怎麼會講話...）",
-        background: "好奇星草原",
-        characters: ["星辰苦惱"],
     },
     {
         id: 15,
@@ -4000,8 +3990,6 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-2-第二張.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "{playerName}的星球是甚麼樣子的咩？",
-        background: "好奇星草原",
-        characters: ["好奇星"],
     },
     {
         id: 16,
@@ -4009,8 +3997,6 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-2-第三張.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "叫做地球喔，但其實是什麼樣的我也沒有很清楚...",
-        background: "好奇星草原",
-        characters: ["星辰思考"],
     },
     {
         id: 17,
@@ -4018,8 +4004,6 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "記得曾經聽到過這樣的星球咩。",
-        background: "好奇星草原",
-        characters: ["好奇星開心閉眼"],
     },
     {
         id: 18,
@@ -4518,16 +4502,13 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "欸？這是什麼！",
-        characters: ["星辰害怕"],
-        background: "好奇星黃色結局",
     },
     {
         id: 52,
         comicGroup: 3,
+        comicImages: ["./1漫畫/1好奇星-3-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "拼圖嗎？",
-        characters: ["星辰思考"],
-        background: "好奇星黃色結局",
     },
     {
         id: 53,
@@ -4535,8 +4516,7 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-3-第二張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好酷，我也是第一次看到咩。",
-        characters: ["好奇星開心閉眼有尾巴"],
-        background: "好奇星黃色結局",
+
     },
     {
         id: 54,
@@ -4544,16 +4524,14 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "它好像進到火箭裡面了。",
-        characters: ["星辰嚇死"],
-        background: "好奇星黃色結局",
+
     },
     {
         id: 55,
         comicGroup: 3,
+        comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "哇，它被喚醒了！",
-        characters: ["好奇星開心有尾巴"],
-        background: "好奇星黃色結局",
     },
     {
         id: 56,
@@ -4561,8 +4539,6 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
-        characters: ["好奇星有尾巴"],
-        background: "好奇星黃色結局",
     },
     {
         id: 57,
@@ -4570,8 +4546,6 @@ img { max-width:100%; }
         comicImages: ["./1漫畫/1好奇星-4-第二張.webp","./1漫畫/1好奇星-4-第三張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "嘿咻！",
-        characters: ["一群好奇星"],
-        background: "好奇星黃色結局",
     },
     {
         id: 58,
