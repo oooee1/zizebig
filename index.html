@@ -15934,6 +15934,12 @@ body.opening-comic-controls #skip-btn{
   const overlay=document.getElementById("result-preview-share-overlay");
   if(overlay){
    window.removeEventListener("resize",overlay.__positionPreviewToStage);
+   window.removeEventListener("scroll",overlay.__positionPreviewToStage,true);
+   if(window.visualViewport){
+    window.visualViewport.removeEventListener("resize",overlay.__positionPreviewToStage);
+    window.visualViewport.removeEventListener("scroll",overlay.__positionPreviewToStage);
+   }
+   if(overlay.__stageResizeObserver)overlay.__stageResizeObserver.disconnect();
    overlay.remove();
   }
   if(activePreviewURL){URL.revokeObjectURL(activePreviewURL);activePreviewURL="";}
@@ -16006,24 +16012,43 @@ body.opening-comic-controls #skip-btn{
    const stage=document.getElementById("game-container");
    if(!stage||!overlay.isConnected)return;
    const rect=stage.getBoundingClientRect();
+   /* 使用舞台實際可視矩形，不使用瀏覽器視窗尺寸；內容超出時在舞台內裁切。 */
    overlay.style.setProperty("position","fixed","important");
-   overlay.style.setProperty("inset","auto","important");
-   overlay.style.setProperty("left",rect.left+"px","important");
-   overlay.style.setProperty("top",rect.top+"px","important");
+   overlay.style.setProperty("left",Math.max(0,rect.left)+"px","important");
+   overlay.style.setProperty("top",Math.max(0,rect.top)+"px","important");
    overlay.style.setProperty("right","auto","important");
    overlay.style.setProperty("bottom","auto","important");
-   overlay.style.setProperty("width",rect.width+"px","important");
-   overlay.style.setProperty("height",rect.height+"px","important");
+   overlay.style.setProperty("width",Math.max(0,Math.min(rect.width,window.innerWidth-Math.max(0,rect.left)))+"px","important");
+   overlay.style.setProperty("height",Math.max(0,Math.min(rect.height,window.innerHeight-Math.max(0,rect.top)))+"px","important");
+   overlay.style.setProperty("inset","auto","important");
    overlay.style.setProperty("transform","none","important");
-   overlay.style.setProperty("padding","12px 8px","important");
+   overlay.style.setProperty("box-sizing","border-box","important");
+   overlay.style.setProperty("overflow","hidden","important");
+   overlay.style.setProperty("padding","8px 6px","important");
    const modal=overlay.querySelector(".result-preview-modal");
    if(modal){
-    modal.style.setProperty("max-height","calc(100% - 24px)","important");
+    modal.style.setProperty("box-sizing","border-box","important");
+    modal.style.setProperty("max-height","100%","important");
     modal.style.setProperty("width","100%","important");
+    modal.style.setProperty("min-height","0","important");
+    modal.style.setProperty("overflow","hidden","important");
+    modal.style.setProperty("gap","clamp(5px,1.2vh,10px)","important");
    }
+   const img=overlay.querySelector(".result-preview-image");
+   if(img)img.style.setProperty("max-height","min(27vh, calc(100% - 180px))","important");
   };
   positionPreviewToStage();
-  window.addEventListener("resize",positionPreviewToStage);
+  window.addEventListener("resize",positionPreviewToStage,{passive:true});
+  window.addEventListener("scroll",positionPreviewToStage,{passive:true,capture:true});
+  if(window.visualViewport){
+   window.visualViewport.addEventListener("resize",positionPreviewToStage,{passive:true});
+   window.visualViewport.addEventListener("scroll",positionPreviewToStage,{passive:true});
+  }
+  const stageForPreview=document.getElementById("game-container");
+  if(stageForPreview&&window.ResizeObserver){
+   overlay.__stageResizeObserver=new ResizeObserver(positionPreviewToStage);
+   overlay.__stageResizeObserver.observe(stageForPreview);
+  }
   overlay.__positionPreviewToStage=positionPreviewToStage;
   overlay.querySelector(".result-preview-close").addEventListener("click",closePreview);
   const zone=overlay.querySelector(".result-preview-download-zone");
@@ -16571,12 +16596,13 @@ body > #developer-tools-panel button{
  rotate:none!important;
  font-style:normal!important;
 }
-/* 適合職業區塊上移50px；參考標語下移150px，兩者獨立定位。 */
+/* 適合職業整個區塊上移150px；參考標語獨立下移1000px。 */
 #personality-result-screen #personality-result-copy .result-secondary{
- translate:0 -50px!important;
+ translate:0 -150px!important;
 }
 #personality-result-screen #personality-result-copy > .result-disclaimer{
- translate:0 150px!important;
+ position:relative!important;
+ translate:0 1000px!important;
 }
 /* 白色底部漸層與保存按鈕使用相同淡出狀態。 */
 #personality-result-screen::after{
