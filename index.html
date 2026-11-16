@@ -8832,9 +8832,10 @@ function createComicDialogueBubble(comicBox, scene) {
 function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options = {}) {
     if (!comicBox || !comicImg) return;
     const enteringComicMode = comicBox.style.display !== "block";
-    const groupChanged = comicGroup !== null && previousGroup !== null && previousGroup !== String(comicGroup);
-    const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || options.opening || groupChanged));
     const previousGroup = comicBox.getAttribute("data-comic-group") || null;
+    const groupChanged = comicGroup !== null && previousGroup !== null && previousGroup !== String(comicGroup);
+    // opening 只負責啟用 11／12 雙圖層同步，不代表每一格都要讓整張漫畫畫布重新滑入。
+    const shouldAnimateComicEntry = options.animateEntry === true || (options.animateEntry !== false && (enteringComicMode || groupChanged));
     if (comicGroup !== null && previousGroup && previousGroup !== String(comicGroup)) {
         comicBox.querySelectorAll(".comic-dialogue-layer").forEach(layer => layer.remove());
         comicBox.querySelectorAll(".comic-layer-extra, .comic-role-clip").forEach(layer => {
