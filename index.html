@@ -14285,6 +14285,49 @@ window.savePersonalityResultImage=async function(){
 }
 </style>
 
+
+<style id="startup-stage-controls-and-comic-darken-20261116">
+/* 開始畫面必須限制在實際遊戲舞台內；桌機仍維持置中的 430px 遊戲範圍，不再鋪滿整個瀏覽器。 */
+#game-container{position:relative!important;isolation:isolate!important}
+#intro-start-screen{
+ position:absolute!important;
+ inset:0!important;
+ width:100%!important;
+ height:100%!important;
+ min-width:0!important;
+ max-width:none!important;
+ max-height:none!important;
+ z-index:2147482000!important;
+}
+#intro-start-screen video{
+ position:absolute!important;
+ inset:0!important;
+ width:100%!important;
+ height:100%!important;
+ object-fit:cover!important;
+}
+/* 載入畫面要蓋住選單、音量、跳過及開發者圖示；載入完成後再顯示。 */
+#loading-screen{z-index:2147483646!important}
+#game-container .menu-container,
+#game-container #skip-btn{
+ z-index:2147483000!important;
+}
+body.opening-comic-controls .menu-container,
+body.opening-comic-controls #skip-btn{
+ z-index:2147483000!important;
+}
+/* 開場漫畫背景整體壓暗，角色及文字圖層亮度不變。 */
+#comic-box.opening-comic-active .intro-comic-background{
+ filter:brightness(.72)!important;
+}
+/* 開始介面期間不顯示遊戲操作圖示，避免它們浮在首頁或載入介面上。 */
+#game-container:has(#intro-start-screen:not([style*="display: none"])) .menu-container,
+#game-container:has(#intro-start-screen:not([style*="display: none"])) #skip-btn{
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
