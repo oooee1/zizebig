@@ -11999,8 +11999,10 @@ function openPersonalityResult(first,second){
             if (!comicStage || comicStage.dataset.comicAdvanceBound === "1") return;
             comicStage.dataset.comicAdvanceBound = "1";
             comicStage.addEventListener("click", function(event) {
-                const active = document.body.classList.contains("comic-scene-active") ||
-                    comicStage.classList.contains("opening-comic-active");
+                // 開場 11～14 有自己的 pointerup/click 推進流程；不可再落入一般劇情 nextStep，
+                // 否則同一次翻頁會同步推進底下場景並呼叫 clearComicLayers，讓 11 看起來被 12 蓋掉。
+                if (comicStage.classList.contains("opening-comic-active")) return;
+                const active = document.body.classList.contains("comic-scene-active");
                 if (!active) return;
                 if (event.target && event.target.closest &&
                     event.target.closest("button,a,input,textarea,select,[data-no-story-advance]")) return;
@@ -19194,14 +19196,19 @@ body.opening-comic-controls #game-container #skip-btn{
   width:90%!important;height:90%!important;max-width:90%!important;max-height:90%!important;
   transform:translate(-50%,-50%)!important;object-fit:contain!important;object-position:center center!important;
 }
-/* 開始介面的 Logo 與標準字都恢復黑色泛光。 */
-#intro-start-logo,#intro-start-title{
+/* 黑色泛光只留在 Logo；標準字不再把外擴光暈壓到 Logo 上。 */
+#intro-start-logo{
+  position:relative!important;z-index:3!important;
   -webkit-filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
     drop-shadow(0 0 22px rgba(0,0,0,.94))
     drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
   filter:drop-shadow(0 0 9px rgba(0,0,0,.98))
     drop-shadow(0 0 22px rgba(0,0,0,.94))
     drop-shadow(0 0 38px rgba(0,0,0,.78))!important;
+}
+#intro-start-title{
+  position:relative!important;z-index:2!important;
+  -webkit-filter:none!important;filter:none!important;
 }
 /* 第一朵與最後一朵雲各自上移 6 個百分點，中間雲保持原位。 */
 #game-container .dream-cloud-transition img:nth-child(1){top:-46%!important}
