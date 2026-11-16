@@ -8796,18 +8796,22 @@ function createComicDialogueBubble(comicBox, scene) {
         layer.className = "comic-dialogue-layer";
         layer.setAttribute("aria-live", "polite");
         Object.assign(layer.style, {
-            position: "absolute", inset: "4%", zIndex: "2147483646",
+            position: "absolute", inset: "0", zIndex: "2147483646",
             display: "block", visibility: "visible", opacity: "1",
             pointerEvents: "none", overflow: "visible"
         });
         comicBox.appendChild(layer);
     } else {
         Object.assign(layer.style, {
-            position: "absolute", inset: "4%", zIndex: "2147483646",
+            position: "absolute", inset: "0", zIndex: "2147483646",
             display: "block", visibility: "visible", opacity: "1",
             pointerEvents: "none", overflow: "visible"
         });
     }
+    // 泡泡定位以完整漫畫畫布為座標，不再被 CSS 的 4%／7% 內縮改變位置。
+    layer.style.setProperty("inset", "0", "important");
+    layer.style.setProperty("width", "100%", "important");
+    layer.style.setProperty("height", "100%", "important");
     const sceneKey = String(scene.id ?? currentStep);
     const existing = Array.from(layer.querySelectorAll(".comic-speech-bubble"))
         .find(bubble => bubble.dataset.sceneId === sceneKey);
@@ -8833,6 +8837,12 @@ function createComicDialogueBubble(comicBox, scene) {
         zIndex: "2147483647", visibility: "visible", opacity: "1",
         pointerEvents: "none"
     });
+    // 清除歷史 CSS 中互相衝突的寬度，統一使用較窄的畫布比例。
+    bubble.style.setProperty("width", "max-content", "important");
+    bubble.style.setProperty("max-width", "min(42%, 320px)", "important");
+    bubble.style.setProperty("min-width", "0", "important");
+    bubble.style.setProperty("padding", "9px 13px", "important");
+    bubble.style.setProperty("white-space", "pre-wrap", "important");
     bubble.dataset.sceneId = sceneKey;
     bubble.dataset.tail = slot.tail || scene.comicDialogueTail || "bottom-right";
     ["left","right","top","bottom"].forEach(key => {
@@ -11814,6 +11824,20 @@ function openPersonalityResult(first,second){
             const images = sources.map((src, index) => {
                 const img = document.createElement("img");
                 img.src = src; img.alt = ""; img.dataset.cloudIndex = String(index);
+                // 雲的位置直接寫在元素上，避免後面重複的全域 CSS 把三張圖覆蓋成同一位置。
+                const cloudLayout = [
+                    { left:"-12%", top:"-18%", width:"124%", height:"82%" },
+                    { left:"-2%", top:"12%", width:"112%", height:"80%" },
+                    { left:"-10%", top:"45%", width:"122%", height:"84%" }
+                ][index];
+                for (const [key,value] of Object.entries(cloudLayout)) img.style.setProperty(key,value,"important");
+                img.style.setProperty("position","absolute","important");
+                img.style.setProperty("right","auto","important");
+                img.style.setProperty("bottom","auto","important");
+                img.style.setProperty("max-width","none","important");
+                img.style.setProperty("max-height","none","important");
+                img.style.setProperty("object-fit","contain","important");
+                img.style.setProperty("object-position","center center","important");
                 overlay.appendChild(img); return img;
             });
             stage.appendChild(overlay);
