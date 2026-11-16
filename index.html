@@ -8611,7 +8611,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         const play = () => {
             layer.style.setProperty("animation", "none", "important");
             void layer.offsetWidth;
-            layer.style.setProperty("animation", "fadeInUp .6s ease-out both", "important");
+            layer.style.setProperty("animation", "comicLayerEntry .6s ease-out both", "important");
         };
         if (layer.complete && layer.naturalWidth > 0) play();
         else {
@@ -16701,7 +16701,6 @@ body.opening-comic-controls #skip-btn{
 /* 11／12 分鏡：角色使用對應背景的透明度遮罩，避免角色越出該張背景。 */
 #comic-box.opening-comic-active .intro-comic-role{
   z-index:3!important;
-  opacity:1!important;
   pointer-events:none!important;
   object-fit:fill!important;
 }
@@ -16981,8 +16980,9 @@ body.opening-comic-controls #game-container #skip-btn{
 
 
 <style id="stage-comic-result-final-adjustments-20261116">
-/* 所有漫畫（11～14、1～4、好奇星劇情及後續分鏡）統一以遊戲舞台為基準，前景同為86%。 */
-#game-container #comic-box .comic-layer{
+/* 全部漫畫（11～14、1～4、好奇星劇情及後續分鏡）統一以遊戲舞台為基準，前景同為86%。 */
+#game-container #comic-box .comic-layer,
+#game-container #comic-box.opening-comic-active .comic-layer:not(.intro-comic-background[src*="漫畫背景"]){
  position:absolute!important;top:50%!important;left:50%!important;
  right:auto!important;bottom:auto!important;
  width:86%!important;height:86%!important;
@@ -16992,7 +16992,7 @@ body.opening-comic-controls #game-container #skip-btn{
  transform:translate(-50%,-50%)!important;
  object-fit:contain!important;object-position:center center!important;
 }
-/* 開場漫畫最底層共用底圖只填滿遊戲舞台，不使用 vw／dvh。 */
+/* 開場漫畫共用底圖只填滿遊戲舞台，不使用 vw／dvh。 */
 #game-container #comic-box.opening-comic-active .intro-comic-background[src*="漫畫背景"]{
  position:absolute!important;inset:0!important;
  width:100%!important;height:100%!important;
@@ -17001,7 +17001,10 @@ body.opening-comic-controls #game-container #skip-btn{
  margin:0!important;padding:0!important;transform:none!important;
  object-fit:cover!important;object-position:center center!important;z-index:0!important;
 }
-/* 所有分離式背景與角色（包括11、12及好奇星第一組第二張）同尺寸、同中心、同拉伸方式。 */
+/* 11／12 局部背景、角色及好奇星第一組第二張：完全相同的舞台相對尺寸與定位。 */
+#game-container #comic-box.opening-comic-active .intro-comic-background[src*="11背景"],
+#game-container #comic-box.opening-comic-active .intro-comic-background[src*="12背景"],
+#game-container #comic-box.opening-comic-active .intro-comic-role,
 #game-container #comic-box .comic-split-background,
 #game-container #comic-box .comic-split-role{
  position:absolute!important;top:50%!important;left:50%!important;
@@ -17013,7 +17016,7 @@ body.opening-comic-controls #game-container #skip-btn{
  transform:translate(-50%,-50%)!important;
  object-fit:fill!important;object-position:center center!important;
 }
-/* 角色只在對應背景的有效範圍內顯示，遮罩和角色使用相同的86%畫布。 */
+/* 分離角色以對應背景作遮罩；兩者的畫布尺寸、比例與中心點一致。 */
 #game-container #comic-box .comic-split-role[data-comic-mask-role="split"]{
  -webkit-mask-image:var(--comic-role-mask)!important;
  mask-image:var(--comic-role-mask)!important;
@@ -17023,8 +17026,11 @@ body.opening-comic-controls #game-container #skip-btn{
  z-index:3!important;
 }
 #game-container #comic-box .comic-split-background{z-index:2!important}
-#game-container #comic-box.opening-comic-active .intro-comic-role{z-index:3!important}
-/* 不讓容器位移動畫與每張漫畫圖片的淡入上移疊加。 */
+/* 所有新漫畫圖層逐張執行淡入上移；不讓整個漫畫容器一起滑動。 */
+@keyframes comicLayerEntry{
+ from{opacity:0;translate:0 50px}
+ to{opacity:1;translate:0 0}
+}
 #game-container #comic-box.comic-slide-up{animation:none!important}
 /* 載入畫面在遊戲舞台內滿版，且高於所有舞台 UI；桌機不超出遊戲框。 */
 #game-container > #loading-screen{
@@ -17033,6 +17039,11 @@ body.opening-comic-controls #game-container #skip-btn{
  min-width:0!important;min-height:0!important;
  max-width:100%!important;max-height:100%!important;
  z-index:2147483647!important;box-sizing:border-box!important;
+}
+/* 桌面開始介面不顯示瀏覽器原生影片畫中畫／媒體控制圖示。 */
+#intro-start-video::-webkit-media-controls,
+#intro-start-video::-webkit-media-controls-picture-in-picture-button{
+ display:none!important;
 }
 /* 片尾所有工作人員 IG 圖片統一放大，烏賊那一列文字再縮小。 */
 #end-credits .credits-person img{
