@@ -12324,7 +12324,7 @@ function openPersonalityResult(first,second){
                             : '圖片載入較慢，正在重試...';
                     }
 
-                    preloadImages(initialAssets, error => {
+                    preloadImages([...new Set([...openingComicAssets, ...initialAssets])], error => {
                         window.__zizebigStartupStage = error ? '第一幕素材載入失敗，準備重試或略過' : '第一幕素材載入完成';
                         if (error) {
                             console.warn("第一幕圖片載入未完成：", error);
