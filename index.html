@@ -9060,7 +9060,7 @@ function renderComicLayers(comicBox, comicImg, comicPaths, comicGroup, options =
         // 先取得分鏡編號再使用；舊程式在宣告前讀取 splitPanelNumber，
         // 會觸發 TDZ ReferenceError，令 11／12 的角色圖層無法完成建立。
         const splitPanelMatch = (isSplitBackground || isSplitRole)
-            ? path.match(/(?:^|\\/)(11|12)(?:背景)?\\.(?:webp|png|jpe?g)$/i)
+            ? path.match(/(?:^|\/)(11|12)(?:背景)?\.(?:webp|png|jpe?g)$/i)
             : null;
         const splitPanelNumber = splitPanelMatch ? Number(splitPanelMatch[1]) : 0;
         const layerOrder = shownPaths.length;
