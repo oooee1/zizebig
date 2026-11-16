@@ -10469,20 +10469,24 @@ function positionResultTextElements(layers,copy){
    const b=getResultImageAlphaBounds(longStrip);
    const note=copy.querySelector(".result-disclaimer");
    if(b&&note){
-    const imageRect=longStrip.getBoundingClientRect();
-    const scale=imageRect.height/longStrip.naturalHeight;
-    note.style.position="absolute";
-    note.style.left="0";
-    note.style.width="100%";
-    const isMobileNoteLayout=window.matchMedia("(max-width:900px)").matches ||
-      (window.matchMedia("(pointer:coarse)").matches && window.innerWidth<=1200);
-    const noteBaseTop=(imageRect.top-copy.getBoundingClientRect().top+(b.y+b.height)*scale-72)/responsiveScale+(isMobileNoteLayout?1820:1150)/responsiveScale;
-    const noteShiftX=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-x"))||0;
-    const noteShiftY=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-y"))||0;
-    note.style.setProperty("left",noteShiftX+"px","important");
-    note.style.setProperty("top",(noteBaseTop+noteShiftY)+"px","important");
-    note.style.setProperty("transform","translateY(-100%)","important");
-    note.style.margin="0";
+    const copyRect=copy.getBoundingClientRect();
+    const continueButton=copy.querySelector(".result-continue");
+    note.style.setProperty("position","absolute","important");
+    note.style.setProperty("width","100%","important");
+    note.style.setProperty("margin","0","important");
+    note.style.setProperty("transform","none","important");
+    // 標語直接錨定在「繼續遊戲」上方，不再使用長條紙的超大固定偏移量。
+    if(continueButton){
+     const buttonRect=continueButton.getBoundingClientRect();
+     const noteHeight=note.getBoundingClientRect().height||note.offsetHeight||24;
+     const noteShiftX=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-x"))||0;
+     const noteShiftY=parseFloat(getComputedStyle(copy).getPropertyValue("--result-disclaimer-shift-y"))||0;
+     note.style.setProperty("left",noteShiftX+"px","important");
+     note.style.setProperty("top",(buttonRect.top-copyRect.top-noteHeight-12+noteShiftY)+"px","important");
+    }else{
+     // 按鈕尚未完成定位時，暫時隱藏標語，等下一次 layout/resize 再依按鈕定位。
+     note.style.setProperty("visibility","hidden","important");
+    }
    }
   }
  };
@@ -14530,6 +14534,42 @@ body.opening-comic-controls #skip-btn{
 }
 </style>
 <style id="result-disclaimer-position-controls-20261116">
+/* 標語由 JS 錨定在「繼續遊戲」上方；保留可選微調值。 */
+#personality-result-screen #personality-result-copy{
+ --result-disclaimer-shift-x:0px;
+ --result-disclaimer-shift-y:0px;
+}
+</style>
+<style id="result-preview-share-title-visible-20261116">
+/* 分享提示使用系統中文字體，避免 iOS／桌面缺字型時整段文字消失。 */
+#result-preview-share-overlay .result-preview-share-title{
+ display:block!important;
+ flex:0 0 auto!important;
+ flex-shrink:0!important;
+ position:relative!important;
+ z-index:2147483602!important;
+ width:100%!important;
+ min-height:1.5em!important;
+ height:auto!important;
+ overflow:visible!important;
+ visibility:visible!important;
+ opacity:1!important;
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",sans-serif!important;
+ font-size:clamp(17px,4.8vw,22px)!important;
+ font-style:normal!important;
+ font-weight:500!important;
+ line-height:1.5!important;
+ text-align:center!important;
+ white-space:normal!important;
+ text-indent:0!important;
+ transform:none!important;
+ rotate:none!important;
+ margin:0!important;
+}
+</style>
+<style id="result-disclaimer-position-controls-20261116">
 /* 測驗標語的調整入口：改這兩個值即可移動，JS 不再用 inline 預設值蓋掉。 */
 #personality-result-screen #personality-result-copy{
  --result-disclaimer-shift-x:0px;
@@ -16198,7 +16238,7 @@ body.opening-comic-controls #skip-btn{
  overflow:visible!important;
 }
 #result-preview-share-overlay .result-preview-close{
- position:absolute!important;right:3px!important;top:0!important;
+ position:absolute!important;right:33px!important;top:0!important;
  z-index:3!important;width:42px!important;height:42px!important;
  border:0!important;background:transparent!important;
  color:#fff!important;font-family:Arial,sans-serif!important;
@@ -16254,7 +16294,7 @@ body.opening-comic-controls #skip-btn{
  /* 分享視窗由 openPreview() 直接填滿 #game-container；不再另套 viewport 定位。 */
  #result-preview-share-overlay .result-preview-modal{width:100%!important;max-width:100%!important}
  #result-preview-share-overlay .result-preview-image{max-height:33vh!important;max-width:min(31.2vw,258px)!important}
- #result-preview-share-overlay .result-preview-close{right:10px!important;top:0!important}
+ #result-preview-share-overlay .result-preview-close{right:40px!important;top:0!important}
 }
 </style>
 
@@ -16659,7 +16699,7 @@ body > #developer-tools-panel button{
   const update=()=>{
    const maxScroll=Math.max(0,screen.scrollHeight-screen.clientHeight);
    const hasScrollableContent=maxScroll>8;
-   const atEnd=hasScrollableContent&&(maxScroll-screen.scrollTop<=18);
+   const atEnd=hasScrollableContent&&(maxScroll-screen.scrollTop<=120);
    screen.classList.toggle("at-scroll-end",atEnd);
    if(save&&!save.hidden){
     save.style.setProperty("opacity",atEnd?"0":"1","important");
