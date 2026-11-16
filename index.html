@@ -4171,7 +4171,7 @@ img { max-width:100%; }
     {
         id: 13.1,
         comicImages: [],
-        comicDialoguePosition: { left: "calc(30% + 34px)", top: "calc(20% + 7px)", tail: "top-left" },
+        comicDialoguePosition: { left: "calc(40% + 34px)", top: "calc(20% + 7px)", tail: "top-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "我們的毛沒辦法被吹走，星球才會充滿了棉花咩。",
     },
@@ -4186,7 +4186,7 @@ img { max-width:100%; }
     {
         id: 14,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(21% + 5% + 16px)", top: "calc(19% + 5% + 7px + 4%)", tail: "bottom-right" },
+        comicDialoguePosition: { left: "calc(13% + 5% + 16px)", top: "calc(19% + 5% + 7px + 7%)", tail: "top-right" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "（所以羊怎麼會講話...）",
     },
@@ -4712,7 +4712,7 @@ img { max-width:100%; }
     {
         id: 53,
         comicGroup: 3,
-        comicDialoguePosition: { right: "5%", top: "calc(1% + 20px + 22%)", tail: "top-right" },
+        comicDialoguePosition: { right: "5%", top: "calc(1% + 20px + 35%)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-3-第二張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好酷，我也是第一次看到咩。",
@@ -4753,7 +4753,7 @@ img { max-width:100%; }
     {
         id: 57,
         comicGroup: 4,
-        comicDialoguePosition: { right: "4%", top: "calc(8% + 32px + 25%)", tail: "bottom-left" },
+        comicDialoguePosition: { right: "4%", top: "calc(8% + 32px + 38%)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-4-第二張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "嘿咻！",
@@ -12486,7 +12486,10 @@ function openPersonalityResult(first,second){
 
         const overlay = document.createElement("div");
         overlay.id = "skip-confirm-overlay";
-        overlay.style.cssText = "position:absolute;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;pointer-events:auto;";
+        // 將確認視窗放在 body 最上層，並依遊戲舞台實際矩形定位，避免被漫畫／開發者工具遮住。
+const stage = document.getElementById("game-container");
+const rect = stage ? stage.getBoundingClientRect() : { left:0, top:0, width:window.innerWidth, height:window.innerHeight };
+overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;width:"+rect.width+"px;height:"+rect.height+"px;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:22px;box-sizing:border-box;pointer-events:auto;";
         overlay.innerHTML = `
           <style>
             #skip-confirm-overlay .skip-card{position:relative;width:min(390px,100%);box-sizing:border-box;padding:28px 24px 23px;background:#000;border:2px solid #ffb30f;border-radius:18px 22px 17px 21px;color:#fff;text-align:center;font-family:Arial,sans-serif;font-weight:bold;box-shadow:none;overflow:hidden;}
@@ -12647,8 +12650,7 @@ function openPersonalityResult(first,second){
               <button type="button" id="skip-confirm-yes">確定</button>
             </div>
           </div>`;
-        const game = document.getElementById("game-container") || document.body;
-        game.appendChild(overlay);
+        document.body.appendChild(overlay);
 
         const close = () => overlay.remove();
         overlay.querySelector("#skip-confirm-no").addEventListener("click", (event) => {
@@ -12886,7 +12888,7 @@ function openPersonalityResult(first,second){
                     }
                     if (skipButton) {
                         skipButton.style.setProperty("position", "absolute", "important");
-                        skipButton.style.setProperty("top", "max(22px, calc(env(safe-area-inset-top) + 8px))", "important");
+                        skipButton.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
                         skipButton.style.setProperty("right", "112px", "important");
                         skipButton.style.setProperty("left", "auto", "important");
                         skipButton.style.setProperty("display", "flex", "important");
@@ -19415,4 +19417,18 @@ body.opening-comic-controls #game-container #skip-btn{
 #game-container #comic-box .comic-layer-entry{
   animation:comicLayerEntry .6s ease-out both!important;
 }
+</style>
+
+<style id="20261117-root-fixes-controls-cloud-glow">
+/* 頂部控制同一水平中心線；跳過鍵固定在開發者按鈕左側，避免被覆蓋。 */
+#game-container .menu-container,body.opening-comic-controls #game-container .menu-container{top:max(14px,env(safe-area-inset-top))!important;}
+#game-container #skip-btn,body.opening-comic-controls #game-container #skip-btn{position:absolute!important;top:max(14px,env(safe-area-inset-top))!important;right:112px!important;left:auto!important;width:42px!important;height:42px!important;z-index:2147483649!important;display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;pointer-events:auto!important;touch-action:manipulation!important;}
+body.opening-comic-controls #game-container #skip-btn{right:112px!important;top:max(14px,env(safe-area-inset-top))!important;}
+/* 標準字保留黑色小範圍泛光，但光暈不跨到上方 Logo；Logo 位於前層且不加光暈。 */
+#intro-start-content{isolation:isolate!important}
+#intro-start-logo{position:relative!important;z-index:3!important;-webkit-filter:none!important;filter:none!important;}
+#intro-start-title{position:relative!important;z-index:1!important;-webkit-filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;filter:drop-shadow(0 0 2px rgba(0,0,0,1)) drop-shadow(0 0 5px rgba(0,0,0,.88))!important;}
+/* opacity:0!important 會壓過 Web Animations API，讓三片雲永遠透明；改回一般 opacity。 */
+#game-container .dream-cloud-transition img{opacity:0;visibility:visible!important;display:block!important;}
+#skip-confirm-overlay{z-index:2147483647!important;pointer-events:auto!important}#skip-confirm-overlay *{pointer-events:auto}
 </style>
