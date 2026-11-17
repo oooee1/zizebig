@@ -12871,7 +12871,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                     }
                     if (skipButton) {
                         skipButton.style.setProperty("position", "absolute", "important");
-                        skipButton.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
+                        skipButton.style.removeProperty("top");
                         skipButton.style.setProperty("right", "14px", "important");
                         skipButton.style.setProperty("width", "62px", "important");
                         skipButton.style.setProperty("height", "62px", "important");
@@ -19705,5 +19705,37 @@ body.opening-comic-controls #game-container > #skip-btn{
 body.opening-comic-controls #game-container #skip-btn,
 body.opening-comic-controls #game-container > #skip-btn{
   transform:translateY(16px)!important;
+}
+</style>
+
+
+<style id="20261117-skip-button-real-alignment-fix">
+/* 跳過鍵與音量鍵共用同一組 62px 控制框、54px 圖示；top 不再由 JS 行內樣式鎖死。 */
+#game-container > #skip-btn,
+body.opening-comic-controls #game-container > #skip-btn{
+  position:absolute!important;
+  top:max(14px,env(safe-area-inset-top))!important;
+  right:14px!important;
+  left:auto!important;
+  width:62px!important;height:62px!important;
+  min-width:62px!important;min-height:62px!important;
+  max-width:62px!important;max-height:62px!important;
+  margin:0!important;padding:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  box-sizing:border-box!important;transform:none!important;
+  z-index:2147483649!important;
+  visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+  cursor:pointer!important;touch-action:manipulation!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  flex-shrink:0!important;
+}
+#game-container > #skip-btn img,
+body.opening-comic-controls #game-container > #skip-btn img{
+  display:block!important;
+  width:54px!important;height:54px!important;
+  min-width:54px!important;min-height:54px!important;
+  max-width:54px!important;max-height:54px!important;
+  margin:0!important;padding:0!important;
+  object-fit:contain!important;pointer-events:none!important;
 }
 </style>
