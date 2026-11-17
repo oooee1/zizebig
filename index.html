@@ -4162,14 +4162,14 @@ img { max-width:100%; }
         id: 15,
         comicGroup: 2,
         comicImages: ["./1漫畫/1好奇星-2-第二張.webp","./1漫畫/1好奇星-2-第三張.webp"],
-        comicDialoguePosition: { left: "5%", top: "calc(21% + 5% + 8px - 12% + 10px + 9px)", tail: "bottom-left" },
+        comicDialoguePosition: { left: "5%", top: "calc(21% + 5% + 8px - 12% + 10px + 9px + 17px)", tail: "bottom-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "{playerName}的星球是什麼樣子的咩？",
     },
     {
         id: 14,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(13% + 5% + 16px + 20% + 5px + 4px)", top: "calc(19% + 5% + 7px + 7%)", tail: "top-left" },
+        comicDialoguePosition: { left: "calc(13% + 5% + 16px + 20% + 5px + 4px + 10px)", top: "calc(19% + 5% + 7px + 7%)", tail: "top-left" },
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "（所以羊怎麼會講話...）",
     },
@@ -4373,7 +4373,7 @@ img { max-width:100%; }
         id: 31.2,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "就是這裡了咩。",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["好奇星會跳"],
     },
     {
@@ -9715,7 +9715,7 @@ if (window.currentSceneBGM !== scene.bgm) {
             else if (charName === "星辰驕傲") playNodAnim("星辰驕傲");
             else if (charName === "星辰點頭") playNodAnim("星辰點頭");
             else if (charName === "一群好奇星") playHappyJumpAnim("一群好奇星");
-            else if (charName === "好奇星") playCuriousAnim("好奇星", "curious-bounce");
+            else if (charName === "好奇星" && Number(currentSceneId) !== 11) playCuriousAnim("好奇星", "curious-bounce");
             else if (charName === "好奇星開心") playCuriousAnim("好奇星開心", "curious-wiggle");
             else if (charName === "好奇星會跳") playCuriousAnim("好奇星會跳", "curious-pop");
             else if (charName === "好奇星有尾巴") playCuriousAnim("好奇星有尾巴", "curious-bounce");
@@ -11511,8 +11511,13 @@ function openPersonalityResultCore(first,second){
   "爽快星":["在行動中找到解決問題的方法","毫不退縮的精神","忽略他人的想法與感受","習慣以直接有效的方式解決問題"],
   "熱情星":["對自己認定的目標充滿幹勁","凝聚團隊","忽略實際限制","樂觀的態度帶動身邊的人","表達能力"]
  };
- const careerHighlights=["理解與自己想法不同的人","創意","靈活調整方向","調整自己的做法","行動","關心他人的感受與需求","同理心","主動尋找問題背後的原因","主動尋找解決問題的方法","溝通","不同的角度","處境","執行力","面對挑戰","主動承擔責任","熱忱"];
- const terms=[...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[]),...(sameStarHighlights[star]||[]),...careerHighlights].filter(Boolean).sort((a,b)=>b.length-a.length);
+ const careerHighlightsByStar={
+  "好奇星":["理解與自己想法不同的人","創意"],
+  "同情星":["關心他人的感受與需求","同理心"],
+  "爽快星":["主動尋找解決問題的方法","執行力"],
+  "熱情星":["面對挑戰時主動承擔責任","熱忱"]
+ };
+ const terms=[...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[]),...(sameStarHighlights[star]||[]),...(careerHighlightsByStar[star]||[])].filter(Boolean).sort((a,b)=>b.length-a.length);
   terms.forEach(term=>{
    const mark='<span class="result-highlight" style="--highlight-color:'+color+'">'+term+'</span>';
    out=out.split(term).join(mark);
@@ -19603,4 +19608,25 @@ body.opening-comic-controls #game-container > #skip-btn img{
  width:44px!important;height:44px!important;
 }
 #personality-result-copy .result-belongs-heading{translate:0 10px!important;}
+</style>
+
+<style id="20261117-skip-match-volume-final">
+/* 跳過鍵與音量圖示使用相同的 62px 控制框、54px 圖片尺寸，固定在舞台右上角。 */
+#game-container > #skip-btn,
+body.opening-comic-controls #game-container > #skip-btn{
+ position:absolute!important;top:14px!important;right:14px!important;left:auto!important;
+ width:62px!important;height:62px!important;min-width:62px!important;min-height:62px!important;
+ max-width:62px!important;max-height:62px!important;padding:0!important;margin:0!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;transform:none!important;
+ z-index:2147483649!important;visibility:visible!important;opacity:1!important;
+ pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation!important;
+ background:transparent!important;border:0!important;border-radius:0!important;flex-shrink:0!important;
+}
+#game-container > #skip-btn img,
+body.opening-comic-controls #game-container > #skip-btn img{
+ display:block!important;width:54px!important;height:54px!important;
+ max-width:54px!important;max-height:54px!important;object-fit:contain!important;
+ margin:0!important;padding:0!important;pointer-events:none!important;
+}
 </style>
