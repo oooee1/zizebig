@@ -3214,7 +3214,6 @@ img { max-width:100%; }
             <!-- 好奇星系列 -->
             <div id="好奇星" class="角色圖 全好奇星"><img data-src="./pct/好奇星_p.webp" alt="好奇星"></div>
             <div id="好奇星開心" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心.webp" alt="好奇星開心"></div>    
-            <div id="好奇星會跳" class="角色圖 全好奇星"><img data-src="./pct/好奇星_p.webp" alt="好奇星會跳"></div>
             <div id="好奇星有尾巴" class="角色圖 全好奇星"><img data-src="./pct/好奇星小尾巴.webp" alt="好奇星有尾巴"></div>
             <div id="好奇星開心有尾巴" class="角色圖 全好奇星"><img data-src="./pct/好奇星開心wink.webp" alt="好奇星開心有尾巴"></div>
             <div id="一群好奇星" class="角色圖 全好奇星"><img data-src="./pct/好奇星  一群好奇星.webp" alt="一群好奇星"></div>
@@ -4380,63 +4379,63 @@ img { max-width:100%; }
         id: 31.3,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "這裡這樣子多久了？（看見好奇星們在挖棉花下的草吃）",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["星辰嚇死"],
     },
     {
         id: 31.4,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "我也忘記了咩，記得上次是兩位和你很像的大人幫助我們...",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["好奇星"],
     },
     {
         id: 31.5,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "啊，看那裡咩！就是那幾座發電機。",
-        background: "好奇星棉花重災區",
-        characters: ["好奇星會跳"],
+        background: "好奇星草叢",
+        characters: ["好奇星有尾巴"],
     },
     {
         id: 31.6,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "只不過現在完全不能運轉了咩...",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["好奇星"],
     },
     {
         id: 31.7,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "哎...好希望能重新看到我們的草原咩。",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["好奇星哭"],
     },
     {
         id: 31.8,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "放心吧，我會幫助你們的。",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["星辰驕傲"],
     },
     {
         id: 31.9,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "呃...雖然我也不確定能不能做到，但會盡全力的！",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["星辰思考"],
     },
     {
         id: 31.91,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "這真是太好了咩，不知道怎麼感謝你咩。",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["好奇星開心"],
     },
     {
         id: 31.92,
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "告訴我能回地球的方法就行了。",
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
         characters: ["星辰驕傲"],
     },
     {
@@ -4444,7 +4443,7 @@ img { max-width:100%; }
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "但具體應該怎麼解決呢。",
         characters: ["星辰思考"],
-        background: "好奇星棉花重災區",
+        background: "好奇星草叢",
     },
     {
         id: 32,
@@ -9487,7 +9486,6 @@ if (!hasScoredOptions) {
         pageEl.classList.toggle("mail-failure-mode", Number(scene.id) === 179.5);
         // 337.1「我的選擇」停留畫面：開啟飄雪與微光粒子效果。
         pageEl.classList.toggle("my-choice-atmosphere", currentSceneId === 337.1);
-        pageEl.classList.toggle("curious-star-intro-jump", Number(currentSceneId) === 31.2);
 
         // 送信教學每次切換一句話都重新播放立繪動畫；三張表情都加上，
         // 由 CSS 讓當下實際顯示的立繪呈現動畫，避免動畫加在隱藏角色上。
@@ -19665,5 +19663,33 @@ body.opening-comic-controls #game-container > #skip-btn{
 body.opening-comic-controls #game-container #skip-btn,
 body.opening-comic-controls #game-container > #skip-btn{
   top:max(52px,calc(env(safe-area-inset-top) + 38px))!important;
+}
+</style>
+
+
+<style id="20261117-curious-grass-tail-skip-final">
+/* 31.3–31.93：抵達後沿用草叢背景；好奇星改用有尾巴立繪並做輕柔呼吸／搖擺動畫。 */
+#game-container #page1 #好奇星有尾巴{
+  animation:curiousTailPortraitEnter .48s cubic-bezier(.2,.7,.25,1) both!important;
+  transform-origin:50% 100%!important;
+}
+#game-container #page1 #好奇星有尾巴 img{
+  animation:curiousTailPortraitIdle 1.35s ease-in-out infinite!important;
+  transform-origin:50% 100%!important;
+}
+@keyframes curiousTailPortraitEnter{
+  from{opacity:0;transform:translateY(18px) scale(.96)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes curiousTailPortraitIdle{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-5px) rotate(1.2deg)}
+}
+/* 以 transform 位移跳過鍵，避開多組 top 規則與定位覆蓋造成的無效調整。 */
+#game-container #skip-btn,
+#game-container > #skip-btn,
+body.opening-comic-controls #game-container #skip-btn,
+body.opening-comic-controls #game-container > #skip-btn{
+  transform:translateY(16px)!important;
 }
 </style>
