@@ -15983,6 +15983,19 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
   tryPlayVideo();
 })();
 </script>
+
+<style id="result-career-shift-left-4-20261117">
+/* 適合職業區整組往左4px；桌機保留原本上移150px，手機保留原本 left/top 定位。 */
+#personality-result-screen #personality-result-copy > .result-secondary{
+ translate:-4px -150px!important;
+}
+@media (max-width:900px), (pointer:coarse) and (max-width:1200px){
+ #personality-result-screen #personality-result-copy > .result-secondary{
+  translate:-4px 0!important;
+ }
+}
+</style>
+
 </body>
 
 <style id="result-user-final-adjustments-20261108i">
