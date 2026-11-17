@@ -4133,7 +4133,7 @@ img { max-width:100%; }
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "你要不要參觀我們的星球咩？",
         characters: ["好奇星"],
-        background: "好奇星草原",
+        background: "好奇星草叢",
     },
     {
         id: 12,
@@ -4184,7 +4184,7 @@ img { max-width:100%; }
     {
         id: 17,
         comicGroup: 2,
-        comicDialoguePosition: { left: "calc(32% + 14px + 9% + 8px)", bottom: "calc(-1% + 15px)", tail: "top-left" },
+        comicDialoguePosition: { left: "calc(32% + 14px + 9% + 17px)", bottom: "calc(-1% + 15px)", tail: "top-left" },
         comicImages: ["./1漫畫/1好奇星-2-第四張.webp","./1漫畫/1好奇星-2-第四張好奇星.webp"],
         bgm: "./audio/Mozart  Allegro in B flat Major, K 3 - Sheetmusic2print.mp3",
         text: "記得曾經聽到過這樣的星球咩。",
@@ -4713,7 +4713,7 @@ img { max-width:100%; }
     {
         id: 55,
         comicGroup: 3,
-        comicDialoguePosition: { left: "8%", top: "calc(35% + 34px + 54% - 8px)", tail: "bottom-left" },
+        comicDialoguePosition: { left: "8%", top: "calc(35% + 34px + 54% - 17px)", tail: "bottom-left" },
         comicImages: ["./1漫畫/1好奇星-3-第二張拼圖.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "哇，它被喚醒了！",
@@ -4721,7 +4721,7 @@ img { max-width:100%; }
     {
         id: 56,
         comicGroup: 4,
-        comicDialoguePosition: { left: "8%", bottom: "calc(67% + 40px)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", bottom: "calc(67% + 33px)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
@@ -11511,7 +11511,8 @@ function openPersonalityResultCore(first,second){
   "爽快星":["在行動中找到解決問題的方法","毫不退縮的精神","忽略他人的想法與感受","習慣以直接有效的方式解決問題"],
   "熱情星":["對自己認定的目標充滿幹勁","凝聚團隊","忽略實際限制","樂觀的態度帶動身邊的人","表達能力"]
  };
- const terms=[...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[]),...(sameStarHighlights[first]||[])].filter(Boolean).sort((a,b)=>b.length-a.length);
+ const careerHighlights=["理解與自己想法不同的人","創意","靈活調整方向","調整自己的做法","行動","關心他人的感受與需求","同理心","主動尋找問題背後的原因","主動尋找解決問題的方法","溝通","不同的角度","處境","執行力","面對挑戰","主動承擔責任","熱忱"];
+ const terms=[...((RESULT_STARS[star]&&RESULT_STARS[star].keys)||[]),...(sameStarHighlights[star]||[]),...careerHighlights].filter(Boolean).sort((a,b)=>b.length-a.length);
   terms.forEach(term=>{
    const mark='<span class="result-highlight" style="--highlight-color:'+color+'">'+term+'</span>';
    out=out.split(term).join(mark);
@@ -11551,7 +11552,8 @@ function openPersonalityResultCore(first,second){
   const jobCategories=String(jobs[second]||"").split("\n").map((line,index)=>{const parts=line.split("：");const heading=(parts.shift()||"").replace("設計與內容創作","設計與媒體創作");let description="(如: "+parts.join("：").replace(/^\s+/,"")+")";if(second==="好奇星"&&index===0)description=description.replace("資料分析師、","資料分析師、<br>");return '<div class="result-job-category">'+(index===1?'<p class="result-job-category-or">或</p>':"")+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+heading+'</div><p class="result-job-category-description">'+description+'</p></div>';}).join("");
   const curiosityCareerText=(value)=>replace(value).replace("知識！","知識！<br>").replace("方法。","方法。<br>").replace("優勢。","優勢。<br>");
   const cleanPassionLead=value=>second==="熱情星"?String(value||"").replace(/(^|[。！？\n]\s*)熱情星/g,"$1"):String(value||"");
-  const curiosityCareerDetails=curiosityMark(curiosityCareerText(cleanPassionLead(details[second])),["主動蒐集資訊、嘗試不同的方法","細節"]);
+  const careerDetailText=curiosityCareerText(cleanPassionLead(details[second])).replace(/主動伸出援手(?:協助解決困難)?[，,]?/g,"");
+  const curiosityCareerDetails=curiosityMark(careerDetailText,["主動蒐集資訊、嘗試不同的方法","細節"]);
   html+='<section class="result-section result-secondary"><h2 class="result-career-heading">適合職業</h2><p class="result-career-intro'+(first===second?' result-career-intro-tied':'')+'">'+replace(careerIntro)+(first===second?'<span class="result-career-intro-tie-group"><span class="result-career-intro-star'+(second==="同情星"?' result-career-intro-star-sympathy':'')+'" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span><span class="result-career-intro-tie-mark">(?!)</span></span>':'<span class="result-career-intro-star'+(second==="同情星"?' result-career-intro-star-sympathy':'')+'" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>')+'<span class="result-career-intro-next">可能適合的職業類別是...</span></p>'+jobCategories+'<div class="result-trait-heading"><span class="result-trait-heading-label">'+replace("屬於()的特質：")+'</span></div><p>'+replace(cleanPassionLead(traits[second]))+'</p><p>'+curiosityCareerDetails+'</p></section><p class="result-disclaimer">(測驗結果僅供參考，不能代表實際人生咩！)</p>';
  }
  else{
@@ -19590,3 +19592,14 @@ body.opening-comic-controls #game-container > #skip-btn img{
 }
 </style>
 
+
+<style id="20261117-followup-position-career-fixes">
+/* 漫畫對話位置：逐句獨立微調，避免牽動同組其他格。 */
+#game-container .comic-dialogue{ }
+/* 最終結果上方的選單列不顯示；跳過鍵縮小但保留原位置與點擊層級。 */
+#game-container:has(#personality-result-screen.show) > .menu-container{display:none!important;}
+#game-container > #skip-btn,#game-container #skip-btn{
+ width:44px!important;height:44px!important;
+}
+#personality-result-copy .result-belongs-heading{translate:0 10px!important;}
+</style>
