@@ -25,9 +25,9 @@ jobs:
         run: |
           ffmpeg -y -i "玩法介紹影片.webm" \
             -map 0:v:0 -an \
-            -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" \
-            -c:v libx264 -profile:v baseline -level 3.0 \
-            -pix_fmt yuv420p -preset slow -crf 22 \
+            -vf "scale=w='if(gte(iw,ih),min(iw,1280),min(iw,720))':h='if(gte(iw,ih),min(ih,720),min(ih,1280))':force_original_aspect_ratio=decrease:force_divisible_by=2,fps=30,format=yuv420p" \
+            -c:v libx264 -profile:v baseline -level:v 3.1 \
+            -pix_fmt yuv420p -preset slow -crf 23 \
             -movflags +faststart "玩法介紹影片.mp4"
           test -s "玩法介紹影片.mp4"
 
