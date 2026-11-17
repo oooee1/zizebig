@@ -13152,7 +13152,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                     }
                     if (skipButton) {
                         skipButton.style.setProperty("position", "absolute", "important");
-                        skipButton.style.setProperty("top", "max(14px, env(safe-area-inset-top))", "important");
+                        skipButton.style.removeProperty("top");
                         skipButton.style.setProperty("right", "14px", "important");
                         skipButton.style.setProperty("width", "62px", "important");
                         skipButton.style.setProperty("height", "62px", "important");
