@@ -13263,16 +13263,11 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                         const bar = document.getElementById("progress-bar");
                         if (bar) bar.style.width = "70%";
                         Promise.all([videoReady, fontReady]).then(([ok]) => {
+                        Promise.all([videoReady, fontReady]).then(([ok]) => {
+                            // 開始介面的影片只是背景裝飾，不可因影片無法播放而永久鎖住整個遊戲。
+                            // iOS／網路環境可能回報 error 或始終沒有首幀；此時仍顯示開始按鈕。
                             if (!ok) {
-                                console.warn("[開始介面] 背景影片尚未取得可播放畫面，重新載入後再進入。");
-                                if (loadingPercent) loadingPercent.textContent = "影片載入中，請稍候…";
-                                const retryVideo = () => {
-                                    if (video && video.readyState >= 2) showStartInterface();
-                                    else if (video) { try { video.load(); } catch (error) {} setTimeout(retryVideo, 1200); }
-                                    else showStartInterface();
-                                };
-                                setTimeout(retryVideo, 1200);
-                                return;
+                                console.warn("[開始介面] 背景影片無法播放，略過影片並繼續顯示開始介面。");
                             }
                             if (loadingPercent) loadingPercent.textContent = "100%";
                             if (bar) bar.style.width = "100%";
