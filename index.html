@@ -13248,7 +13248,7 @@ overlay.style.cssText = "position:fixed;left:"+rect.left+"px;top:"+rect.top+"px;
                             startPlayback();
                         };
                         const onError = () => finish(false);
-                        const videoFallback = setTimeout(() => finish(loadedFirstFrame), 15000);
+                        const videoFallback = setTimeout(() => finish(loadedFirstFrame), 6000);
                         video.preload = "auto";
                         video.addEventListener("loadeddata", onLoaded);
                         video.addEventListener("canplay", onReady, { once: true });
