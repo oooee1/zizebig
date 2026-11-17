@@ -4721,7 +4721,7 @@ img { max-width:100%; }
     {
         id: 56,
         comicGroup: 4,
-        comicDialoguePosition: { left: "8%", bottom: "calc(67% + 16px + 17px)", tail: "top-right" },
+        comicDialoguePosition: { left: "8%", bottom: "calc(67% + 16px + 17px + 40px)", tail: "top-right" },
         comicImages: ["./1漫畫/1好奇星-4-第一張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "好奇星們！馬上確定好路線，我們要送{playerName}回家了咩！",
@@ -19629,5 +19629,30 @@ body.opening-comic-controls #game-container > #skip-btn img{
  display:block!important;width:44px!important;height:44px!important;
  max-width:44px!important;max-height:44px!important;object-fit:contain!important;
  margin:0!important;padding:0!important;pointer-events:none!important;
+}
+</style>
+
+<style id="curious-jump-same-portrait-size-and-skip-down-20261117">
+/* 好奇星跳躍只做上下位移，不再用 scale 放大／壓扁；尺寸沿用一般好奇星立繪。 */
+#game-container #page1.curious-star-intro-jump #好奇星會跳{
+  width:90%!important;max-width:none!important;height:auto!important;
+}
+#game-container #page1.curious-star-intro-jump #好奇星會跳 img{
+  width:135%!important;height:auto!important;max-width:none!important;
+  animation:curiousStarIntroHopSameSize .72s cubic-bezier(.32,.7,.28,1) infinite!important;
+  transform-origin:bottom center!important;
+}
+@keyframes curiousStarIntroHopSameSize{
+  0%,100%{transform:translateY(0)}
+  22%{transform:translateY(0)}
+  55%{transform:translateY(-42px)}
+  78%{transform:translateY(-12px)}
+}
+/* 前面的多組定位曾覆蓋跳過鍵的 top；在檔案最後統一往下移 20px。 */
+#game-container #skip-btn,
+#game-container > #skip-btn,
+body.opening-comic-controls #game-container #skip-btn,
+body.opening-comic-controls #game-container > #skip-btn{
+  top:max(42px,calc(env(safe-area-inset-top) + 28px))!important;
 }
 </style>
