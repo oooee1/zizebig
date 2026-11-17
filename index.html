@@ -4729,7 +4729,7 @@ img { max-width:100%; }
     {
         id: 56.1,
         comicGroup: 4,
-        comicImages: [],
+        comicImages: ["./1漫畫/1好奇星-4-第三張.webp"],
         bgm: "./audio/Schumann Kinderszenen Op.15 No.7, Träumerei (Horowitz) - Ashish Xiangyi Kumar (1).mp3",
         text: "",
     },
@@ -11602,7 +11602,8 @@ function openPersonalityResultCore(first,second){
  if(career){
   const intro=replace(career.intro).replace(second,'<span class="result-career-intro-star'+(second==="同情星"?' result-career-intro-star-sympathy':'')+'" style="--result-career-star-color:'+secondaryColor+'">'+second+'</span>');
   const categories=career.categories.map((item,index)=>'<div class="result-job-category" style="margin-left:auto!important;margin-right:auto!important;text-align:center!important;">'+(item.separator?'<p class="result-job-category-or">'+item.separator+'</p>':'')+'<div class="result-job-category-title" style="--job-category-color:'+secondaryColor+'">'+item.title.replace("設計與內容創作","設計與媒體創作").replace("娛樂表演與休閒服務","文教表演與休閒服務")+'</div><p class="result-job-category-description" style="text-align:center!important;">(如: '+replace(item.description).replace(/、(?=\.{3,}等)/g,"").replace(/^\s+/,"").replace(/\n/g,"<br>")+')</p></div>').join("");
-  const summary=resultTextHtml(career.traitSummary,replace,emphasize,second,secondaryColor);
+  const careerSummaryText=String(career.traitSummary||"").replace(/主動伸出援手(?:協助解決困難)?[，,]?/g,"");
+  const summary=resultTextHtml(careerSummaryText,replace,emphasize,second,secondaryColor);
   const details=resultTextHtml(career.details,replace,emphasize,second,secondaryColor);
   let disclaimer=career.disclaimer||"(測驗結果僅供參考)";
   const disclaimerHalf=disclaimer.length/2;
