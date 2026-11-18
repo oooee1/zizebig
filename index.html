@@ -17830,19 +17830,18 @@ body.comic-scene-active #game-container > #對話框,body.comic-scene-active #ga
    return;
   }
   if(platform==="instagram"){
-   // 網頁版無法寫入 iOS UIPasteboard 的 Instagram 專用貼紙資料；
-   // 先把結果圖交給使用者保存，再直接開啟 Instagram。
+   // 先下載測驗結果圖，再直接開啟 Instagram 私訊收件匣，讓使用者選擇傳送對象。
+   // 網頁無法將圖片自動附加到 Instagram DM，需在聊天室內自行選取已下載的結果圖。
    const url=URL.createObjectURL(blob);
    const link=document.createElement("a");
    link.href=url;link.download=activeFile;link.style.display="none";
    document.body.appendChild(link);link.click();link.remove();
    setTimeout(()=>URL.revokeObjectURL(url),60000);
-   window.location.href="instagram://app";
-   openFallback("https://www.instagram.com/");
-   if(label)label.textContent="正在下載結果圖並開啟 Instagram；iPhone 請先將檔案存到照片，再到限動加入 Add Yours";
+   window.location.href="instagram://direct-inbox";
+   openFallback("https://www.instagram.com/direct/inbox/");
+   if(label)label.textContent="結果圖已準備，正在開啟 Instagram 私訊；選擇對象後，從下載項目附上結果圖即可傳送";
    return;
   }
- }
  function shareResult(platform){
   const label=document.querySelector("#result-preview-share-overlay .result-preview-download-label");
   const cached=shareBlobCache.get(activeFile);
